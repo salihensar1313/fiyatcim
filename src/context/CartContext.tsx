@@ -1,0 +1,152 @@
+"use client";
+
+import { createContext, useContext, useEffect, useState, useCallback, useMemo, ReactNode } from "react";
+import type { CartItem, Product } from "@/types";
+import { getEffectivePrice, calculateShipping } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
+import { safeGetJSON, safeSetJSON } from "@/lib/safe-storage";
+
+interface CartContextType {
+  items: CartItem[];
+  addItem: (product: Product, qty?: number) => void;
+  removeItem: (productId: string) => void;
+  updateQuantity: (productId: string, qty: number) => void;
+  clearCart: () => void;
+  getItemCount: () => number;
+  getSubtotal: () => number;
+  getShipping: () => number;
+  getTotal: () => number;
+  isInCart: (productId: string) => boolean;
+  couponCode: string | null;
+  setCouponCode: (code: string | null) => void;
+  discount: number;
+  setDiscount: (amount: number) => void;
+}
+
+const CartContext = createContext<CartContextType | undefined>(undefined);
+
+export function CartProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [couponCode, setCouponCode] = useState<string | null>(null);
+  const [discount, setDiscount] = useState(0);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // G1: Kullanıcı bazlı storage key — her kullanıcının sepeti ayrı
+  const storageKey = useMemo(() => `fiyatcim_cart_${user?.id || "guest"}`, [user?.id]);
+
+  // localStorage'dan yükle — user değişince tetiklenir (safeGetJSON ile — GATE 3)
+  useEffect(() => {
+    const data = safeGetJSON<{ items?: unknown[]; couponCode?: string | null }>(
+      storageKey, { items: [], couponCode: null }
+    );
+
+    // Veri doğrulama: her item'da product_id ve qty olmalı
+    const validItems = (Array.isArray(data.items) ? data.items : []).filter(
+      (item: unknown): item is CartItem =>
+        typeof item === "object" && item !== null && "product_id" in item && "qty" in item
+    );
+
+    setItems(validItems);
+    setCouponCode(typeof data.couponCode === "string" ? data.couponCode : null);
+    setDiscount(0);
+    setIsLoaded(true);
+  }, [storageKey]);
+
+  // localStorage'a kaydet — safeSetJSON ile (GATE 3)
+  useEffect(() => {
+    if (!isLoaded) return;
+    safeSetJSON(storageKey, { items, couponCode });
+  }, [items, couponCode, isLoaded, storageKey]);
+
+  const addItem = useCallback((product: Product, qty = 1) => {
+    setItems((prev) => {
+      const existing = prev.find((item) => item.product_id === product.id);
+      if (existing) {
+        return prev.map((item) =>
+          item.product_id === product.id
+            ? { ...item, qty: Math.min(item.qty + qty, product.stock), product }
+            : item
+        );
+      }
+      return [...prev, { product_id: product.id, qty: Math.min(qty, product.stock), product }];
+    });
+  }, []);
+
+  const removeItem = useCallback((productId: string) => {
+    setItems((prev) => prev.filter((item) => item.product_id !== productId));
+  }, []);
+
+  const updateQuantity = useCallback((productId: string, qty: number) => {
+    if (qty <= 0) {
+      setItems((prev) => prev.filter((item) => item.product_id !== productId));
+      return;
+    }
+    setItems((prev) =>
+      prev.map((item) =>
+        item.product_id === productId ? { ...item, qty } : item
+      )
+    );
+  }, []);
+
+  const clearCart = useCallback(() => {
+    setItems([]);
+    setCouponCode(null);
+    setDiscount(0);
+  }, []);
+
+  const getItemCount = useCallback(() => {
+    return items.reduce((sum, item) => sum + item.qty, 0);
+  }, [items]);
+
+  const getSubtotal = useCallback(() => {
+    return items.reduce((sum, item) => {
+      if (!item.product) return sum;
+      return sum + getEffectivePrice(item.product.price, item.product.sale_price) * item.qty;
+    }, 0);
+  }, [items]);
+
+  const getShipping = useCallback(() => {
+    return calculateShipping(getSubtotal());
+  }, [getSubtotal]);
+
+  const getTotal = useCallback(() => {
+    return getSubtotal() - discount + getShipping();
+  }, [getSubtotal, discount, getShipping]);
+
+  const isInCart = useCallback(
+    (productId: string) => items.some((item) => item.product_id === productId),
+    [items]
+  );
+
+  return (
+    <CartContext.Provider
+      value={{
+        items,
+        addItem,
+        removeItem,
+        updateQuantity,
+        clearCart,
+        getItemCount,
+        getSubtotal,
+        getShipping,
+        getTotal,
+        isInCart,
+        couponCode,
+        setCouponCode,
+        discount,
+        setDiscount,
+      }}
+    >
+      {children}
+    </CartContext.Provider>
+  );
+}
+
+export function useCart() {
+  const context = useContext(CartContext);
+  if (!context) {
+    throw new Error("useCart must be used within a CartProvider");
+  }
+  return context;
+}

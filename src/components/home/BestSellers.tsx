@@ -1,0 +1,51 @@
+"use client";
+
+import Link from "next/link";
+import { ArrowRight, Flame } from "lucide-react";
+import { useProducts } from "@/context/ProductContext";
+import ProductCard from "@/components/product/ProductCard";
+
+export default function BestSellers() {
+  const { products } = useProducts();
+
+  // İndirimli ürünler (sale_price olanlar), en yüksek indirim oranına göre sırala
+  const discounted = products
+    .filter((p) => p.sale_price && p.sale_price < p.price)
+    .sort((a, b) => {
+      const discountA = (a.price - (a.sale_price || a.price)) / a.price;
+      const discountB = (b.price - (b.sale_price || b.price)) / b.price;
+      return discountB - discountA;
+    })
+    .slice(0, 4);
+
+  if (discounted.length === 0) return null;
+
+  return (
+    <section className="py-12 sm:py-16">
+      <div className="container-custom">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="flex items-center gap-2 section-title">
+              <Flame size={24} className="text-primary-600" />
+              Çok Satanlar
+            </h2>
+            <p className="section-subtitle">En çok tercih edilen indirimli ürünler</p>
+          </div>
+          <Link
+            href="/urunler"
+            className="hidden items-center gap-1 text-sm font-semibold text-primary-600 transition-colors hover:text-primary-700 sm:flex"
+          >
+            Tümünü Gör
+            <ArrowRight size={16} />
+          </Link>
+        </div>
+
+        <div className="mt-8 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+          {discounted.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
