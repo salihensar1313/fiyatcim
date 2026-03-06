@@ -66,6 +66,8 @@ export const FOOTER_LINKS = {
   yasal: [
     { label: "KVKK", href: "/kvkk" },
     { label: "Gizlilik Politikası", href: "/gizlilik" },
+    { label: "Bilgi Güvenliği", href: "/bilgi-guvenligi" },
+    { label: "Güvenli Alışveriş", href: "/guvenli-alisveris" },
     { label: "Çerez Politikası", href: "/cerez-politikasi" },
     { label: "Mesafeli Satış", href: "/mesafeli-satis-sozlesmesi" },
     { label: "Ön Bilgilendirme", href: "/on-bilgilendirme" },

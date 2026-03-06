@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -41,11 +41,36 @@ export default function HeroSliderClient({ slides }: Props) {
     setCurrent((prev) => (prev + 1) % activeSlides.length);
   };
 
+  // Touch swipe
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    const diff = touchStartX.current - touchEndX.current;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) goNext();
+      else goPrev();
+    }
+  };
+
   if (activeSlides.length === 0) return null;
 
   return (
     <section className="group/slider relative overflow-hidden bg-dark-900">
-      <div className="relative">
+      <div
+        className="relative"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         {activeSlides.map((slide, i) => (
           <div
             key={slide.id}
@@ -103,14 +128,14 @@ export default function HeroSliderClient({ slides }: Props) {
         <>
           <button
             onClick={goPrev}
-            className="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/20 p-3 text-white backdrop-blur-sm transition-all hover:bg-white/40 opacity-0 group-hover/slider:opacity-100"
+            className="absolute left-4 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-white/20 p-3 text-white backdrop-blur-sm transition-all hover:bg-white/40 opacity-0 group-hover/slider:opacity-100 lg:block"
             aria-label="Onceki slayt"
           >
             <ChevronLeft size={24} />
           </button>
           <button
             onClick={goNext}
-            className="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/20 p-3 text-white backdrop-blur-sm transition-all hover:bg-white/40 opacity-0 group-hover/slider:opacity-100"
+            className="absolute right-4 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-white/20 p-3 text-white backdrop-blur-sm transition-all hover:bg-white/40 opacity-0 group-hover/slider:opacity-100 lg:block"
             aria-label="Sonraki slayt"
           >
             <ChevronRight size={24} />
