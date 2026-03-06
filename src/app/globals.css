@@ -17,6 +17,16 @@
   }
 }
 
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
 @layer components {
   .container-custom {
     @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;

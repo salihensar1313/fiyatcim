@@ -13,6 +13,7 @@ import {
   Tag,
   ArrowLeft,
   Globe,
+  X,
 } from "lucide-react";
 import { SITE_NAME } from "@/lib/constants";
 
@@ -28,20 +29,33 @@ const menuItems = [
   { label: "Ayarlar", href: "/admin/ayarlar", icon: Settings },
 ];
 
-export default function AdminSidebar() {
+interface AdminSidebarProps {
+  mobileOpen?: boolean;
+  onClose?: () => void;
+}
+
+export default function AdminSidebar({ mobileOpen, onClose }: AdminSidebarProps) {
   const pathname = usePathname();
 
-  return (
-    <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r border-dark-200 bg-dark-900 text-white">
+  const sidebarContent = (
+    <>
       {/* Logo */}
-      <div className="flex h-16 items-center gap-2 border-b border-dark-700 px-6">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600 text-xs font-bold">
-          FC
+      <div className="flex h-16 items-center justify-between border-b border-dark-700 px-6">
+        <div className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600 text-xs font-bold">
+            FC
+          </div>
+          <div>
+            <p className="text-sm font-bold">{SITE_NAME}</p>
+            <p className="text-xs text-dark-400">Admin Panel</p>
+          </div>
         </div>
-        <div>
-          <p className="text-sm font-bold">{SITE_NAME}</p>
-          <p className="text-xs text-dark-400">Admin Panel</p>
-        </div>
+        {/* Mobile close button */}
+        {onClose && (
+          <button onClick={onClose} className="lg:hidden text-dark-400 hover:text-white">
+            <X size={20} />
+          </button>
+        )}
       </div>
 
       {/* Menu */}
@@ -53,6 +67,7 @@ export default function AdminSidebar() {
               <li key={item.href}>
                 <Link
                   href={item.href}
+                  onClick={onClose}
                   className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
                     isActive
                       ? "bg-primary-600 text-white"
@@ -78,6 +93,25 @@ export default function AdminSidebar() {
           Siteye Dön
         </Link>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <aside className="fixed left-0 top-0 z-40 hidden h-screen w-64 flex-col border-r border-dark-200 bg-dark-900 text-white lg:flex">
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile sidebar overlay */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+          <aside className="absolute left-0 top-0 flex h-full w-64 flex-col bg-dark-900 text-white shadow-xl">
+            {sidebarContent}
+          </aside>
+        </div>
+      )}
+    </>
   );
 }

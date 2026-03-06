@@ -29,7 +29,7 @@ export default function WhatsAppButton() {
     <>
       {/* Tooltip */}
       {showTooltip && (
-        <div className="fixed bottom-24 right-6 z-40 flex items-center gap-2 rounded-lg bg-white px-4 py-3 shadow-xl border border-dark-100 animate-fade-in">
+        <div className="fixed bottom-[140px] right-6 z-40 flex items-center gap-2 rounded-lg bg-white px-4 py-3 shadow-xl border border-dark-100 animate-fade-in lg:bottom-24">
           <p className="text-sm font-medium text-dark-700">Size nasıl yardımcı olabiliriz?</p>
           <button onClick={() => setShowTooltip(false)} className="text-dark-400 hover:text-dark-600">
             <X size={14} />
@@ -44,14 +44,14 @@ export default function WhatsAppButton() {
         rel="noopener noreferrer"
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
-        className="fixed bottom-6 right-6 z-40 flex h-[60px] w-[60px] items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-all hover:scale-110 hover:shadow-xl"
+        className="fixed bottom-20 right-6 z-40 flex h-[60px] w-[60px] items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-all hover:scale-110 hover:shadow-xl lg:bottom-6"
         aria-label="WhatsApp ile iletişime geç"
       >
         <WhatsAppIcon size={32} />
       </a>
 
       {/* Pulse animation */}
-      <span className="fixed bottom-6 right-6 z-30 h-[60px] w-[60px] animate-ping rounded-full bg-[#25D366]/30 pointer-events-none" />
+      <span className="fixed bottom-20 right-6 z-30 h-[60px] w-[60px] animate-ping rounded-full bg-[#25D366]/30 pointer-events-none lg:bottom-6" />
     </>
   );
 }

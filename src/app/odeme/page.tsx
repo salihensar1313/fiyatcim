@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { CreditCard, Truck, FileText, MapPin, Plus } from "lucide-react";
+import { CreditCard, Truck, FileText, MapPin, Plus, Smartphone } from "lucide-react";
+import SmsOtpVerify from "@/components/ui/SmsOtpVerify";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useOrders } from "@/context/OrderContext";
@@ -20,7 +21,7 @@ export default function CheckoutPage() {
 
   const userAddresses = addresses.filter((a) => a.user_id === user?.id);
 
-  const [step, setStep] = useState<"address" | "payment">("address");
+  const [step, setStep] = useState<"address" | "sms" | "payment">("address");
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
   const [showManualForm, setShowManualForm] = useState(false);
   const [address, setAddress] = useState({
@@ -46,10 +47,12 @@ export default function CheckoutPage() {
     address.ilce.trim() &&
     address.adres.trim();
 
+  const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+
   const handleAddressSubmit = () => {
     setAddressAttempted(true);
     if (!isAddressValid) return;
-    setStep("payment");
+    setStep(IS_DEMO ? "sms" : "payment");
   };
 
   // G3: Hydration-safe redirect — render body'de router.push YASAK
@@ -83,21 +86,34 @@ export default function CheckoutPage() {
         <h1 className="mb-6 text-2xl font-bold text-dark-900">Ödeme</h1>
 
         {/* Steps */}
-        <div className="mb-8 flex items-center gap-4">
-          {[
-            { key: "address" as const, label: "Adres", icon: Truck },
-            { key: "payment" as const, label: "Ödeme", icon: CreditCard },
-          ].map((s, i) => (
-            <div key={s.key} className="flex items-center gap-2">
-              {i > 0 && <div className="h-px w-8 bg-dark-200" />}
-              <div className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium ${
-                step === s.key ? "bg-primary-600 text-white" : "bg-dark-100 text-dark-500"
-              }`}>
-                <s.icon size={16} />
-                {s.label}
+        <div className="mb-8 flex flex-wrap items-center gap-2 sm:gap-4">
+          {(IS_DEMO
+            ? [
+                { key: "address" as const, label: "Adres", icon: Truck },
+                { key: "sms" as const, label: "SMS", icon: Smartphone },
+                { key: "payment" as const, label: "Ödeme", icon: CreditCard },
+              ]
+            : [
+                { key: "address" as const, label: "Adres", icon: Truck },
+                { key: "payment" as const, label: "Ödeme", icon: CreditCard },
+              ]
+          ).map((s, i, arr) => {
+            const stepOrder = arr.map((x) => x.key);
+            const currentIdx = stepOrder.indexOf(step);
+            const thisIdx = stepOrder.indexOf(s.key);
+            const isActive = thisIdx <= currentIdx;
+            return (
+              <div key={s.key} className="flex items-center gap-2">
+                {i > 0 && <div className="h-px w-4 bg-dark-200 sm:w-8" />}
+                <div className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium sm:px-4 ${
+                  isActive ? "bg-primary-600 text-white" : "bg-dark-100 text-dark-500"
+                }`}>
+                  <s.icon size={16} />
+                  {s.label}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">
@@ -180,10 +196,10 @@ export default function CheckoutPage() {
                     {/* Seçili adresle devam */}
                     {selectedAddressId && !showManualForm && (
                       <button
-                        onClick={() => setStep("payment")}
+                        onClick={() => setStep(IS_DEMO ? "sms" : "payment")}
                         className="mt-4 rounded-lg bg-primary-600 px-6 py-3 text-sm font-bold text-white hover:bg-primary-700"
                       >
-                        Ödemeye Geç
+                        Devam Et
                       </button>
                     )}
                   </div>
@@ -288,6 +304,16 @@ export default function CheckoutPage() {
               </div>
             )}
 
+            {step === "sms" && (
+              <div className="rounded-xl border border-dark-100 bg-white p-6">
+                <SmsOtpVerify
+                  phone={address.telefon}
+                  onVerified={() => setStep("payment")}
+                  onBack={() => setStep("address")}
+                />
+              </div>
+            )}
+
             {step === "payment" && (
               <div className="rounded-xl border border-dark-100 bg-white p-6">
                 <h2 className="mb-4 text-lg font-bold text-dark-900">Ödeme Yöntemi</h2>
@@ -352,7 +378,7 @@ export default function CheckoutPage() {
 
                 <div className="mt-4 flex gap-3">
                   <button
-                    onClick={() => setStep("address")}
+                    onClick={() => setStep(IS_DEMO ? "sms" : "address")}
                     className="rounded-lg border border-dark-200 px-6 py-3 text-sm font-semibold text-dark-700 hover:bg-dark-50"
                   >
                     Geri

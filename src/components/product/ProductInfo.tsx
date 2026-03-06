@@ -10,6 +10,7 @@ import Rating from "@/components/ui/Rating";
 import Badge from "@/components/ui/Badge";
 import { useToast } from "@/components/ui/Toast";
 import PriceDisplay from "@/components/ui/PriceDisplay";
+import { useProductReviews } from "@/hooks/useProductReviews";
 
 interface ProductInfoProps {
   product: Product;
@@ -27,6 +28,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const inCart = isInCart(product.id);
   const inWishlist = isInWishlist(product.id);
   const brand = product.brand;
+  const { reviews, averageRating } = useProductReviews(product.id);
 
   const handleAddToCart = () => {
     for (let i = 0; i < qty; i++) {
@@ -49,7 +51,22 @@ export default function ProductInfo({ product }: ProductInfoProps) {
 
       {/* Rating & SKU */}
       <div className="flex items-center gap-4">
-        <Rating rating={4.5} size="sm" />
+        {reviews.length > 0 ? (
+          <button
+            onClick={() => {
+              document.getElementById("product-tabs")?.scrollIntoView({ behavior: "smooth" });
+              window.location.hash = "reviews";
+            }}
+            className="flex items-center gap-2 hover:opacity-80"
+          >
+            <Rating rating={averageRating} size="sm" />
+            <span className="text-sm text-primary-600 hover:underline">
+              {reviews.length} değerlendirme
+            </span>
+          </button>
+        ) : (
+          <span className="text-sm text-dark-400">Henüz değerlendirme yok</span>
+        )}
         <span className="text-sm text-dark-400">SKU: {product.sku}</span>
       </div>
 

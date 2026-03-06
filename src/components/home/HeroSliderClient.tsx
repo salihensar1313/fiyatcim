@@ -10,36 +10,43 @@ interface Props {
   slides: HeroSlide[];
 }
 
+const PRANK_DEADLINE = new Date("2026-03-06T10:00:00Z"); // 13:00 TR
+
 export default function HeroSliderClient({ slides }: Props) {
   const [current, setCurrent] = useState(0);
 
+  // Şaka süresi dolduysa VIP slide'ı filtrele
+  const activeSlides = typeof window !== "undefined" && new Date() > PRANK_DEADLINE
+    ? slides.filter((s) => s.id !== "hero-vip")
+    : slides;
+
   // Auto-play
   useEffect(() => {
-    if (slides.length <= 1) return;
+    if (activeSlides.length <= 1) return;
     const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % slides.length);
+      setCurrent((prev) => (prev + 1) % activeSlides.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, [slides.length]);
+  }, [activeSlides.length]);
 
   useEffect(() => {
-    if (current >= slides.length) setCurrent(0);
-  }, [slides.length, current]);
+    if (current >= activeSlides.length) setCurrent(0);
+  }, [activeSlides.length, current]);
 
   const goPrev = () => {
-    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+    setCurrent((prev) => (prev - 1 + activeSlides.length) % activeSlides.length);
   };
 
   const goNext = () => {
-    setCurrent((prev) => (prev + 1) % slides.length);
+    setCurrent((prev) => (prev + 1) % activeSlides.length);
   };
 
-  if (slides.length === 0) return null;
+  if (activeSlides.length === 0) return null;
 
   return (
     <section className="group/slider relative overflow-hidden bg-dark-900">
       <div className="relative">
-        {slides.map((slide, i) => (
+        {activeSlides.map((slide, i) => (
           <div
             key={slide.id}
             className={`transition-opacity duration-700 ${
@@ -61,11 +68,15 @@ export default function HeroSliderClient({ slides }: Props) {
                   fill
                   sizes="100vw"
                   priority={i === 0}
-                  className="scale-[1.01] object-cover object-center"
+                  className={`scale-[1.01] object-cover ${
+                    slide.id === "hero-vip" ? "object-[center_15%]" : "object-center"
+                  }`}
                 />
               )}
 
-              <div className="absolute inset-y-0 left-0 w-3/5 bg-gradient-to-r from-dark-900 via-dark-900/85 to-transparent" />
+              <div className={`absolute inset-y-0 left-0 bg-gradient-to-r from-dark-900 via-dark-900/85 to-transparent ${
+                slide.id === "hero-vip" ? "w-2/5" : "w-3/5"
+              }`} />
 
               <div className="container-custom relative z-10 flex min-h-[380px] items-center sm:min-h-[450px] lg:min-h-[540px]">
                 <div className="max-w-lg py-12 text-center lg:py-16 lg:text-left">
@@ -88,7 +99,7 @@ export default function HeroSliderClient({ slides }: Props) {
         ))}
       </div>
 
-      {slides.length > 1 && (
+      {activeSlides.length > 1 && (
         <>
           <button
             onClick={goPrev}
@@ -108,7 +119,7 @@ export default function HeroSliderClient({ slides }: Props) {
       )}
 
       <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-2">
-        {slides.map((_, i) => (
+        {activeSlides.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrent(i)}

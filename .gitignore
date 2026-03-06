@@ -42,3 +42,5 @@ _writer.js
 
 # claude local
 .claude/
+
+.vercel

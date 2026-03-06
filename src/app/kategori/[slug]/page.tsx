@@ -156,9 +156,9 @@ export default function CategoryPage() {
               className="rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
             >
               <option value="newest">En Yeni</option>
-              <option value="price_asc">Fiyat: Düşükten Yükseğe</option>
-              <option value="price_desc">Fiyat: Yüksekten Düşüğe</option>
-              <option value="name_asc">İsim: A-Z</option>
+              <option value="price_asc">Fiyat ↑</option>
+              <option value="price_desc">Fiyat ↓</option>
+              <option value="name_asc">A-Z</option>
             </select>
           </div>
 
@@ -179,7 +179,7 @@ export default function CategoryPage() {
         </div>
 
         {paginatedProducts.length > 0 ? (
-          <div className={viewMode === "grid" ? "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" : "space-y-4"}>
+          <div className={viewMode === "grid" ? "grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4" : "space-y-4"}>
             {paginatedProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

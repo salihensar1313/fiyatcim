@@ -692,6 +692,14 @@ export const products: Product[] = [
 // ==========================================
 export const heroSlides: HeroSlide[] = [
   {
+    id: "hero-vip",
+    title: "Yılın Güvenlik Uzmanı Ödülü Sahibi",
+    subtitle: "Fiyatcim.com kurucusu, güvenlik sektörünün efsanevi lideri. 7/24 bizzat sahada, müşteri memnuniyeti %100. Kendisine ulaşmak için hemen arayın!",
+    image: "/images/hero/hero-vip.jpg",
+    cta_text: "Hemen Ara 📞",
+    cta_link: "/ara",
+  },
+  {
     id: "hero-1",
     title: "Güvenlik Teknolojilerinde En İyi Fiyatlar",
     subtitle: "Uzman onaylı alarm, kamera ve akıllı ev sistemleri. Fiyatcim güvencesiyle alışveriş yapın, ücretsiz kargo fırsatını kaçırmayın.",

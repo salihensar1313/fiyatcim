@@ -89,7 +89,7 @@ export default function ProductDetailPage() {
           <ProductInfo product={product} />
         </div>
 
-        <div className="mt-12 rounded-xl border border-dark-100 bg-white p-6">
+        <div id="product-tabs" className="mt-12 rounded-xl border border-dark-100 bg-white p-6">
           <ProductTabs product={product} />
         </div>
 

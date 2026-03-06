@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, UserPlus, Mail, ShieldCheck, ArrowLeft, ArrowRight, User } from "lucide-react";
+import { Eye, EyeOff, UserPlus, Mail, ShieldCheck, ArrowLeft, ArrowRight, User, Smartphone } from "lucide-react";
+import SmsOtpVerify from "@/components/ui/SmsOtpVerify";
 import { useAuth } from "@/context/AuthContext";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 
@@ -15,7 +16,7 @@ const OTP_COOLDOWN_MS = 60 * 1000; // 60 saniye resend cooldown
 const MAX_OTP_ATTEMPTS = 5;
 const LOCK_DURATION_MS = 2 * 60 * 1000; // 2 dakika kilit
 
-type Step = "email" | "otp" | "info" | "agreements";
+type Step = "email" | "otp" | "info" | "sms" | "agreements";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -27,6 +28,7 @@ export default function RegisterPage() {
   // Step 3: Kişisel bilgiler
   const [ad, setAd] = useState("");
   const [soyad, setSoyad] = useState("");
+  const [telefon, setTelefon] = useState("905");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -131,13 +133,17 @@ export default function RegisterPage() {
     setOtpAttempts(0);
   };
 
-  // Step 3 → Step 4: Bilgiler → Sözleşmeler
+  // Step 3 → Step 4 (SMS) veya Step 5 (Sözleşmeler)
   const handleInfoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     if (!ad.trim() || !soyad.trim()) {
       setError("Ad ve soyad zorunludur.");
+      return;
+    }
+    if (telefon.length < 12) {
+      setError("Geçerli bir telefon numarası girin.");
       return;
     }
     if (password.length < 6) {
@@ -149,7 +155,11 @@ export default function RegisterPage() {
       return;
     }
 
-    setStep("agreements");
+    if (IS_DEMO) {
+      setStep("sms");
+    } else {
+      setStep("agreements");
+    }
   };
 
   // Son adım: Kayıt tamamla
@@ -161,7 +171,7 @@ export default function RegisterPage() {
     }
 
     setLoading(true);
-    const result = await signUp(email, password, ad, soyad);
+    const result = await signUp(email, password, ad, soyad, telefon);
     if (result.error) {
       setError(result.error);
       setLoading(false);
@@ -172,12 +182,13 @@ export default function RegisterPage() {
 
   const allMandatoryChecked = agreeKVKK && agreeTerms && agreePrivacy;
 
-  // Step indicator — non-demo'da OTP adımı yok
+  // Step indicator — non-demo'da OTP/SMS adımları yok
   const steps: { key: Step; label: string; icon: typeof UserPlus }[] = IS_DEMO
     ? [
         { key: "email", label: "E-posta", icon: Mail },
         { key: "otp", label: "Doğrulama", icon: ShieldCheck },
         { key: "info", label: "Bilgiler", icon: User },
+        { key: "sms", label: "SMS", icon: Smartphone },
         { key: "agreements", label: "Sözleşmeler", icon: ShieldCheck },
       ]
     : [
@@ -373,6 +384,23 @@ export default function RegisterPage() {
                 </div>
 
                 <div>
+                  <label className="mb-1 block text-sm font-medium text-dark-700">Telefon</label>
+                  <input
+                    type="tel"
+                    value={telefon.replace(/(\d{2})(\d{3})(\d{0,3})(\d{0,2})(\d{0,2})/, (_m: string, a: string, b: string, c: string, d: string, e: string) => [a, b, c, d, e].filter(Boolean).join(" "))}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/[^0-9]/g, "");
+                      if (raw.length < 3 || !raw.startsWith("905")) return;
+                      if (raw.length <= 12) setTelefon(raw);
+                    }}
+                    placeholder="90 5XX XXX XX XX"
+                    inputMode="numeric"
+                    maxLength={16}
+                    className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                  />
+                </div>
+
+                <div>
                   <label className="mb-1 block text-sm font-medium text-dark-700">Şifre</label>
                   <div className="relative">
                     <input
@@ -430,7 +458,16 @@ export default function RegisterPage() {
             </>
           )}
 
-          {/* STEP 4: Sözleşmeler */}
+          {/* STEP 4: SMS Doğrulama */}
+          {step === "sms" && (
+            <SmsOtpVerify
+              phone={telefon}
+              onVerified={() => setStep("agreements")}
+              onBack={() => setStep("info")}
+            />
+          )}
+
+          {/* STEP 5: Sözleşmeler */}
           {step === "agreements" && (
             <>
               <div className="mb-6 text-center">
@@ -518,7 +555,7 @@ export default function RegisterPage() {
                 </button>
 
                 <button
-                  onClick={() => { setStep("info"); setError(""); }}
+                  onClick={() => { setStep(IS_DEMO ? "sms" : "info"); setError(""); }}
                   className="flex w-full items-center justify-center gap-2 text-sm text-dark-500 hover:text-dark-700"
                 >
                   <ArrowLeft size={14} />

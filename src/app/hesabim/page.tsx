@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import { Mail, Phone } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import SmsOtpVerify from "@/components/ui/SmsOtpVerify";
+
+const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
 type Tab = "profile" | "contact";
 
@@ -26,6 +29,9 @@ export default function AccountPage() {
   const [telefon, setTelefon] = useState("");
   const [saved, setSaved] = useState(false);
 
+  // SMS doğrulama state
+  const [pendingTelefon, setPendingTelefon] = useState<string | null>(null);
+
   useEffect(() => {
     if (profile) {
       setAd(profile.ad || "");
@@ -36,11 +42,30 @@ export default function AccountPage() {
 
   if (!user) return null;
 
+  const telefonChanged = telefon !== (profile?.telefon || "") && telefon.length >= 10;
+
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Telefon değiştiyse ve demo modda → SMS doğrulama göster
+    if (telefonChanged && IS_DEMO) {
+      setPendingTelefon(telefon);
+      return;
+    }
+
+    // Telefon değişmediyse veya non-demo → direkt kaydet
     updateProfile({ ad, soyad, telefon });
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handleSmsVerified = () => {
+    if (pendingTelefon) {
+      updateProfile({ ad, soyad, telefon: pendingTelefon });
+      setPendingTelefon(null);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    }
   };
 
   const tabs: { key: Tab; label: string }[] = [
@@ -80,49 +105,65 @@ export default function AccountPage() {
             Kişisel bilgilerinizi buradan güncelleyebilirsiniz.
           </p>
 
-          <form onSubmit={handleSave} className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="mb-1 block text-sm font-medium text-dark-700">Ad</label>
-                <input
-                  type="text"
-                  value={ad}
-                  onChange={(e) => setAd(e.target.value)}
-                  className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-dark-700">Soyad</label>
-                <input
-                  type="text"
-                  value={soyad}
-                  onChange={(e) => setSoyad(e.target.value)}
-                  className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Telefon</label>
-              <input
-                type="tel"
-                value={telefon}
-                onChange={(e) => setTelefon(e.target.value)}
-                placeholder="05XX XXX XX XX"
-                className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+          {/* SMS Doğrulama — telefon değişikliği */}
+          {pendingTelefon ? (
+            <div className="rounded-xl border border-dark-100 p-6">
+              <SmsOtpVerify
+                phone={pendingTelefon}
+                onVerified={handleSmsVerified}
+                onBack={() => setPendingTelefon(null)}
               />
             </div>
+          ) : (
+            <form onSubmit={handleSave} className="space-y-4">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-dark-700">Ad</label>
+                  <input
+                    type="text"
+                    value={ad}
+                    onChange={(e) => setAd(e.target.value)}
+                    className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-dark-700">Soyad</label>
+                  <input
+                    type="text"
+                    value={soyad}
+                    onChange={(e) => setSoyad(e.target.value)}
+                    className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                  />
+                </div>
+              </div>
 
-            <div className="flex items-center gap-3 pt-2">
-              <button
-                type="submit"
-                className="rounded-lg bg-primary-600 px-6 py-2.5 text-sm font-bold text-white hover:bg-primary-700"
-              >
-                Güncelle
-              </button>
-              {saved && <span className="text-sm text-green-600">Kaydedildi!</span>}
-            </div>
-          </form>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-dark-700">Telefon</label>
+                <input
+                  type="tel"
+                  value={telefon}
+                  onChange={(e) => setTelefon(e.target.value)}
+                  placeholder="05XX XXX XX XX"
+                  className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                />
+                {telefonChanged && IS_DEMO && (
+                  <p className="mt-1 text-xs text-orange-600">
+                    Telefon değişikliği için SMS doğrulama gerekecektir.
+                  </p>
+                )}
+              </div>
+
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  type="submit"
+                  className="rounded-lg bg-primary-600 px-6 py-2.5 text-sm font-bold text-white hover:bg-primary-700"
+                >
+                  {telefonChanged && IS_DEMO ? "Doğrula ve Güncelle" : "Güncelle"}
+                </button>
+                {saved && <span className="text-sm text-green-600">Kaydedildi!</span>}
+              </div>
+            </form>
+          )}
         </div>
       )}
 

@@ -1,7 +1,7 @@
 "use client";
 
-import { Fragment, useState } from "react";
-import { ShoppingBag, Eye, ChevronDown, MapPin, Package, Phone } from "lucide-react";
+import { Fragment, useState, useMemo } from "react";
+import { ShoppingBag, Eye, ChevronDown, MapPin, Package, Phone, Search } from "lucide-react";
 import { useOrders } from "@/context/OrderContext";
 import { formatPrice } from "@/lib/utils";
 import { ORDER_STATUS_LABELS } from "@/types";
@@ -31,6 +31,21 @@ export default function AdminOrdersPage() {
   const { getAllOrders, updateOrderStatus } = useOrders();
   const orders = getAllOrders();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+
+  const filtered = useMemo(() => {
+    if (!search.trim()) return orders;
+    const q = search.toLowerCase();
+    return orders.filter((o) => {
+      const addr = o.shipping_address;
+      const customerName = `${addr.ad} ${addr.soyad}`.toLowerCase();
+      return (
+        o.order_no?.toLowerCase().includes(q) ||
+        customerName.includes(q) ||
+        addr.telefon?.includes(q)
+      );
+    });
+  }, [orders, search]);
 
   if (orders.length === 0) {
     return (
@@ -57,6 +72,18 @@ export default function AdminOrdersPage() {
         <p className="text-sm text-dark-500">{orders.length} sipariş</p>
       </div>
 
+      {/* Search */}
+      <div className="mb-4 flex items-center gap-2 rounded-xl border border-dark-100 bg-white px-4 py-2">
+        <Search size={16} className="text-dark-400" />
+        <input
+          type="text"
+          placeholder="Sipariş kodu, müşteri adı veya telefon ara..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="flex-1 bg-transparent text-sm outline-none placeholder:text-dark-400"
+        />
+      </div>
+
       <div className="rounded-xl border border-dark-100 bg-white">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -71,7 +98,7 @@ export default function AdminOrdersPage() {
               </tr>
             </thead>
             <tbody>
-              {orders.map((order) => {
+              {filtered.map((order) => {
                 const transitions = ALLOWED_TRANSITIONS[order.status] || [];
                 const isExpanded = expandedId === order.id;
 
@@ -197,6 +224,13 @@ export default function AdminOrdersPage() {
                   </Fragment>
                 );
               })}
+              {filtered.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="px-4 py-8 text-center text-sm text-dark-400">
+                    Aramayla eşleşen sipariş bulunamadı.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

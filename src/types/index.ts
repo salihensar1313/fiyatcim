@@ -166,7 +166,27 @@ export interface Review {
   comment: string;
   is_approved: boolean;
   created_at: string;
+  helpful_yes: number;
+  helpful_no: number;
   // Joined
+  profile?: Profile;
+}
+
+export interface ReviewVote {
+  review_id: string;
+  user_id: string;
+  vote: "yes" | "no";
+}
+
+export interface Question {
+  id: string;
+  product_id: string;
+  user_id: string;
+  question: string;
+  answer: string | null;
+  answered_by: string | null;
+  created_at: string;
+  answered_at: string | null;
   profile?: Profile;
 }
 

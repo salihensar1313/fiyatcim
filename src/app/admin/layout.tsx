@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import AdminSidebar from "@/components/admin/AdminSidebar";
@@ -9,6 +9,7 @@ import AdminHeader from "@/components/admin/AdminHeader";
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { user, isAdmin, isLoading } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // GATE 1: Hydration-safe redirect — render body'de router.push YASAK
   useEffect(() => {
@@ -31,10 +32,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* GATE 2: Admin sayfaları indexlenmemeli — "use client" layout'ta metadata export çalışmaz */}
       <meta name="robots" content="noindex,nofollow" />
       <div className="flex min-h-screen bg-dark-50">
-        <AdminSidebar />
-        <div className="ml-64 flex-1">
-          <AdminHeader />
-          <main className="p-6">{children}</main>
+        <AdminSidebar mobileOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <div className="flex-1 lg:ml-64">
+          <AdminHeader onMenuToggle={() => setSidebarOpen(true)} />
+          <main className="p-4 lg:p-6">{children}</main>
         </div>
       </div>
     </>

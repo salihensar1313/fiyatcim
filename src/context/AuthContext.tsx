@@ -10,15 +10,27 @@ interface User {
   email: string;
 }
 
+interface RegisteredUser {
+  user_id: string;
+  email: string;
+  ad: string;
+  soyad: string;
+  telefon: string;
+  role: "user" | "admin";
+  created_at: string;
+}
+
 interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   isLoading: boolean;
   isAdmin: boolean;
   signIn: (email: string, password: string) => Promise<{ error?: string }>;
-  signUp: (email: string, password: string, ad: string, soyad: string) => Promise<{ error?: string }>;
+  signUp: (email: string, password: string, ad: string, soyad: string, telefon?: string) => Promise<{ error?: string }>;
   signOut: () => void;
   updateProfile: (data: Partial<Profile>) => void;
+  adminUpdateUser: (userId: string, data: { ad: string; soyad: string; telefon: string }) => void;
+  adminChangePassword: (email: string, newPassword: string) => { error?: string };
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -111,7 +123,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return {};
       }
 
-      // Demo normal kullanıcı
+      // Demo normal kullanıcı — kayıtlı şifre kontrolü
+      const passwords = safeGetJSON<Record<string, string>>("fiyatcim_demo_passwords", {});
+      const pwMap = typeof passwords === "object" && passwords ? passwords : {};
+      const registeredUsers = safeGetJSON<RegisteredUser[]>("fiyatcim_registered_users", []);
+      const regArr = Array.isArray(registeredUsers) ? registeredUsers : [];
+      const registeredUser = regArr.find((ru) => ru.email === email);
+
+      // Kayıtlı kullanıcı + şifresi var → kontrol et
+      if (registeredUser && pwMap[email]) {
+        if (pwMap[email] !== password) {
+          return { error: "Geçersiz e-posta veya şifre." };
+        }
+        const u: User = { id: registeredUser.user_id, email };
+        const p: Profile = { user_id: u.id, ad: registeredUser.ad, soyad: registeredUser.soyad, telefon: registeredUser.telefon, role: registeredUser.role as "user" | "admin" };
+        setUser(u);
+        setProfile(p);
+        persistDemo(u, p);
+        return {};
+      }
+
+      // Kayıtlı değil veya şifresi yok → eski davranış (min 6 karakter)
       if (password.length >= 6) {
         const u: User = { id: "user-demo-" + Date.now(), email };
         const p: Profile = { user_id: u.id, ad: "", soyad: "", telefon: "", role: "user" };
@@ -134,7 +166,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ========================================
   // SIGN UP
   // ========================================
-  const signUp = useCallback(async (email: string, password: string, ad: string, soyad: string): Promise<{ error?: string }> => {
+  const signUp = useCallback(async (email: string, password: string, ad: string, soyad: string, telefon?: string): Promise<{ error?: string }> => {
     if (!email || !password || !ad || !soyad) {
       return { error: "Tüm alanlar zorunludur." };
     }
@@ -143,8 +175,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     if (IS_DEMO_MODE) {
+      const tel = telefon || "";
       const u: User = { id: "user-" + Date.now(), email };
-      const p: Profile = { user_id: u.id, ad, soyad, telefon: "", role: "user" };
+      const p: Profile = { user_id: u.id, ad, soyad, telefon: tel, role: "user" };
       setUser(u);
       setProfile(p);
       persistDemo(u, p);
@@ -153,8 +186,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const usersArray = Array.isArray(existingUsers) ? existingUsers : [];
       safeSetJSON("fiyatcim_registered_users", [
         ...usersArray,
-        { user_id: u.id, email, ad, soyad, telefon: "", role: "user", created_at: new Date().toISOString() },
+        { user_id: u.id, email, ad, soyad, telefon: tel, role: "user", created_at: new Date().toISOString() },
       ]);
+      // Store password for demo mode
+      const passwords = safeGetJSON<Record<string, string>>("fiyatcim_demo_passwords", {});
+      const pwMap = typeof passwords === "object" && passwords ? passwords : {};
+      pwMap[email] = password;
+      safeSetJSON("fiyatcim_demo_passwords", pwMap);
       return {};
     }
 
@@ -169,7 +207,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user_id: data.user.id,
         ad,
         soyad,
-        telefon: "",
+        telefon: telefon || "",
         role: "user",
       });
     }
@@ -195,7 +233,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [persistDemo]);
 
   // ========================================
-  // UPDATE PROFILE
+  // UPDATE PROFILE (+ registered_users sync)
   // ========================================
   const updateProfile = useCallback((data: Partial<Profile>) => {
     setProfile((prev) => {
@@ -204,6 +242,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (IS_DEMO_MODE) {
         persistDemo(user, updated);
+        // Sync to registered_users list so admin panel sees changes
+        if (user) {
+          const users = safeGetJSON<RegisteredUser[]>("fiyatcim_registered_users", []);
+          const arr = Array.isArray(users) ? users : [];
+          const idx = arr.findIndex((u) => u.user_id === user.id || u.email === user.email);
+          if (idx >= 0) {
+            arr[idx] = { ...arr[idx], ...data };
+            safeSetJSON("fiyatcim_registered_users", arr);
+          }
+        }
       } else if (user) {
         const supabase = createClient();
         supabase.from("profiles").update(data).eq("user_id", user.id);
@@ -213,11 +261,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   }, [user, persistDemo]);
 
+  // ========================================
+  // ADMIN: Update any user profile
+  // ========================================
+  const adminUpdateUser = useCallback((userId: string, data: { ad: string; soyad: string; telefon: string }) => {
+    if (!IS_DEMO_MODE) return;
+    const users = safeGetJSON<RegisteredUser[]>("fiyatcim_registered_users", []);
+    const arr = Array.isArray(users) ? users : [];
+    const idx = arr.findIndex((u) => u.user_id === userId);
+    if (idx >= 0) {
+      arr[idx] = { ...arr[idx], ...data };
+      safeSetJSON("fiyatcim_registered_users", arr);
+    }
+  }, []);
+
+  // ========================================
+  // ADMIN: Change any user password
+  // ========================================
+  const adminChangePassword = useCallback((email: string, newPassword: string): { error?: string } => {
+    if (!newPassword || newPassword.length < 6) {
+      return { error: "Şifre en az 6 karakter olmalıdır." };
+    }
+    if (IS_DEMO_MODE) {
+      const passwords = safeGetJSON<Record<string, string>>("fiyatcim_demo_passwords", {});
+      const pwMap = typeof passwords === "object" && passwords ? passwords : {};
+      pwMap[email] = newPassword;
+      safeSetJSON("fiyatcim_demo_passwords", pwMap);
+      return {};
+    }
+    return { error: "Bu özellik demo modda çalışır." };
+  }, []);
+
   const isAdmin = profile?.role === "admin";
 
   return (
     <AuthContext.Provider
-      value={{ user, profile, isLoading, isAdmin, signIn, signUp, signOut, updateProfile }}
+      value={{ user, profile, isLoading, isAdmin, signIn, signUp, signOut, updateProfile, adminUpdateUser, adminChangePassword }}
     >
       {children}
     </AuthContext.Provider>

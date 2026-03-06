@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Bell, User, LogOut, ShoppingBag, UserPlus, Package } from "lucide-react";
+import { Bell, User, LogOut, ShoppingBag, UserPlus, Package, Menu } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { safeGetJSON, safeSetJSON } from "@/lib/safe-storage";
@@ -67,7 +67,11 @@ const COLOR_MAP = {
   stock: "bg-orange-100 text-orange-600",
 };
 
-export default function AdminHeader() {
+interface AdminHeaderProps {
+  onMenuToggle?: () => void;
+}
+
+export default function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
   const { user, profile, signOut } = useAuth();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -119,8 +123,15 @@ export default function AdminHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-dark-100 bg-white px-6">
-      <h2 className="text-lg font-bold text-dark-900">Admin Panel</h2>
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-dark-100 bg-white px-4 lg:px-6">
+      <div className="flex items-center gap-3">
+        {onMenuToggle && (
+          <button onClick={onMenuToggle} className="rounded-lg p-2 text-dark-400 hover:bg-dark-50 hover:text-dark-600 lg:hidden">
+            <Menu size={20} />
+          </button>
+        )}
+        <h2 className="text-lg font-bold text-dark-900">Admin Panel</h2>
+      </div>
 
       <div className="flex items-center gap-4">
         {/* Notifications */}
