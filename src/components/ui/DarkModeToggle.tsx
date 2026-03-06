@@ -14,13 +14,13 @@ export default function DarkModeToggle() {
 
   // Server ve ilk render'da sabit ikon göster — hydration mismatch önlenir
   const icon = !mounted ? (
-    <Monitor size={20} />
+    <Monitor size={22} />
   ) : theme === "dark" ? (
-    <Moon size={20} />
+    <Moon size={22} />
   ) : theme === "light" ? (
-    <Sun size={20} />
+    <Sun size={22} />
   ) : (
-    <Monitor size={20} />
+    <Monitor size={22} />
   );
 
   return (
