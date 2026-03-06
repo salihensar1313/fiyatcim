@@ -70,7 +70,7 @@ export default function ProductFilter({
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="flex items-center gap-2 text-lg font-bold text-dark-900">
+        <h3 className="flex items-center gap-2 text-lg font-bold text-dark-900 dark:text-dark-50">
           <SlidersHorizontal size={20} />
           Filtrele
         </h3>
@@ -88,7 +88,7 @@ export default function ProductFilter({
       <div className="border-t border-dark-100 pt-4">
         <button
           onClick={() => toggleSection("category")}
-          className="flex w-full items-center justify-between text-sm font-semibold text-dark-900"
+          className="flex w-full items-center justify-between text-sm font-semibold text-dark-900 dark:text-dark-50"
         >
           Kategoriler
           <ChevronDown
@@ -107,7 +107,7 @@ export default function ProductFilter({
                   onChange={() => updateFilter({ category: selectedCategory === cat.slug ? undefined : cat.slug })}
                   className="h-4 w-4 text-primary-600 accent-primary-600"
                 />
-                <span className="text-sm text-dark-700">{cat.name}</span>
+                <span className="text-sm text-dark-700 dark:text-dark-200">{cat.name}</span>
               </label>
             ))}
           </div>
@@ -118,7 +118,7 @@ export default function ProductFilter({
       <div className="border-t border-dark-100 pt-4">
         <button
           onClick={() => toggleSection("brand")}
-          className="flex w-full items-center justify-between text-sm font-semibold text-dark-900"
+          className="flex w-full items-center justify-between text-sm font-semibold text-dark-900 dark:text-dark-50"
         >
           Markalar
           <ChevronDown
@@ -136,7 +136,7 @@ export default function ProductFilter({
                   onChange={() => updateFilter({ brand: selectedBrand === brand.slug ? undefined : brand.slug })}
                   className="h-4 w-4 rounded accent-primary-600"
                 />
-                <span className="text-sm text-dark-700">{brand.name}</span>
+                <span className="text-sm text-dark-700 dark:text-dark-200">{brand.name}</span>
               </label>
             ))}
           </div>
@@ -147,7 +147,7 @@ export default function ProductFilter({
       <div className="border-t border-dark-100 pt-4">
         <button
           onClick={() => toggleSection("price")}
-          className="flex w-full items-center justify-between text-sm font-semibold text-dark-900"
+          className="flex w-full items-center justify-between text-sm font-semibold text-dark-900 dark:text-dark-50"
         >
           Fiyat Aralığı
           <ChevronDown
@@ -188,7 +188,7 @@ export default function ProductFilter({
                   className={`rounded-full border px-3 py-1 text-xs transition-colors ${
                     minPrice === range.min && maxPrice === range.max
                       ? "border-primary-600 bg-primary-50 text-primary-700"
-                      : "border-dark-200 text-dark-600 hover:border-primary-300"
+                      : "border-dark-200 text-dark-600 dark:text-dark-300 hover:border-primary-300"
                   }`}
                 >
                   {range.label}
@@ -203,7 +203,7 @@ export default function ProductFilter({
       <div className="border-t border-dark-100 pt-4">
         <button
           onClick={() => toggleSection("rating")}
-          className="flex w-full items-center justify-between text-sm font-semibold text-dark-900"
+          className="flex w-full items-center justify-between text-sm font-semibold text-dark-900 dark:text-dark-50"
         >
           Puan
           <ChevronDown
@@ -218,7 +218,7 @@ export default function ProductFilter({
                 key={star}
                 onClick={() => updateFilter({ minRating: minRating === star ? undefined : star })}
                 className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors ${
-                  minRating === star ? "bg-primary-50 text-primary-700" : "text-dark-600 hover:bg-dark-50"
+                  minRating === star ? "bg-primary-50 text-primary-700" : "text-dark-600 dark:text-dark-300 hover:bg-dark-50"
                 }`}
               >
                 <div className="flex items-center gap-0.5">
@@ -237,7 +237,7 @@ export default function ProductFilter({
       <div className="border-t border-dark-100 pt-4">
         <button
           onClick={() => toggleSection("stock")}
-          className="flex w-full items-center justify-between text-sm font-semibold text-dark-900"
+          className="flex w-full items-center justify-between text-sm font-semibold text-dark-900 dark:text-dark-50"
         >
           Stok Durumu
           <ChevronDown
@@ -254,7 +254,7 @@ export default function ProductFilter({
                 onChange={() => updateFilter({ stockOnly: stockOnly ? undefined : true })}
                 className="h-4 w-4 rounded accent-primary-600"
               />
-              <span className="text-sm text-dark-700">Sadece stokta olanlar</span>
+              <span className="text-sm text-dark-700 dark:text-dark-200">Sadece stokta olanlar</span>
             </label>
           </div>
         )}
@@ -267,7 +267,7 @@ export default function ProductFilter({
       {/* Mobile filter toggle */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="flex items-center gap-2 rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 lg:hidden"
+        className="flex items-center gap-2 rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 lg:hidden"
       >
         <SlidersHorizontal size={16} />
         Filtrele
@@ -280,7 +280,7 @@ export default function ProductFilter({
 
       {/* Desktop sidebar */}
       <aside className="hidden w-64 shrink-0 lg:block">
-        <div className="sticky top-24 rounded-xl border border-dark-100 bg-white p-5">
+        <div className="sticky top-24 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-5">
           {filterContent}
         </div>
       </aside>
@@ -289,7 +289,7 @@ export default function ProductFilter({
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
-          <div className="absolute bottom-0 left-0 right-0 max-h-[80vh] overflow-y-auto rounded-t-2xl bg-white p-6">
+          <div className="absolute bottom-0 left-0 right-0 max-h-[80vh] overflow-y-auto rounded-t-2xl bg-white dark:bg-dark-800 p-6">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-lg font-bold">Filtrele</h3>
               <button onClick={() => setMobileOpen(false)}>

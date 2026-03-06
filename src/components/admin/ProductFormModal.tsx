@@ -149,10 +149,10 @@ export default function ProductFormModal({
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 pt-8">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative w-full max-w-2xl rounded-xl bg-white shadow-xl">
+      <div className="relative w-full max-w-2xl rounded-xl bg-white dark:bg-dark-800 shadow-xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-dark-100 px-6 py-4">
-          <h2 className="text-lg font-bold text-dark-900">
+          <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">
             {product ? "Ürün Düzenle" : "Yeni Ürün Ekle"}
           </h2>
           <button onClick={onClose} className="rounded-lg p-2 text-dark-400 hover:bg-dark-50">
@@ -165,7 +165,7 @@ export default function ProductFormModal({
           {/* Name & SKU */}
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Ürün Adı *</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Ürün Adı *</label>
               <input
                 type="text"
                 value={form.name}
@@ -178,7 +178,7 @@ export default function ProductFormModal({
               {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">SKU *</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">SKU *</label>
               <input
                 type="text"
                 value={form.sku}
@@ -194,19 +194,19 @@ export default function ProductFormModal({
 
           {/* Slug */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-dark-700">Slug</label>
+            <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Slug</label>
             <input
               type="text"
               value={form.slug}
               onChange={(e) => setForm((prev) => ({ ...prev, slug: e.target.value }))}
-              className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm text-dark-500 focus:border-primary-600 focus:outline-none"
+              className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm text-dark-500 dark:text-dark-400 focus:border-primary-600 focus:outline-none"
             />
           </div>
 
           {/* Category & Brand */}
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Kategori</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Kategori</label>
               <select
                 value={form.category_id}
                 onChange={(e) => setForm((prev) => ({ ...prev, category_id: e.target.value }))}
@@ -220,7 +220,7 @@ export default function ProductFormModal({
               </select>
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Marka</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Marka</label>
               <select
                 value={form.brand_id}
                 onChange={(e) => setForm((prev) => ({ ...prev, brand_id: e.target.value }))}
@@ -238,7 +238,7 @@ export default function ProductFormModal({
           {/* USD Price & Sale Price */}
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Fiyat ($) *</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Fiyat ($) *</label>
               <input
                 type="number"
                 value={form.price_usd || ""}
@@ -252,7 +252,7 @@ export default function ProductFormModal({
               {errors.price_usd && <p className="mt-1 text-xs text-red-500">{errors.price_usd}</p>}
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">İndirimli Fiyat ($)</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">İndirimli Fiyat ($)</label>
               <input
                 type="number"
                 value={form.sale_price_usd ?? ""}
@@ -273,7 +273,7 @@ export default function ProductFormModal({
           {/* TL Price & Sale Price & Stock */}
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Fiyat (₺) *</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Fiyat (₺) *</label>
               <input
                 type="number"
                 value={form.price || ""}
@@ -287,7 +287,7 @@ export default function ProductFormModal({
               {errors.price && <p className="mt-1 text-xs text-red-500">{errors.price}</p>}
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">İndirimli Fiyat (₺)</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">İndirimli Fiyat (₺)</label>
               <input
                 type="number"
                 value={form.sale_price ?? ""}
@@ -304,7 +304,7 @@ export default function ProductFormModal({
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Stok *</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Stok *</label>
               <input
                 type="number"
                 value={form.stock}
@@ -321,7 +321,7 @@ export default function ProductFormModal({
           {/* Warranty, Shipping, Status */}
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Garanti (ay)</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Garanti (ay)</label>
               <input
                 type="number"
                 value={form.warranty_months}
@@ -331,7 +331,7 @@ export default function ProductFormModal({
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Teslimat</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Teslimat</label>
               <select
                 value={form.shipping_type}
                 onChange={(e) =>
@@ -351,14 +351,14 @@ export default function ProductFormModal({
                   onChange={(e) => setForm((prev) => ({ ...prev, is_active: e.target.checked }))}
                   className="h-4 w-4 rounded accent-primary-600"
                 />
-                <span className="text-sm font-medium text-dark-700">Aktif</span>
+                <span className="text-sm font-medium text-dark-700 dark:text-dark-200">Aktif</span>
               </label>
             </div>
           </div>
 
           {/* Short Description */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-dark-700">Kısa Açıklama</label>
+            <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Kısa Açıklama</label>
             <input
               type="text"
               value={form.short_desc}
@@ -370,7 +370,7 @@ export default function ProductFormModal({
 
           {/* Description */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-dark-700">Detaylı Açıklama</label>
+            <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Detaylı Açıklama</label>
             <textarea
               value={form.description}
               onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
@@ -382,13 +382,13 @@ export default function ProductFormModal({
 
           {/* Specs */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-dark-700">Teknik Özellikler</label>
+            <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Teknik Özellikler</label>
             {Object.entries(form.specs).length > 0 && (
               <div className="mb-2 space-y-1">
                 {Object.entries(form.specs).map(([key, value]) => (
                   <div key={key} className="flex items-center gap-2 rounded bg-dark-50 px-3 py-1.5 text-sm">
-                    <span className="font-medium text-dark-700">{key}:</span>
-                    <span className="text-dark-500">{value}</span>
+                    <span className="font-medium text-dark-700 dark:text-dark-200">{key}:</span>
+                    <span className="text-dark-500 dark:text-dark-400">{value}</span>
                     <button
                       onClick={() => removeSpec(key)}
                       className="ml-auto text-dark-400 hover:text-red-500"
@@ -416,7 +416,7 @@ export default function ProductFormModal({
               />
               <button
                 onClick={addSpec}
-                className="rounded-lg bg-dark-100 px-3 py-2 text-sm font-medium text-dark-700 hover:bg-dark-200"
+                className="rounded-lg bg-dark-100 px-3 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-200"
               >
                 Ekle
               </button>
@@ -428,7 +428,7 @@ export default function ProductFormModal({
         <div className="flex justify-end gap-3 border-t border-dark-100 px-6 py-4">
           <button
             onClick={onClose}
-            className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 hover:bg-dark-50"
+            className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50"
           >
             İptal
           </button>

@@ -10,7 +10,7 @@ const variants = {
   red: "bg-primary-50 text-primary-700",
   green: "bg-green-50 text-green-700",
   yellow: "bg-yellow-50 text-yellow-700",
-  gray: "bg-dark-100 text-dark-600",
+  gray: "bg-dark-100 text-dark-600 dark:text-dark-300",
   blue: "bg-blue-50 text-blue-700",
 };
 

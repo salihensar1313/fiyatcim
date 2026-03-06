@@ -96,9 +96,9 @@ export default function SmsOtpVerify({ phone, onVerified, onBack }: SmsOtpVerify
         <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary-100">
           <Smartphone size={24} className="text-primary-600" />
         </div>
-        <h2 className="text-xl font-bold text-dark-900">SMS Doğrulama</h2>
-        <p className="mt-1 text-sm text-dark-500">
-          <span className="font-medium text-dark-700">{maskPhone(phone)}</span> numarasına gönderilen 6 haneli kodu girin
+        <h2 className="text-xl font-bold text-dark-900 dark:text-dark-50">SMS Doğrulama</h2>
+        <p className="mt-1 text-sm text-dark-500 dark:text-dark-400">
+          <span className="font-medium text-dark-700 dark:text-dark-200">{maskPhone(phone)}</span> numarasına gönderilen 6 haneli kodu girin
         </p>
       </div>
 
@@ -113,7 +113,7 @@ export default function SmsOtpVerify({ phone, onVerified, onBack }: SmsOtpVerify
       )}
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-dark-700">Doğrulama Kodu</label>
+        <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Doğrulama Kodu</label>
         <input
           type="text"
           inputMode="numeric"
@@ -164,7 +164,7 @@ export default function SmsOtpVerify({ phone, onVerified, onBack }: SmsOtpVerify
       {onBack && (
         <button
           onClick={onBack}
-          className="flex w-full items-center justify-center gap-2 text-sm text-dark-500 hover:text-dark-700"
+          className="flex w-full items-center justify-center gap-2 text-sm text-dark-500 dark:text-dark-400 hover:text-dark-700 dark:text-dark-200"
         >
           <ArrowLeft size={14} />
           Geri Dön

@@ -77,13 +77,13 @@ export default function CheckoutPage() {
   const total = getTotal();
 
   return (
-    <div className="bg-dark-50 pb-16">
+    <div className="bg-dark-50 dark:bg-dark-900 pb-16">
       <div className="container mx-auto px-4 py-4">
         <Breadcrumb items={[{ label: "Sepet", href: "/sepet" }, { label: "Ödeme" }]} />
       </div>
 
       <div className="container mx-auto px-4">
-        <h1 className="mb-6 text-2xl font-bold text-dark-900">Ödeme</h1>
+        <h1 className="mb-6 text-2xl font-bold text-dark-900 dark:text-dark-50">Ödeme</h1>
 
         {/* Steps */}
         <div className="mb-8 flex flex-wrap items-center gap-2 sm:gap-4">
@@ -106,7 +106,7 @@ export default function CheckoutPage() {
               <div key={s.key} className="flex items-center gap-2">
                 {i > 0 && <div className="h-px w-4 bg-dark-200 sm:w-8" />}
                 <div className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium sm:px-4 ${
-                  isActive ? "bg-primary-600 text-white" : "bg-dark-100 text-dark-500"
+                  isActive ? "bg-primary-600 text-white" : "bg-dark-100 text-dark-500 dark:text-dark-400"
                 }`}>
                   <s.icon size={16} />
                   {s.label}
@@ -123,8 +123,8 @@ export default function CheckoutPage() {
               <div className="space-y-4">
                 {/* Kayıtlı Adresler */}
                 {userAddresses.length > 0 && (
-                  <div className="rounded-xl border border-dark-100 bg-white p-6">
-                    <h2 className="mb-4 text-lg font-bold text-dark-900">Kayıtlı Adreslerim</h2>
+                  <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+                    <h2 className="mb-4 text-lg font-bold text-dark-900 dark:text-dark-50">Kayıtlı Adreslerim</h2>
                     <div className="space-y-3">
                       {userAddresses.map((addr) => (
                         <label
@@ -157,12 +157,12 @@ export default function CheckoutPage() {
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2">
                               <MapPin size={14} className="text-primary-600" />
-                              <span className="text-sm font-semibold text-dark-900">{addr.baslik}</span>
+                              <span className="text-sm font-semibold text-dark-900 dark:text-dark-50">{addr.baslik}</span>
                             </div>
-                            <p className="mt-1 text-sm text-dark-600">
+                            <p className="mt-1 text-sm text-dark-600 dark:text-dark-300">
                               {addr.ad} {addr.soyad}
                             </p>
-                            <p className="text-sm text-dark-500">
+                            <p className="text-sm text-dark-500 dark:text-dark-400">
                               {addr.adres}, {addr.ilce}/{addr.il}
                             </p>
                           </div>
@@ -189,7 +189,7 @@ export default function CheckoutPage() {
                           className="h-4 w-4 text-primary-600 focus:ring-primary-500"
                         />
                         <Plus size={16} className="text-primary-600" />
-                        <span className="text-sm font-medium text-dark-700">Farklı bir adrese gönder</span>
+                        <span className="text-sm font-medium text-dark-700 dark:text-dark-200">Farklı bir adrese gönder</span>
                       </label>
                     </div>
 
@@ -207,12 +207,12 @@ export default function CheckoutPage() {
 
                 {/* Manuel Adres Formu */}
                 {(userAddresses.length === 0 || showManualForm) && (
-                  <div className="rounded-xl border border-dark-100 bg-white p-6">
-                    <h2 className="mb-4 text-lg font-bold text-dark-900">Teslimat Adresi</h2>
+                  <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+                    <h2 className="mb-4 text-lg font-bold text-dark-900 dark:text-dark-50">Teslimat Adresi</h2>
                     <div className="space-y-4">
                       <div className="grid gap-4 sm:grid-cols-2">
                         <div>
-                          <label className="mb-1 block text-sm font-medium text-dark-700">Ad <span className="text-primary-600">*</span></label>
+                          <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Ad <span className="text-primary-600">*</span></label>
                           <input
                             type="text" required value={address.ad}
                             onChange={(e) => setAddress({ ...address, ad: e.target.value })}
@@ -220,7 +220,7 @@ export default function CheckoutPage() {
                           />
                         </div>
                         <div>
-                          <label className="mb-1 block text-sm font-medium text-dark-700">Soyad <span className="text-primary-600">*</span></label>
+                          <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Soyad <span className="text-primary-600">*</span></label>
                           <input
                             type="text" required value={address.soyad}
                             onChange={(e) => setAddress({ ...address, soyad: e.target.value })}
@@ -229,7 +229,7 @@ export default function CheckoutPage() {
                         </div>
                       </div>
                       <div>
-                        <label className="mb-1 block text-sm font-medium text-dark-700">Telefon <span className="text-primary-600">*</span></label>
+                        <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Telefon <span className="text-primary-600">*</span></label>
                         <input
                           type="tel" required
                           value={address.telefon.replace(/(\d{2})(\d{3})(\d{0,3})(\d{0,2})(\d{0,2})/, (_m, a, b, c, d, e) => [a, b, c, d, e].filter(Boolean).join(" "))}
@@ -246,11 +246,11 @@ export default function CheckoutPage() {
                       </div>
                       <div className="grid gap-4 sm:grid-cols-3">
                         <div>
-                          <label className="mb-1 block text-sm font-medium text-dark-700">İl <span className="text-primary-600">*</span></label>
+                          <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">İl <span className="text-primary-600">*</span></label>
                           <select
                             required value={address.il}
                             onChange={(e) => setAddress({ ...address, il: e.target.value, ilce: "" })}
-                            className={`w-full rounded-lg border bg-white px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none ${addressAttempted && !address.il ? "border-red-400" : "border-dark-200"}`}
+                            className={`w-full rounded-lg border bg-white dark:bg-dark-800 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none ${addressAttempted && !address.il ? "border-red-400" : "border-dark-200"}`}
                           >
                             <option value="">İl Seçin</option>
                             {["Adana","Adıyaman","Afyonkarahisar","Ağrı","Amasya","Ankara","Antalya","Artvin","Aydın","Balıkesir","Bilecik","Bingöl","Bitlis","Bolu","Burdur","Bursa","Çanakkale","Çankırı","Çorum","Denizli","Diyarbakır","Edirne","Elazığ","Erzincan","Erzurum","Eskişehir","Gaziantep","Giresun","Gümüşhane","Hakkari","Hatay","Isparta","Mersin","İstanbul","İzmir","Kars","Kastamonu","Kayseri","Kırklareli","Kırşehir","Kocaeli","Konya","Kütahya","Malatya","Manisa","Kahramanmaraş","Mardin","Muğla","Muş","Nevşehir","Niğde","Ordu","Rize","Sakarya","Samsun","Siirt","Sinop","Sivas","Tekirdağ","Tokat","Trabzon","Tunceli","Şanlıurfa","Uşak","Van","Yozgat","Zonguldak","Aksaray","Bayburt","Karaman","Kırıkkale","Batman","Şırnak","Bartın","Ardahan","Iğdır","Yalova","Karabük","Kilis","Osmaniye","Düzce"].map((il) => (
@@ -259,7 +259,7 @@ export default function CheckoutPage() {
                           </select>
                         </div>
                         <div>
-                          <label className="mb-1 block text-sm font-medium text-dark-700">İlçe <span className="text-primary-600">*</span></label>
+                          <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">İlçe <span className="text-primary-600">*</span></label>
                           <input
                             type="text" required value={address.ilce}
                             onChange={(e) => setAddress({ ...address, ilce: e.target.value })}
@@ -268,7 +268,7 @@ export default function CheckoutPage() {
                           />
                         </div>
                         <div>
-                          <label className="mb-1 block text-sm font-medium text-dark-700">Posta Kodu</label>
+                          <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Posta Kodu</label>
                           <input
                             type="text" value={address.posta_kodu}
                             onChange={(e) => setAddress({ ...address, posta_kodu: e.target.value })}
@@ -277,7 +277,7 @@ export default function CheckoutPage() {
                         </div>
                       </div>
                       <div>
-                        <label className="mb-1 block text-sm font-medium text-dark-700">Adres <span className="text-primary-600">*</span></label>
+                        <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Adres <span className="text-primary-600">*</span></label>
                         <textarea
                           rows={3} required value={address.adres}
                           onChange={(e) => setAddress({ ...address, adres: e.target.value })}
@@ -305,7 +305,7 @@ export default function CheckoutPage() {
             )}
 
             {step === "sms" && (
-              <div className="rounded-xl border border-dark-100 bg-white p-6">
+              <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
                 <SmsOtpVerify
                   phone={address.telefon}
                   onVerified={() => setStep("payment")}
@@ -315,9 +315,9 @@ export default function CheckoutPage() {
             )}
 
             {step === "payment" && (
-              <div className="rounded-xl border border-dark-100 bg-white p-6">
-                <h2 className="mb-4 text-lg font-bold text-dark-900">Ödeme Yöntemi</h2>
-                <div className="rounded-lg bg-blue-50 p-4">
+              <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+                <h2 className="mb-4 text-lg font-bold text-dark-900 dark:text-dark-50">Ödeme Yöntemi</h2>
+                <div className="rounded-lg bg-blue-50 dark:bg-blue-900/30 p-4">
                   <div className="flex items-center gap-2">
                     <CreditCard size={18} className="text-blue-600" />
                     <p className="text-sm font-medium text-blue-700">Demo Modu</p>
@@ -329,48 +329,48 @@ export default function CheckoutPage() {
                 </div>
                 {/* G7: Zorunlu Sözleşme Onayları */}
                 <div className="mt-6 space-y-2">
-                  <h3 className="mb-2 text-sm font-bold text-dark-900">Sözleşme Onayları</h3>
+                  <h3 className="mb-2 text-sm font-bold text-dark-900 dark:text-dark-50">Sözleşme Onayları</h3>
 
-                  <label className="flex items-start gap-2.5 rounded-lg border border-dark-100 p-2.5 text-sm transition-colors hover:bg-dark-50">
+                  <label className="flex items-start gap-2.5 rounded-lg border border-dark-100 p-2.5 text-sm transition-colors hover:bg-dark-50 dark:bg-dark-800">
                     <input type="checkbox" checked={agreeSales} onChange={(e) => setAgreeSales(e.target.checked)}
                       className="mt-0.5 h-4 w-4 rounded border-dark-300 text-primary-600 focus:ring-primary-500" />
-                    <span className="text-dark-700">
+                    <span className="text-dark-700 dark:text-dark-200">
                       <Link href="/mesafeli-satis-sozlesmesi" target="_blank" className="font-medium text-primary-600 hover:underline">Mesafeli Satış Sözleşmesi</Link>
                       {"\u2019"}ni okudum ve kabul ediyorum. <span className="text-primary-600">*</span>
                     </span>
                   </label>
 
-                  <label className="flex items-start gap-2.5 rounded-lg border border-dark-100 p-2.5 text-sm transition-colors hover:bg-dark-50">
+                  <label className="flex items-start gap-2.5 rounded-lg border border-dark-100 p-2.5 text-sm transition-colors hover:bg-dark-50 dark:bg-dark-800">
                     <input type="checkbox" checked={agreePreInfo} onChange={(e) => setAgreePreInfo(e.target.checked)}
                       className="mt-0.5 h-4 w-4 rounded border-dark-300 text-primary-600 focus:ring-primary-500" />
-                    <span className="text-dark-700">
+                    <span className="text-dark-700 dark:text-dark-200">
                       <Link href="/on-bilgilendirme" target="_blank" className="font-medium text-primary-600 hover:underline">Ön Bilgilendirme Formu</Link>
                       {"\u2019"}nu okudum ve kabul ediyorum. <span className="text-primary-600">*</span>
                     </span>
                   </label>
 
-                  <label className="flex items-start gap-2.5 rounded-lg border border-dark-100 p-2.5 text-sm transition-colors hover:bg-dark-50">
+                  <label className="flex items-start gap-2.5 rounded-lg border border-dark-100 p-2.5 text-sm transition-colors hover:bg-dark-50 dark:bg-dark-800">
                     <input type="checkbox" checked={agreeKVKK} onChange={(e) => setAgreeKVKK(e.target.checked)}
                       className="mt-0.5 h-4 w-4 rounded border-dark-300 text-primary-600 focus:ring-primary-500" />
-                    <span className="text-dark-700">
+                    <span className="text-dark-700 dark:text-dark-200">
                       <Link href="/kvkk" target="_blank" className="font-medium text-primary-600 hover:underline">KVKK Aydınlatma Metni</Link>
                       {"\u2019"}ni okudum ve kabul ediyorum. <span className="text-primary-600">*</span>
                     </span>
                   </label>
 
-                  <label className="flex items-start gap-2.5 rounded-lg border border-dark-100 p-2.5 text-sm transition-colors hover:bg-dark-50">
+                  <label className="flex items-start gap-2.5 rounded-lg border border-dark-100 p-2.5 text-sm transition-colors hover:bg-dark-50 dark:bg-dark-800">
                     <input type="checkbox" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)}
                       className="mt-0.5 h-4 w-4 rounded border-dark-300 text-primary-600 focus:ring-primary-500" />
-                    <span className="text-dark-700">
+                    <span className="text-dark-700 dark:text-dark-200">
                       <Link href="/kullanim-kosullari" target="_blank" className="font-medium text-primary-600 hover:underline">Kullanım Koşulları</Link>
                       {"\u2019"}nı okudum ve kabul ediyorum. <span className="text-primary-600">*</span>
                     </span>
                   </label>
 
-                  <label className="flex items-start gap-2.5 rounded-lg border border-dark-100 p-2.5 text-sm transition-colors hover:bg-dark-50">
+                  <label className="flex items-start gap-2.5 rounded-lg border border-dark-100 p-2.5 text-sm transition-colors hover:bg-dark-50 dark:bg-dark-800">
                     <input type="checkbox" checked={agreeMarketing} onChange={(e) => setAgreeMarketing(e.target.checked)}
                       className="mt-0.5 h-4 w-4 rounded border-dark-300 text-primary-600 focus:ring-primary-500" />
-                    <span className="text-dark-700">
+                    <span className="text-dark-700 dark:text-dark-200">
                       Kampanya ve indirimlerden haberdar olmak istiyorum. <span className="text-dark-400">(Opsiyonel)</span>
                     </span>
                   </label>
@@ -379,7 +379,7 @@ export default function CheckoutPage() {
                 <div className="mt-4 flex gap-3">
                   <button
                     onClick={() => setStep(IS_DEMO ? "sms" : "address")}
-                    className="rounded-lg border border-dark-200 px-6 py-3 text-sm font-semibold text-dark-700 hover:bg-dark-50"
+                    className="rounded-lg border border-dark-200 px-6 py-3 text-sm font-semibold text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:bg-dark-800"
                   >
                     Geri
                   </button>
@@ -413,8 +413,8 @@ export default function CheckoutPage() {
 
           {/* Order Summary */}
           <div>
-            <div className="sticky top-24 rounded-xl border border-dark-100 bg-white p-6">
-              <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-dark-900">
+            <div className="sticky top-24 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+              <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-dark-900 dark:text-dark-50">
                 <FileText size={18} />
                 Sipariş Özeti
               </h3>
@@ -422,11 +422,11 @@ export default function CheckoutPage() {
               <div className="space-y-3 border-b border-dark-100 pb-4">
                 {items.map((item) => (
                   <div key={item.product_id} className="flex items-center justify-between text-sm">
-                    <span className="truncate text-dark-600">
+                    <span className="truncate text-dark-600 dark:text-dark-300">
                       {item.product?.name} <span className="text-dark-400">x{item.qty}</span>
                     </span>
                     <div className="shrink-0 text-right">
-                      <span className="font-medium text-dark-900">
+                      <span className="font-medium text-dark-900 dark:text-dark-50">
                         {item.product && formatUSD((item.product.sale_price_usd || item.product.price_usd) * item.qty)}
                       </span>
                       <span className="ml-1.5 text-xs text-primary-600">
@@ -439,8 +439,8 @@ export default function CheckoutPage() {
 
               <div className="mt-4 space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-dark-500">Ara Toplam</span>
-                  <span className="text-dark-900">{formatPrice(subtotal)}</span>
+                  <span className="text-dark-500 dark:text-dark-400">Ara Toplam</span>
+                  <span className="text-dark-900 dark:text-dark-50">{formatPrice(subtotal)}</span>
                 </div>
                 {discount > 0 && (
                   <div className="flex justify-between text-sm">
@@ -449,18 +449,18 @@ export default function CheckoutPage() {
                   </div>
                 )}
                 <div className="flex justify-between text-sm">
-                  <span className="text-dark-500">Kargo</span>
-                  <span className="text-dark-900">
+                  <span className="text-dark-500 dark:text-dark-400">Kargo</span>
+                  <span className="text-dark-900 dark:text-dark-50">
                     {shipping === 0 ? "Ücretsiz" : formatPrice(shipping)}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-dark-500">KDV (%20 dahil)</span>
-                  <span className="text-dark-900">{formatPrice(total - total / 1.2)}</span>
+                  <span className="text-dark-500 dark:text-dark-400">KDV (%20 dahil)</span>
+                  <span className="text-dark-900 dark:text-dark-50">{formatPrice(total - total / 1.2)}</span>
                 </div>
                 <div className="flex justify-between border-t border-dark-100 pt-2">
-                  <span className="font-bold text-dark-900">Toplam (KDV Dahil)</span>
-                  <span className="text-lg font-bold text-dark-900">{formatPrice(total)}</span>
+                  <span className="font-bold text-dark-900 dark:text-dark-50">Toplam (KDV Dahil)</span>
+                  <span className="text-lg font-bold text-dark-900 dark:text-dark-50">{formatPrice(total)}</span>
                 </div>
               </div>
             </div>

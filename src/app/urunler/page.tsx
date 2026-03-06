@@ -121,7 +121,7 @@ function ProductsContent() {
 
   if (loading) {
     return (
-      <div className="bg-dark-50 pb-16">
+      <div className="bg-dark-50 dark:bg-dark-900 pb-16">
         <div className="container mx-auto px-4 py-4">
           <Breadcrumb items={[{ label: "Ürünler" }]} />
         </div>
@@ -135,15 +135,15 @@ function ProductsContent() {
   }
 
   return (
-    <div className="bg-dark-50 pb-16">
+    <div className="bg-dark-50 dark:bg-dark-900 pb-16">
       <div className="container mx-auto px-4 py-4">
         <Breadcrumb items={[{ label: "Ürünler" }]} />
       </div>
 
       <div className="container mx-auto px-4">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-dark-900 md:text-3xl">Tüm Ürünler</h1>
-          <p className="mt-1 text-sm text-dark-500">{filtered.length} ürün bulundu</p>
+          <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50 md:text-3xl">Tüm Ürünler</h1>
+          <p className="mt-1 text-sm text-dark-500 dark:text-dark-400">{filtered.length} ürün bulundu</p>
         </div>
 
         <div className="flex flex-col gap-4 lg:flex-row lg:gap-6">
@@ -160,7 +160,7 @@ function ProductsContent() {
           />
 
           <div className="min-w-0 flex-1">
-            <div className="mb-4 rounded-xl border border-dark-100 bg-white p-3">
+            <div className="mb-4 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-3">
               <div className="flex items-center gap-2">
                 <div className="relative min-w-0 flex-1">
                   <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-400" />
@@ -187,13 +187,13 @@ function ProductsContent() {
                 <div className="hidden items-center gap-1 rounded-lg border border-dark-200 p-1 sm:flex">
                   <button
                     onClick={() => setViewMode("grid")}
-                    className={`rounded p-1.5 ${viewMode === "grid" ? "bg-primary-600 text-white" : "text-dark-400 hover:text-dark-600"}`}
+                    className={`rounded p-1.5 ${viewMode === "grid" ? "bg-primary-600 text-white" : "text-dark-400 hover:text-dark-600 dark:text-dark-300"}`}
                   >
                     <LayoutGrid size={16} />
                   </button>
                   <button
                     onClick={() => setViewMode("list")}
-                    className={`rounded p-1.5 ${viewMode === "list" ? "bg-primary-600 text-white" : "text-dark-400 hover:text-dark-600"}`}
+                    className={`rounded p-1.5 ${viewMode === "list" ? "bg-primary-600 text-white" : "text-dark-400 hover:text-dark-600 dark:text-dark-300"}`}
                   >
                     <List size={16} />
                   </button>
@@ -203,27 +203,27 @@ function ProductsContent() {
 
             {(filters.category || filters.brand || filters.minRating || filters.stockOnly) && (
               <div className="mb-4 flex flex-wrap items-center gap-2">
-                <span className="text-sm text-dark-500">Aktif Filtreler:</span>
+                <span className="text-sm text-dark-500 dark:text-dark-400">Aktif Filtreler:</span>
                 {filters.category && (
-                  <span className="flex items-center gap-1 rounded-full bg-primary-50 px-3 py-1 text-xs font-medium text-primary-700">
+                  <span className="flex items-center gap-1 rounded-full bg-primary-50 dark:bg-primary-900/30 px-3 py-1 text-xs font-medium text-primary-700">
                     {cats.find((c) => c.slug === filters.category)?.name}
                     <button onClick={() => handleFilterChange({ ...filters, category: undefined })} className="ml-1 hover:text-primary-900">&times;</button>
                   </span>
                 )}
                 {filters.brand && (
-                  <span className="flex items-center gap-1 rounded-full bg-primary-50 px-3 py-1 text-xs font-medium text-primary-700">
+                  <span className="flex items-center gap-1 rounded-full bg-primary-50 dark:bg-primary-900/30 px-3 py-1 text-xs font-medium text-primary-700">
                     {allBrands.find((b) => b.slug === filters.brand)?.name}
                     <button onClick={() => handleFilterChange({ ...filters, brand: undefined })} className="ml-1 hover:text-primary-900">&times;</button>
                   </span>
                 )}
                 {filters.minRating && (
-                  <span className="flex items-center gap-1 rounded-full bg-yellow-50 px-3 py-1 text-xs font-medium text-yellow-700">
+                  <span className="flex items-center gap-1 rounded-full bg-yellow-50 dark:bg-yellow-900/30 px-3 py-1 text-xs font-medium text-yellow-700">
                     {filters.minRating}+ Yıldız
                     <button onClick={() => handleFilterChange({ ...filters, minRating: undefined })} className="ml-1 hover:text-yellow-900">&times;</button>
                   </span>
                 )}
                 {filters.stockOnly && (
-                  <span className="flex items-center gap-1 rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700">
+                  <span className="flex items-center gap-1 rounded-full bg-green-50 dark:bg-green-900/30 px-3 py-1 text-xs font-medium text-green-700">
                     Stokta
                     <button onClick={() => handleFilterChange({ ...filters, stockOnly: undefined })} className="ml-1 hover:text-green-900">&times;</button>
                   </span>
@@ -238,10 +238,10 @@ function ProductsContent() {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white py-16">
+              <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 py-16">
                 <Search size={48} className="mb-4 text-dark-200" />
-                <h3 className="text-lg font-semibold text-dark-900">Ürün Bulunamadı</h3>
-                <p className="mt-1 text-sm text-dark-500">Farklı filtreler veya arama terimleri deneyebilirsiniz.</p>
+                <h3 className="text-lg font-semibold text-dark-900 dark:text-dark-50">Ürün Bulunamadı</h3>
+                <p className="mt-1 text-sm text-dark-500 dark:text-dark-400">Farklı filtreler veya arama terimleri deneyebilirsiniz.</p>
                 <button
                   onClick={() => { setSearch(""); setFilters({}); setPage(1); }}
                   className="mt-4 rounded-lg bg-primary-600 px-6 py-2 text-sm font-semibold text-white hover:bg-primary-700"

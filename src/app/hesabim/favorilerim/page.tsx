@@ -13,7 +13,7 @@ export default function WishlistPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-dark-900">
+      <h1 className="mb-6 text-2xl font-bold text-dark-900 dark:text-dark-50">
         Favorilerim
         {wishlistProducts.length > 0 && (
           <span className="ml-2 text-lg font-normal text-dark-400">
@@ -29,10 +29,10 @@ export default function WishlistPage() {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white py-20">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 py-20">
           <Heart size={56} className="mb-4 text-dark-200" />
-          <h2 className="text-lg font-bold text-dark-900">Favori Listeniz Boş</h2>
-          <p className="mt-2 text-sm text-dark-500">
+          <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">Favori Listeniz Boş</h2>
+          <p className="mt-2 text-sm text-dark-500 dark:text-dark-400">
             Beğendiğiniz ürünleri favorilere ekleyerek takip edebilirsiniz.
           </p>
           <Link

@@ -55,8 +55,8 @@ export default function AdminDashboard() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-dark-900">Dashboard</h1>
-        <p className="text-sm text-dark-500">Mağaza genel durumu</p>
+        <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">Dashboard</h1>
+        <p className="text-sm text-dark-500 dark:text-dark-400">Mağaza genel durumu</p>
       </div>
 
       {/* Stats Cards */}
@@ -93,9 +93,9 @@ export default function AdminDashboard() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Recent orders */}
-        <div className="rounded-xl border border-dark-100 bg-white p-6">
+        <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="font-bold text-dark-900">Son Siparişler</h3>
+            <h3 className="font-bold text-dark-900 dark:text-dark-50">Son Siparişler</h3>
             <TrendingUp size={18} className="text-dark-400" />
           </div>
           {recentOrders.length > 0 ? (
@@ -103,39 +103,39 @@ export default function AdminDashboard() {
               {recentOrders.map((order) => (
                 <div key={order.id} className="flex items-center justify-between rounded-lg bg-dark-50 px-3 py-2">
                   <div>
-                    <span className="text-sm font-medium text-dark-700">#{order.order_no || order.id.slice(0, 8)}</span>
+                    <span className="text-sm font-medium text-dark-700 dark:text-dark-200">#{order.order_no || order.id.slice(0, 8)}</span>
                     <p className="text-xs text-dark-400">{new Date(order.created_at).toLocaleDateString("tr-TR")}</p>
                   </div>
-                  <span className="text-sm font-bold text-dark-900">{formatPrice(order.total)}</span>
+                  <span className="text-sm font-bold text-dark-900 dark:text-dark-50">{formatPrice(order.total)}</span>
                 </div>
               ))}
             </div>
           ) : (
             <div className="flex flex-col items-center py-8 text-center">
               <ShoppingBag size={40} className="mb-3 text-dark-200" />
-              <p className="text-sm text-dark-500">Henüz sipariş yok</p>
+              <p className="text-sm text-dark-500 dark:text-dark-400">Henüz sipariş yok</p>
               <p className="text-xs text-dark-400">Siparişler burada listelenecek</p>
             </div>
           )}
         </div>
 
         {/* Low stock warning */}
-        <div className="rounded-xl border border-dark-100 bg-white p-6">
+        <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="font-bold text-dark-900">Stok Uyarıları</h3>
+            <h3 className="font-bold text-dark-900 dark:text-dark-50">Stok Uyarıları</h3>
             <Eye size={18} className="text-dark-400" />
           </div>
           {lowStockProducts.length > 0 || outOfStockProducts.length > 0 ? (
             <div className="space-y-3">
               {outOfStockProducts.map((p) => (
-                <div key={p.id} className="flex items-center justify-between rounded-lg bg-red-50 px-3 py-2">
-                  <span className="text-sm text-dark-700 truncate">{p.name}</span>
+                <div key={p.id} className="flex items-center justify-between rounded-lg bg-red-50 dark:bg-red-900/30 px-3 py-2">
+                  <span className="text-sm text-dark-700 dark:text-dark-200 truncate">{p.name}</span>
                   <span className="shrink-0 rounded bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">Tükendi</span>
                 </div>
               ))}
               {lowStockProducts.map((p) => (
                 <div key={p.id} className="flex items-center justify-between rounded-lg bg-orange-50 px-3 py-2">
-                  <span className="text-sm text-dark-700 truncate">{p.name}</span>
+                  <span className="text-sm text-dark-700 dark:text-dark-200 truncate">{p.name}</span>
                   <span className="shrink-0 rounded bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-700">
                     {p.stock} adet
                   </span>
@@ -151,9 +151,9 @@ export default function AdminDashboard() {
         </div>
 
         {/* Recent Customers */}
-        <div className="rounded-xl border border-dark-100 bg-white p-6">
+        <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="font-bold text-dark-900">Son Kayıtlar</h3>
+            <h3 className="font-bold text-dark-900 dark:text-dark-50">Son Kayıtlar</h3>
             <Users size={18} className="text-dark-400" />
           </div>
           {recentCustomers.length > 0 ? (
@@ -161,7 +161,7 @@ export default function AdminDashboard() {
               {recentCustomers.map((c) => (
                 <div key={c.user_id} className="flex items-center justify-between rounded-lg bg-dark-50 px-3 py-2">
                   <div>
-                    <span className="text-sm font-medium text-dark-700">{c.ad} {c.soyad}</span>
+                    <span className="text-sm font-medium text-dark-700 dark:text-dark-200">{c.ad} {c.soyad}</span>
                     <p className="text-xs text-dark-400">{c.email}</p>
                   </div>
                   <span className="text-xs text-dark-400">
@@ -173,38 +173,38 @@ export default function AdminDashboard() {
           ) : (
             <div className="flex flex-col items-center py-8 text-center">
               <Users size={40} className="mb-3 text-dark-200" />
-              <p className="text-sm text-dark-500">Henüz kayıtlı üye yok</p>
+              <p className="text-sm text-dark-500 dark:text-dark-400">Henüz kayıtlı üye yok</p>
             </div>
           )}
         </div>
 
         {/* Quick Stats */}
-        <div className="rounded-xl border border-dark-100 bg-white p-6">
-          <h3 className="mb-4 font-bold text-dark-900">Hızlı İstatistikler</h3>
+        <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+          <h3 className="mb-4 font-bold text-dark-900 dark:text-dark-50">Hızlı İstatistikler</h3>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-dark-600">Toplam Ürün</span>
-              <span className="font-bold text-dark-900">{activeProducts.length}</span>
+              <span className="text-sm text-dark-600 dark:text-dark-300">Toplam Ürün</span>
+              <span className="font-bold text-dark-900 dark:text-dark-50">{activeProducts.length}</span>
             </div>
             <div className="h-px bg-dark-100" />
             <div className="flex items-center justify-between">
-              <span className="text-sm text-dark-600">Tükenen Ürünler</span>
+              <span className="text-sm text-dark-600 dark:text-dark-300">Tükenen Ürünler</span>
               <span className="font-bold text-red-600">{outOfStockProducts.length}</span>
             </div>
             <div className="h-px bg-dark-100" />
             <div className="flex items-center justify-between">
-              <span className="text-sm text-dark-600">Düşük Stok</span>
+              <span className="text-sm text-dark-600 dark:text-dark-300">Düşük Stok</span>
               <span className="font-bold text-orange-600">{lowStockProducts.length}</span>
             </div>
             <div className="h-px bg-dark-100" />
             <div className="flex items-center justify-between">
-              <span className="text-sm text-dark-600">Kayıtlı Müşteriler</span>
-              <span className="font-bold text-dark-900">{customers.length}</span>
+              <span className="text-sm text-dark-600 dark:text-dark-300">Kayıtlı Müşteriler</span>
+              <span className="font-bold text-dark-900 dark:text-dark-50">{customers.length}</span>
             </div>
             <div className="h-px bg-dark-100" />
             <div className="flex items-center justify-between">
-              <span className="text-sm text-dark-600">Toplam Sipariş</span>
-              <span className="font-bold text-dark-900">{orders.length}</span>
+              <span className="text-sm text-dark-600 dark:text-dark-300">Toplam Sipariş</span>
+              <span className="font-bold text-dark-900 dark:text-dark-50">{orders.length}</span>
             </div>
           </div>
         </div>

@@ -29,9 +29,9 @@ export default function WhatsAppButton() {
     <>
       {/* Tooltip */}
       {showTooltip && (
-        <div className="fixed bottom-[140px] right-6 z-40 flex items-center gap-2 rounded-lg bg-white px-4 py-3 shadow-xl border border-dark-100 animate-fade-in lg:bottom-24">
-          <p className="text-sm font-medium text-dark-700">Size nasıl yardımcı olabiliriz?</p>
-          <button onClick={() => setShowTooltip(false)} className="text-dark-400 hover:text-dark-600">
+        <div className="fixed bottom-[140px] right-6 z-40 flex items-center gap-2 rounded-lg bg-white dark:bg-dark-800 px-4 py-3 shadow-xl border border-dark-100 animate-fade-in lg:bottom-24">
+          <p className="text-sm font-medium text-dark-700 dark:text-dark-200">Size nasıl yardımcı olabiliriz?</p>
+          <button onClick={() => setShowTooltip(false)} className="text-dark-400 hover:text-dark-600 dark:text-dark-300">
             <X size={14} />
           </button>
         </div>

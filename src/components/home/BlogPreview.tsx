@@ -48,10 +48,10 @@ export default async function BlogPreview() {
                     {formatDate(post.created_at)}
                   </span>
                 </div>
-                <h3 className="mt-3 text-base font-semibold text-dark-900 transition-colors group-hover:text-primary-600">
+                <h3 className="mt-3 text-base font-semibold text-dark-900 dark:text-dark-50 transition-colors group-hover:text-primary-600">
                   {post.title}
                 </h3>
-                <p className="mt-2 line-clamp-2 text-sm text-dark-500">{post.excerpt}</p>
+                <p className="mt-2 line-clamp-2 text-sm text-dark-500 dark:text-dark-400">{post.excerpt}</p>
                 <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary-600">
                   Devamini Oku
                   <ArrowRight size={14} />

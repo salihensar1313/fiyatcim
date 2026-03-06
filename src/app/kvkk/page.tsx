@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function KVKKPage() {
   return (
-    <div className="bg-dark-50 pb-16">
+    <div className="bg-dark-50 dark:bg-dark-900 pb-16">
       <div className="container mx-auto px-4 py-4">
         <Breadcrumb items={[{ label: "KVKK Aydınlatma Metni" }]} />
       </div>
@@ -32,22 +32,22 @@ export default function KVKKPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="mx-auto max-w-3xl space-y-8">
           {/* Güncelleme Tarihi */}
-          <div className="rounded-lg border border-blue-200 bg-blue-50 px-5 py-3 text-sm text-blue-800">
+          <div className="rounded-lg border border-blue-200 bg-blue-50 dark:bg-blue-900/30 px-5 py-3 text-sm text-blue-800">
             <strong>Güncelleme Tarihi:</strong> 01.03.2026
           </div>
 
           {/* Veri Sorumlusu */}
-          <section className="rounded-xl border border-dark-100 bg-white p-6">
-            <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-dark-900">
+          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+            <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-dark-900 dark:text-dark-50">
               <FileText size={20} className="text-primary-600" />
               Veri Sorumlusu
             </h2>
-            <p className="text-sm leading-relaxed text-dark-600">
+            <p className="text-sm leading-relaxed text-dark-600 dark:text-dark-300">
               Fiyatcim Elektronik Ticaret (&quot;Fiyatcim&quot; veya &quot;Şirket&quot;), 6698 sayılı
               Kişisel Verilerin Korunması Kanunu (&quot;KVKK&quot;) kapsamında veri sorumlusu
               sıfatıyla, kişisel verilerinizi aşağıda açıklanan şekilde işlemektedir.
             </p>
-            <div className="mt-3 rounded-lg bg-dark-50 p-4 text-sm text-dark-600">
+            <div className="mt-3 rounded-lg bg-dark-50 p-4 text-sm text-dark-600 dark:text-dark-300">
               <p><strong>Ticaret Unvanı:</strong> Fiyatcim Elektronik Ticaret</p>
               <p><strong>Adres:</strong> {CONTACT.address}</p>
               <p><strong>E-posta:</strong> {CONTACT.email}</p>
@@ -56,8 +56,8 @@ export default function KVKKPage() {
           </section>
 
           {/* İşlenen Kişisel Veriler */}
-          <section className="rounded-xl border border-dark-100 bg-white p-6">
-            <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-dark-900">
+          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+            <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-dark-900 dark:text-dark-50">
               <Eye size={20} className="text-primary-600" />
               İşlenen Kişisel Veriler
             </h2>
@@ -78,9 +78,9 @@ export default function KVKKPage() {
                     { cat: "Pazarlama Bilgileri", desc: "Alışveriş tercihleri, çerez verileri, kampanya katılım bilgileri" },
                     { cat: "Hukuki İşlem Bilgileri", desc: "Fatura bilgileri, yasal süreç kapsamında gerekli veriler" },
                   ].map((row, i) => (
-                    <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-dark-50"}>
-                      <td className="px-4 py-3 font-medium text-dark-800">{row.cat}</td>
-                      <td className="px-4 py-3 text-dark-600">{row.desc}</td>
+                    <tr key={i} className={i % 2 === 0 ? "bg-white dark:bg-dark-800" : "bg-dark-50 dark:bg-dark-800"}>
+                      <td className="px-4 py-3 font-medium text-dark-800 dark:text-dark-100">{row.cat}</td>
+                      <td className="px-4 py-3 text-dark-600 dark:text-dark-300">{row.desc}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -89,9 +89,9 @@ export default function KVKKPage() {
           </section>
 
           {/* İşleme Amaçları */}
-          <section className="rounded-xl border border-dark-100 bg-white p-6">
-            <h2 className="mb-3 text-lg font-bold text-dark-900">Kişisel Verilerin İşlenme Amaçları</h2>
-            <ul className="space-y-2 text-sm text-dark-600">
+          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+            <h2 className="mb-3 text-lg font-bold text-dark-900 dark:text-dark-50">Kişisel Verilerin İşlenme Amaçları</h2>
+            <ul className="space-y-2 text-sm text-dark-600 dark:text-dark-300">
               {[
                 "Üyelik ve hesap oluşturma süreçlerinin yürütülmesi",
                 "Sipariş ve ödeme işlemlerinin gerçekleştirilmesi",
@@ -113,13 +113,13 @@ export default function KVKKPage() {
           </section>
 
           {/* Aktarım */}
-          <section className="rounded-xl border border-dark-100 bg-white p-6">
-            <h2 className="mb-3 text-lg font-bold text-dark-900">Kişisel Verilerin Aktarılması</h2>
-            <p className="mb-3 text-sm text-dark-600">
+          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+            <h2 className="mb-3 text-lg font-bold text-dark-900 dark:text-dark-50">Kişisel Verilerin Aktarılması</h2>
+            <p className="mb-3 text-sm text-dark-600 dark:text-dark-300">
               Kişisel verileriniz, KVKK&apos;nın 8. ve 9. maddelerinde belirtilen koşullar
               çerçevesinde aşağıdaki taraflara aktarılabilir:
             </p>
-            <ul className="space-y-2 text-sm text-dark-600">
+            <ul className="space-y-2 text-sm text-dark-600 dark:text-dark-300">
               {[
                 "Kargo ve lojistik şirketleri (teslimat için)",
                 "Ödeme kuruluşları ve bankalar (ödeme işlemleri için)",
@@ -136,9 +136,9 @@ export default function KVKKPage() {
           </section>
 
           {/* Saklama Süreleri */}
-          <section className="rounded-xl border border-dark-100 bg-white p-6">
-            <h2 className="mb-3 text-lg font-bold text-dark-900">Saklama Süreleri</h2>
-            <p className="text-sm text-dark-600">
+          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+            <h2 className="mb-3 text-lg font-bold text-dark-900 dark:text-dark-50">Saklama Süreleri</h2>
+            <p className="text-sm text-dark-600 dark:text-dark-300">
               Kişisel verileriniz, işleme amacının gerektirdiği süre boyunca ve ilgili mevzuatta
               öngörülen zamanaşımı süreleri boyunca saklanır. Saklama süresinin sona ermesiyle
               birlikte veriler silinir, yok edilir veya anonim hale getirilir.
@@ -159,9 +159,9 @@ export default function KVKKPage() {
                     { type: "Çerez verileri", period: "Maks. 2 yıl" },
                     { type: "Pazarlama izinleri", period: "İzin geri çekilene kadar" },
                   ].map((row, i) => (
-                    <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-dark-50"}>
-                      <td className="px-4 py-3 font-medium text-dark-800">{row.type}</td>
-                      <td className="px-4 py-3 text-dark-600">{row.period}</td>
+                    <tr key={i} className={i % 2 === 0 ? "bg-white dark:bg-dark-800" : "bg-dark-50 dark:bg-dark-800"}>
+                      <td className="px-4 py-3 font-medium text-dark-800 dark:text-dark-100">{row.type}</td>
+                      <td className="px-4 py-3 text-dark-600 dark:text-dark-300">{row.period}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -170,12 +170,12 @@ export default function KVKKPage() {
           </section>
 
           {/* Haklar */}
-          <section className="rounded-xl border border-dark-100 bg-white p-6">
-            <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-dark-900">
+          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+            <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-dark-900 dark:text-dark-50">
               <Trash2 size={20} className="text-primary-600" />
               KVKK Kapsamında Haklarınız
             </h2>
-            <p className="mb-3 text-sm text-dark-600">
+            <p className="mb-3 text-sm text-dark-600 dark:text-dark-300">
               KVKK&apos;nın 11. maddesi uyarınca aşağıdaki haklara sahipsiniz:
             </p>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -190,7 +190,7 @@ export default function KVKKPage() {
                 "Otomatik analiz yoluyla aleyhinize bir sonuç çıkmasına itiraz etme",
                 "Kanuna aykırı işleme nedeniyle zararın giderilmesini talep etme",
               ].map((right, i) => (
-                <div key={i} className="flex items-start gap-2 rounded-lg border border-dark-100 bg-dark-50 p-3 text-sm text-dark-600">
+                <div key={i} className="flex items-start gap-2 rounded-lg border border-dark-100 bg-dark-50 p-3 text-sm text-dark-600 dark:text-dark-300">
                   <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-600 text-[10px] font-bold text-white">
                     {i + 1}
                   </span>
@@ -201,7 +201,7 @@ export default function KVKKPage() {
           </section>
 
           {/* Başvuru */}
-          <section className="rounded-xl border border-primary-200 bg-primary-50 p-6">
+          <section className="rounded-xl border border-primary-200 bg-primary-50 dark:bg-primary-900/30 p-6">
             <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-primary-800">
               <Mail size={20} />
               Başvuru Yöntemi

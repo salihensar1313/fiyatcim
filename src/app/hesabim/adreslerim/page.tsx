@@ -93,7 +93,7 @@ export default function AddressesPage() {
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-dark-900">Adreslerim</h1>
+        <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">Adreslerim</h1>
         <button
           onClick={openNew}
           className="flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700"
@@ -108,17 +108,17 @@ export default function AddressesPage() {
           {userAddresses.map((addr) => (
             <div
               key={addr.id}
-              className="relative rounded-xl border border-dark-100 bg-white p-5"
+              className="relative rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-5"
             >
               <div className="mb-3 flex items-center justify-between">
-                <h3 className="flex items-center gap-2 font-semibold text-dark-900">
+                <h3 className="flex items-center gap-2 font-semibold text-dark-900 dark:text-dark-50">
                   <MapPin size={16} className="text-primary-600" />
                   {addr.baslik}
                 </h3>
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => openEdit(addr)}
-                    className="rounded-lg p-1.5 text-dark-400 hover:bg-dark-50 hover:text-dark-700"
+                    className="rounded-lg p-1.5 text-dark-400 hover:bg-dark-50 hover:text-dark-700 dark:text-dark-200"
                     title="Düzenle"
                   >
                     <Pencil size={15} />
@@ -133,7 +133,7 @@ export default function AddressesPage() {
                       </button>
                       <button
                         onClick={() => setDeleteConfirm(null)}
-                        className="rounded-lg px-2 py-1 text-xs font-medium text-dark-500 hover:bg-dark-50"
+                        className="rounded-lg px-2 py-1 text-xs font-medium text-dark-500 dark:text-dark-400 hover:bg-dark-50 dark:bg-dark-800"
                       >
                         İptal
                       </button>
@@ -141,7 +141,7 @@ export default function AddressesPage() {
                   ) : (
                     <button
                       onClick={() => setDeleteConfirm(addr.id)}
-                      className="rounded-lg p-1.5 text-dark-400 hover:bg-red-50 hover:text-red-600"
+                      className="rounded-lg p-1.5 text-dark-400 hover:bg-red-50 dark:bg-red-900/30 hover:text-red-600"
                       title="Sil"
                     >
                       <Trash2 size={15} />
@@ -149,13 +149,13 @@ export default function AddressesPage() {
                   )}
                 </div>
               </div>
-              <p className="text-sm font-medium text-dark-800">
+              <p className="text-sm font-medium text-dark-800 dark:text-dark-100">
                 {addr.ad} {addr.soyad}
               </p>
-              <p className="mt-1 text-sm text-dark-500">
+              <p className="mt-1 text-sm text-dark-500 dark:text-dark-400">
                 {addr.adres}
               </p>
-              <p className="mt-1 text-sm text-dark-500">
+              <p className="mt-1 text-sm text-dark-500 dark:text-dark-400">
                 {addr.ilce} / {addr.il}
                 {addr.posta_kodu && ` - ${addr.posta_kodu}`}
               </p>
@@ -166,10 +166,10 @@ export default function AddressesPage() {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white py-20">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 py-20">
           <MapPin size={56} className="mb-4 text-dark-200" />
-          <h2 className="text-lg font-bold text-dark-900">Kayıtlı Adresiniz Yok</h2>
-          <p className="mt-2 text-sm text-dark-500">
+          <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">Kayıtlı Adresiniz Yok</h2>
+          <p className="mt-2 text-sm text-dark-500 dark:text-dark-400">
             Sipariş verirken kullanmak üzere adres ekleyebilirsiniz.
           </p>
           <button
@@ -185,12 +185,12 @@ export default function AddressesPage() {
       {/* Modal */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
+          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white dark:bg-dark-800 p-6 shadow-xl">
             <div className="mb-5 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-dark-900">
+              <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">
                 {editingId ? "Adresi Düzenle" : "Yeni Adres Ekle"}
               </h2>
-              <button onClick={closeForm} className="rounded-lg p-1 text-dark-400 hover:bg-dark-50 hover:text-dark-700">
+              <button onClick={closeForm} className="rounded-lg p-1 text-dark-400 hover:bg-dark-50 hover:text-dark-700 dark:text-dark-200">
                 <X size={20} />
               </button>
             </div>
@@ -198,7 +198,7 @@ export default function AddressesPage() {
             <div className="space-y-4">
               {/* Adres Başlığı */}
               <div>
-                <label className="mb-1 block text-sm font-medium text-dark-700">
+                <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">
                   Adres Başlığı <span className="text-primary-600">*</span>
                 </label>
                 <input
@@ -213,7 +213,7 @@ export default function AddressesPage() {
               {/* Ad Soyad */}
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-dark-700">
+                  <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">
                     Ad <span className="text-primary-600">*</span>
                   </label>
                   <input
@@ -224,7 +224,7 @@ export default function AddressesPage() {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-dark-700">
+                  <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">
                     Soyad <span className="text-primary-600">*</span>
                   </label>
                   <input
@@ -238,7 +238,7 @@ export default function AddressesPage() {
 
               {/* Telefon */}
               <div>
-                <label className="mb-1 block text-sm font-medium text-dark-700">
+                <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">
                   Telefon <span className="text-primary-600">*</span>
                 </label>
                 <input
@@ -255,13 +255,13 @@ export default function AddressesPage() {
               {/* İl / İlçe / Posta Kodu */}
               <div className="grid gap-4 sm:grid-cols-3">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-dark-700">
+                  <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">
                     İl <span className="text-primary-600">*</span>
                   </label>
                   <select
                     value={form.il}
                     onChange={(e) => setForm({ ...form, il: e.target.value, ilce: "" })}
-                    className="w-full rounded-lg border border-dark-200 bg-white px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                    className="w-full rounded-lg border border-dark-200 bg-white dark:bg-dark-800 dark:border-dark-600 dark:bg-dark-800 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
                   >
                     <option value="">İl Seçin</option>
                     {ILLER.map((il) => (
@@ -270,7 +270,7 @@ export default function AddressesPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-dark-700">
+                  <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">
                     İlçe <span className="text-primary-600">*</span>
                   </label>
                   <input
@@ -282,7 +282,7 @@ export default function AddressesPage() {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-dark-700">Posta Kodu</label>
+                  <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Posta Kodu</label>
                   <input
                     type="text"
                     value={form.posta_kodu}
@@ -294,7 +294,7 @@ export default function AddressesPage() {
 
               {/* Adres */}
               <div>
-                <label className="mb-1 block text-sm font-medium text-dark-700">
+                <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">
                   Adres <span className="text-primary-600">*</span>
                 </label>
                 <textarea
@@ -317,7 +317,7 @@ export default function AddressesPage() {
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={closeForm}
-                  className="rounded-lg border border-dark-200 px-5 py-2.5 text-sm font-semibold text-dark-700 hover:bg-dark-50"
+                  className="rounded-lg border border-dark-200 px-5 py-2.5 text-sm font-semibold text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:bg-dark-800"
                 >
                   İptal
                 </button>

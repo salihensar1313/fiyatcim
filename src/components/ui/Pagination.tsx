@@ -26,7 +26,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="rounded-lg p-2 text-dark-500 hover:bg-dark-50 disabled:cursor-not-allowed disabled:opacity-30"
+        className="rounded-lg p-2 text-dark-500 dark:text-dark-400 hover:bg-dark-50 disabled:cursor-not-allowed disabled:opacity-30"
       >
         <ChevronLeft size={18} />
       </button>
@@ -41,7 +41,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
               "flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium transition-colors",
               currentPage === page
                 ? "bg-primary-600 text-white"
-                : "text-dark-600 hover:bg-dark-50"
+                : "text-dark-600 dark:text-dark-300 hover:bg-dark-50"
             )}
           >
             {page}
@@ -51,7 +51,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="rounded-lg p-2 text-dark-500 hover:bg-dark-50 disabled:cursor-not-allowed disabled:opacity-30"
+        className="rounded-lg p-2 text-dark-500 dark:text-dark-400 hover:bg-dark-50 disabled:cursor-not-allowed disabled:opacity-30"
       >
         <ChevronRight size={18} />
       </button>

@@ -39,7 +39,7 @@ export default function ProductGallery({ images, productName, categoryId }: Prod
   return (
     <div className="space-y-4">
       {/* Main Image with Hover Zoom */}
-      <div className="relative overflow-hidden rounded-xl border border-dark-100 bg-white">
+      <div className="relative overflow-hidden rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800">
         <div
           ref={imgContainerRef}
           className="relative aspect-square cursor-crosshair"
@@ -47,7 +47,7 @@ export default function ProductGallery({ images, productName, categoryId }: Prod
           onMouseLeave={() => setLensActive(false)}
           onMouseMove={handleMouseMove}
         >
-          <div className="relative h-full w-full bg-white p-8">
+          <div className="relative h-full w-full bg-white dark:bg-dark-800 p-8">
             <Image
               src={productImage}
               alt={productName}
@@ -64,7 +64,7 @@ export default function ProductGallery({ images, productName, categoryId }: Prod
           {/* Lens indicator */}
           {lensActive && (
             <div
-              className="pointer-events-none absolute h-24 w-24 rounded-full border-2 border-primary-600/50 bg-white/10"
+              className="pointer-events-none absolute h-24 w-24 rounded-full border-2 border-primary-600/50 bg-white dark:bg-dark-800/10"
               style={{
                 left: `calc(${lensPos.x}% - 48px)`,
                 top: `calc(${lensPos.y}% - 48px)`,
@@ -75,9 +75,9 @@ export default function ProductGallery({ images, productName, categoryId }: Prod
           {/* Zoom button (opens full modal) */}
           <button
             onClick={() => setZoomed(true)}
-            className="absolute right-4 top-4 z-10 rounded-full bg-white/80 p-2 shadow-md backdrop-blur-sm transition-all hover:bg-white"
+            className="absolute right-4 top-4 z-10 rounded-full bg-white dark:bg-dark-800/80 p-2 shadow-md backdrop-blur-sm transition-all hover:bg-white dark:bg-dark-800"
           >
-            <ZoomIn size={20} className="text-dark-600" />
+            <ZoomIn size={20} className="text-dark-600 dark:text-dark-300" />
           </button>
 
           {/* Navigation arrows */}
@@ -85,13 +85,13 @@ export default function ProductGallery({ images, productName, categoryId }: Prod
             <>
               <button
                 onClick={() => goTo(activeIndex - 1)}
-                className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/80 p-2 shadow-md backdrop-blur-sm transition-all hover:bg-white"
+                className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white dark:bg-dark-800/80 p-2 shadow-md backdrop-blur-sm transition-all hover:bg-white dark:bg-dark-800"
               >
                 <ChevronLeft size={20} />
               </button>
               <button
                 onClick={() => goTo(activeIndex + 1)}
-                className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/80 p-2 shadow-md backdrop-blur-sm transition-all hover:bg-white"
+                className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white dark:bg-dark-800/80 p-2 shadow-md backdrop-blur-sm transition-all hover:bg-white dark:bg-dark-800"
               >
                 <ChevronRight size={20} />
               </button>
@@ -114,7 +114,7 @@ export default function ProductGallery({ images, productName, categoryId }: Prod
             <button
               key={index}
               onClick={() => setActiveIndex(index)}
-              className={`aspect-square w-20 shrink-0 overflow-hidden rounded-lg border-2 bg-white transition-all ${
+              className={`aspect-square w-20 shrink-0 overflow-hidden rounded-lg border-2 bg-white dark:bg-dark-800 transition-all ${
                 activeIndex === index ? "border-primary-600 ring-2 ring-primary-600/20" : "border-dark-100 hover:border-dark-300"
               }`}
             >
@@ -139,7 +139,7 @@ export default function ProductGallery({ images, productName, categoryId }: Prod
           onClick={() => setZoomed(false)}
         >
           <div className="relative max-h-[90vh] max-w-5xl" onClick={(e) => e.stopPropagation()}>
-            <div className="relative h-[85vh] w-[85vw] rounded-xl bg-white p-4">
+            <div className="relative h-[85vh] w-[85vw] rounded-xl bg-white dark:bg-dark-800 p-4">
               <Image
                 src={productImage}
                 alt={productName}
@@ -152,7 +152,7 @@ export default function ProductGallery({ images, productName, categoryId }: Prod
             {/* Close button */}
             <button
               onClick={() => setZoomed(false)}
-              className="absolute -right-2 -top-2 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-lg transition-transform hover:scale-110"
+              className="absolute -right-2 -top-2 flex h-10 w-10 items-center justify-center rounded-full bg-white dark:bg-dark-800 shadow-lg transition-transform hover:scale-110"
             >
               <X size={20} />
             </button>
@@ -162,13 +162,13 @@ export default function ProductGallery({ images, productName, categoryId }: Prod
               <>
                 <button
                   onClick={() => goTo(activeIndex - 1)}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-3 shadow-lg transition-all hover:bg-white"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white dark:bg-dark-800/90 p-3 shadow-lg transition-all hover:bg-white dark:bg-dark-800"
                 >
                   <ChevronLeft size={24} />
                 </button>
                 <button
                   onClick={() => goTo(activeIndex + 1)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-3 shadow-lg transition-all hover:bg-white"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white dark:bg-dark-800/90 p-3 shadow-lg transition-all hover:bg-white dark:bg-dark-800"
                 >
                   <ChevronRight size={24} />
                 </button>

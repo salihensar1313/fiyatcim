@@ -118,12 +118,12 @@ export default function AdminGuvenRozetleriPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/admin/icerik" className="rounded-lg p-2 text-dark-400 hover:bg-dark-100 hover:text-dark-600">
+          <Link href="/admin/icerik" className="rounded-lg p-2 text-dark-400 hover:bg-dark-100 hover:text-dark-600 dark:text-dark-300">
             <ArrowLeft size={18} />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-dark-900">Güven Rozetleri</h1>
-            <p className="text-sm text-dark-500">{items.length} rozet</p>
+            <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">Güven Rozetleri</h1>
+            <p className="text-sm text-dark-500 dark:text-dark-400">{items.length} rozet</p>
           </div>
         </div>
         <button
@@ -137,13 +137,13 @@ export default function AdminGuvenRozetleriPage() {
 
       {/* Form */}
       {formOpen && (
-        <div className="mb-6 rounded-xl border border-dark-100 bg-white p-6">
-          <h3 className="mb-4 text-lg font-bold text-dark-900">
+        <div className="mb-6 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+          <h3 className="mb-4 text-lg font-bold text-dark-900 dark:text-dark-50">
             {editing ? "Rozeti Düzenle" : "Yeni Rozet"}
           </h3>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Başlık *</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Başlık *</label>
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -151,7 +151,7 @@ export default function AdminGuvenRozetleriPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">İkon</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">İkon</label>
               <div className="grid grid-cols-4 gap-2">
                 {ICON_OPTIONS.map((opt) => (
                   <button
@@ -160,8 +160,8 @@ export default function AdminGuvenRozetleriPage() {
                     onClick={() => setIcon(opt.value)}
                     className={`flex flex-col items-center gap-1 rounded-lg border p-2 text-xs transition-colors ${
                       icon === opt.value
-                        ? "border-primary-600 bg-primary-50 text-primary-600"
-                        : "border-dark-200 text-dark-500 hover:border-primary-300"
+                        ? "border-primary-600 bg-primary-50 dark:bg-primary-900/30 text-primary-600"
+                        : "border-dark-200 text-dark-500 dark:text-dark-400 hover:border-primary-300"
                     }`}
                   >
                     <opt.Icon size={18} />
@@ -171,7 +171,7 @@ export default function AdminGuvenRozetleriPage() {
               </div>
             </div>
             <div className="sm:col-span-2">
-              <label className="mb-1 block text-sm font-medium text-dark-700">Açıklama</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Açıklama</label>
               <input
                 value={desc}
                 onChange={(e) => setDesc(e.target.value)}
@@ -180,7 +180,7 @@ export default function AdminGuvenRozetleriPage() {
             </div>
           </div>
           <div className="mt-4 flex justify-end gap-3">
-            <button onClick={resetForm} className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 hover:bg-dark-50">
+            <button onClick={resetForm} className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:bg-dark-800">
               İptal
             </button>
             <button onClick={handleSave} className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700">
@@ -195,25 +195,25 @@ export default function AdminGuvenRozetleriPage() {
         {items.map((item) => {
           const IconComp = ICON_MAP[item.icon] || Award;
           return (
-            <div key={item.id} className="flex items-start gap-4 rounded-xl border border-dark-100 bg-white p-5">
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+            <div key={item.id} className="flex items-start gap-4 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-5">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary-50 dark:bg-primary-900/30 text-primary-600">
                 <IconComp size={20} />
               </div>
               <div className="flex-1">
-                <h4 className="font-bold text-dark-900">{item.title}</h4>
-                <p className="mt-0.5 text-xs text-dark-500">{item.desc}</p>
+                <h4 className="font-bold text-dark-900 dark:text-dark-50">{item.title}</h4>
+                <p className="mt-0.5 text-xs text-dark-500 dark:text-dark-400">{item.desc}</p>
               </div>
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => openEdit(item)}
-                  className="rounded p-1.5 text-dark-400 hover:bg-blue-50 hover:text-blue-600"
+                  className="rounded p-1.5 text-dark-400 hover:bg-blue-50 dark:bg-blue-900/30 hover:text-blue-600"
                   title="Düzenle"
                 >
                   <Edit size={14} />
                 </button>
                 <button
                   onClick={() => setDeleteTarget(item)}
-                  className="rounded p-1.5 text-dark-400 hover:bg-red-50 hover:text-red-600"
+                  className="rounded p-1.5 text-dark-400 hover:bg-red-50 dark:bg-red-900/30 hover:text-red-600"
                   title="Sil"
                 >
                   <Trash2 size={14} />
@@ -225,8 +225,8 @@ export default function AdminGuvenRozetleriPage() {
       </div>
 
       {items.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white py-20">
-          <p className="text-dark-500">Henüz rozet yok.</p>
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 py-20">
+          <p className="text-dark-500 dark:text-dark-400">Henüz rozet yok.</p>
         </div>
       )}
 

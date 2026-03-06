@@ -53,6 +53,11 @@ export const brands: Brand[] = [
 // ==========================================
 // PRODUCTS
 // ==========================================
+// Helper: Flash sale bitiş zamanları (demo: her zaman gelecekte)
+function flashSaleEnd(hoursFromNow: number): string {
+  return new Date(Date.now() + hoursFromNow * 60 * 60 * 1000).toISOString();
+}
+
 export const products: Product[] = [
   // --- ALARM SİSTEMLERİ (cat-1) ---
   {
@@ -73,6 +78,7 @@ export const products: Product[] = [
     shipping_type: "kargo",
     is_active: true,
     deleted_at: null,
+    sale_ends_at: flashSaleEnd(6), // 6 saat sonra biter
     short_desc: "Hub, hareket sensörü, kapı sensörü ve uzaktan kumanda dahil profesyonel kablosuz alarm seti.",
     description: "Ajax StarterKit, evinizi veya iş yerinizi koruma altına alan profesyonel kablosuz güvenlik sistemidir. Jeweller kablosuz protokolü ile 2000 metreye kadar iletişim mesafesi sunar. Akıllı telefon uygulaması üzerinden anlık bildirimler alabilir, sistemi uzaktan kontrol edebilirsiniz. Pil ömrü 7 yıla kadar uzun süre dayanır.",
     specs: { "İletişim": "Jeweller 868 MHz", "Menzil": "2000m açık alan", "Pil Ömrü": "7 yıl", "Sensör Sayısı": "100 adede kadar", "Uygulamalar": "iOS / Android", "Bağlantı": "Ethernet + 2G/4G" },
@@ -125,6 +131,7 @@ export const products: Product[] = [
     shipping_type: "kargo",
     is_active: true,
     deleted_at: null,
+    sale_ends_at: flashSaleEnd(14), // 14 saat sonra biter
     short_desc: "Evcil hayvan dostu kablosuz hareket sensörü. 12m algılama mesafesi.",
     description: "Ajax MotionProtect, 20 kg'a kadar evcil hayvanları görmezden gelen akıllı hareket dedektörüdür. SmartDetect algoritması sayesinde yanlış alarmları en aza indirir. 12 metre algılama mesafesi ve 88.5° görüş açısı ile geniş alanları kapsar.",
     specs: { "Algılama": "12m", "Görüş Açısı": "88.5°", "Pil": "CR123A (5 yıl)", "Evcil Hayvan": "20 kg'a kadar", "Montaj": "Duvar / tavan", "Boyut": "110×65×50mm" },
@@ -231,6 +238,7 @@ export const products: Product[] = [
     shipping_type: "kurulum",
     is_active: true,
     deleted_at: null,
+    sale_ends_at: flashSaleEnd(10), // 10 saat sonra biter
     short_desc: "4 adet 2MP IP kamera + NVR + HDD dahil komple güvenlik kamera seti.",
     description: "Hikvision 4 kameralı IP güvenlik seti ile ev veya iş yerinizi 7/24 izleyin. 2MP Full HD çözünürlükte kristal netliğinde görüntü. 30 metre gece görüşü, IP67 su geçirmezlik. 1TB HDD dahil, 4 kanal NVR kayıt cihazı ile birlikte.",
     specs: { "Çözünürlük": "2MP (1080p)", "Kamera Sayısı": "4", "NVR": "4 Kanal", "HDD": "1TB", "Gece Görüşü": "30m IR", "Su Geçirmezlik": "IP67" },
@@ -361,6 +369,7 @@ export const products: Product[] = [
     shipping_type: "kargo",
     is_active: true,
     deleted_at: null,
+    sale_ends_at: flashSaleEnd(3), // 3 saat sonra biter (acil!)
     short_desc: "4MP ColorVu kamera. Gece bile renkli görüntü, sıcak LED aydınlatma.",
     description: "Hikvision ColorVu teknolojisi ile gece bile renkli görüntü elde edin. F1.0 geniş diyafram ve sıcak LED aydınlatma kombinasyonu ile 7/24 renkli izleme. Kişi ve araç tespiti ile akıllı güvenlik.",
     specs: { "Çözünürlük": "4MP", "ColorVu": "F1.0 sensör", "LED": "30m sıcak ışık", "WDR": "130dB", "Lens": "2.8mm", "Koruma": "IP67" },
@@ -691,14 +700,6 @@ export const products: Product[] = [
 // HERO SLIDES
 // ==========================================
 export const heroSlides: HeroSlide[] = [
-  {
-    id: "hero-vip",
-    title: "Yılın Güvenlik Uzmanı Ödülü Sahibi",
-    subtitle: "Fiyatcim.com kurucusu, güvenlik sektörünün efsanevi lideri. 7/24 bizzat sahada, müşteri memnuniyeti %100. Kendisine ulaşmak için hemen arayın!",
-    image: "/images/hero/hero-vip.jpg",
-    cta_text: "Hemen Ara 📞",
-    cta_link: "/ara",
-  },
   {
     id: "hero-1",
     title: "Güvenlik Teknolojilerinde En İyi Fiyatlar",

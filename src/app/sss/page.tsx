@@ -16,7 +16,7 @@ export default async function FAQPage() {
   }));
 
   return (
-    <div className="bg-dark-50 pb-16">
+    <div className="bg-dark-50 dark:bg-dark-900 pb-16">
       {faqs.length > 0 && (
         <JsonLd data={buildFAQSchema(faqs.map((f) => ({ question: f.question, answer: f.answer })))} />
       )}
@@ -26,8 +26,8 @@ export default async function FAQPage() {
 
       <div className="container mx-auto px-4">
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-bold text-dark-900 md:text-3xl">Sıkça Sorulan Sorular</h1>
-          <p className="mx-auto mt-2 max-w-xl text-dark-500">
+          <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50 md:text-3xl">Sıkça Sorulan Sorular</h1>
+          <p className="mx-auto mt-2 max-w-xl text-dark-500 dark:text-dark-400">
             Merak ettiğiniz soruların yanıtlarını burada bulabilirsiniz.
           </p>
         </div>

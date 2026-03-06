@@ -44,7 +44,7 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
   const initial = (profile?.ad?.[0] || user.email[0] || "U").toUpperCase();
 
   return (
-    <div className="bg-dark-50 pb-16">
+    <div className="bg-dark-50 dark:bg-dark-900 pb-16">
       <div className="container mx-auto px-4 py-4">
         <Breadcrumb items={[{ label: "Hesabım" }]} />
       </div>
@@ -53,17 +53,17 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
         <div className="grid gap-6 lg:grid-cols-4">
           {/* Sidebar */}
           <div className="space-y-2">
-            <div className="rounded-xl border border-dark-100 bg-white p-4">
+            <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-4">
               {/* User Info */}
               <div className="mb-4 flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-sm font-bold text-primary-600">
                   {initial}
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-dark-900">
+                  <p className="truncate text-sm font-semibold text-dark-900 dark:text-dark-50">
                     {profile?.ad} {profile?.soyad}
                   </p>
-                  <p className="truncate text-xs text-dark-500">{user.email}</p>
+                  <p className="truncate text-xs text-dark-500 dark:text-dark-400">{user.email}</p>
                 </div>
               </div>
 
@@ -83,8 +83,8 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
                             href={item.href}
                             className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${
                               isActive
-                                ? "bg-primary-50 font-semibold text-primary-600"
-                                : "text-dark-700 hover:bg-dark-50"
+                                ? "bg-primary-50 dark:bg-primary-900/30 font-semibold text-primary-600"
+                                : "text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:bg-dark-800"
                             }`}
                           >
                             <item.icon size={16} />

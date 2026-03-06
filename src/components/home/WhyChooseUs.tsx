@@ -37,7 +37,7 @@ export default function WhyChooseUs() {
   }, []);
 
   return (
-    <section className="bg-dark-50 py-12 sm:py-16">
+    <section className="bg-dark-50 py-12 sm:py-16 dark:bg-dark-950">
       <div className="container-custom">
         <div className="text-center">
           <h2 className="section-title">Neden Fiyatcim?</h2>
@@ -50,14 +50,14 @@ export default function WhyChooseUs() {
             return (
               <div
                 key={f.id}
-                className="flex gap-4 rounded-xl border border-dark-100 bg-white p-6 transition-shadow hover:shadow-md"
+                className="flex gap-4 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6 transition-shadow hover:shadow-md dark:border-dark-700 dark:bg-dark-800"
               >
-                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-600 dark:bg-primary-900/30">
                   <IconComp size={28} />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-dark-900">{f.title}</h3>
-                  <p className="mt-1 text-sm leading-relaxed text-dark-500">{f.desc}</p>
+                  <h3 className="text-base font-bold text-dark-900 dark:text-dark-50">{f.title}</h3>
+                  <p className="mt-1 text-sm leading-relaxed text-dark-500 dark:text-dark-400">{f.desc}</p>
                 </div>
               </div>
             );

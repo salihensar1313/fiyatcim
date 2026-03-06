@@ -44,6 +44,7 @@ export interface Product {
   specs: Record<string, string>;
   images: string[];
   seo_title: string;
+  sale_ends_at?: string; // ISO date — flash sale bitis zamani
   seo_desc: string;
   created_at: string;
   updated_at?: string;
@@ -164,6 +165,7 @@ export interface Review {
   user_id: string;
   rating: number;
   comment: string;
+  images?: string[]; // base64 fotoğraflar (max 3)
   is_approved: boolean;
   created_at: string;
   helpful_yes: number;
@@ -208,6 +210,28 @@ export interface SiteSetting {
 }
 
 // ==========================================
+// PRICE HISTORY TYPES
+// ==========================================
+
+export interface PriceHistoryEntry {
+  productId: string;
+  price: number;
+  priceUsd: number;
+  recordedAt: string; // ISO date string
+}
+
+export interface PriceStats {
+  lowest: number;
+  highest: number;
+  average: number;
+  current: number;
+  change7d: number | null; // percentage change in last 7 days
+  change30d: number | null;
+  lowestDate: string | null;
+  highestDate: string | null;
+}
+
+// ==========================================
 // CART TYPES
 // ==========================================
 
@@ -216,6 +240,9 @@ export interface CartItem {
   qty: number;
   // Enriched from product data
   product?: Product;
+  // Gift wrap
+  giftWrap?: boolean;
+  giftMessage?: string;
 }
 
 export interface CartState {

@@ -9,12 +9,13 @@ import ReviewsTab from "@/components/product/tabs/ReviewsTab";
 import QATab from "@/components/product/tabs/QATab";
 import InstallmentTab from "@/components/product/tabs/InstallmentTab";
 import ReturnPolicyTab from "@/components/product/tabs/ReturnPolicyTab";
+import PriceHistoryChart from "@/components/product/PriceHistoryChart";
 
 interface ProductTabsProps {
   product: Product;
 }
 
-type TabKey = "description" | "specs" | "reviews" | "qa" | "installment" | "returns";
+type TabKey = "description" | "specs" | "reviews" | "qa" | "installment" | "returns" | "price-history";
 
 export default function ProductTabs({ product }: ProductTabsProps) {
   const { reviews } = useProductReviews(product.id);
@@ -24,7 +25,7 @@ export default function ProductTabs({ product }: ProductTabsProps) {
   const getInitialTab = (): TabKey => {
     if (typeof window !== "undefined") {
       const hash = window.location.hash.replace("#", "") as TabKey;
-      const valid: TabKey[] = ["description", "specs", "reviews", "qa", "installment", "returns"];
+      const valid: TabKey[] = ["description", "specs", "reviews", "qa", "installment", "returns", "price-history"];
       if (valid.includes(hash)) return hash;
     }
     return "description";
@@ -42,6 +43,7 @@ export default function ProductTabs({ product }: ProductTabsProps) {
     { key: "qa", label: "Soru Cevap", badge: questions.length },
     { key: "installment", label: "Taksit Seçenekleri" },
     { key: "returns", label: "İade ve Değişim" },
+    { key: "price-history", label: "Fiyat Geçmişi" },
   ];
 
   const checkScroll = () => {
@@ -90,7 +92,7 @@ export default function ProductTabs({ product }: ProductTabsProps) {
               className={`relative shrink-0 px-4 py-3.5 text-sm font-semibold transition-colors sm:px-6 ${
                 activeTab === tab.key
                   ? "border-b-2 border-primary-600 text-primary-600"
-                  : "text-dark-500 hover:text-dark-700"
+                  : "text-dark-500 dark:text-dark-400 hover:text-dark-700 dark:text-dark-200"
               }`}
             >
               <span className="flex items-center gap-1.5">
@@ -100,7 +102,7 @@ export default function ProductTabs({ product }: ProductTabsProps) {
                     className={`inline-flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-[10px] font-bold ${
                       activeTab === tab.key
                         ? "bg-primary-600 text-white"
-                        : "bg-dark-200 text-dark-600"
+                        : "bg-dark-200 text-dark-600 dark:text-dark-300"
                     }`}
                   >
                     {tab.badge}
@@ -121,7 +123,7 @@ export default function ProductTabs({ product }: ProductTabsProps) {
         {activeTab === "description" && (
           <div className="space-y-6">
             <div className="prose max-w-none">
-              <p className="whitespace-pre-line leading-relaxed text-dark-700">
+              <p className="whitespace-pre-line leading-relaxed text-dark-700 dark:text-dark-200">
                 {product.description}
               </p>
             </div>
@@ -164,14 +166,14 @@ export default function ProductTabs({ product }: ProductTabsProps) {
             {/* Key Features */}
             {Object.keys(product.specs).length > 0 && (
               <div>
-                <h3 className="mb-3 text-sm font-semibold text-dark-900">Öne Çıkan Özellikler</h3>
+                <h3 className="mb-3 text-sm font-semibold text-dark-900 dark:text-dark-50">Öne Çıkan Özellikler</h3>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {Object.entries(product.specs)
                     .slice(0, 6)
                     .map(([key, value]) => (
                       <div key={key} className="flex items-center gap-2">
                         <CheckCircle size={14} className="shrink-0 text-primary-600" />
-                        <span className="text-sm text-dark-700">
+                        <span className="text-sm text-dark-700 dark:text-dark-200">
                           <span className="font-medium">{key}:</span> {value}
                         </span>
                       </div>
@@ -187,9 +189,9 @@ export default function ProductTabs({ product }: ProductTabsProps) {
             <table className="w-full">
               <tbody>
                 {Object.entries(product.specs).map(([key, value], index) => (
-                  <tr key={key} className={index % 2 === 0 ? "bg-dark-50" : "bg-white"}>
-                    <td className="w-1/3 px-4 py-3 text-sm font-semibold text-dark-700">{key}</td>
-                    <td className="px-4 py-3 text-sm text-dark-600">{value}</td>
+                  <tr key={key} className={index % 2 === 0 ? "bg-dark-50" : "bg-white dark:bg-dark-800"}>
+                    <td className="w-1/3 px-4 py-3 text-sm font-semibold text-dark-700 dark:text-dark-200">{key}</td>
+                    <td className="px-4 py-3 text-sm text-dark-600 dark:text-dark-300">{value}</td>
                   </tr>
                 ))}
               </tbody>
@@ -201,6 +203,13 @@ export default function ProductTabs({ product }: ProductTabsProps) {
         {activeTab === "qa" && <QATab product={product} />}
         {activeTab === "installment" && <InstallmentTab product={product} />}
         {activeTab === "returns" && <ReturnPolicyTab />}
+        {activeTab === "price-history" && (
+          <PriceHistoryChart
+            productId={product.id}
+            currentPrice={product.sale_price || product.price}
+            compact
+          />
+        )}
       </div>
     </div>
   );

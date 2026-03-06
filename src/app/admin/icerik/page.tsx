@@ -58,8 +58,8 @@ export default function AdminContentPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-dark-900">İçerik Yönetimi</h1>
-        <p className="text-sm text-dark-500">Ana sayfa bölümleri, blog, slider ve daha fazlasını düzenleyin</p>
+        <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">İçerik Yönetimi</h1>
+        <p className="text-sm text-dark-500 dark:text-dark-400">Ana sayfa bölümleri, blog, slider ve daha fazlasını düzenleyin</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -67,13 +67,13 @@ export default function AdminContentPage() {
           <Link
             key={section.label}
             href={section.href}
-            className="cursor-pointer rounded-xl border border-dark-100 bg-white p-6 transition-shadow hover:shadow-md"
+            className="cursor-pointer rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6 transition-shadow hover:shadow-md"
           >
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-50 text-primary-600">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-50 dark:bg-primary-900/30 text-primary-600">
               <section.icon size={24} />
             </div>
-            <h3 className="font-bold text-dark-900">{section.label}</h3>
-            <p className="mt-1 text-sm text-dark-500">{section.desc}</p>
+            <h3 className="font-bold text-dark-900 dark:text-dark-50">{section.label}</h3>
+            <p className="mt-1 text-sm text-dark-500 dark:text-dark-400">{section.desc}</p>
           </Link>
         ))}
       </div>

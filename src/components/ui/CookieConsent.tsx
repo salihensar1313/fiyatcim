@@ -32,13 +32,13 @@ export default function CookieConsent() {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-dark-200 bg-white p-4 shadow-2xl sm:p-6">
+    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-dark-200 bg-white dark:bg-dark-800 p-4 shadow-2xl sm:p-6 dark:border-dark-700 dark:bg-dark-800">
       <div className="container mx-auto flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-start gap-3">
           <Cookie size={24} className="mt-0.5 shrink-0 text-primary-600" />
           <div>
-            <p className="text-sm font-medium text-dark-900">Çerez Bildirimi</p>
-            <p className="mt-1 text-xs leading-relaxed text-dark-500">
+            <p className="text-sm font-medium text-dark-900 dark:text-dark-50">Çerez Bildirimi</p>
+            <p className="mt-1 text-xs leading-relaxed text-dark-500 dark:text-dark-400">
               Sitemizde deneyiminizi iyileştirmek için çerezler kullanıyoruz.{" "}
               <Link href="/gizlilik" className="text-primary-600 hover:underline">
                 Gizlilik Politikası
@@ -50,7 +50,7 @@ export default function CookieConsent() {
         <div className="flex shrink-0 items-center gap-2">
           <button
             onClick={handleDecline}
-            className="rounded-lg border border-dark-200 px-4 py-2 text-xs font-medium text-dark-600 transition-colors hover:bg-dark-50"
+            className="rounded-lg border border-dark-200 px-4 py-2 text-xs font-medium text-dark-600 dark:text-dark-300 transition-colors hover:bg-dark-50 dark:border-dark-600 dark:text-dark-300 dark:hover:bg-dark-700"
           >
             Sadece Zorunlu
           </button>

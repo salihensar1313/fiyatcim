@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ShoppingCart, Heart, Plus, Minus, Trash2, GitCompareArrows } from "lucide-react";
+import { ShoppingCart, Heart, Plus, Minus, Trash2, GitCompareArrows, Zap } from "lucide-react";
 import type { Product } from "@/types";
 import { getDiscountPercent, getStockStatus } from "@/lib/utils";
 import PriceDisplay from "@/components/ui/PriceDisplay";
@@ -12,6 +12,8 @@ import Rating from "@/components/ui/Rating";
 import { CATEGORY_IMAGES } from "@/lib/constants";
 import { useToast } from "@/components/ui/Toast";
 import { useCompare } from "@/hooks/useCompare";
+import { useCountdown } from "@/hooks/useFlashSale";
+import PriceDropBadge from "./PriceDropBadge";
 
 interface ProductCardProps {
   product: Product;
@@ -27,6 +29,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const inWishlist = isInWishlist(product.id);
   const { toggleCompare, isInCompare, isFull } = useCompare();
   const inCompare = isInCompare(product.id);
+  const flashSale = useCountdown(product.sale_ends_at);
 
   return (
     <div className="card group relative flex flex-col overflow-hidden">
@@ -47,6 +50,13 @@ export default function ProductCard({ product }: ProductCardProps) {
             Son {product.stock} adet!
           </span>
         )}
+        <PriceDropBadge productId={product.id} currentPrice={product.sale_price || product.price} />
+        {flashSale.ready && !flashSale.isExpired && product.sale_ends_at && (
+          <span className="flex items-center gap-1 rounded-full bg-yellow-500 px-2 py-1 text-xs font-bold text-white animate-pulse">
+            <Zap size={12} />
+            {String(flashSale.hours).padStart(2, "0")}:{String(flashSale.minutes).padStart(2, "0")}:{String(flashSale.seconds).padStart(2, "0")}
+          </span>
+        )}
       </div>
 
       {/* Action Buttons */}
@@ -56,7 +66,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             toggleItem(product.id);
             showToast(inWishlist ? "Favorilerden çıkarıldı" : "Favorilere eklendi", inWishlist ? "info" : "success");
           }}
-          className="rounded-full bg-white p-2 shadow-md transition-all hover:scale-110"
+          className="rounded-full bg-white dark:bg-dark-800 p-2 shadow-md transition-all hover:scale-110 dark:bg-dark-700"
         >
           <Heart
             size={18}
@@ -72,7 +82,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             toggleCompare(product.id);
             showToast(inCompare ? "Karşılaştırmadan çıkarıldı" : "Karşılaştırmaya eklendi", inCompare ? "info" : "success");
           }}
-          className="rounded-full bg-white p-2 shadow-md transition-all hover:scale-110"
+          className="rounded-full bg-white dark:bg-dark-800 p-2 shadow-md transition-all hover:scale-110 dark:bg-dark-700"
           title="Karşılaştır"
         >
           <GitCompareArrows
@@ -83,7 +93,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
 
       {/* Product Image */}
-      <Link href={`/urunler/${product.slug}`} className="relative aspect-square overflow-hidden bg-white p-4">
+      <Link href={`/urunler/${product.slug}`} className="relative aspect-square overflow-hidden bg-white dark:bg-dark-800 p-4 dark:bg-dark-700">
         <Image
           src={CATEGORY_IMAGES[product.category_id] || "/images/categories/alarm.png"}
           alt={product.name}
@@ -107,7 +117,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Name */}
         <Link
           href={`/urunler/${product.slug}`}
-          className="mt-1 line-clamp-2 text-sm font-medium text-dark-900 transition-colors hover:text-primary-600"
+          className="mt-1 line-clamp-2 text-sm font-medium text-dark-900 dark:text-dark-50 transition-colors hover:text-primary-600 dark:text-dark-50"
         >
           {product.name}
         </Link>

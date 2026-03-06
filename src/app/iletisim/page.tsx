@@ -17,13 +17,13 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="bg-dark-50 pb-16">
+    <div className="bg-dark-50 dark:bg-dark-900 pb-16">
       <div className="container mx-auto px-4 py-4">
         <Breadcrumb items={[{ label: "İletişim" }]} />
       </div>
 
       <div className="container mx-auto px-4">
-        <h1 className="mb-8 text-center text-2xl font-bold text-dark-900 md:text-3xl">İletişim</h1>
+        <h1 className="mb-8 text-center text-2xl font-bold text-dark-900 dark:text-dark-50 md:text-3xl">İletişim</h1>
 
         <div className="grid gap-8 lg:grid-cols-3">
           {/* Contact Info */}
@@ -34,13 +34,13 @@ export default function ContactPage() {
               { icon: MapPin, label: "Adres", value: CONTACT.address },
               { icon: Clock, label: "Çalışma Saatleri", value: CONTACT.workingHours },
             ].map((item) => (
-              <div key={item.label} className="flex gap-4 rounded-xl border border-dark-100 bg-white p-4">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+              <div key={item.label} className="flex gap-4 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-50 dark:bg-primary-900/30 text-primary-600">
                   <item.icon size={18} />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-dark-900">{item.label}</p>
-                  <p className="mt-0.5 text-sm text-dark-600">{item.value}</p>
+                  <p className="text-sm font-semibold text-dark-900 dark:text-dark-50">{item.label}</p>
+                  <p className="mt-0.5 text-sm text-dark-600 dark:text-dark-300">{item.value}</p>
                 </div>
               </div>
             ))}
@@ -48,11 +48,11 @@ export default function ContactPage() {
 
           {/* Contact Form */}
           <div className="lg:col-span-2">
-            <div className="rounded-xl border border-dark-100 bg-white p-6">
-              <h2 className="mb-4 text-lg font-bold text-dark-900">Bize Yazın</h2>
+            <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+              <h2 className="mb-4 text-lg font-bold text-dark-900 dark:text-dark-50">Bize Yazın</h2>
 
               {sent ? (
-                <div className="rounded-lg bg-green-50 p-6 text-center">
+                <div className="rounded-lg bg-green-50 dark:bg-green-900/30 p-6 text-center">
                   <p className="font-semibold text-green-700">Mesajınız gönderildi!</p>
                   <p className="mt-1 text-sm text-green-600">En kısa sürede size dönüş yapacağız.</p>
                 </div>
@@ -60,7 +60,7 @@ export default function ContactPage() {
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="mb-1 block text-sm font-medium text-dark-700">Ad Soyad</label>
+                      <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Ad Soyad</label>
                       <input
                         type="text"
                         required
@@ -70,7 +70,7 @@ export default function ContactPage() {
                       />
                     </div>
                     <div>
-                      <label className="mb-1 block text-sm font-medium text-dark-700">E-posta</label>
+                      <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">E-posta</label>
                       <input
                         type="email"
                         required
@@ -82,7 +82,7 @@ export default function ContactPage() {
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="mb-1 block text-sm font-medium text-dark-700">Telefon</label>
+                      <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Telefon</label>
                       <input
                         type="tel"
                         value={formData.phone}
@@ -91,7 +91,7 @@ export default function ContactPage() {
                       />
                     </div>
                     <div>
-                      <label className="mb-1 block text-sm font-medium text-dark-700">Konu</label>
+                      <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Konu</label>
                       <select
                         value={formData.subject}
                         onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
@@ -107,7 +107,7 @@ export default function ContactPage() {
                     </div>
                   </div>
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-dark-700">Mesajınız</label>
+                    <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Mesajınız</label>
                     <textarea
                       required
                       rows={5}

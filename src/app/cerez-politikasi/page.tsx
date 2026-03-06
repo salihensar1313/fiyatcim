@@ -10,27 +10,27 @@ export const metadata: Metadata = {
 
 export default function CookiePolicyPage() {
   return (
-    <div className="bg-dark-50 pb-16">
+    <div className="bg-dark-50 dark:bg-dark-900 pb-16">
       <div className="container mx-auto px-4 py-4">
         <Breadcrumb items={[{ label: "Cerez Politikasi" }]} />
       </div>
       <div className="container mx-auto px-4">
-        <div className="mx-auto max-w-3xl rounded-xl border border-dark-100 bg-white p-8">
-          <h1 className="mb-6 text-2xl font-bold text-dark-900">Cerez Politikasi</h1>
-          <div className="space-y-4 text-sm leading-relaxed text-dark-600">
+        <div className="mx-auto max-w-3xl rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-8">
+          <h1 className="mb-6 text-2xl font-bold text-dark-900 dark:text-dark-50">Cerez Politikasi</h1>
+          <div className="space-y-4 text-sm leading-relaxed text-dark-600 dark:text-dark-300">
             <p>
               Fiyatcim.com olarak, web sitemizde cerezler (cookies) kullanmaktayiz. Bu politika, cerezlerin ne oldugunu,
               nasil kullanildigini ve tercihlerinizi nasil yonetebileceginizi aciklar.
             </p>
 
-            <h2 className="text-lg font-bold text-dark-900">Cerez Nedir?</h2>
+            <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">Cerez Nedir?</h2>
             <p>
               Cerezler, web sitelerinin tarayiciniza gonderdigi kucuk metin dosyalaridir. Tarayiciniz bu dosyalari
               cihazinizda saklar ve sonraki ziyaretlerinizde siteye geri gonderir. Cerezler, siteyi daha verimli
               kullanmanizi saglar.
             </p>
 
-            <h2 className="text-lg font-bold text-dark-900">Kullanilan Cerez Turleri</h2>
+            <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">Kullanilan Cerez Turleri</h2>
             <ul className="ml-4 list-disc space-y-1">
               <li>
                 <strong>Zorunlu Cerezler:</strong> Sitenin temel islevlerinin calismasi icin gereklidir. Sepet, oturum
@@ -50,7 +50,7 @@ export default function CookiePolicyPage() {
               </li>
             </ul>
 
-            <h2 className="text-lg font-bold text-dark-900">Cerez Tercihlerinizi Yonetme</h2>
+            <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">Cerez Tercihlerinizi Yonetme</h2>
             <p>
               Tarayici ayarlarinizdan cerezleri silebilir veya engelleyebilirsiniz. Ancak zorunlu cerezlerin
               engellenmesi sitenin duzgun calismasini engelleyebilir.
@@ -62,13 +62,13 @@ export default function CookiePolicyPage() {
               <li>Edge: Ayarlar &gt; Gizlilik &gt; Cerezler</li>
             </ul>
 
-            <h2 className="text-lg font-bold text-dark-900">Veri Paylasimi</h2>
+            <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">Veri Paylasimi</h2>
             <p>
               Cerezler araciligiyla toplanan veriler ucuncu taraflarla yalnizca anonim istatistik amacli paylasilir.
               Kisisel verileriniz cerezler araciligiyla ucuncu taraflara satilmaz veya devredilmez.
             </p>
 
-            <h2 className="text-lg font-bold text-dark-900">Iletisim</h2>
+            <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">Iletisim</h2>
             <p>
               Cerez politikamiz hakkinda sorulariniz icin destek@fiyatcim.com adresinden bize ulasabilirsiniz.
             </p>

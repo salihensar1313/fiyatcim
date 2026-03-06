@@ -14,6 +14,7 @@ import { CurrencyProvider } from "@/context/CurrencyContext";
 import { ToastProvider } from "@/components/ui/Toast";
 import CookieConsent from "@/components/ui/CookieConsent";
 import GoogleAnalytics from "@/components/seo/GoogleAnalytics";
+import { ThemeProvider } from "@/context/ThemeContext";
 import JsonLd, { buildOrganizationSchema, buildWebSiteSchema, buildLocalBusinessSchema } from "@/components/seo/JsonLd";
 
 const inter = Inter({
@@ -24,11 +25,18 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  manifest: "/manifest.json",
+  themeColor: "#DC2626",
   title: {
     default: SITE_FULL_NAME,
     template: "%s | Fiyatcim",
   },
   description: SITE_DESCRIPTION,
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Fiyatcim",
+  },
   robots: {
     index: true,
     follow: true,
@@ -71,12 +79,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr" className={inter.variable}>
+    <html lang="tr" className={inter.variable} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("fiyatcim_theme");if(t==="dark"||(t!=="light"&&matchMedia("(prefers-color-scheme:dark)").matches))document.documentElement.classList.add("dark")}catch(e){}})()`,
+          }}
+        />
+      </head>
       <body className="flex min-h-screen flex-col font-sans antialiased">
         <GoogleAnalytics />
         <JsonLd data={buildOrganizationSchema()} />
         <JsonLd data={buildWebSiteSchema()} />
         <JsonLd data={buildLocalBusinessSchema()} />
+        <ThemeProvider>
         <CurrencyProvider>
         <AuthProvider>
           <ProductProvider>
@@ -97,6 +113,7 @@ export default function RootLayout({
           </ProductProvider>
         </AuthProvider>
         </CurrencyProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

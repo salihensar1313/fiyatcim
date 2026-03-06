@@ -6,6 +6,7 @@ import type { CartItem as CartItemType } from "@/types";
 import { formatPrice, getEffectivePrice, getDiscountPercent } from "@/lib/utils";
 import { useCart } from "@/context/CartContext";
 import PriceDisplay from "@/components/ui/PriceDisplay";
+import GiftWrapOption from "./GiftWrapOption";
 
 interface CartItemProps {
   item: CartItemType;
@@ -22,7 +23,7 @@ export default function CartItem({ item }: CartItemProps) {
   const lineTotal = effectivePrice * item.qty;
 
   return (
-    <div className="flex gap-4 rounded-xl border border-dark-100 bg-white p-4">
+    <div className="flex gap-4 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-4">
       {/* Image */}
       <Link href={`/urunler/${product.slug}`} className="shrink-0">
         <div className="flex h-24 w-24 items-center justify-center rounded-lg bg-dark-50">
@@ -36,7 +37,7 @@ export default function CartItem({ item }: CartItemProps) {
           <div>
             <Link
               href={`/urunler/${product.slug}`}
-              className="text-sm font-semibold text-dark-900 hover:text-primary-600"
+              className="text-sm font-semibold text-dark-900 dark:text-dark-50 hover:text-primary-600"
             >
               {product.name}
             </Link>
@@ -72,21 +73,28 @@ export default function CartItem({ item }: CartItemProps) {
             <div className="flex items-center rounded-lg border border-dark-200">
               <button
                 onClick={() => updateQuantity(product.id, item.qty - 1)}
-                className="px-2 py-1.5 text-dark-600 hover:text-dark-900"
+                className="px-2 py-1.5 text-dark-600 dark:text-dark-300 hover:text-dark-900 dark:text-dark-50"
               >
                 <Minus size={14} />
               </button>
               <span className="min-w-[32px] text-center text-sm font-semibold">{item.qty}</span>
               <button
                 onClick={() => updateQuantity(product.id, Math.min(item.qty + 1, product.stock))}
-                className="px-2 py-1.5 text-dark-600 hover:text-dark-900"
+                className="px-2 py-1.5 text-dark-600 dark:text-dark-300 hover:text-dark-900 dark:text-dark-50"
               >
                 <Plus size={14} />
               </button>
             </div>
-            <span className="text-sm font-bold text-dark-900">{formatPrice(lineTotal)}</span>
+            <span className="text-sm font-bold text-dark-900 dark:text-dark-50">{formatPrice(lineTotal)}</span>
           </div>
         </div>
+
+        {/* Gift Wrap */}
+        <GiftWrapOption
+          productId={product.id}
+          isWrapped={item.giftWrap}
+          message={item.giftMessage}
+        />
       </div>
     </div>
   );

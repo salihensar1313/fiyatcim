@@ -29,28 +29,28 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
 
       {/* Menu */}
       <div
-        className={`fixed left-0 top-0 z-50 flex h-full w-80 max-w-[85vw] transform flex-col bg-white shadow-2xl transition-transform duration-300 ${
+        className={`fixed left-0 top-0 z-50 flex h-full w-80 max-w-[85vw] transform flex-col bg-white dark:bg-dark-800 shadow-2xl transition-transform duration-300 dark:bg-dark-800 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-dark-100 px-4 py-4">
-          <span className="text-lg font-bold text-dark-900">Menü</span>
+        <div className="flex items-center justify-between border-b border-dark-100 px-4 py-4 dark:border-dark-700">
+          <span className="text-lg font-bold text-dark-900 dark:text-dark-50">Menü</span>
           <button
             onClick={onClose}
-            className="rounded-lg p-2 text-dark-500 hover:bg-dark-50"
+            className="rounded-lg p-2 text-dark-500 dark:text-dark-400 hover:bg-dark-50"
           >
             <X size={20} />
           </button>
         </div>
 
         {/* User Actions */}
-        <div className="border-b border-dark-100 px-4 py-3">
+        <div className="border-b border-dark-100 px-4 py-3 dark:border-dark-700">
           <div className="flex items-center gap-2">
             <Link
               href="/hesabim"
               onClick={onClose}
-              className="flex flex-1 items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-dark-700 hover:bg-dark-50"
+              className="flex flex-1 items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:text-dark-200 dark:hover:bg-dark-700"
             >
               <User size={18} />
               Hesabım
@@ -58,7 +58,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             <Link
               href="/sepet"
               onClick={onClose}
-              className="relative flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-dark-700 hover:bg-dark-50"
+              className="relative flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:text-dark-200 dark:hover:bg-dark-700"
             >
               <ShoppingCart size={18} />
               Sepet
@@ -71,7 +71,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             <Link
               href="/hesabim/favorilerim"
               onClick={onClose}
-              className="relative flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-dark-700 hover:bg-dark-50"
+              className="relative flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:text-dark-200 dark:hover:bg-dark-700"
             >
               <Heart size={18} />
               {wishlistCount > 0 && (
@@ -93,7 +93,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               key={link.key}
               href={link.href}
               onClick={onClose}
-              className="block rounded-lg px-3 py-3 font-medium text-dark-700 hover:bg-dark-50"
+              className="block rounded-lg px-3 py-3 font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:text-dark-200 dark:hover:bg-dark-700"
             >
               {link.label}
             </Link>
@@ -105,36 +105,36 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           <Link
             href="/hakkimizda"
             onClick={onClose}
-            className="block rounded-lg px-3 py-2.5 text-sm text-dark-600 hover:bg-dark-50"
+            className="block rounded-lg px-3 py-2.5 text-sm text-dark-600 dark:text-dark-300 hover:bg-dark-50 dark:text-dark-300 dark:hover:bg-dark-700"
           >
             Hakkımızda
           </Link>
           <Link
             href="/blog"
             onClick={onClose}
-            className="block rounded-lg px-3 py-2.5 text-sm text-dark-600 hover:bg-dark-50"
+            className="block rounded-lg px-3 py-2.5 text-sm text-dark-600 dark:text-dark-300 hover:bg-dark-50 dark:text-dark-300 dark:hover:bg-dark-700"
           >
             Blog
           </Link>
           <Link
             href="/iletisim"
             onClick={onClose}
-            className="block rounded-lg px-3 py-2.5 text-sm text-dark-600 hover:bg-dark-50"
+            className="block rounded-lg px-3 py-2.5 text-sm text-dark-600 dark:text-dark-300 hover:bg-dark-50 dark:text-dark-300 dark:hover:bg-dark-700"
           >
             İletişim
           </Link>
           <Link
             href="/sss"
             onClick={onClose}
-            className="block rounded-lg px-3 py-2.5 text-sm text-dark-600 hover:bg-dark-50"
+            className="block rounded-lg px-3 py-2.5 text-sm text-dark-600 dark:text-dark-300 hover:bg-dark-50 dark:text-dark-300 dark:hover:bg-dark-700"
           >
             SSS
           </Link>
         </nav>
 
         {/* Contact */}
-        <div className="border-t border-dark-100 px-4 py-4">
-          <p className="text-xs font-medium text-dark-500">İletişim</p>
+        <div className="border-t border-dark-100 px-4 py-4 dark:border-dark-700">
+          <p className="text-xs font-medium text-dark-500 dark:text-dark-400">İletişim</p>
           <a
             href={`mailto:${CONTACT.email}`}
             className="mt-1 block text-sm font-medium text-primary-600 hover:underline"

@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
-  Search,
   ShoppingCart,
   User,
   Menu,
@@ -23,6 +22,8 @@ import { useWishlist } from "@/context/WishlistContext";
 import { useCurrency } from "@/context/CurrencyContext";
 import MobileMenu from "./MobileMenu";
 import NotificationBell from "@/components/ui/NotificationBell";
+import SearchAutocomplete from "./SearchAutocomplete";
+import DarkModeToggle from "@/components/ui/DarkModeToggle";
 
 const MEGA_MENU_DATA = [
   {
@@ -78,7 +79,6 @@ const MEGA_MENU_DATA = [
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [activeMega, setActiveMega] = useState<string | null>(null);
   const megaTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pathname = usePathname();
@@ -106,13 +106,6 @@ export default function Header() {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, [handleScroll]);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      window.location.href = `/urunler?search=${encodeURIComponent(searchQuery.trim())}`;
-    }
-  };
 
   const handleMegaEnter = (key: string) => {
     if (megaTimeoutRef.current) clearTimeout(megaTimeoutRef.current);
@@ -149,33 +142,16 @@ export default function Header() {
             {/* Exchange Rate Badge */}
             <div className="hidden items-center gap-1.5 rounded-md bg-dark-800 px-3 py-1.5 text-xs lg:flex">
               <span className="font-medium text-dark-400">$1</span>
-              <span className="text-dark-500">=</span>
+              <span className="text-dark-500 dark:text-dark-400">=</span>
               <span className="font-bold text-green-400">
                 {currencyLoading ? "..." : `₺${usdTry.toFixed(2)}`}
               </span>
             </div>
 
             {/* Search - Desktop */}
-            <form
-              onSubmit={handleSearch}
-              className="hidden flex-1 items-center lg:flex lg:max-w-xl"
-            >
-              <div className="relative w-full">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Ürün, marka veya kategori ara..."
-                  className="w-full rounded-lg border border-dark-600 bg-dark-800 py-2.5 pl-4 pr-12 text-sm text-white placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
-                />
-                <button
-                  type="submit"
-                  className="absolute right-1 top-1/2 -translate-y-1/2 rounded-md bg-primary-600 p-2 text-white transition-colors hover:bg-primary-700"
-                >
-                  <Search size={16} />
-                </button>
-              </div>
-            </form>
+            <div className="hidden flex-1 lg:block lg:max-w-xl">
+              <SearchAutocomplete />
+            </div>
 
             {/* Right Icons */}
             <div className="flex items-center gap-1 sm:gap-2">
@@ -191,6 +167,9 @@ export default function Header() {
                   </span>
                 )}
               </Link>
+
+              {/* Dark Mode Toggle */}
+              <DarkModeToggle />
 
               {/* Notifications */}
               <NotificationBell />
@@ -221,21 +200,7 @@ export default function Header() {
 
         {/* Mobile Search */}
         <div className="bg-dark-800 px-4 py-2 lg:hidden">
-          <form onSubmit={handleSearch} className="relative">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Ürün ara..."
-              className="w-full rounded-lg border border-dark-600 bg-dark-700 py-2 pl-4 pr-10 text-sm text-white placeholder-dark-400 focus:border-primary-500 focus:outline-none"
-            />
-            <button
-              type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-dark-400"
-            >
-              <Search size={18} />
-            </button>
-          </form>
+          <SearchAutocomplete isMobile />
         </div>
 
         {/* Red Navigation Bar - Desktop with Mega Menu */}
@@ -261,7 +226,7 @@ export default function Header() {
                 {/* Mega dropdown */}
                 {activeMega === megaItem.key && (
                   <div
-                    className="absolute left-0 top-full z-40 w-72 rounded-b-xl border border-t-0 border-dark-100 bg-white py-3 shadow-xl"
+                    className="absolute left-0 top-full z-40 w-72 rounded-b-xl border border-t-0 border-dark-100 bg-white dark:bg-dark-800 py-3 shadow-xl dark:border-dark-700 dark:bg-dark-800"
                     onMouseEnter={() => handleMegaEnter(megaItem.key)}
                     onMouseLeave={handleMegaLeave}
                   >
@@ -270,18 +235,18 @@ export default function Header() {
                       <megaItem.icon size={18} className="text-primary-600" />
                       <Link
                         href={megaItem.href}
-                        className="text-sm font-bold text-dark-900 hover:text-primary-600"
+                        className="text-sm font-bold text-dark-900 dark:text-dark-50 hover:text-primary-600 dark:text-dark-50"
                       >
                         Tümünü Gör
                       </Link>
                     </div>
-                    <div className="mx-4 mb-2 h-px bg-dark-100" />
+                    <div className="mx-4 mb-2 h-px bg-dark-100 dark:bg-dark-700" />
                     {/* Sub-items */}
                     {megaItem.items.map((sub) => (
                       <Link
                         key={sub.label}
                         href={sub.href}
-                        className="block px-4 py-2 text-sm text-dark-600 transition-colors hover:bg-primary-50 hover:text-primary-700"
+                        className="block px-4 py-2 text-sm text-dark-600 dark:text-dark-300 transition-colors hover:bg-primary-50 hover:text-primary-700 dark:text-dark-300 dark:hover:bg-dark-700"
                       >
                         {sub.label}
                       </Link>

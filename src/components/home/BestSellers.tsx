@@ -27,9 +27,9 @@ export default function BestSellers() {
           <div>
             <h2 className="flex items-center gap-2 section-title">
               <Flame size={24} className="text-primary-600" />
-              Çok Satanlar
+              Öne Çıkan İndirimler
             </h2>
-            <p className="section-subtitle">En çok tercih edilen indirimli ürünler</p>
+            <p className="section-subtitle">En yüksek indirim oranına sahip ürünler</p>
           </div>
           <Link
             href="/urunler"

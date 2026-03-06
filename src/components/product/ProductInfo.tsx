@@ -47,7 +47,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       )}
 
       {/* Name */}
-      <h1 className="text-2xl font-bold text-dark-900 lg:text-3xl">{product.name}</h1>
+      <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50 lg:text-3xl">{product.name}</h1>
 
       {/* Rating & SKU */}
       <div className="flex items-center gap-4">
@@ -71,7 +71,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       </div>
 
       {/* Short desc */}
-      <p className="text-dark-600">{product.short_desc}</p>
+      <p className="text-dark-600 dark:text-dark-300">{product.short_desc}</p>
 
       {/* Price */}
       <div className="flex items-center gap-3">
@@ -98,7 +98,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
           </p>
           <div className="mt-1 flex flex-wrap gap-2">
             {[3, 6, 9, 12].map((ay) => (
-              <span key={ay} className="rounded bg-white px-2 py-1 text-xs font-medium text-blue-600 shadow-sm">
+              <span key={ay} className="rounded bg-white dark:bg-dark-800 px-2 py-1 text-xs font-medium text-blue-600 shadow-sm">
                 {ay} Taksit: {formatPrice(effectivePrice / ay)}/ay
               </span>
             ))}
@@ -186,14 +186,14 @@ export default function ProductInfo({ product }: ProductInfoProps) {
               <div className="flex items-center rounded-lg border border-dark-200">
                 <button
                   onClick={() => setQty(Math.max(1, qty - 1))}
-                  className="px-3 py-2 text-dark-600 hover:text-dark-900"
+                  className="px-3 py-2 text-dark-600 dark:text-dark-300 hover:text-dark-900 dark:text-dark-50"
                 >
                   <Minus size={16} />
                 </button>
                 <span className="min-w-[40px] text-center text-sm font-semibold">{qty}</span>
                 <button
                   onClick={() => setQty(Math.min(product.stock, qty + 1))}
-                  className="px-3 py-2 text-dark-600 hover:text-dark-900"
+                  className="px-3 py-2 text-dark-600 dark:text-dark-300 hover:text-dark-900 dark:text-dark-50"
                 >
                   <Plus size={16} />
                 </button>
@@ -232,10 +232,10 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         <div className="flex items-center gap-3">
           <Truck size={18} className="text-primary-600" />
           <div>
-            <p className="text-sm font-medium text-dark-900">
+            <p className="text-sm font-medium text-dark-900 dark:text-dark-50">
               {product.shipping_type === "kurulum" ? "Ücretsiz Kurulum" : "Hızlı Kargo"}
             </p>
-            <p className="text-xs text-dark-500">
+            <p className="text-xs text-dark-500 dark:text-dark-400">
               {product.shipping_type === "kurulum"
                 ? "Profesyonel kurulum ekibi ile yerinde montaj"
                 : "2.000₺ üzeri siparişlerde ücretsiz kargo"}
@@ -245,15 +245,15 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         <div className="flex items-center gap-3">
           <Shield size={18} className="text-primary-600" />
           <div>
-            <p className="text-sm font-medium text-dark-900">{product.warranty_months} Ay Garanti</p>
-            <p className="text-xs text-dark-500">Üretici garantisi kapsamında</p>
+            <p className="text-sm font-medium text-dark-900 dark:text-dark-50">{product.warranty_months} Ay Garanti</p>
+            <p className="text-xs text-dark-500 dark:text-dark-400">Üretici garantisi kapsamında</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <Package size={18} className="text-primary-600" />
           <div>
-            <p className="text-sm font-medium text-dark-900">14 Gün İade Hakkı</p>
-            <p className="text-xs text-dark-500">Koşulsuz iade ve değişim</p>
+            <p className="text-sm font-medium text-dark-900 dark:text-dark-50">14 Gün İade Hakkı</p>
+            <p className="text-xs text-dark-500 dark:text-dark-400">Koşulsuz iade ve değişim</p>
           </div>
         </div>
       </div>

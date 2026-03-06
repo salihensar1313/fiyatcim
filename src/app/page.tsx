@@ -5,6 +5,9 @@ import PromoBanner from "@/components/home/PromoBanner";
 import CategoryCards from "@/components/home/CategoryCards";
 import FeaturedProducts from "@/components/home/FeaturedProducts";
 import BestSellers from "@/components/home/BestSellers";
+import FlashSale from "@/components/home/FlashSale";
+import TrendingProducts from "@/components/home/TrendingProducts";
+import CampaignRadar from "@/components/home/CampaignRadar";
 import TrustBadges from "@/components/home/TrustBadges";
 import WhyChooseUs from "@/components/home/WhyChooseUs";
 import Newsletter from "@/components/home/Newsletter";
@@ -17,8 +20,11 @@ import Testimonials from "@/components/home/Testimonials";
  * 2. PromoBanner — Kampanya barı
  * 3. CategoryCards — Ürün kategorileri
  * 4. FeaturedProducts — Öne çıkan ürünler
- * 5. BestSellers — Çok satanlar / indirimli ürünler
- * 6. TrustBadges — Güven rozeti barı
+ * 5. FlashSale — Flaş indirimler (countdown)
+ * 6. BestSellers — Öne çıkan indirimler
+ * 7. TrendingProducts — Trend ürünler
+ * 8. CampaignRadar — Kampanya radar
+ * 9. TrustBadges — Güven rozeti barı
  * 7. WhyChooseUs — Neden biz
  * 8. Newsletter — E-posta abonelik
  * 9. BlogPreview — Blog önizleme
@@ -39,8 +45,11 @@ export default function HomePage() {
       <Suspense fallback={<div className="bg-dark-50 py-12 sm:py-16"><div className="container-custom"><div className="grid grid-cols-2 gap-4 lg:grid-cols-4">{Array.from({ length: 4 }).map((_, i) => (<div key={i} className="h-72 animate-pulse rounded-xl bg-dark-100" />))}</div></div></div>}>
         <FeaturedProducts />
       </Suspense>
+      <FlashSale />
       <BestSellers />
-      <Suspense fallback={<div className="border-y border-dark-100 bg-white py-6 sm:py-8"><div className="container-custom"><div className="grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-8">{Array.from({ length: 4 }).map((_, i) => (<div key={i} className="h-12 animate-pulse rounded bg-dark-50" />))}</div></div></div>}>
+      <TrendingProducts />
+      <CampaignRadar />
+      <Suspense fallback={<div className="border-y border-dark-100 bg-white dark:bg-dark-800 py-6 sm:py-8"><div className="container-custom"><div className="grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-8">{Array.from({ length: 4 }).map((_, i) => (<div key={i} className="h-12 animate-pulse rounded bg-dark-50 dark:bg-dark-800" />))}</div></div></div>}>
         <TrustBadges />
       </Suspense>
       <WhyChooseUs />

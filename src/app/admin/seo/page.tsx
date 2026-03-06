@@ -65,15 +65,15 @@ export default function AdminSeoPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="flex items-center gap-2 text-2xl font-bold text-dark-900">
+        <h1 className="flex items-center gap-2 text-2xl font-bold text-dark-900 dark:text-dark-50">
           <Globe size={24} />
           SEO Yönetimi
         </h1>
-        <p className="text-sm text-dark-500">Sayfa bazlı meta title ve description düzenleyin</p>
+        <p className="text-sm text-dark-500 dark:text-dark-400">Sayfa bazlı meta title ve description düzenleyin</p>
       </div>
 
       {/* SEO Tips */}
-      <div className="mb-6 rounded-xl border border-blue-200 bg-blue-50 p-4">
+      <div className="mb-6 rounded-xl border border-blue-200 bg-blue-50 dark:bg-blue-900/30 p-4">
         <h3 className="flex items-center gap-2 text-sm font-bold text-blue-800">
           <Search size={16} />
           SEO İpuçları
@@ -89,18 +89,18 @@ export default function AdminSeoPage() {
       {/* Pages List */}
       <div className="space-y-4">
         {pages.map((page) => (
-          <div key={page.path} className="rounded-xl border border-dark-100 bg-white p-5">
+          <div key={page.path} className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-5">
             {editingPath === page.path ? (
               /* Edit Mode */
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <FileText size={16} className="text-primary-600" />
-                  <span className="text-sm font-bold text-dark-900">{page.label}</span>
-                  <span className="rounded bg-dark-100 px-2 py-0.5 text-xs text-dark-500">{page.path}</span>
+                  <span className="text-sm font-bold text-dark-900 dark:text-dark-50">{page.label}</span>
+                  <span className="rounded bg-dark-100 px-2 py-0.5 text-xs text-dark-500 dark:text-dark-400">{page.path}</span>
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-dark-600">
+                  <label className="mb-1 block text-xs font-medium text-dark-600 dark:text-dark-300">
                     Meta Title
                     <span className={`ml-2 ${editTitle.length > 60 ? "text-red-600" : "text-dark-400"}`}>
                       ({editTitle.length}/60)
@@ -118,7 +118,7 @@ export default function AdminSeoPage() {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-dark-600">
+                  <label className="mb-1 block text-xs font-medium text-dark-600 dark:text-dark-300">
                     Meta Description
                     <span className={`ml-2 ${editDesc.length > 160 ? "text-red-600" : "text-dark-400"}`}>
                       ({editDesc.length}/160)
@@ -141,7 +141,7 @@ export default function AdminSeoPage() {
                   <div>
                     <p className="text-lg text-blue-700 hover:underline cursor-pointer truncate">{editTitle || "Başlık giriniz"}</p>
                     <p className="text-sm text-green-700">{`www.fiyatcim.com${page.path}`}</p>
-                    <p className="text-sm text-dark-600 line-clamp-2">{editDesc || "Açıklama giriniz"}</p>
+                    <p className="text-sm text-dark-600 dark:text-dark-300 line-clamp-2">{editDesc || "Açıklama giriniz"}</p>
                   </div>
                 </div>
 
@@ -155,7 +155,7 @@ export default function AdminSeoPage() {
                   </button>
                   <button
                     onClick={cancelEdit}
-                    className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-600 hover:bg-dark-50"
+                    className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-600 dark:text-dark-300 hover:bg-dark-50 dark:bg-dark-800"
                   >
                     İptal
                   </button>
@@ -170,13 +170,13 @@ export default function AdminSeoPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <FileText size={16} className="text-primary-600" />
-                    <span className="text-sm font-bold text-dark-900">{page.label}</span>
-                    <span className="rounded bg-dark-100 px-2 py-0.5 text-xs text-dark-500">{page.path}</span>
+                    <span className="text-sm font-bold text-dark-900 dark:text-dark-50">{page.label}</span>
+                    <span className="rounded bg-dark-100 px-2 py-0.5 text-xs text-dark-500 dark:text-dark-400">{page.path}</span>
                   </div>
                   <span className="text-xs text-primary-600">Düzenle</span>
                 </div>
-                <p className="mt-2 text-sm text-dark-700 truncate">{page.title}</p>
-                <p className="mt-1 text-xs text-dark-500 line-clamp-1">{page.description}</p>
+                <p className="mt-2 text-sm text-dark-700 dark:text-dark-200 truncate">{page.title}</p>
+                <p className="mt-1 text-xs text-dark-500 dark:text-dark-400 line-clamp-1">{page.description}</p>
               </div>
             )}
           </div>

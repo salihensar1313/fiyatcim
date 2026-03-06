@@ -22,7 +22,7 @@ export default function Accordion({ items }: AccordionProps) {
         <div key={i}>
           <button
             onClick={() => setOpenIndex(openIndex === i ? null : i)}
-            className="flex w-full items-center justify-between px-5 py-4 text-left text-sm font-medium text-dark-900 hover:bg-dark-50"
+            className="flex w-full items-center justify-between px-5 py-4 text-left text-sm font-medium text-dark-900 dark:text-dark-50 hover:bg-dark-50"
           >
             <span>{item.title}</span>
             <ChevronDown
@@ -39,7 +39,7 @@ export default function Accordion({ items }: AccordionProps) {
               openIndex === i ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
             )}
           >
-            <p className="px-5 pb-4 text-sm leading-relaxed text-dark-600">{item.content}</p>
+            <p className="px-5 pb-4 text-sm leading-relaxed text-dark-600 dark:text-dark-300">{item.content}</p>
           </div>
         </div>
       ))}

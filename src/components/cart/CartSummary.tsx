@@ -8,11 +8,12 @@ import { useSettings } from "@/hooks/useSettings";
 import CouponInput from "./CouponInput";
 
 export default function CartSummary() {
-  const { getSubtotal, getShipping, getTotal, discount, getItemCount } = useCart();
+  const { getSubtotal, getShipping, getGiftWrapTotal, getTotal, discount, getItemCount } = useCart();
   const settings = useSettings();
 
   const subtotal = getSubtotal();
   const shipping = getShipping();
+  const giftWrapTotal = getGiftWrapTotal();
   const total = getTotal();
   const itemCount = getItemCount();
   const threshold = settings.freeShippingThreshold;
@@ -21,8 +22,8 @@ export default function CartSummary() {
   const freeShippingProgress = Math.min((subtotal / threshold) * 100, 100);
 
   return (
-    <div className="rounded-xl border border-dark-100 bg-white p-6">
-      <h3 className="mb-4 text-lg font-bold text-dark-900">Sipariş Özeti</h3>
+    <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+      <h3 className="mb-4 text-lg font-bold text-dark-900 dark:text-dark-50">Sipariş Özeti</h3>
 
       {/* Free shipping progress */}
       {remainingForFreeShipping > 0 && (
@@ -48,8 +49,8 @@ export default function CartSummary() {
       {/* Lines */}
       <div className="mt-4 space-y-3 border-t border-dark-100 pt-4">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-dark-600">Ara Toplam ({itemCount} ürün)</span>
-          <span className="font-medium text-dark-900">{formatPrice(subtotal)}</span>
+          <span className="text-dark-600 dark:text-dark-300">Ara Toplam ({itemCount} ürün)</span>
+          <span className="font-medium text-dark-900 dark:text-dark-50">{formatPrice(subtotal)}</span>
         </div>
         {discount > 0 && (
           <div className="flex items-center justify-between text-sm">
@@ -57,9 +58,15 @@ export default function CartSummary() {
             <span className="font-medium text-green-600">-{formatPrice(discount)}</span>
           </div>
         )}
+        {giftWrapTotal > 0 && (
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-dark-600 dark:text-dark-300">Hediye Paketi</span>
+            <span className="font-medium text-dark-900 dark:text-dark-50">{formatPrice(giftWrapTotal)}</span>
+          </div>
+        )}
         <div className="flex items-center justify-between text-sm">
-          <span className="text-dark-600">Kargo</span>
-          <span className="font-medium text-dark-900">
+          <span className="text-dark-600 dark:text-dark-300">Kargo</span>
+          <span className="font-medium text-dark-900 dark:text-dark-50">
             {shipping === 0 ? (
               <span className="text-green-600">Ücretsiz</span>
             ) : (
@@ -71,14 +78,14 @@ export default function CartSummary() {
 
       {/* KDV — fiyatlar zaten KDV dahil, sadece KDV tutarını göster */}
       <div className="mt-3 flex items-center justify-between text-sm">
-        <span className="text-dark-600">KDV (%20 dahil)</span>
-        <span className="font-medium text-dark-900">{formatPrice(total - total / 1.2)}</span>
+        <span className="text-dark-600 dark:text-dark-300">KDV (%20 dahil)</span>
+        <span className="font-medium text-dark-900 dark:text-dark-50">{formatPrice(total - total / 1.2)}</span>
       </div>
 
       {/* Total */}
       <div className="mt-3 flex items-center justify-between border-t border-dark-100 pt-4">
-        <span className="text-base font-bold text-dark-900">Toplam (KDV Dahil)</span>
-        <span className="text-xl font-bold text-dark-900">{formatPrice(total)}</span>
+        <span className="text-base font-bold text-dark-900 dark:text-dark-50">Toplam (KDV Dahil)</span>
+        <span className="text-xl font-bold text-dark-900 dark:text-dark-50">{formatPrice(total)}</span>
       </div>
 
       {/* Checkout Button */}

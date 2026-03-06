@@ -32,21 +32,21 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   if (!post) notFound();
 
   return (
-    <div className="bg-dark-50 pb-16">
+    <div className="bg-dark-50 dark:bg-dark-900 pb-16">
       <div className="container mx-auto px-4 py-4">
         <Breadcrumb items={[{ label: "Blog", href: "/blog" }, { label: post.title }]} />
       </div>
 
       <div className="container mx-auto px-4">
         <article className="mx-auto max-w-3xl">
-          <Link href="/blog" className="mb-4 inline-flex items-center gap-1 text-sm text-dark-500 hover:text-dark-700">
+          <Link href="/blog" className="mb-4 inline-flex items-center gap-1 text-sm text-dark-500 dark:text-dark-400 hover:text-dark-700 dark:text-dark-200">
             <ArrowLeft size={14} />
             Blog&apos;a Dön
           </Link>
 
-          <div className="rounded-xl border border-dark-100 bg-white p-8">
+          <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-8">
             <div className="mb-4 flex items-center gap-3">
-              <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-medium text-primary-700">
+              <span className="rounded-full bg-primary-50 dark:bg-primary-900/30 px-3 py-1 text-xs font-medium text-primary-700">
                 {post.category}
               </span>
               <span className="flex items-center gap-1 text-sm text-dark-400">
@@ -55,13 +55,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               </span>
             </div>
 
-            <h1 className="mb-6 text-2xl font-bold text-dark-900 md:text-3xl">{post.title}</h1>
+            <h1 className="mb-6 text-2xl font-bold text-dark-900 dark:text-dark-50 md:text-3xl">{post.title}</h1>
 
             <div className="mb-6 aspect-video rounded-lg bg-dark-100" />
 
             <div className="prose max-w-none">
-              <p className="text-lg leading-relaxed text-dark-700">{post.excerpt}</p>
-              <p className="mt-4 leading-relaxed text-dark-600">{post.content}</p>
+              <p className="text-lg leading-relaxed text-dark-700 dark:text-dark-200">{post.excerpt}</p>
+              <p className="mt-4 leading-relaxed text-dark-600 dark:text-dark-300">{post.content}</p>
             </div>
           </div>
         </article>

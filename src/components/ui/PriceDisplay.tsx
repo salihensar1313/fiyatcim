@@ -59,7 +59,7 @@ export default function PriceDisplay({
 
   if (showOnlyTL) {
     return (
-      <span className={`${cls.usd} text-dark-900`}>
+      <span className={`${cls.usd} text-dark-900 dark:text-dark-50`}>
         {formatTL(effectiveTry)}
       </span>
     );
@@ -69,7 +69,7 @@ export default function PriceDisplay({
     <div className="flex flex-col">
       {/* Ana sat\u0131r: USD fiyat + eski fiyat */}
       <div className="flex items-center gap-2">
-        <span className={`${cls.usd} text-dark-900`}>
+        <span className={`${cls.usd} text-dark-900 dark:text-dark-50`}>
           {formatUSD(effectiveUsd)}
         </span>
         {hasDiscount && (

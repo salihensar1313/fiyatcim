@@ -11,7 +11,7 @@ export default async function FeaturedProducts() {
   const featured = await getFeaturedProducts(8, client);
 
   return (
-    <section className="bg-dark-50 py-12 sm:py-16">
+    <section className="bg-dark-50 py-12 sm:py-16 dark:bg-dark-950">
       <div className="container-custom">
         <div className="flex items-center justify-between">
           <div>

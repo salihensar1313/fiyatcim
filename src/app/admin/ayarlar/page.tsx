@@ -81,8 +81,8 @@ export default function AdminSettingsPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-dark-900">Ayarlar</h1>
-          <p className="text-sm text-dark-500">Mağaza yapılandırması</p>
+          <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">Ayarlar</h1>
+          <p className="text-sm text-dark-500 dark:text-dark-400">Mağaza yapılandırması</p>
         </div>
         <button
           onClick={handleSave}
@@ -94,7 +94,7 @@ export default function AdminSettingsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="mb-4 flex gap-1 rounded-xl border border-dark-100 bg-white p-1">
+      <div className="mb-4 flex gap-1 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-1">
         {tabs.map((tab) => (
           <button
             key={tab.key}
@@ -102,7 +102,7 @@ export default function AdminSettingsPage() {
             className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
               activeTab === tab.key
                 ? "bg-primary-600 text-white"
-                : "text-dark-500 hover:bg-dark-50 hover:text-dark-700"
+                : "text-dark-500 dark:text-dark-400 hover:bg-dark-50 hover:text-dark-700 dark:text-dark-200"
             }`}
           >
             <tab.icon size={16} />
@@ -112,12 +112,12 @@ export default function AdminSettingsPage() {
       </div>
 
       {/* Content */}
-      <div className="rounded-xl border border-dark-100 bg-white p-6">
+      <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
         {/* Genel Ayarlar */}
         {activeTab === "genel" && (
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Site Adı</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Site Adı</label>
               <input
                 value={settings.siteName}
                 onChange={(e) => updateField("siteName", e.target.value)}
@@ -125,7 +125,7 @@ export default function AdminSettingsPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Tam Başlık</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Tam Başlık</label>
               <input
                 value={settings.siteFullName}
                 onChange={(e) => updateField("siteFullName", e.target.value)}
@@ -133,7 +133,7 @@ export default function AdminSettingsPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Telefon</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Telefon</label>
               <input
                 value={settings.phone}
                 onChange={(e) => updateField("phone", e.target.value)}
@@ -141,7 +141,7 @@ export default function AdminSettingsPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">E-posta</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">E-posta</label>
               <input
                 value={settings.email}
                 onChange={(e) => updateField("email", e.target.value)}
@@ -149,7 +149,7 @@ export default function AdminSettingsPage() {
               />
             </div>
             <div className="sm:col-span-2">
-              <label className="mb-1 block text-sm font-medium text-dark-700">Adres</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Adres</label>
               <input
                 value={settings.address}
                 onChange={(e) => updateField("address", e.target.value)}
@@ -157,7 +157,7 @@ export default function AdminSettingsPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Instagram</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Instagram</label>
               <input
                 value={settings.instagram}
                 onChange={(e) => updateField("instagram", e.target.value)}
@@ -165,7 +165,7 @@ export default function AdminSettingsPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Facebook</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Facebook</label>
               <input
                 value={settings.facebook}
                 onChange={(e) => updateField("facebook", e.target.value)}
@@ -179,7 +179,7 @@ export default function AdminSettingsPage() {
         {activeTab === "kargo" && (
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Ücretsiz Kargo Eşiği (₺)</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Ücretsiz Kargo Eşiği (₺)</label>
               <input
                 type="number"
                 value={settings.freeShippingThreshold}
@@ -188,7 +188,7 @@ export default function AdminSettingsPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Varsayılan Kargo Ücreti (₺)</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Varsayılan Kargo Ücreti (₺)</label>
               <input
                 type="number"
                 value={settings.defaultShippingFee}
@@ -218,7 +218,7 @@ export default function AdminSettingsPage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="mb-1 block text-sm font-medium text-dark-700">API Key</label>
+                <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">API Key</label>
                 <input
                   type="password"
                   value={settings.paymentApiKey}
@@ -228,7 +228,7 @@ export default function AdminSettingsPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-dark-700">Secret Key</label>
+                <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Secret Key</label>
                 <input
                   type="password"
                   value={settings.paymentSecretKey}
@@ -260,7 +260,7 @@ export default function AdminSettingsPage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="mb-1 block text-sm font-medium text-dark-700">SMTP Sunucu</label>
+                <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">SMTP Sunucu</label>
                 <input
                   type="text"
                   value={settings.smtpHost}
@@ -270,7 +270,7 @@ export default function AdminSettingsPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-dark-700">Port</label>
+                <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Port</label>
                 <input
                   type="text"
                   value={settings.smtpPort}
@@ -280,7 +280,7 @@ export default function AdminSettingsPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-dark-700">Kullanıcı Adı</label>
+                <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Kullanıcı Adı</label>
                 <input
                   type="text"
                   value={settings.smtpUser}
@@ -290,7 +290,7 @@ export default function AdminSettingsPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-dark-700">Şifre</label>
+                <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Şifre</label>
                 <input
                   type="password"
                   value={settings.smtpPass}
@@ -305,7 +305,7 @@ export default function AdminSettingsPage() {
       </div>
 
       {/* Global Demo notice */}
-      <div className="mt-6 rounded-xl bg-blue-50 p-4">
+      <div className="mt-6 rounded-xl bg-blue-50 dark:bg-blue-900/30 p-4">
         <p className="text-sm text-blue-700">
           <span className="font-medium">Demo Modu:</span> Ayarlar localStorage&apos;da saklanır.
           Production&apos;da Supabase <code className="rounded bg-blue-100 px-1 text-xs">site_settings</code> tablosu ile entegre çalışacak.

@@ -69,7 +69,7 @@ export default function Newsletter() {
             </form>
           )}
 
-          <p className="mt-3 text-xs text-dark-500">
+          <p className="mt-3 text-xs text-dark-500 dark:text-dark-400">
             Istediginiz zaman abonelikten cikabilirsiniz.
           </p>
         </div>

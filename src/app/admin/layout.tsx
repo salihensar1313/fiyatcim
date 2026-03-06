@@ -31,7 +31,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <>
       {/* GATE 2: Admin sayfaları indexlenmemeli — "use client" layout'ta metadata export çalışmaz */}
       <meta name="robots" content="noindex,nofollow" />
-      <div className="flex min-h-screen bg-dark-50">
+      <div className="flex min-h-screen bg-dark-50 dark:bg-dark-800">
         <AdminSidebar mobileOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <div className="flex-1 lg:ml-64">
           <AdminHeader onMenuToggle={() => setSidebarOpen(true)} />

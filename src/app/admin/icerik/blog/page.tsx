@@ -147,12 +147,12 @@ export default function AdminBlogPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/admin/icerik" className="rounded-lg p-2 text-dark-400 hover:bg-dark-100 hover:text-dark-600">
+          <Link href="/admin/icerik" className="rounded-lg p-2 text-dark-400 hover:bg-dark-100 hover:text-dark-600 dark:text-dark-300">
             <ArrowLeft size={18} />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-dark-900">Blog Yazıları</h1>
-            <p className="text-sm text-dark-500">{blogs.length} yazı</p>
+            <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">Blog Yazıları</h1>
+            <p className="text-sm text-dark-500 dark:text-dark-400">{blogs.length} yazı</p>
           </div>
         </div>
         <button
@@ -166,13 +166,13 @@ export default function AdminBlogPage() {
 
       {/* Form */}
       {formOpen && (
-        <div className="mb-6 rounded-xl border border-dark-100 bg-white p-6">
-          <h3 className="mb-4 text-lg font-bold text-dark-900">
+        <div className="mb-6 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+          <h3 className="mb-4 text-lg font-bold text-dark-900 dark:text-dark-50">
             {editing ? "Yazıyı Düzenle" : "Yeni Blog Yazısı"}
           </h3>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
-              <label className="mb-1 block text-sm font-medium text-dark-700">Başlık *</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Başlık *</label>
               <input
                 value={title}
                 onChange={(e) => {
@@ -183,7 +183,7 @@ export default function AdminBlogPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Slug</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Slug</label>
               <input
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
@@ -191,7 +191,7 @@ export default function AdminBlogPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Kategori</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Kategori</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
@@ -204,7 +204,7 @@ export default function AdminBlogPage() {
               </select>
             </div>
             <div className="sm:col-span-2">
-              <label className="mb-1 block text-sm font-medium text-dark-700">Özet</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Özet</label>
               <input
                 value={excerpt}
                 onChange={(e) => setExcerpt(e.target.value)}
@@ -212,7 +212,7 @@ export default function AdminBlogPage() {
               />
             </div>
             <div className="sm:col-span-2">
-              <label className="mb-1 block text-sm font-medium text-dark-700">İçerik</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">İçerik</label>
               <textarea
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
@@ -225,7 +225,7 @@ export default function AdminBlogPage() {
             </div>
           </div>
           <div className="mt-4 flex justify-end gap-3">
-            <button onClick={resetForm} className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 hover:bg-dark-50">
+            <button onClick={resetForm} className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:bg-dark-800">
               İptal
             </button>
             <button
@@ -240,40 +240,40 @@ export default function AdminBlogPage() {
       )}
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-dark-100 bg-white">
+      <div className="overflow-hidden rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-dark-100 bg-dark-50">
+            <thead className="border-b border-dark-100 bg-dark-50 dark:bg-dark-800">
               <tr>
-                <th className="px-4 py-3 font-semibold text-dark-700">Başlık</th>
-                <th className="px-4 py-3 font-semibold text-dark-700">Kategori</th>
-                <th className="px-4 py-3 font-semibold text-dark-700">Tarih</th>
-                <th className="px-4 py-3 font-semibold text-dark-700">İşlemler</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Başlık</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Kategori</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Tarih</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">İşlemler</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-dark-50">
               {blogs.map((blog) => (
                 <tr key={blog.id} className="hover:bg-dark-50/50">
                   <td className="max-w-[300px] px-4 py-3">
-                    <p className="truncate font-medium text-dark-900">{blog.title}</p>
+                    <p className="truncate font-medium text-dark-900 dark:text-dark-50">{blog.title}</p>
                     <p className="truncate text-xs text-dark-400">/{blog.slug}</p>
                   </td>
-                  <td className="px-4 py-3 text-dark-500">{blog.category}</td>
-                  <td className="px-4 py-3 text-dark-500">
+                  <td className="px-4 py-3 text-dark-500 dark:text-dark-400">{blog.category}</td>
+                  <td className="px-4 py-3 text-dark-500 dark:text-dark-400">
                     {new Date(blog.created_at).toLocaleDateString("tr-TR")}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => openEdit(blog)}
-                        className="rounded p-1.5 text-dark-400 hover:bg-blue-50 hover:text-blue-600"
+                        className="rounded p-1.5 text-dark-400 hover:bg-blue-50 dark:bg-blue-900/30 hover:text-blue-600"
                         title="Düzenle"
                       >
                         <Edit size={14} />
                       </button>
                       <button
                         onClick={() => setDeleteTarget(blog)}
-                        className="rounded p-1.5 text-dark-400 hover:bg-red-50 hover:text-red-600"
+                        className="rounded p-1.5 text-dark-400 hover:bg-red-50 dark:bg-red-900/30 hover:text-red-600"
                         title="Sil"
                       >
                         <Trash2 size={14} />
@@ -288,7 +288,7 @@ export default function AdminBlogPage() {
 
         {blogs.length === 0 && (
           <div className="py-12 text-center">
-            <p className="text-dark-500">Henüz blog yazısı yok.</p>
+            <p className="text-dark-500 dark:text-dark-400">Henüz blog yazısı yok.</p>
           </div>
         )}
       </div>

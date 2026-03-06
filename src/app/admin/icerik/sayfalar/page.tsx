@@ -88,12 +88,12 @@ export default function AdminSayfalarPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/admin/icerik" className="rounded-lg p-2 text-dark-400 hover:bg-dark-100 hover:text-dark-600">
+          <Link href="/admin/icerik" className="rounded-lg p-2 text-dark-400 hover:bg-dark-100 hover:text-dark-600 dark:text-dark-300">
             <ArrowLeft size={18} />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-dark-900">Sayfa İçerikleri</h1>
-            <p className="text-sm text-dark-500">Neden Biz ve Bülten bölümlerini düzenleyin</p>
+            <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">Sayfa İçerikleri</h1>
+            <p className="text-sm text-dark-500 dark:text-dark-400">Neden Biz ve Bülten bölümlerini düzenleyin</p>
           </div>
         </div>
         <button
@@ -112,7 +112,7 @@ export default function AdminSayfalarPage() {
           className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
             tab === "whyChooseUs"
               ? "bg-primary-600 text-white"
-              : "bg-dark-100 text-dark-600 hover:bg-dark-200"
+              : "bg-dark-100 text-dark-600 dark:text-dark-300 hover:bg-dark-200"
           }`}
         >
           Neden Biz ({data.whyChooseUs.length})
@@ -122,7 +122,7 @@ export default function AdminSayfalarPage() {
           className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
             tab === "newsletter"
               ? "bg-primary-600 text-white"
-              : "bg-dark-100 text-dark-600 hover:bg-dark-200"
+              : "bg-dark-100 text-dark-600 dark:text-dark-300 hover:bg-dark-200"
           }`}
         >
           Bülten
@@ -133,16 +133,16 @@ export default function AdminSayfalarPage() {
       {tab === "whyChooseUs" && (
         <div className="space-y-4">
           {data.whyChooseUs.map((feature, idx) => (
-            <div key={feature.id} className="rounded-xl border border-dark-100 bg-white p-5">
+            <div key={feature.id} className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-5">
               <div className="mb-3 flex items-center gap-2">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 text-xs font-bold text-primary-600">
                   {idx + 1}
                 </span>
-                <h3 className="font-medium text-dark-900">Özellik {idx + 1}</h3>
+                <h3 className="font-medium text-dark-900 dark:text-dark-50">Özellik {idx + 1}</h3>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-dark-700">Başlık</label>
+                  <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Başlık</label>
                   <input
                     value={feature.title}
                     onChange={(e) => updateFeature(feature.id, "title", e.target.value)}
@@ -150,7 +150,7 @@ export default function AdminSayfalarPage() {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-dark-700">İkon</label>
+                  <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">İkon</label>
                   <div className="flex flex-wrap gap-1.5">
                     {ICON_OPTIONS.map((opt) => (
                       <button
@@ -159,8 +159,8 @@ export default function AdminSayfalarPage() {
                         onClick={() => updateFeature(feature.id, "icon", opt.value)}
                         className={`flex items-center gap-1 rounded-lg border px-2 py-1 text-xs transition-colors ${
                           feature.icon === opt.value
-                            ? "border-primary-600 bg-primary-50 text-primary-600"
-                            : "border-dark-200 text-dark-500 hover:border-primary-300"
+                            ? "border-primary-600 bg-primary-50 dark:bg-primary-900/30 text-primary-600"
+                            : "border-dark-200 text-dark-500 dark:text-dark-400 hover:border-primary-300"
                         }`}
                       >
                         <opt.Icon size={14} />
@@ -170,7 +170,7 @@ export default function AdminSayfalarPage() {
                   </div>
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="mb-1 block text-sm font-medium text-dark-700">Açıklama</label>
+                  <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Açıklama</label>
                   <textarea
                     value={feature.desc}
                     onChange={(e) => updateFeature(feature.id, "desc", e.target.value)}
@@ -186,10 +186,10 @@ export default function AdminSayfalarPage() {
 
       {/* Newsletter Tab */}
       {tab === "newsletter" && (
-        <div className="rounded-xl border border-dark-100 bg-white p-6">
+        <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
           <div className="space-y-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Başlık</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Başlık</label>
               <input
                 value={data.newsletter.title}
                 onChange={(e) =>
@@ -202,7 +202,7 @@ export default function AdminSayfalarPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Alt Başlık</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Alt Başlık</label>
               <input
                 value={data.newsletter.subtitle}
                 onChange={(e) =>
@@ -217,7 +217,7 @@ export default function AdminSayfalarPage() {
 
             {/* Preview */}
             <div className="mt-4">
-              <p className="mb-2 text-xs font-medium text-dark-500">Önizleme</p>
+              <p className="mb-2 text-xs font-medium text-dark-500 dark:text-dark-400">Önizleme</p>
               <div className="rounded-lg bg-dark-900 px-6 py-8 text-center">
                 <h3 className="text-lg font-bold text-white">{data.newsletter.title}</h3>
                 <p className="mt-1 text-sm text-dark-300">{data.newsletter.subtitle}</p>

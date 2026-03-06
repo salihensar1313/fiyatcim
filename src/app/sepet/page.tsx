@@ -12,7 +12,7 @@ export default function CartPage() {
   const itemCount = getItemCount();
 
   return (
-    <div className="bg-dark-50 pb-16">
+    <div className="bg-dark-50 dark:bg-dark-900 pb-16">
       {/* Breadcrumb */}
       <div className="container mx-auto px-4 py-4">
         <Breadcrumb items={[{ label: "Sepetim" }]} />
@@ -20,7 +20,7 @@ export default function CartPage() {
 
       <div className="container mx-auto px-4">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-dark-900 md:text-3xl">
+          <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50 md:text-3xl">
             Sepetim
             {itemCount > 0 && (
               <span className="ml-2 text-lg font-normal text-dark-400">({itemCount} ürün)</span>
@@ -54,10 +54,10 @@ export default function CartPage() {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white py-20">
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 py-20">
             <ShoppingCart size={64} className="mb-4 text-dark-200" />
-            <h2 className="text-xl font-bold text-dark-900">Sepetiniz Boş</h2>
-            <p className="mt-2 text-dark-500">
+            <h2 className="text-xl font-bold text-dark-900 dark:text-dark-50">Sepetiniz Boş</h2>
+            <p className="mt-2 text-dark-500 dark:text-dark-400">
               Henüz sepetinize ürün eklemediniz.
             </p>
             <Link

@@ -46,12 +46,12 @@ export default function AdminKampanyaPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/admin/icerik" className="rounded-lg p-2 text-dark-400 hover:bg-dark-100 hover:text-dark-600">
+          <Link href="/admin/icerik" className="rounded-lg p-2 text-dark-400 hover:bg-dark-100 hover:text-dark-600 dark:text-dark-300">
             <ArrowLeft size={18} />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-dark-900">Kampanya Bandı</h1>
-            <p className="text-sm text-dark-500">Ana sayfa üstündeki kampanya barını düzenleyin</p>
+            <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">Kampanya Bandı</h1>
+            <p className="text-sm text-dark-500 dark:text-dark-400">Ana sayfa üstündeki kampanya barını düzenleyin</p>
           </div>
         </div>
         <button
@@ -63,20 +63,20 @@ export default function AdminKampanyaPage() {
         </button>
       </div>
 
-      <div className="rounded-xl border border-dark-100 bg-white p-6">
+      <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
         <div className="space-y-4">
           {/* Active Toggle */}
           <div className="flex items-center justify-between rounded-lg border border-dark-100 p-4">
             <div>
-              <h3 className="font-medium text-dark-900">Bandı Göster</h3>
-              <p className="text-xs text-dark-500">Aktif olduğunda ana sayfada görünür</p>
+              <h3 className="font-medium text-dark-900 dark:text-dark-50">Bandı Göster</h3>
+              <p className="text-xs text-dark-500 dark:text-dark-400">Aktif olduğunda ana sayfada görünür</p>
             </div>
             <button
               onClick={() => setBanner((prev) => ({ ...prev, active: !prev.active }))}
               className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                 banner.active
                   ? "bg-green-100 text-green-700"
-                  : "bg-dark-100 text-dark-500"
+                  : "bg-dark-100 text-dark-500 dark:text-dark-400"
               }`}
             >
               {banner.active ? <Eye size={16} /> : <EyeOff size={16} />}
@@ -85,7 +85,7 @@ export default function AdminKampanyaPage() {
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-dark-700">Başlık</label>
+            <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Başlık</label>
             <input
               value={banner.title}
               onChange={(e) => setBanner((prev) => ({ ...prev, title: e.target.value }))}
@@ -95,7 +95,7 @@ export default function AdminKampanyaPage() {
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-dark-700">Açıklama</label>
+            <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Açıklama</label>
             <input
               value={banner.description}
               onChange={(e) => setBanner((prev) => ({ ...prev, description: e.target.value }))}
@@ -105,7 +105,7 @@ export default function AdminKampanyaPage() {
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-dark-700">Buton Linki</label>
+            <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Buton Linki</label>
             <input
               value={banner.link}
               onChange={(e) => setBanner((prev) => ({ ...prev, link: e.target.value }))}
@@ -117,7 +117,7 @@ export default function AdminKampanyaPage() {
           {/* Preview */}
           {banner.active && (
             <div className="mt-4">
-              <p className="mb-2 text-xs font-medium text-dark-500">Önizleme</p>
+              <p className="mb-2 text-xs font-medium text-dark-500 dark:text-dark-400">Önizleme</p>
               <div className="rounded-lg bg-gradient-to-r from-primary-600 to-primary-700 px-4 py-3">
                 <p className="text-sm text-white">
                   <span className="font-bold">{banner.title}</span>{" "}

@@ -51,12 +51,12 @@ export default function InstallmentTab({ product }: InstallmentTabProps) {
                 return (
                   <tr
                     key={`${bank.name}-${inst}`}
-                    className={`border-t border-dark-100 ${idx % 2 === 0 ? "bg-white" : "bg-dark-50"}`}
+                    className={`border-t border-dark-100 ${idx % 2 === 0 ? "bg-white dark:bg-dark-800" : "bg-dark-50"}`}
                   >
                     {idx === 0 ? (
                       <td
                         rowSpan={INSTALLMENTS.length}
-                        className="border-r border-dark-100 px-4 py-3 align-middle font-medium text-dark-800"
+                        className="border-r border-dark-100 px-4 py-3 align-middle font-medium text-dark-800 dark:text-dark-100"
                       >
                         <div className="flex items-center gap-2">
                           <span className="text-lg">{bank.logo}</span>
@@ -64,7 +64,7 @@ export default function InstallmentTab({ product }: InstallmentTabProps) {
                         </div>
                       </td>
                     ) : null}
-                    <td className="px-4 py-2.5 text-center text-dark-700">
+                    <td className="px-4 py-2.5 text-center text-dark-700 dark:text-dark-200">
                       {inst === 1 ? (
                         <span className="rounded bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700">
                           Tek Çekim
@@ -73,10 +73,10 @@ export default function InstallmentTab({ product }: InstallmentTabProps) {
                         <span>{inst} Taksit</span>
                       )}
                     </td>
-                    <td className="px-4 py-2.5 text-right font-medium text-dark-900">
+                    <td className="px-4 py-2.5 text-right font-medium text-dark-900 dark:text-dark-50">
                       {formatPrice(monthly)}
                     </td>
-                    <td className="hidden px-4 py-2.5 text-right text-dark-500 sm:table-cell">
+                    <td className="hidden px-4 py-2.5 text-right text-dark-500 dark:text-dark-400 sm:table-cell">
                       {formatPrice(total)}
                     </td>
                   </tr>

@@ -10,15 +10,15 @@ export default async function GuidesPage() {
   const posts = await getBlogPosts(client);
 
   return (
-    <div className="bg-dark-50 pb-16">
+    <div className="bg-dark-50 dark:bg-dark-900 pb-16">
       <div className="container mx-auto px-4 py-4">
         <Breadcrumb items={[{ label: "Rehberler" }]} />
       </div>
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-4xl">
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-dark-900">Rehberler</h1>
-            <p className="mt-2 text-dark-500">
+            <h1 className="text-3xl font-bold text-dark-900 dark:text-dark-50">Rehberler</h1>
+            <p className="mt-2 text-dark-500 dark:text-dark-400">
               Guvenlik sistemleri hakkinda bilmeniz gereken her sey
             </p>
           </div>

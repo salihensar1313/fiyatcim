@@ -129,12 +129,12 @@ export default function AdminKategorilerPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/admin/icerik" className="rounded-lg p-2 text-dark-400 hover:bg-dark-100 hover:text-dark-600">
+          <Link href="/admin/icerik" className="rounded-lg p-2 text-dark-400 hover:bg-dark-100 hover:text-dark-600 dark:text-dark-300">
             <ArrowLeft size={18} />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-dark-900">Kategoriler</h1>
-            <p className="text-sm text-dark-500">{items.length} kategori</p>
+            <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">Kategoriler</h1>
+            <p className="text-sm text-dark-500 dark:text-dark-400">{items.length} kategori</p>
           </div>
         </div>
         <button
@@ -148,13 +148,13 @@ export default function AdminKategorilerPage() {
 
       {/* Form */}
       {formOpen && (
-        <div className="mb-6 rounded-xl border border-dark-100 bg-white p-6">
-          <h3 className="mb-4 text-lg font-bold text-dark-900">
+        <div className="mb-6 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+          <h3 className="mb-4 text-lg font-bold text-dark-900 dark:text-dark-50">
             {editing ? "Kategoriyi Düzenle" : "Yeni Kategori"}
           </h3>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Kategori Adı *</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Kategori Adı *</label>
               <input
                 value={name}
                 onChange={(e) => { setName(e.target.value); if (!editing) setSlug(slugify(e.target.value)); }}
@@ -162,7 +162,7 @@ export default function AdminKategorilerPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Slug</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Slug</label>
               <input
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
@@ -170,7 +170,7 @@ export default function AdminKategorilerPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Sıra No</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Sıra No</label>
               <input
                 type="number"
                 value={sortOrder}
@@ -183,7 +183,7 @@ export default function AdminKategorilerPage() {
             </div>
           </div>
           <div className="mt-4 flex justify-end gap-3">
-            <button onClick={resetForm} className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 hover:bg-dark-50">
+            <button onClick={resetForm} className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:bg-dark-800">
               İptal
             </button>
             <button
@@ -198,16 +198,16 @@ export default function AdminKategorilerPage() {
       )}
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-dark-100 bg-white">
+      <div className="overflow-hidden rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-dark-100 bg-dark-50">
+            <thead className="border-b border-dark-100 bg-dark-50 dark:bg-dark-800">
               <tr>
-                <th className="px-4 py-3 font-semibold text-dark-700">Sıra</th>
-                <th className="px-4 py-3 font-semibold text-dark-700">Kategori</th>
-                <th className="px-4 py-3 font-semibold text-dark-700">Slug</th>
-                <th className="px-4 py-3 font-semibold text-dark-700">Sıra No</th>
-                <th className="px-4 py-3 font-semibold text-dark-700">İşlemler</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Sıra</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Kategori</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Slug</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Sıra No</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">İşlemler</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-dark-50">
@@ -216,21 +216,21 @@ export default function AdminKategorilerPage() {
                   <td className="px-4 py-3 text-dark-400">
                     <GripVertical size={14} />
                   </td>
-                  <td className="px-4 py-3 font-medium text-dark-900">{cat.name}</td>
-                  <td className="px-4 py-3 text-dark-500">/{cat.slug}</td>
-                  <td className="px-4 py-3 text-dark-500">{cat.sort_order}</td>
+                  <td className="px-4 py-3 font-medium text-dark-900 dark:text-dark-50">{cat.name}</td>
+                  <td className="px-4 py-3 text-dark-500 dark:text-dark-400">/{cat.slug}</td>
+                  <td className="px-4 py-3 text-dark-500 dark:text-dark-400">{cat.sort_order}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => openEdit(cat)}
-                        className="rounded p-1.5 text-dark-400 hover:bg-blue-50 hover:text-blue-600"
+                        className="rounded p-1.5 text-dark-400 hover:bg-blue-50 dark:bg-blue-900/30 hover:text-blue-600"
                         title="Düzenle"
                       >
                         <Edit size={14} />
                       </button>
                       <button
                         onClick={() => setDeleteTarget(cat)}
-                        className="rounded p-1.5 text-dark-400 hover:bg-red-50 hover:text-red-600"
+                        className="rounded p-1.5 text-dark-400 hover:bg-red-50 dark:bg-red-900/30 hover:text-red-600"
                         title="Sil"
                       >
                         <Trash2 size={14} />
@@ -244,7 +244,7 @@ export default function AdminKategorilerPage() {
         </div>
         {items.length === 0 && (
           <div className="py-12 text-center">
-            <p className="text-dark-500">Henüz kategori yok.</p>
+            <p className="text-dark-500 dark:text-dark-400">Henüz kategori yok.</p>
           </div>
         )}
       </div>

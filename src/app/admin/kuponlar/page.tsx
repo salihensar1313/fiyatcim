@@ -118,13 +118,13 @@ export default function AdminCouponsPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-dark-900">Kuponlar</h1>
-          <p className="text-sm text-dark-500">{coupons.length} kupon</p>
+          <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">Kuponlar</h1>
+          <p className="text-sm text-dark-500 dark:text-dark-400">{coupons.length} kupon</p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={handleExportCSV}
-            className="flex items-center gap-2 rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 hover:bg-dark-50"
+            className="flex items-center gap-2 rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:bg-dark-800"
           >
             <Download size={16} />
             CSV
@@ -141,13 +141,13 @@ export default function AdminCouponsPage() {
 
       {/* Form */}
       {formOpen && (
-        <div className="mb-6 rounded-xl border border-dark-100 bg-white p-6">
-          <h3 className="mb-4 text-lg font-bold text-dark-900">
+        <div className="mb-6 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+          <h3 className="mb-4 text-lg font-bold text-dark-900 dark:text-dark-50">
             {editing ? "Kuponu Düzenle" : "Yeni Kupon"}
           </h3>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Kupon Kodu *</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Kupon Kodu *</label>
               <input
                 value={code}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
@@ -156,7 +156,7 @@ export default function AdminCouponsPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">İndirim Türü</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">İndirim Türü</label>
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value as "percent" | "fixed")}
@@ -167,7 +167,7 @@ export default function AdminCouponsPage() {
               </select>
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">
                 Değer * {type === "percent" ? "(%)" : "(₺)"}
               </label>
               <input
@@ -179,7 +179,7 @@ export default function AdminCouponsPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Min. Sepet Tutarı (₺)</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Min. Sepet Tutarı (₺)</label>
               <input
                 type="number"
                 value={minCart}
@@ -189,7 +189,7 @@ export default function AdminCouponsPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Maks. Kullanım</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Maks. Kullanım</label>
               <input
                 type="number"
                 value={maxUses}
@@ -200,7 +200,7 @@ export default function AdminCouponsPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Son Kullanım Tarihi</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Son Kullanım Tarihi</label>
               <input
                 type="date"
                 value={expiry}
@@ -216,11 +216,11 @@ export default function AdminCouponsPage() {
                 onChange={(e) => setActive(e.target.checked)}
                 className="h-4 w-4 rounded border-dark-300 text-primary-600 focus:ring-primary-500"
               />
-              <label htmlFor="coupon-active" className="text-sm font-medium text-dark-700">Aktif</label>
+              <label htmlFor="coupon-active" className="text-sm font-medium text-dark-700 dark:text-dark-200">Aktif</label>
             </div>
           </div>
           <div className="mt-4 flex justify-end gap-3">
-            <button onClick={resetForm} className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 hover:bg-dark-50">
+            <button onClick={resetForm} className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:bg-dark-800">
               İptal
             </button>
             <button onClick={handleSave} className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700">
@@ -231,18 +231,18 @@ export default function AdminCouponsPage() {
       )}
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-dark-100 bg-white">
+      <div className="overflow-hidden rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-dark-100 bg-dark-50">
+            <thead className="border-b border-dark-100 bg-dark-50 dark:bg-dark-800">
               <tr>
-                <th className="px-4 py-3 font-semibold text-dark-700">Kod</th>
-                <th className="px-4 py-3 font-semibold text-dark-700">İndirim</th>
-                <th className="px-4 py-3 font-semibold text-dark-700">Min. Sepet</th>
-                <th className="px-4 py-3 font-semibold text-dark-700">Kullanım</th>
-                <th className="px-4 py-3 font-semibold text-dark-700">Son Tarih</th>
-                <th className="px-4 py-3 font-semibold text-dark-700">Durum</th>
-                <th className="px-4 py-3 font-semibold text-dark-700">İşlemler</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Kod</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">İndirim</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Min. Sepet</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Kullanım</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Son Tarih</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Durum</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">İşlemler</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-dark-50">
@@ -255,19 +255,19 @@ export default function AdminCouponsPage() {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <Tag size={14} className="text-primary-600" />
-                        <span className="font-mono font-bold text-dark-900">{coupon.code}</span>
+                        <span className="font-mono font-bold text-dark-900 dark:text-dark-50">{coupon.code}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-dark-700">
+                    <td className="px-4 py-3 text-dark-700 dark:text-dark-200">
                       {coupon.type === "percent" ? `%${coupon.value}` : `${coupon.value}₺`}
                     </td>
-                    <td className="px-4 py-3 text-dark-500">
+                    <td className="px-4 py-3 text-dark-500 dark:text-dark-400">
                       {coupon.min_cart > 0 ? `${coupon.min_cart}₺` : "-"}
                     </td>
-                    <td className="px-4 py-3 text-dark-500">
+                    <td className="px-4 py-3 text-dark-500 dark:text-dark-400">
                       {coupon.used_count}{coupon.max_uses !== null ? ` / ${coupon.max_uses}` : " / ∞"}
                     </td>
-                    <td className="px-4 py-3 text-dark-500">
+                    <td className="px-4 py-3 text-dark-500 dark:text-dark-400">
                       {coupon.expiry
                         ? new Date(coupon.expiry).toLocaleDateString("tr-TR")
                         : "Süresiz"}
@@ -287,14 +287,14 @@ export default function AdminCouponsPage() {
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => openEdit(coupon)}
-                          className="rounded p-1.5 text-dark-400 hover:bg-blue-50 hover:text-blue-600"
+                          className="rounded p-1.5 text-dark-400 hover:bg-blue-50 dark:bg-blue-900/30 hover:text-blue-600"
                           title="Düzenle"
                         >
                           <Edit size={14} />
                         </button>
                         <button
                           onClick={() => setDeleteTarget(coupon)}
-                          className="rounded p-1.5 text-dark-400 hover:bg-red-50 hover:text-red-600"
+                          className="rounded p-1.5 text-dark-400 hover:bg-red-50 dark:bg-red-900/30 hover:text-red-600"
                           title="Sil"
                         >
                           <Trash2 size={14} />
@@ -310,7 +310,7 @@ export default function AdminCouponsPage() {
 
         {coupons.length === 0 && (
           <div className="py-12 text-center">
-            <p className="text-dark-500">Henüz kupon yok.</p>
+            <p className="text-dark-500 dark:text-dark-400">Henüz kupon yok.</p>
           </div>
         )}
       </div>

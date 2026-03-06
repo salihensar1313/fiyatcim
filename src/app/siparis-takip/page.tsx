@@ -29,7 +29,7 @@ const STATUS_ICONS: Record<string, React.ElementType> = {
 
 export default function OrderTrackingPage() {
   return (
-    <Suspense fallback={<div className="container-custom py-8 text-center text-dark-500">Yükleniyor...</div>}>
+    <Suspense fallback={<div className="container-custom py-8 text-center text-dark-500 dark:text-dark-400">Yükleniyor...</div>}>
       <OrderTrackingContent />
     </Suspense>
   );
@@ -100,16 +100,16 @@ function OrderTrackingContent() {
   return (
     <div className="container-custom py-8">
       <div className="mx-auto max-w-2xl">
-        <h1 className="text-2xl font-bold text-dark-900">Sipariş Takip</h1>
-        <p className="mt-1 text-sm text-dark-500">
+        <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">Sipariş Takip</h1>
+        <p className="mt-1 text-sm text-dark-500 dark:text-dark-400">
           Sipariş numaranız ve e-posta adresiniz ile siparişinizi takip edebilirsiniz.
         </p>
 
         {/* Search Form */}
-        <div className="mt-6 rounded-xl border border-dark-100 bg-white p-6">
+        <div className="mt-6 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Sipariş Numarası</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Sipariş Numarası</label>
               <input
                 value={orderNo}
                 onChange={(e) => setOrderNo(e.target.value)}
@@ -118,7 +118,7 @@ function OrderTrackingContent() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">E-posta Adresi</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">E-posta Adresi</label>
               <input
                 type="email"
                 value={email}
@@ -139,7 +139,7 @@ function OrderTrackingContent() {
 
         {/* Error */}
         {error && (
-          <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4">
+          <div className="mt-4 rounded-lg border border-red-200 bg-red-50 dark:bg-red-900/30 p-4">
             <p className="text-sm text-red-700">{error}</p>
           </div>
         )}
@@ -148,15 +148,15 @@ function OrderTrackingContent() {
         {foundOrder && (
           <div className="mt-6 space-y-4">
             {/* Order Header */}
-            <div className="rounded-xl border border-dark-100 bg-white p-6">
+            <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs text-dark-400">Sipariş No</p>
-                  <p className="font-mono text-lg font-bold text-dark-900">{foundOrder.order_no}</p>
+                  <p className="font-mono text-lg font-bold text-dark-900 dark:text-dark-50">{foundOrder.order_no}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-xs text-dark-400">Tarih</p>
-                  <p className="text-sm font-medium text-dark-700">
+                  <p className="text-sm font-medium text-dark-700 dark:text-dark-200">
                     {new Date(foundOrder.created_at).toLocaleDateString("tr-TR", {
                       day: "numeric",
                       month: "long",
@@ -169,9 +169,9 @@ function OrderTrackingContent() {
               {/* Status Badge */}
               <div className="mt-4">
                 <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium ${
-                  foundOrder.status === "delivered" ? "bg-green-50 text-green-700" :
-                  foundOrder.status === "cancelled" || foundOrder.status === "refunded" ? "bg-red-50 text-red-700" :
-                  "bg-blue-50 text-blue-700"
+                  foundOrder.status === "delivered" ? "bg-green-50 dark:bg-green-900/30 text-green-700" :
+                  foundOrder.status === "cancelled" || foundOrder.status === "refunded" ? "bg-red-50 dark:bg-red-900/30 text-red-700" :
+                  "bg-blue-50 dark:bg-blue-900/30 text-blue-700"
                 }`}>
                   {(() => {
                     const Icon = STATUS_ICONS[foundOrder.status] || Clock;
@@ -184,8 +184,8 @@ function OrderTrackingContent() {
 
             {/* Progress Steps — G37: Kargo Bar */}
             {foundOrder.status !== "cancelled" && foundOrder.status !== "refunded" && (
-              <div className="rounded-xl border border-dark-100 bg-white p-6">
-                <h3 className="mb-4 text-sm font-bold text-dark-900">Sipariş Durumu</h3>
+              <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+                <h3 className="mb-4 text-sm font-bold text-dark-900 dark:text-dark-50">Sipariş Durumu</h3>
                 <div className="flex items-center justify-between">
                   {STATUS_STEPS.map((step, i) => {
                     const status = getStepStatus(step, foundOrder.status);
@@ -202,7 +202,7 @@ function OrderTrackingContent() {
                             <Icon size={18} />
                           </div>
                           <p className={`mt-2 text-center text-xs font-medium ${
-                            status === "inactive" ? "text-dark-400" : "text-dark-700"
+                            status === "inactive" ? "text-dark-400" : "text-dark-700 dark:text-dark-200"
                           }`}>
                             {ORDER_STATUS_LABELS[step]}
                           </p>
@@ -223,31 +223,31 @@ function OrderTrackingContent() {
 
             {/* Tracking Info */}
             {foundOrder.tracking_no && (
-              <div className="rounded-xl border border-dark-100 bg-white p-6">
-                <h3 className="mb-2 text-sm font-bold text-dark-900">Kargo Bilgileri</h3>
+              <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+                <h3 className="mb-2 text-sm font-bold text-dark-900 dark:text-dark-50">Kargo Bilgileri</h3>
                 <div className="flex items-center gap-3">
                   <Truck size={18} className="text-primary-600" />
                   <div>
                     {foundOrder.shipping_company && (
-                      <p className="text-sm font-medium text-dark-700">{foundOrder.shipping_company}</p>
+                      <p className="text-sm font-medium text-dark-700 dark:text-dark-200">{foundOrder.shipping_company}</p>
                     )}
-                    <p className="text-sm text-dark-500">Takip No: {foundOrder.tracking_no}</p>
+                    <p className="text-sm text-dark-500 dark:text-dark-400">Takip No: {foundOrder.tracking_no}</p>
                   </div>
                 </div>
               </div>
             )}
 
             {/* Order Items */}
-            <div className="rounded-xl border border-dark-100 bg-white p-6">
-              <h3 className="mb-4 text-sm font-bold text-dark-900">Sipariş Detayı</h3>
+            <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+              <h3 className="mb-4 text-sm font-bold text-dark-900 dark:text-dark-50">Sipariş Detayı</h3>
               <div className="space-y-3">
                 {foundOrder.items?.map((item) => (
                   <div key={item.id} className="flex items-center justify-between border-b border-dark-50 pb-3 last:border-0 last:pb-0">
                     <div>
-                      <p className="text-sm font-medium text-dark-900">{item.name_snapshot}</p>
+                      <p className="text-sm font-medium text-dark-900 dark:text-dark-50">{item.name_snapshot}</p>
                       <p className="text-xs text-dark-400">{item.qty} adet</p>
                     </div>
-                    <p className="text-sm font-medium text-dark-700">
+                    <p className="text-sm font-medium text-dark-700 dark:text-dark-200">
                       {((item.sale_price_snapshot || item.price_snapshot) * item.qty).toLocaleString("tr-TR")}₺
                     </p>
                   </div>
@@ -257,38 +257,38 @@ function OrderTrackingContent() {
               {/* Totals */}
               <div className="mt-4 space-y-2 border-t border-dark-100 pt-4">
                 <div className="flex justify-between text-sm">
-                  <span className="text-dark-500">Ara Toplam</span>
-                  <span className="text-dark-700">{foundOrder.subtotal.toLocaleString("tr-TR")}₺</span>
+                  <span className="text-dark-500 dark:text-dark-400">Ara Toplam</span>
+                  <span className="text-dark-700 dark:text-dark-200">{foundOrder.subtotal.toLocaleString("tr-TR")}₺</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-dark-500">Kargo</span>
-                  <span className="text-dark-700">
+                  <span className="text-dark-500 dark:text-dark-400">Kargo</span>
+                  <span className="text-dark-700 dark:text-dark-200">
                     {foundOrder.shipping === 0 ? "Ücretsiz" : `${foundOrder.shipping.toLocaleString("tr-TR")}₺`}
                   </span>
                 </div>
                 {foundOrder.discount > 0 && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-dark-500">İndirim</span>
+                    <span className="text-dark-500 dark:text-dark-400">İndirim</span>
                     <span className="text-green-600">-{foundOrder.discount.toLocaleString("tr-TR")}₺</span>
                   </div>
                 )}
                 <div className="flex justify-between border-t border-dark-100 pt-2 text-base font-bold">
-                  <span className="text-dark-900">Toplam</span>
-                  <span className="text-dark-900">{foundOrder.total.toLocaleString("tr-TR")}₺</span>
+                  <span className="text-dark-900 dark:text-dark-50">Toplam</span>
+                  <span className="text-dark-900 dark:text-dark-50">{foundOrder.total.toLocaleString("tr-TR")}₺</span>
                 </div>
               </div>
             </div>
 
             {/* Delivery Address */}
-            <div className="rounded-xl border border-dark-100 bg-white p-6">
-              <h3 className="mb-2 text-sm font-bold text-dark-900">Teslimat Adresi</h3>
-              <p className="text-sm text-dark-600">
+            <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+              <h3 className="mb-2 text-sm font-bold text-dark-900 dark:text-dark-50">Teslimat Adresi</h3>
+              <p className="text-sm text-dark-600 dark:text-dark-300">
                 {foundOrder.shipping_address.ad} {foundOrder.shipping_address.soyad}
               </p>
-              <p className="text-sm text-dark-500">
+              <p className="text-sm text-dark-500 dark:text-dark-400">
                 {foundOrder.shipping_address.adres}
               </p>
-              <p className="text-sm text-dark-500">
+              <p className="text-sm text-dark-500 dark:text-dark-400">
                 {foundOrder.shipping_address.ilce} / {foundOrder.shipping_address.il}
               </p>
             </div>
@@ -299,7 +299,7 @@ function OrderTrackingContent() {
         {searched && !foundOrder && !error && (
           <div className="mt-8 text-center">
             <Search size={48} className="mx-auto text-dark-200" />
-            <p className="mt-4 text-dark-500">Sipariş bulunamadı.</p>
+            <p className="mt-4 text-dark-500 dark:text-dark-400">Sipariş bulunamadı.</p>
           </div>
         )}
       </div>

@@ -92,6 +92,7 @@ export const PAGINATION = {
 
 export const FREE_SHIPPING_THRESHOLD = 2000;
 export const DEFAULT_SHIPPING_COST = 49.90;
+export const GIFT_WRAP_COST = 19.90;
 
 export const ORDER_STATUS_COLORS: Record<string, string> = {
   pending_payment: "bg-yellow-100 text-yellow-800",

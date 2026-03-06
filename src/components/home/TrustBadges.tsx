@@ -13,7 +13,7 @@ export default async function TrustBadges() {
   const badges = await getTrustBadges(client);
 
   return (
-    <section className="border-y border-dark-100 bg-white py-6 sm:py-8">
+    <section className="border-y border-dark-100 bg-white dark:bg-dark-800 py-6 sm:py-8 dark:border-dark-700 dark:bg-dark-800">
       <div className="container-custom">
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-8">
           {badges.map((badge) => {
@@ -24,8 +24,8 @@ export default async function TrustBadges() {
                   <IconComp size={22} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-dark-900">{badge.title}</h3>
-                  <p className="text-xs text-dark-500">{badge.description}</p>
+                  <h3 className="text-sm font-bold text-dark-900 dark:text-dark-50">{badge.title}</h3>
+                  <p className="text-xs text-dark-500 dark:text-dark-400">{badge.description}</p>
                 </div>
               </div>
             );

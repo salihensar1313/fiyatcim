@@ -17,7 +17,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="w-full">
         {label && (
-          <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-dark-700">
+          <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-dark-700 dark:text-dark-200">
             {label}
           </label>
         )}

@@ -200,13 +200,13 @@ export default function RegisterPage() {
   const currentStepIndex = steps.findIndex((s) => s.key === step);
 
   return (
-    <div className="bg-dark-50 pb-16">
+    <div className="bg-dark-50 dark:bg-dark-900 pb-16">
       <div className="container mx-auto px-4 py-4">
         <Breadcrumb items={[{ label: "Kayıt Ol" }]} />
       </div>
 
       <div className="container mx-auto flex justify-center px-4">
-        <div className="w-full max-w-md rounded-xl border border-dark-100 bg-white p-8">
+        <div className="w-full max-w-md rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-8">
           {/* Step Indicator */}
           <div className="mb-6 flex items-center justify-center gap-2">
             {steps.map((s, i) => (
@@ -230,13 +230,13 @@ export default function RegisterPage() {
           {step === "email" && (
             <>
               <div className="mb-6 text-center">
-                <h1 className="text-2xl font-bold text-dark-900">Kayıt Ol</h1>
-                <p className="mt-1 text-sm text-dark-500">Önce e-posta adresinizi doğrulayalım</p>
+                <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">Kayıt Ol</h1>
+                <p className="mt-1 text-sm text-dark-500 dark:text-dark-400">Önce e-posta adresinizi doğrulayalım</p>
               </div>
 
               <form onSubmit={handleEmailSubmit} className="space-y-4">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-dark-700">E-posta</label>
+                  <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">E-posta</label>
                   <input
                     type="email"
                     value={email}
@@ -248,7 +248,7 @@ export default function RegisterPage() {
                 </div>
 
                 {error && (
-                  <div className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">{error}</div>
+                  <div className="rounded-lg bg-red-50 dark:bg-red-900/30 px-4 py-2 text-sm text-red-600">{error}</div>
                 )}
 
                 <button
@@ -266,15 +266,15 @@ export default function RegisterPage() {
           {step === "otp" && (
             <>
               <div className="mb-6 text-center">
-                <h1 className="text-2xl font-bold text-dark-900">E-posta Doğrulama</h1>
-                <p className="mt-1 text-sm text-dark-500">
-                  <span className="font-medium text-dark-700">{email}</span> adresine gönderilen 6 haneli kodu girin
+                <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">E-posta Doğrulama</h1>
+                <p className="mt-1 text-sm text-dark-500 dark:text-dark-400">
+                  <span className="font-medium text-dark-700 dark:text-dark-200">{email}</span> adresine gönderilen 6 haneli kodu girin
                 </p>
               </div>
 
               {/* Demo bilgisi — sadece demo modda */}
               {IS_DEMO && (
-                <div className="mb-4 rounded-lg bg-blue-50 p-3">
+                <div className="mb-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 p-3">
                   <p className="text-xs font-semibold text-blue-700">Demo Modu</p>
                   <p className="mt-0.5 text-xs text-blue-600">Doğrulama kodu: <span className="font-mono font-bold">123456</span></p>
                 </div>
@@ -282,7 +282,7 @@ export default function RegisterPage() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-dark-700">Doğrulama Kodu</label>
+                  <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Doğrulama Kodu</label>
                   <input
                     type="text"
                     inputMode="numeric"
@@ -296,13 +296,13 @@ export default function RegisterPage() {
                 </div>
 
                 {lockLeft > 0 && (
-                  <div className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">
+                  <div className="rounded-lg bg-red-50 dark:bg-red-900/30 px-4 py-2 text-sm text-red-600">
                     Hesap kilitlendi. {lockLeft} saniye bekleyin.
                   </div>
                 )}
 
                 {error && lockLeft === 0 && (
-                  <div className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">{error}</div>
+                  <div className="rounded-lg bg-red-50 dark:bg-red-900/30 px-4 py-2 text-sm text-red-600">{error}</div>
                 )}
 
                 <button
@@ -332,7 +332,7 @@ export default function RegisterPage() {
 
                 <button
                   onClick={() => { setStep("email"); setError(""); }}
-                  className="flex w-full items-center justify-center gap-2 text-sm text-dark-500 hover:text-dark-700"
+                  className="flex w-full items-center justify-center gap-2 text-sm text-dark-500 dark:text-dark-400 hover:text-dark-700 dark:text-dark-200"
                 >
                   <ArrowLeft size={14} />
                   Geri Dön
@@ -345,12 +345,12 @@ export default function RegisterPage() {
           {step === "info" && (
             <>
               <div className="mb-6 text-center">
-                <h1 className="text-2xl font-bold text-dark-900">Kişisel Bilgiler</h1>
-                <p className="mt-1 text-sm text-dark-500">Hesap bilgilerinizi tamamlayın</p>
+                <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">Kişisel Bilgiler</h1>
+                <p className="mt-1 text-sm text-dark-500 dark:text-dark-400">Hesap bilgilerinizi tamamlayın</p>
               </div>
 
               {/* Doğrulanmış e-posta */}
-              <div className="mb-4 flex items-center gap-2 rounded-lg bg-green-50 p-3">
+              <div className="mb-4 flex items-center gap-2 rounded-lg bg-green-50 dark:bg-green-900/30 p-3">
                 <ShieldCheck size={16} className="text-green-600" />
                 <span className="text-sm text-green-700">
                   <span className="font-medium">{email}</span> doğrulandı
@@ -360,7 +360,7 @@ export default function RegisterPage() {
               <form onSubmit={handleInfoSubmit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-dark-700">Ad</label>
+                    <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Ad</label>
                     <input
                       type="text"
                       value={ad}
@@ -371,7 +371,7 @@ export default function RegisterPage() {
                     />
                   </div>
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-dark-700">Soyad</label>
+                    <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Soyad</label>
                     <input
                       type="text"
                       value={soyad}
@@ -384,7 +384,7 @@ export default function RegisterPage() {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-dark-700">Telefon</label>
+                  <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Telefon</label>
                   <input
                     type="tel"
                     value={telefon.replace(/(\d{2})(\d{3})(\d{0,3})(\d{0,2})(\d{0,2})/, (_m: string, a: string, b: string, c: string, d: string, e: string) => [a, b, c, d, e].filter(Boolean).join(" "))}
@@ -401,7 +401,7 @@ export default function RegisterPage() {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-dark-700">Şifre</label>
+                  <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Şifre</label>
                   <div className="relative">
                     <input
                       type={showPassword ? "text" : "password"}
@@ -423,7 +423,7 @@ export default function RegisterPage() {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-dark-700">Şifre Tekrar</label>
+                  <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Şifre Tekrar</label>
                   <input
                     type="password"
                     value={passwordConfirm}
@@ -435,7 +435,7 @@ export default function RegisterPage() {
                 </div>
 
                 {error && (
-                  <div className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">{error}</div>
+                  <div className="rounded-lg bg-red-50 dark:bg-red-900/30 px-4 py-2 text-sm text-red-600">{error}</div>
                 )}
 
                 <button
@@ -449,7 +449,7 @@ export default function RegisterPage() {
                 <button
                   type="button"
                   onClick={() => { setStep(IS_DEMO ? "otp" : "email"); setError(""); }}
-                  className="flex w-full items-center justify-center gap-2 text-sm text-dark-500 hover:text-dark-700"
+                  className="flex w-full items-center justify-center gap-2 text-sm text-dark-500 dark:text-dark-400 hover:text-dark-700 dark:text-dark-200"
                 >
                   <ArrowLeft size={14} />
                   Geri Dön
@@ -471,20 +471,20 @@ export default function RegisterPage() {
           {step === "agreements" && (
             <>
               <div className="mb-6 text-center">
-                <h1 className="text-2xl font-bold text-dark-900">Sözleşmeler</h1>
-                <p className="mt-1 text-sm text-dark-500">Kayıt için gerekli sözleşmeleri onaylayın</p>
+                <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">Sözleşmeler</h1>
+                <p className="mt-1 text-sm text-dark-500 dark:text-dark-400">Kayıt için gerekli sözleşmeleri onaylayın</p>
               </div>
 
               <div className="space-y-3">
                 {/* KVKK — zorunlu */}
-                <label className="flex items-start gap-3 rounded-lg border border-dark-100 p-3 transition-colors hover:bg-dark-50">
+                <label className="flex items-start gap-3 rounded-lg border border-dark-100 p-3 transition-colors hover:bg-dark-50 dark:bg-dark-800">
                   <input
                     type="checkbox"
                     checked={agreeKVKK}
                     onChange={(e) => setAgreeKVKK(e.target.checked)}
                     className="mt-0.5 h-4 w-4 rounded border-dark-300 text-primary-600 focus:ring-primary-500"
                   />
-                  <span className="text-sm text-dark-700">
+                  <span className="text-sm text-dark-700 dark:text-dark-200">
                     <Link href="/kvkk" target="_blank" className="font-medium text-primary-600 hover:underline">
                       KVKK Aydınlatma Metni
                     </Link>
@@ -493,14 +493,14 @@ export default function RegisterPage() {
                 </label>
 
                 {/* Kullanım Koşulları — zorunlu */}
-                <label className="flex items-start gap-3 rounded-lg border border-dark-100 p-3 transition-colors hover:bg-dark-50">
+                <label className="flex items-start gap-3 rounded-lg border border-dark-100 p-3 transition-colors hover:bg-dark-50 dark:bg-dark-800">
                   <input
                     type="checkbox"
                     checked={agreeTerms}
                     onChange={(e) => setAgreeTerms(e.target.checked)}
                     className="mt-0.5 h-4 w-4 rounded border-dark-300 text-primary-600 focus:ring-primary-500"
                   />
-                  <span className="text-sm text-dark-700">
+                  <span className="text-sm text-dark-700 dark:text-dark-200">
                     <Link href="/kullanim-kosullari" target="_blank" className="font-medium text-primary-600 hover:underline">
                       Kullanım Koşulları
                     </Link>
@@ -509,14 +509,14 @@ export default function RegisterPage() {
                 </label>
 
                 {/* Gizlilik — zorunlu */}
-                <label className="flex items-start gap-3 rounded-lg border border-dark-100 p-3 transition-colors hover:bg-dark-50">
+                <label className="flex items-start gap-3 rounded-lg border border-dark-100 p-3 transition-colors hover:bg-dark-50 dark:bg-dark-800">
                   <input
                     type="checkbox"
                     checked={agreePrivacy}
                     onChange={(e) => setAgreePrivacy(e.target.checked)}
                     className="mt-0.5 h-4 w-4 rounded border-dark-300 text-primary-600 focus:ring-primary-500"
                   />
-                  <span className="text-sm text-dark-700">
+                  <span className="text-sm text-dark-700 dark:text-dark-200">
                     <Link href="/gizlilik" target="_blank" className="font-medium text-primary-600 hover:underline">
                       Gizlilik Politikası
                     </Link>
@@ -525,14 +525,14 @@ export default function RegisterPage() {
                 </label>
 
                 {/* Marketing — opsiyonel */}
-                <label className="flex items-start gap-3 rounded-lg border border-dark-100 p-3 transition-colors hover:bg-dark-50">
+                <label className="flex items-start gap-3 rounded-lg border border-dark-100 p-3 transition-colors hover:bg-dark-50 dark:bg-dark-800">
                   <input
                     type="checkbox"
                     checked={agreeMarketing}
                     onChange={(e) => setAgreeMarketing(e.target.checked)}
                     className="mt-0.5 h-4 w-4 rounded border-dark-300 text-primary-600 focus:ring-primary-500"
                   />
-                  <span className="text-sm text-dark-700">
+                  <span className="text-sm text-dark-700 dark:text-dark-200">
                     Kampanya, indirim ve duyurulardan e-posta ile haberdar olmak istiyorum. <span className="text-dark-400">(Opsiyonel)</span>
                   </span>
                 </label>
@@ -542,7 +542,7 @@ export default function RegisterPage() {
                 </p>
 
                 {error && (
-                  <div className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">{error}</div>
+                  <div className="rounded-lg bg-red-50 dark:bg-red-900/30 px-4 py-2 text-sm text-red-600">{error}</div>
                 )}
 
                 <button
@@ -556,7 +556,7 @@ export default function RegisterPage() {
 
                 <button
                   onClick={() => { setStep(IS_DEMO ? "sms" : "info"); setError(""); }}
-                  className="flex w-full items-center justify-center gap-2 text-sm text-dark-500 hover:text-dark-700"
+                  className="flex w-full items-center justify-center gap-2 text-sm text-dark-500 dark:text-dark-400 hover:text-dark-700 dark:text-dark-200"
                 >
                   <ArrowLeft size={14} />
                   Geri Dön
@@ -566,7 +566,7 @@ export default function RegisterPage() {
           )}
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-dark-500">
+            <p className="text-sm text-dark-500 dark:text-dark-400">
               Zaten hesabınız var mı?{" "}
               <Link href="/giris" className="font-semibold text-primary-600 hover:text-primary-700">
                 Giriş Yap

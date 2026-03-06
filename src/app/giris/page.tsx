@@ -33,21 +33,21 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="bg-dark-50 pb-16">
+    <div className="bg-dark-50 dark:bg-dark-900 pb-16">
       <div className="container mx-auto px-4 py-4">
         <Breadcrumb items={[{ label: "Giriş Yap" }]} />
       </div>
 
       <div className="container mx-auto flex justify-center px-4">
-        <div className="w-full max-w-md rounded-xl border border-dark-100 bg-white p-8">
+        <div className="w-full max-w-md rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-8">
           <div className="mb-6 text-center">
-            <h1 className="text-2xl font-bold text-dark-900">Giriş Yap</h1>
-            <p className="mt-1 text-sm text-dark-500">Hesabınıza giriş yaparak devam edin</p>
+            <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">Giriş Yap</h1>
+            <p className="mt-1 text-sm text-dark-500 dark:text-dark-400">Hesabınıza giriş yaparak devam edin</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">E-posta</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">E-posta</label>
               <input
                 type="email"
                 value={email}
@@ -59,7 +59,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Şifre</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Şifre</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -80,7 +80,7 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <div className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">{error}</div>
+              <div className="rounded-lg bg-red-50 dark:bg-red-900/30 px-4 py-2 text-sm text-red-600">{error}</div>
             )}
 
             <button
@@ -94,7 +94,7 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-dark-500">
+            <p className="text-sm text-dark-500 dark:text-dark-400">
               Hesabınız yok mu?{" "}
               <Link href="/kayit" className="font-semibold text-primary-600 hover:text-primary-700">
                 Kayıt Ol
@@ -104,7 +104,7 @@ export default function LoginPage() {
 
           {/* Demo bilgisi — sadece demo modda göster */}
           {IS_DEMO && (
-            <div className="mt-4 rounded-lg bg-blue-50 p-3">
+            <div className="mt-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 p-3">
               <p className="text-xs font-semibold text-blue-700">Demo Giriş Bilgileri:</p>
               <p className="mt-1 text-xs text-blue-600">Admin: admin@fiyatcim.com / admin123</p>
               <p className="text-xs text-blue-600">Kullanıcı: Herhangi bir e-posta / 6+ karakter şifre</p>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { Star, User, Send, ThumbsUp, ThumbsDown, ChevronDown, Info, MessageSquarePlus } from "lucide-react";
+import { useState, useRef, useCallback } from "react";
+import { Star, User, Send, ThumbsUp, ThumbsDown, ChevronDown, Info, MessageSquarePlus, Camera, X, ImageIcon } from "lucide-react";
 import type { Product } from "@/types";
 import { useProductReviews, type ReviewSortOption } from "@/hooks/useProductReviews";
 import { useAuth } from "@/context/AuthContext";
@@ -9,6 +9,7 @@ import Rating from "@/components/ui/Rating";
 import { useToast } from "@/components/ui/Toast";
 import { formatDate } from "@/lib/utils";
 import { CATEGORY_IMAGES } from "@/lib/constants";
+import ImageLightbox from "@/components/ui/ImageLightbox";
 import Image from "next/image";
 
 interface ReviewsTabProps {
@@ -34,7 +35,70 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState("");
   const [hoverRating, setHoverRating] = useState(0);
+  const [reviewImages, setReviewImages] = useState<string[]>([]);
+  const [showPhotosOnly, setShowPhotosOnly] = useState(false);
+  const [lightboxImages, setLightboxImages] = useState<string[] | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   const formRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const MAX_IMAGES = 3;
+  const MAX_SIZE_KB = 800; // max width px for resize
+
+  const resizeImage = useCallback((file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = document.createElement("img");
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let w = img.width;
+          let h = img.height;
+          if (w > MAX_SIZE_KB) {
+            h = (h * MAX_SIZE_KB) / w;
+            w = MAX_SIZE_KB;
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL("image/jpeg", 0.7));
+        };
+        img.onerror = reject;
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }, []);
+
+  const handleImageUpload = useCallback(async (files: FileList | null) => {
+    if (!files) return;
+    const remaining = MAX_IMAGES - reviewImages.length;
+    if (remaining <= 0) {
+      showToast(`En fazla ${MAX_IMAGES} fotoğraf ekleyebilirsiniz`, "error");
+      return;
+    }
+
+    const toProcess = Array.from(files).slice(0, remaining);
+    for (const file of toProcess) {
+      if (!file.type.startsWith("image/")) continue;
+      if (file.size > 5 * 1024 * 1024) {
+        showToast("Fotoğraf boyutu en fazla 5MB olmalıdır", "error");
+        continue;
+      }
+      try {
+        const resized = await resizeImage(file);
+        setReviewImages((prev) => [...prev, resized]);
+      } catch {
+        showToast("Fotoğraf yüklenemedi", "error");
+      }
+    }
+  }, [reviewImages.length, resizeImage, showToast]);
+
+  const removeImage = useCallback((index: number) => {
+    setReviewImages((prev) => prev.filter((_, i) => i !== index));
+  }, []);
 
   const sortedReviews = getSortedReviews(sortBy);
   const productImage = CATEGORY_IMAGES[product.category_id] || "/images/categories/alarm.png";
@@ -53,10 +117,12 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
       user_id: user.id,
       rating: reviewRating,
       comment: reviewComment.trim(),
+      images: reviewImages.length > 0 ? reviewImages : undefined,
       profile: profile || undefined,
     });
     setReviewComment("");
     setReviewRating(5);
+    setReviewImages([]);
     setShowForm(false);
     showToast("Değerlendirmeniz eklendi!", "success");
   };
@@ -71,7 +137,7 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
   return (
     <div className="space-y-8">
       {/* === Rating Summary — Hepsiburada Style === */}
-      <div className="rounded-xl border border-dark-100 bg-white p-6">
+      <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
           {/* Product Thumbnail */}
           <div className="hidden shrink-0 sm:block">
@@ -87,7 +153,7 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
 
           {/* Average Rating */}
           <div className="flex shrink-0 flex-col items-center gap-1">
-            <p className="text-5xl font-bold text-dark-900">
+            <p className="text-5xl font-bold text-dark-900 dark:text-dark-50">
               {averageRating > 0 ? averageRating.toFixed(1).replace(".", ",") : "0,0"}
             </p>
             <Rating rating={averageRating} size="sm" />
@@ -105,7 +171,7 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
                 <div key={star} className="flex items-center gap-2">
                   <div className="flex w-10 items-center justify-end gap-0.5">
                     <Star size={12} className="fill-primary-500 text-primary-500" />
-                    <span className="text-xs font-medium text-dark-600">{star}</span>
+                    <span className="text-xs font-medium text-dark-600 dark:text-dark-300">{star}</span>
                   </div>
                   <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-dark-100">
                     <div
@@ -147,8 +213,8 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
 
       {/* === Review Form (Conditional) === */}
       {showForm && (
-        <div ref={formRef} className="rounded-xl border-2 border-primary-200 bg-white p-6">
-          <h4 className="mb-4 text-base font-bold text-dark-900">Değerlendirme Yaz</h4>
+        <div ref={formRef} className="rounded-xl border-2 border-primary-200 bg-white dark:bg-dark-800 p-6">
+          <h4 className="mb-4 text-base font-bold text-dark-900 dark:text-dark-50">Değerlendirme Yaz</h4>
 
           {!user && (
             <div className="mb-4 rounded-lg border border-orange-200 bg-orange-50 p-3 text-sm text-orange-700">
@@ -158,7 +224,7 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
 
           {/* Star selector */}
           <div className="mb-4 flex items-center gap-1">
-            <span className="mr-2 text-sm font-medium text-dark-600">Puanınız:</span>
+            <span className="mr-2 text-sm font-medium text-dark-600 dark:text-dark-300">Puanınız:</span>
             {[1, 2, 3, 4, 5].map((star) => (
               <button
                 key={star}
@@ -195,10 +261,49 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
             className="w-full rounded-lg border border-dark-200 px-4 py-3 text-sm transition-colors focus:border-primary-600 focus:outline-none disabled:cursor-not-allowed disabled:bg-dark-50"
           />
 
+          {/* Photo Upload */}
+          {user && (
+            <div className="mt-3">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={(e) => handleImageUpload(e.target.files)}
+              />
+              <div className="flex items-center gap-3">
+                {reviewImages.map((img, i) => (
+                  <div key={i} className="relative h-16 w-16 overflow-hidden rounded-lg border border-dark-200">
+                    <Image src={img} alt="" fill className="object-cover" sizes="64px" />
+                    <button
+                      onClick={() => removeImage(i)}
+                      className="absolute -right-1 -top-1 rounded-full bg-red-500 p-0.5 text-white"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
+                {reviewImages.length < MAX_IMAGES && (
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex h-16 w-16 flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-dark-200 text-dark-400 transition-colors hover:border-primary-400 hover:text-primary-600"
+                  >
+                    <Camera size={18} />
+                    <span className="text-[10px]">Ekle</span>
+                  </button>
+                )}
+              </div>
+              <p className="mt-1.5 text-xs text-dark-400">
+                En fazla {MAX_IMAGES} fotoğraf (max 5MB/adet)
+              </p>
+            </div>
+          )}
+
           <div className="mt-3 flex items-center justify-between">
             <button
               onClick={() => setShowForm(false)}
-              className="text-sm text-dark-400 hover:text-dark-600"
+              className="text-sm text-dark-400 hover:text-dark-600 dark:text-dark-300"
             >
               Vazgeç
             </button>
@@ -215,23 +320,38 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
       )}
 
       {/* === Sort & Review List Header === */}
-      <div className="flex items-center justify-between">
-        <h4 className="text-base font-bold text-dark-900">
-          Tüm Değerlendirmeler ({reviews.length})
-        </h4>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <h4 className="text-base font-bold text-dark-900 dark:text-dark-50">
+            Tüm Değerlendirmeler ({reviews.length})
+          </h4>
+          {reviews.some((r) => r.images && r.images.length > 0) && (
+            <button
+              onClick={() => setShowPhotosOnly(!showPhotosOnly)}
+              className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                showPhotosOnly
+                  ? "bg-primary-100 text-primary-700"
+                  : "bg-dark-100 text-dark-600 dark:text-dark-300 hover:bg-dark-200"
+              }`}
+            >
+              <ImageIcon size={13} />
+              Fotoğraflı
+            </button>
+          )}
+        </div>
 
         {reviews.length > 1 && (
           <div className="relative">
             <button
               onClick={() => setShowSortMenu(!showSortMenu)}
-              className="flex items-center gap-1.5 rounded-lg border border-dark-200 px-3 py-2 text-xs font-medium text-dark-600 hover:border-dark-300"
+              className="flex items-center gap-1.5 rounded-lg border border-dark-200 px-3 py-2 text-xs font-medium text-dark-600 dark:text-dark-300 hover:border-dark-300"
             >
               {SORT_OPTIONS.find((o) => o.value === sortBy)?.label}
               <ChevronDown size={14} />
             </button>
 
             {showSortMenu && (
-              <div className="absolute right-0 z-20 mt-1 w-44 overflow-hidden rounded-lg border border-dark-100 bg-white shadow-lg">
+              <div className="absolute right-0 z-20 mt-1 w-44 overflow-hidden rounded-lg border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 shadow-lg">
                 {SORT_OPTIONS.map((option) => (
                   <button
                     key={option.value}
@@ -242,7 +362,7 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
                     className={`block w-full px-4 py-2.5 text-left text-xs transition-colors ${
                       sortBy === option.value
                         ? "bg-primary-50 font-semibold text-primary-600"
-                        : "text-dark-600 hover:bg-dark-50"
+                        : "text-dark-600 dark:text-dark-300 hover:bg-dark-50"
                     }`}
                   >
                     {option.label}
@@ -257,10 +377,10 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
       {/* === Review List === */}
       {sortedReviews.length > 0 ? (
         <div className="space-y-4">
-          {sortedReviews.map((review) => {
+          {(showPhotosOnly ? sortedReviews.filter((r) => r.images && r.images.length > 0) : sortedReviews).map((review) => {
             const userVote = user ? getUserVote(review.id, user.id) : null;
             return (
-              <div key={review.id} className="rounded-xl border border-dark-100 bg-white p-5">
+              <div key={review.id} className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-5">
                 {/* Header */}
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
@@ -268,7 +388,7 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
                       <User size={18} />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-dark-900">
+                      <p className="text-sm font-semibold text-dark-900 dark:text-dark-50">
                         {review.profile?.ad || "Anonim"}{" "}
                         {review.profile?.soyad?.charAt(0) || ""}.
                       </p>
@@ -279,7 +399,25 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
                 </div>
 
                 {/* Comment */}
-                <p className="mt-3 text-sm leading-relaxed text-dark-600">{review.comment}</p>
+                <p className="mt-3 text-sm leading-relaxed text-dark-600 dark:text-dark-300">{review.comment}</p>
+
+                {/* Review Photos */}
+                {review.images && review.images.length > 0 && (
+                  <div className="mt-3 flex gap-2">
+                    {review.images.map((img, imgIdx) => (
+                      <button
+                        key={imgIdx}
+                        onClick={() => {
+                          setLightboxImages(review.images!);
+                          setLightboxIndex(imgIdx);
+                        }}
+                        className="relative h-16 w-16 overflow-hidden rounded-lg border border-dark-200 transition-transform hover:scale-105"
+                      >
+                        <Image src={img} alt="" fill className="object-cover" sizes="64px" />
+                      </button>
+                    ))}
+                  </div>
+                )}
 
                 {/* Helpful voting */}
                 <div className="mt-4 flex items-center gap-4 border-t border-dark-50 pt-3">
@@ -328,7 +466,7 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
       ) : (
         <div className="py-12 text-center">
           <Star size={48} className="mx-auto mb-3 text-dark-200" />
-          <p className="text-dark-500">Henüz değerlendirme yapılmamış.</p>
+          <p className="text-dark-500 dark:text-dark-400">Henüz değerlendirme yapılmamış.</p>
           <p className="mt-1 text-sm text-dark-400">İlk değerlendirmeyi siz yapın!</p>
           {!showForm && (
             <button
@@ -340,6 +478,15 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
             </button>
           )}
         </div>
+      )}
+
+      {/* Lightbox */}
+      {lightboxImages && (
+        <ImageLightbox
+          images={lightboxImages}
+          initialIndex={lightboxIndex}
+          onClose={() => setLightboxImages(null)}
+        />
       )}
     </div>
   );

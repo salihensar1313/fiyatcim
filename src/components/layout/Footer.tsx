@@ -151,10 +151,10 @@ export default function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-dark-800">
         <div className="container-custom flex flex-col items-center justify-between gap-4 py-4 sm:flex-row">
-          <p className="text-xs text-dark-500">
+          <p className="text-xs text-dark-500 dark:text-dark-400">
             &copy; {new Date().getFullYear()} Fiyatcim.com. Tüm hakları saklıdır.
           </p>
-          <div className="flex items-center gap-2 text-xs text-dark-500">
+          <div className="flex items-center gap-2 text-xs text-dark-500 dark:text-dark-400">
             <span className="rounded bg-dark-800 px-2 py-1">Visa</span>
             <span className="rounded bg-dark-800 px-2 py-1">Mastercard</span>
             <span className="rounded bg-dark-800 px-2 py-1">Troy</span>

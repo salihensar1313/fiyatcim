@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Bell, Package, ShoppingCart, Tag, CheckCheck } from "lucide-react";
+import { Bell, Package, ShoppingCart, Tag, CheckCheck, TrendingDown, PackageCheck } from "lucide-react";
 import { safeGetJSON, safeSetJSON } from "@/lib/safe-storage";
 import { useAuth } from "@/context/AuthContext";
 import { formatDate } from "@/lib/utils";
 
 export interface Notification {
   id: string;
-  type: "order" | "cart" | "promo" | "system";
+  type: "order" | "cart" | "promo" | "system" | "price_alert" | "stock_alert";
   title: string;
   message: string;
   read: boolean;
@@ -17,18 +17,22 @@ export interface Notification {
 
 const STORAGE_KEY = "fiyatcim_notifications";
 
-const ICON_MAP = {
+const ICON_MAP: Record<Notification["type"], typeof Bell> = {
   order: Package,
   cart: ShoppingCart,
   promo: Tag,
   system: Bell,
+  price_alert: TrendingDown,
+  stock_alert: PackageCheck,
 };
 
-const COLOR_MAP = {
+const COLOR_MAP: Record<Notification["type"], string> = {
   order: "bg-blue-100 text-blue-600",
   cart: "bg-green-100 text-green-600",
   promo: "bg-orange-100 text-orange-600",
   system: "bg-purple-100 text-purple-600",
+  price_alert: "bg-red-100 text-red-600",
+  stock_alert: "bg-teal-100 text-teal-600",
 };
 
 export function useNotifications() {
@@ -101,7 +105,7 @@ export default function NotificationBell() {
       {/* Bell button */}
       <button
         onClick={() => setOpen(!open)}
-        className="relative rounded-full p-2 text-dark-400 transition-colors hover:bg-dark-100 hover:text-dark-600"
+        className="relative rounded-full p-2 text-dark-400 transition-colors hover:bg-dark-100 hover:text-dark-600 dark:text-dark-300"
         aria-label="Bildirimler"
       >
         <Bell size={20} />
@@ -114,10 +118,10 @@ export default function NotificationBell() {
 
       {/* Dropdown */}
       {open && (
-        <div className="absolute right-0 z-50 mt-2 w-80 overflow-hidden rounded-xl border border-dark-100 bg-white shadow-xl sm:w-96">
+        <div className="absolute right-0 z-50 mt-2 w-80 overflow-hidden rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 shadow-xl sm:w-96 dark:border-dark-700 dark:bg-dark-800">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-dark-100 px-4 py-3">
-            <h3 className="text-sm font-bold text-dark-900">Bildirimler</h3>
+          <div className="flex items-center justify-between border-b border-dark-100 px-4 py-3 dark:border-dark-700">
+            <h3 className="text-sm font-bold text-dark-900 dark:text-dark-50">Bildirimler</h3>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
                 <button
@@ -157,14 +161,14 @@ export default function NotificationBell() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <p className={`truncate text-sm ${!notif.read ? "font-semibold text-dark-900" : "text-dark-700"}`}>
+                        <p className={`truncate text-sm ${!notif.read ? "font-semibold text-dark-900 dark:text-dark-50" : "text-dark-700 dark:text-dark-200"}`}>
                           {notif.title}
                         </p>
                         {!notif.read && (
                           <span className="h-2 w-2 shrink-0 rounded-full bg-primary-600" />
                         )}
                       </div>
-                      <p className="mt-0.5 line-clamp-2 text-xs text-dark-500">{notif.message}</p>
+                      <p className="mt-0.5 line-clamp-2 text-xs text-dark-500 dark:text-dark-400">{notif.message}</p>
                       <p className="mt-1 text-[10px] text-dark-400">{formatDate(notif.created_at)}</p>
                     </div>
                   </button>

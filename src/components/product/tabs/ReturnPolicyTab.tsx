@@ -19,7 +19,7 @@ export default function ReturnPolicyTab() {
 
       {/* İade Koşulları */}
       <div>
-        <h4 className="mb-3 flex items-center gap-2 text-sm font-bold text-dark-900">
+        <h4 className="mb-3 flex items-center gap-2 text-sm font-bold text-dark-900 dark:text-dark-50">
           <PackageCheck size={18} className="text-primary-600" />
           İade Koşulları
         </h4>
@@ -31,7 +31,7 @@ export default function ReturnPolicyTab() {
             "Kurulum yapılmış ürünlerde teknik ekip değerlendirmesi gereklidir.",
             "Aksesuarlar ve hediye ürünler eksiksiz iade edilmelidir.",
           ].map((item, i) => (
-            <li key={i} className="flex items-start gap-2 text-sm text-dark-600">
+            <li key={i} className="flex items-start gap-2 text-sm text-dark-600 dark:text-dark-300">
               <ChevronRight size={14} className="mt-0.5 shrink-0 text-primary-500" />
               {item}
             </li>
@@ -41,7 +41,7 @@ export default function ReturnPolicyTab() {
 
       {/* İade Süreci */}
       <div>
-        <h4 className="mb-3 flex items-center gap-2 text-sm font-bold text-dark-900">
+        <h4 className="mb-3 flex items-center gap-2 text-sm font-bold text-dark-900 dark:text-dark-50">
           <RotateCcw size={18} className="text-primary-600" />
           İade Süreci
         </h4>
@@ -57,8 +57,8 @@ export default function ReturnPolicyTab() {
                 {item.step}
               </span>
               <div>
-                <p className="text-sm font-semibold text-dark-900">{item.title}</p>
-                <p className="mt-0.5 text-xs text-dark-500">{item.desc}</p>
+                <p className="text-sm font-semibold text-dark-900 dark:text-dark-50">{item.title}</p>
+                <p className="mt-0.5 text-xs text-dark-500 dark:text-dark-400">{item.desc}</p>
               </div>
             </div>
           ))}

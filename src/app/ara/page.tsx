@@ -1,66 +1,186 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Phone, PhoneOff } from "lucide-react";
+import { Suspense, useEffect, useState, useMemo } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Search, SearchX, TrendingUp } from "lucide-react";
+import { useProducts } from "@/context/ProductContext";
+import { searchProducts, POPULAR_SEARCHES } from "@/lib/search";
+import { useSearchHistory } from "@/hooks/useSearchHistory";
+import ProductCard from "@/components/product/ProductCard";
 import Link from "next/link";
 
-const PRANK_DEADLINE = new Date("2026-03-06T10:00:00Z"); // 13:00 TR
-
 export default function AraPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center py-20">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent" />
+        </div>
+      }
+    >
+      <AraContent />
+    </Suspense>
+  );
+}
+
+function AraContent() {
+  const searchParams = useSearchParams();
   const router = useRouter();
+  const { products, loading } = useProducts();
+  const { addSearch } = useSearchHistory();
 
-  // Süre dolduysa ana sayfaya yönlendir
+  const queryParam = searchParams.get("q") || "";
+  const [query, setQuery] = useState(queryParam);
+
+  // Sync URL param to state
   useEffect(() => {
-    if (new Date() > PRANK_DEADLINE) {
-      router.replace("/");
+    setQuery(queryParam);
+    if (queryParam.trim().length >= 2) {
+      addSearch(queryParam.trim());
     }
-  }, [router]);
+  }, [queryParam, addSearch]);
 
-  // Süre dolmuşsa boş render
-  if (typeof window !== "undefined" && new Date() > PRANK_DEADLINE) {
-    return null;
-  }
+  // Search results
+  const results = useMemo(() => {
+    if (!query || query.trim().length < 2) return [];
+    return searchProducts(products, query);
+  }, [products, query]);
+
+  // Popular products (for empty results)
+  const popularProducts = useMemo(() => {
+    return products
+      .filter((p) => p.is_active && !p.deleted_at && p.sale_price)
+      .sort((a, b) => {
+        const discA = a.sale_price ? ((a.price - a.sale_price) / a.price) : 0;
+        const discB = b.sale_price ? ((b.price - b.sale_price) / b.price) : 0;
+        return discB - discA;
+      })
+      .slice(0, 8);
+  }, [products]);
+
+  // Update URL on search
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (query.trim().length >= 2) {
+      addSearch(query.trim());
+      router.replace(`/ara?q=${encodeURIComponent(query.trim())}`);
+    }
+  };
 
   return (
-    <div className="flex min-h-[70vh] items-center justify-center px-4">
-      <div className="w-full max-w-md text-center">
-        {/* Animasyonlu telefon ikonu */}
-        <div className="mx-auto mb-6 flex h-24 w-24 animate-pulse items-center justify-center rounded-full bg-red-100">
-          <PhoneOff size={48} className="text-red-500" />
+    <div className="container-custom py-8">
+      {/* Search Form */}
+      <form onSubmit={handleSearch} className="mx-auto mb-8 max-w-2xl">
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-400" size={20} />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Ürün, marka veya kategori ara..."
+            className="w-full rounded-xl border-2 border-dark-200 bg-white dark:bg-dark-800 py-3.5 pl-12 pr-4 text-base text-dark-800 dark:text-dark-100 placeholder-dark-400 outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10"
+            autoFocus
+          />
         </div>
+      </form>
 
-        {/* Mesaj */}
-        <h1 className="text-2xl font-extrabold text-dark-900 sm:text-3xl">
-          Aradığınız Kişi Şu Anda İçiyor
-        </h1>
-        <p className="mt-3 text-lg text-dark-500">
-          Lütfen daha sonra tekrar deneyiniz.
-        </p>
+      {loading ? (
+        <div className="flex justify-center py-12">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent" />
+        </div>
+      ) : queryParam.trim().length >= 2 ? (
+        results.length > 0 ? (
+          <>
+            {/* Results header */}
+            <div className="mb-6 flex items-center justify-between">
+              <h1 className="text-lg font-bold text-dark-800 dark:text-dark-100">
+                &quot;{queryParam}&quot; için{" "}
+                <span className="text-primary-600">{results.length} sonuç</span> bulundu
+              </h1>
+            </div>
 
-        {/* Sahte durum bilgisi */}
-        <div className="mt-8 rounded-xl border border-dark-100 bg-dark-50 p-5">
-          <div className="flex items-center justify-center gap-2 text-sm text-dark-600">
-            <span className="relative flex h-3 w-3">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
-              <span className="relative inline-flex h-3 w-3 rounded-full bg-red-500"></span>
-            </span>
-            Durum: <span className="font-bold text-red-600">Meşgul — İçiyor</span>
+            {/* Results grid */}
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {results.map((r) => (
+                <ProductCard key={r.product.id} product={r.product} />
+              ))}
+            </div>
+          </>
+        ) : (
+          /* No results */
+          <div className="text-center">
+            <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-dark-100">
+              <SearchX size={40} className="text-dark-400" />
+            </div>
+            <h2 className="text-xl font-bold text-dark-800 dark:text-dark-100">
+              &quot;{queryParam}&quot; ile eşleşen ürün bulunamadı
+            </h2>
+            <p className="mt-2 text-sm text-dark-500 dark:text-dark-400">
+              Farklı kelimeler deneyin veya popüler aramalara göz atın.
+            </p>
+
+            {/* Popular search suggestions */}
+            <div className="mt-6 flex flex-wrap justify-center gap-2">
+              {POPULAR_SEARCHES.map((term) => (
+                <Link
+                  key={term}
+                  href={`/ara?q=${encodeURIComponent(term)}`}
+                  className="inline-flex items-center gap-1 rounded-full bg-dark-100 px-4 py-2 text-sm text-dark-600 dark:text-dark-300 hover:bg-dark-200"
+                >
+                  <TrendingUp size={14} className="text-primary-500" />
+                  {term}
+                </Link>
+              ))}
+            </div>
+
+            {/* Popular products */}
+            {popularProducts.length > 0 && (
+              <div className="mt-10">
+                <h3 className="mb-4 text-lg font-bold text-dark-800 dark:text-dark-100">Popüler Ürünler</h3>
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                  {popularProducts.map((p) => (
+                    <ProductCard key={p.id} product={p} />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-          <p className="mt-2 text-xs text-dark-400">
-            Tahmini müsait olma süresi: Belli değil ☕
+        )
+      ) : (
+        /* No query: show popular searches + popular products */
+        <div className="text-center">
+          <h1 className="text-xl font-bold text-dark-800 dark:text-dark-100">Ürün Ara</h1>
+          <p className="mt-2 text-sm text-dark-500 dark:text-dark-400">
+            Aradığınız ürünü bulmak için yukarıdaki arama kutusunu kullanın.
           </p>
-        </div>
 
-        {/* Geri dön butonu */}
-        <Link
-          href="/"
-          className="mt-8 inline-flex items-center gap-2 rounded-lg bg-primary-600 px-8 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-700"
-        >
-          <Phone size={16} />
-          Ana Sayfaya Dön
-        </Link>
-      </div>
+          {/* Popular searches */}
+          <div className="mt-6 flex flex-wrap justify-center gap-2">
+            {POPULAR_SEARCHES.map((term) => (
+              <Link
+                key={term}
+                href={`/ara?q=${encodeURIComponent(term)}`}
+                className="inline-flex items-center gap-1 rounded-full bg-dark-100 px-4 py-2 text-sm text-dark-600 dark:text-dark-300 hover:bg-dark-200"
+              >
+                <TrendingUp size={14} className="text-primary-500" />
+                {term}
+              </Link>
+            ))}
+          </div>
+
+          {/* Popular products */}
+          {popularProducts.length > 0 && (
+            <div className="mt-10">
+              <h3 className="mb-4 text-lg font-bold text-dark-800 dark:text-dark-100">Popüler Ürünler</h3>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                {popularProducts.map((p) => (
+                  <ProductCard key={p.id} product={p} />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

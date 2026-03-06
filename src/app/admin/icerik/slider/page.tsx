@@ -140,12 +140,12 @@ export default function AdminSliderPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/admin/icerik" className="rounded-lg p-2 text-dark-400 hover:bg-dark-100 hover:text-dark-600">
+          <Link href="/admin/icerik" className="rounded-lg p-2 text-dark-400 hover:bg-dark-100 hover:text-dark-600 dark:text-dark-300">
             <ArrowLeft size={18} />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-dark-900">Ana Sayfa Slider</h1>
-            <p className="text-sm text-dark-500">{slides.length} slayt</p>
+            <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">Ana Sayfa Slider</h1>
+            <p className="text-sm text-dark-500 dark:text-dark-400">{slides.length} slayt</p>
           </div>
         </div>
         <button
@@ -159,13 +159,13 @@ export default function AdminSliderPage() {
 
       {/* Form */}
       {formOpen && (
-        <div className="mb-6 rounded-xl border border-dark-100 bg-white p-6">
-          <h3 className="mb-4 text-lg font-bold text-dark-900">
+        <div className="mb-6 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+          <h3 className="mb-4 text-lg font-bold text-dark-900 dark:text-dark-50">
             {editing ? "Slaytı Düzenle" : "Yeni Slayt"}
           </h3>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
-              <label className="mb-1 block text-sm font-medium text-dark-700">Başlık *</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Başlık *</label>
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -173,7 +173,7 @@ export default function AdminSliderPage() {
               />
             </div>
             <div className="sm:col-span-2">
-              <label className="mb-1 block text-sm font-medium text-dark-700">Alt Başlık</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Alt Başlık</label>
               <textarea
                 value={subtitle}
                 onChange={(e) => setSubtitle(e.target.value)}
@@ -185,7 +185,7 @@ export default function AdminSliderPage() {
               <ImageUploader value={image} onChange={setImage} label="Slider Görseli" maxWidth={1920} />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Buton Metni</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Buton Metni</label>
               <input
                 value={ctaText}
                 onChange={(e) => setCtaText(e.target.value)}
@@ -193,7 +193,7 @@ export default function AdminSliderPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700">Buton Linki</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Buton Linki</label>
               <input
                 value={ctaLink}
                 onChange={(e) => setCtaLink(e.target.value)}
@@ -202,7 +202,7 @@ export default function AdminSliderPage() {
             </div>
           </div>
           <div className="mt-4 flex justify-end gap-3">
-            <button onClick={resetForm} className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 hover:bg-dark-50">
+            <button onClick={resetForm} className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:bg-dark-800">
               İptal
             </button>
             <button
@@ -219,7 +219,7 @@ export default function AdminSliderPage() {
       {/* Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {slides.map((slide) => (
-          <div key={slide.id} className="overflow-hidden rounded-xl border border-dark-100 bg-white">
+          <div key={slide.id} className="overflow-hidden rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800">
             <div className="relative h-32 bg-dark-200">
               {slide.image ? (
                 slide.image.startsWith("data:") ? (
@@ -235,26 +235,26 @@ export default function AdminSliderPage() {
                   />
                 )
               ) : (
-                <div className="flex h-full items-center justify-center text-xs text-dark-500">
+                <div className="flex h-full items-center justify-center text-xs text-dark-500 dark:text-dark-400">
                   Gorsel yok
                 </div>
               )}
             </div>
             <div className="p-4">
-              <h4 className="font-bold text-dark-900">{slide.title}</h4>
-              <p className="mt-1 line-clamp-2 text-xs text-dark-500">{slide.subtitle}</p>
+              <h4 className="font-bold text-dark-900 dark:text-dark-50">{slide.title}</h4>
+              <p className="mt-1 line-clamp-2 text-xs text-dark-500 dark:text-dark-400">{slide.subtitle}</p>
               <p className="mt-2 text-xs text-primary-600">{slide.cta_text} → {slide.cta_link}</p>
               <div className="mt-3 flex items-center gap-1">
                 <button
                   onClick={() => openEdit(slide)}
-                  className="rounded p-1.5 text-dark-400 hover:bg-blue-50 hover:text-blue-600"
+                  className="rounded p-1.5 text-dark-400 hover:bg-blue-50 dark:bg-blue-900/30 hover:text-blue-600"
                   title="Düzenle"
                 >
                   <Edit size={14} />
                 </button>
                 <button
                   onClick={() => setDeleteTarget(slide)}
-                  className="rounded p-1.5 text-dark-400 hover:bg-red-50 hover:text-red-600"
+                  className="rounded p-1.5 text-dark-400 hover:bg-red-50 dark:bg-red-900/30 hover:text-red-600"
                   title="Sil"
                 >
                   <Trash2 size={14} />
@@ -266,8 +266,8 @@ export default function AdminSliderPage() {
       </div>
 
       {slides.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white py-20">
-          <p className="text-dark-500">Henüz slider yok.</p>
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 py-20">
+          <p className="text-dark-500 dark:text-dark-400">Henüz slider yok.</p>
         </div>
       )}
 

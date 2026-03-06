@@ -59,7 +59,7 @@ const SAFE_SHOPPING_TIPS = [
 
 export default function GuvenliAlisverisPage() {
   return (
-    <div className="bg-dark-50 pb-16">
+    <div className="bg-dark-50 dark:bg-dark-900 pb-16">
       <div className="container mx-auto px-4 py-4">
         <Breadcrumb items={[{ label: "Güvenli Alışveriş Kılavuzu" }]} />
       </div>
@@ -86,15 +86,15 @@ export default function GuvenliAlisverisPage() {
                 className={`rounded-xl border ${tip.border} ${tip.bg} p-5`}
               >
                 <tip.icon size={28} className={tip.color} />
-                <h3 className="mt-2 text-sm font-bold text-dark-900">{tip.title}</h3>
-                <p className="mt-1 text-xs leading-relaxed text-dark-600">{tip.desc}</p>
+                <h3 className="mt-2 text-sm font-bold text-dark-900 dark:text-dark-50">{tip.title}</h3>
+                <p className="mt-1 text-xs leading-relaxed text-dark-600 dark:text-dark-300">{tip.desc}</p>
               </div>
             ))}
           </div>
 
           {/* Güvenli Alışveriş İpuçları */}
-          <section className="rounded-xl border border-dark-100 bg-white p-6">
-            <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-dark-900">
+          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+            <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-dark-900 dark:text-dark-50">
               <Eye size={20} className="text-primary-600" />
               Güvenli Alışveriş İpuçları
             </h2>
@@ -108,7 +108,7 @@ export default function GuvenliAlisverisPage() {
                 "Sipariş onay e-postalarını ve kargo takip bilgilerini kontrol edin.",
                 "Şüpheli bir durumla karşılaştığınızda müşteri hizmetlerimize hemen ulaşın.",
               ].map((tip, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm text-dark-600">
+                <li key={i} className="flex items-start gap-3 text-sm text-dark-600 dark:text-dark-300">
                   <CheckCircle size={16} className="mt-0.5 shrink-0 text-green-500" />
                   {tip}
                 </li>
@@ -143,13 +143,13 @@ export default function GuvenliAlisverisPage() {
           </section>
 
           {/* Sahte Site Tanıma */}
-          <section className="rounded-xl border border-dark-100 bg-white p-6">
-            <h2 className="mb-3 text-lg font-bold text-dark-900">
+          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+            <h2 className="mb-3 text-lg font-bold text-dark-900 dark:text-dark-50">
               Sahte E-posta ve Web Sitelerini Nasıl Tanırım?
             </h2>
-            <div className="space-y-4 text-sm text-dark-600">
+            <div className="space-y-4 text-sm text-dark-600 dark:text-dark-300">
               <div>
-                <h3 className="font-semibold text-dark-800">Gerçek E-posta</h3>
+                <h3 className="font-semibold text-dark-800 dark:text-dark-100">Gerçek E-posta</h3>
                 <ul className="mt-1 space-y-1">
                   <li className="flex items-start gap-2">
                     <CheckCircle size={14} className="mt-0.5 shrink-0 text-green-500" />
@@ -166,7 +166,7 @@ export default function GuvenliAlisverisPage() {
                 </ul>
               </div>
               <div>
-                <h3 className="font-semibold text-dark-800">Sahte E-posta Belirtileri</h3>
+                <h3 className="font-semibold text-dark-800 dark:text-dark-100">Sahte E-posta Belirtileri</h3>
                 <ul className="mt-1 space-y-1">
                   <li className="flex items-start gap-2">
                     <XCircle size={14} className="mt-0.5 shrink-0 text-red-500" />
@@ -186,7 +186,7 @@ export default function GuvenliAlisverisPage() {
           </section>
 
           {/* Sahtecilik Bildir */}
-          <section className="rounded-xl border border-primary-200 bg-primary-50 p-6">
+          <section className="rounded-xl border border-primary-200 bg-primary-50 dark:bg-primary-900/30 p-6">
             <h2 className="mb-3 text-lg font-bold text-primary-800">Sahtecilik Bildirin</h2>
             <p className="text-sm text-primary-700">
               Dolandırıcılık amaçlı gönderilerle karşılaştığınızı düşünüyorsanız, aşağıdaki
@@ -207,9 +207,9 @@ export default function GuvenliAlisverisPage() {
           </section>
 
           {/* Kişisel Verilerin Korunması Linki */}
-          <section className="rounded-xl border border-dark-100 bg-white p-6">
-            <h2 className="mb-3 text-lg font-bold text-dark-900">Kişisel Verilerin Korunması</h2>
-            <p className="text-sm text-dark-600">
+          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+            <h2 className="mb-3 text-lg font-bold text-dark-900 dark:text-dark-50">Kişisel Verilerin Korunması</h2>
+            <p className="text-sm text-dark-600 dark:text-dark-300">
               Kişisel verilerinizin nasıl toplandığı, işlendiği ve korunduğu hakkında detaylı
               bilgi için{" "}
               <a href="/kvkk" className="font-medium text-primary-600 underline">

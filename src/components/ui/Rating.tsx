@@ -27,7 +27,7 @@ export default function Rating({ rating, size = "md", showCount, count }: Rating
         />
       ))}
       {showCount && count !== undefined && (
-        <span className="ml-1 text-xs text-dark-500">({count})</span>
+        <span className="ml-1 text-xs text-dark-500 dark:text-dark-400">({count})</span>
       )}
     </div>
   );

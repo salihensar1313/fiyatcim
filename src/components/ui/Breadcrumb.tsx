@@ -12,7 +12,7 @@ interface BreadcrumbProps {
 
 export default function Breadcrumb({ items }: BreadcrumbProps) {
   return (
-    <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-dark-500">
+    <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-dark-500 dark:text-dark-400">
       <Link href="/" className="flex items-center gap-1 transition-colors hover:text-primary-600">
         <Home size={14} />
         <span>Ana Sayfa</span>
@@ -25,7 +25,7 @@ export default function Breadcrumb({ items }: BreadcrumbProps) {
               {item.label}
             </Link>
           ) : (
-            <span className="font-medium text-dark-900">{item.label}</span>
+            <span className="font-medium text-dark-900 dark:text-dark-50">{item.label}</span>
           )}
         </span>
       ))}

@@ -30,7 +30,7 @@ export default function ConfirmModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onCancel} />
-      <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+      <div className="relative w-full max-w-md rounded-xl bg-white dark:bg-dark-800 p-6 shadow-xl">
         <div className="flex items-start gap-4">
           <div
             className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
@@ -44,15 +44,15 @@ export default function ConfirmModal({
             )}
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-dark-900">{title}</h3>
-            <p className="mt-1 text-sm text-dark-500">{message}</p>
+            <h3 className="text-lg font-semibold text-dark-900 dark:text-dark-50">{title}</h3>
+            <p className="mt-1 text-sm text-dark-500 dark:text-dark-400">{message}</p>
           </div>
         </div>
 
         <div className="mt-6 flex justify-end gap-3">
           <button
             onClick={onCancel}
-            className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 transition-colors hover:bg-dark-50"
+            className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 transition-colors hover:bg-dark-50"
           >
             {cancelLabel}
           </button>

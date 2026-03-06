@@ -5,16 +5,19 @@ import type { CartItem, Product } from "@/types";
 import { getEffectivePrice, calculateShipping } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { safeGetJSON, safeSetJSON } from "@/lib/safe-storage";
+import { GIFT_WRAP_COST } from "@/lib/constants";
 
 interface CartContextType {
   items: CartItem[];
   addItem: (product: Product, qty?: number) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, qty: number) => void;
+  setGiftWrap: (productId: string, wrap: boolean, message?: string) => void;
   clearCart: () => void;
   getItemCount: () => number;
   getSubtotal: () => number;
   getShipping: () => number;
+  getGiftWrapTotal: () => number;
   getTotal: () => number;
   isInCart: (productId: string) => boolean;
   couponCode: string | null;
@@ -89,6 +92,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   }, []);
 
+  const setGiftWrap = useCallback((productId: string, wrap: boolean, message?: string) => {
+    setItems((prev) =>
+      prev.map((item) =>
+        item.product_id === productId
+          ? { ...item, giftWrap: wrap, giftMessage: wrap ? message : undefined }
+          : item
+      )
+    );
+  }, []);
+
   const clearCart = useCallback(() => {
     setItems([]);
     setCouponCode(null);
@@ -110,9 +123,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return calculateShipping(getSubtotal());
   }, [getSubtotal]);
 
+  const getGiftWrapTotal = useCallback(() => {
+    return items.filter((item) => item.giftWrap).length * GIFT_WRAP_COST;
+  }, [items]);
+
   const getTotal = useCallback(() => {
-    return getSubtotal() - discount + getShipping();
-  }, [getSubtotal, discount, getShipping]);
+    return getSubtotal() - discount + getShipping() + getGiftWrapTotal();
+  }, [getSubtotal, discount, getShipping, getGiftWrapTotal]);
 
   const isInCart = useCallback(
     (productId: string) => items.some((item) => item.product_id === productId),
@@ -126,10 +143,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
         addItem,
         removeItem,
         updateQuantity,
+        setGiftWrap,
         clearCart,
         getItemCount,
         getSubtotal,
         getShipping,
+        getGiftWrapTotal,
         getTotal,
         isInCart,
         couponCode,

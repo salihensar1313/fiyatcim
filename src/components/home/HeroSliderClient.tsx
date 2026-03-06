@@ -10,35 +10,24 @@ interface Props {
   slides: HeroSlide[];
 }
 
-const PRANK_DEADLINE = new Date("2026-03-06T10:00:00Z"); // 13:00 TR
-
 export default function HeroSliderClient({ slides }: Props) {
   const [current, setCurrent] = useState(0);
 
-  // Şaka süresi dolduysa VIP slide'ı filtrele
-  const activeSlides = typeof window !== "undefined" && new Date() > PRANK_DEADLINE
-    ? slides.filter((s) => s.id !== "hero-vip")
-    : slides;
-
   // Auto-play
   useEffect(() => {
-    if (activeSlides.length <= 1) return;
+    if (slides.length <= 1) return;
     const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % activeSlides.length);
+      setCurrent((prev) => (prev + 1) % slides.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, [activeSlides.length]);
-
-  useEffect(() => {
-    if (current >= activeSlides.length) setCurrent(0);
-  }, [activeSlides.length, current]);
+  }, [slides.length]);
 
   const goPrev = () => {
-    setCurrent((prev) => (prev - 1 + activeSlides.length) % activeSlides.length);
+    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
   const goNext = () => {
-    setCurrent((prev) => (prev + 1) % activeSlides.length);
+    setCurrent((prev) => (prev + 1) % slides.length);
   };
 
   // Touch swipe
@@ -61,7 +50,7 @@ export default function HeroSliderClient({ slides }: Props) {
     }
   };
 
-  if (activeSlides.length === 0) return null;
+  if (slides.length === 0) return null;
 
   return (
     <section className="group/slider relative overflow-hidden bg-dark-900">
@@ -71,7 +60,7 @@ export default function HeroSliderClient({ slides }: Props) {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {activeSlides.map((slide, i) => (
+        {slides.map((slide, i) => (
           <div
             key={slide.id}
             className={`transition-opacity duration-700 ${
@@ -79,29 +68,16 @@ export default function HeroSliderClient({ slides }: Props) {
             }`}
           >
             <div className="relative min-h-[380px] sm:min-h-[450px] lg:min-h-[540px]">
-              {slide.image?.startsWith("data:") ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={slide.image}
-                  alt={slide.title}
-                  className="absolute inset-0 h-full w-full scale-[1.01] object-cover object-center"
-                />
-              ) : (
-                <Image
-                  src={slide.image || "/images/hero/hero-main.png"}
-                  alt={slide.title}
-                  fill
-                  sizes="100vw"
-                  priority={i === 0}
-                  className={`scale-[1.01] object-cover ${
-                    slide.id === "hero-vip" ? "object-[center_15%]" : "object-center"
-                  }`}
-                />
-              )}
+              <Image
+                src={slide.image || "/images/hero/hero-main.png"}
+                alt={slide.title}
+                fill
+                sizes="100vw"
+                priority={i === 0}
+                className="scale-[1.01] object-cover object-center"
+              />
 
-              <div className={`absolute inset-y-0 left-0 bg-gradient-to-r from-dark-900 via-dark-900/85 to-transparent ${
-                slide.id === "hero-vip" ? "w-2/5" : "w-3/5"
-              }`} />
+              <div className="absolute inset-y-0 left-0 w-3/5 bg-gradient-to-r from-dark-900 via-dark-900/85 to-transparent" />
 
               <div className="container-custom relative z-10 flex min-h-[380px] items-center sm:min-h-[450px] lg:min-h-[540px]">
                 <div className="max-w-lg py-12 text-center lg:py-16 lg:text-left">
@@ -124,18 +100,18 @@ export default function HeroSliderClient({ slides }: Props) {
         ))}
       </div>
 
-      {activeSlides.length > 1 && (
+      {slides.length > 1 && (
         <>
           <button
             onClick={goPrev}
-            className="absolute left-4 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-white/20 p-3 text-white backdrop-blur-sm transition-all hover:bg-white/40 opacity-0 group-hover/slider:opacity-100 lg:block"
+            className="absolute left-4 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-white dark:bg-dark-800/20 p-3 text-white backdrop-blur-sm transition-all hover:bg-white dark:bg-dark-800/40 opacity-0 group-hover/slider:opacity-100 lg:block"
             aria-label="Onceki slayt"
           >
             <ChevronLeft size={24} />
           </button>
           <button
             onClick={goNext}
-            className="absolute right-4 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-white/20 p-3 text-white backdrop-blur-sm transition-all hover:bg-white/40 opacity-0 group-hover/slider:opacity-100 lg:block"
+            className="absolute right-4 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-white dark:bg-dark-800/20 p-3 text-white backdrop-blur-sm transition-all hover:bg-white dark:bg-dark-800/40 opacity-0 group-hover/slider:opacity-100 lg:block"
             aria-label="Sonraki slayt"
           >
             <ChevronRight size={24} />
@@ -144,12 +120,12 @@ export default function HeroSliderClient({ slides }: Props) {
       )}
 
       <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-2">
-        {activeSlides.map((_, i) => (
+        {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrent(i)}
             className={`h-2.5 rounded-full transition-all ${
-              i === current ? "w-8 bg-primary-600" : "w-2.5 bg-white/50"
+              i === current ? "w-8 bg-primary-600" : "w-2.5 bg-white dark:bg-dark-800/50"
             }`}
           />
         ))}

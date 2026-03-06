@@ -52,8 +52,8 @@ export default function QATab({ product }: QATabProps) {
   return (
     <div className="space-y-6">
       {/* Ask Question Form */}
-      <div className="rounded-xl border border-dark-100 bg-white p-6">
-        <h4 className="mb-1 text-base font-bold text-dark-900">Ürün Hakkında Soru Sor</h4>
+      <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+        <h4 className="mb-1 text-base font-bold text-dark-900 dark:text-dark-50">Ürün Hakkında Soru Sor</h4>
         <p className="mb-4 text-xs text-dark-400">
           Satıcıya veya diğer kullanıcılara bu ürün hakkında soru sorabilirsiniz.
         </p>
@@ -93,26 +93,26 @@ export default function QATab({ product }: QATabProps) {
       {/* Questions List */}
       {questions.length > 0 ? (
         <div className="space-y-4">
-          <h4 className="text-base font-bold text-dark-900">
+          <h4 className="text-base font-bold text-dark-900 dark:text-dark-50">
             Sorular ({questions.length})
           </h4>
 
           {questions.map((q) => (
             <div key={q.id} className="overflow-hidden rounded-xl border border-dark-100">
               {/* Question */}
-              <div className="bg-white p-5">
+              <div className="bg-white dark:bg-dark-800 p-5">
                 <div className="flex items-start gap-3">
                   <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
                     <HelpCircle size={16} />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-semibold text-dark-900">
+                      <span className="text-sm font-semibold text-dark-900 dark:text-dark-50">
                         {q.profile?.ad || "Anonim"} {q.profile?.soyad?.charAt(0) || ""}.
                       </span>
                       <span className="text-xs text-dark-400">{formatDate(q.created_at)}</span>
                     </div>
-                    <p className="mt-1 text-sm text-dark-700">{q.question}</p>
+                    <p className="mt-1 text-sm text-dark-700 dark:text-dark-200">{q.question}</p>
                   </div>
                 </div>
               </div>
@@ -133,7 +133,7 @@ export default function QATab({ product }: QATabProps) {
                           <span className="text-xs text-dark-400">{formatDate(q.answered_at)}</span>
                         )}
                       </div>
-                      <p className="mt-1 text-sm text-dark-600">{q.answer}</p>
+                      <p className="mt-1 text-sm text-dark-600 dark:text-dark-300">{q.answer}</p>
                     </div>
                   </div>
                 </div>
@@ -177,7 +177,7 @@ export default function QATab({ product }: QATabProps) {
       ) : (
         <div className="py-12 text-center">
           <MessageCircle size={48} className="mx-auto mb-3 text-dark-200" />
-          <p className="text-dark-500">Henüz soru sorulmamış.</p>
+          <p className="text-dark-500 dark:text-dark-400">Henüz soru sorulmamış.</p>
           <p className="mt-1 text-sm text-dark-400">
             Bu ürün hakkında merak ettiklerinizi sorun!
           </p>

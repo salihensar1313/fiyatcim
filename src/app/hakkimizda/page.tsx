@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="bg-dark-50 pb-16">
+    <div className="bg-dark-50 dark:bg-dark-900 pb-16">
       <div className="container mx-auto px-4 py-4">
         <Breadcrumb items={[{ label: "Hakkımızda" }]} />
       </div>
@@ -35,31 +35,31 @@ export default function AboutPage() {
             { value: "100+", label: "Marka ve kategori ölçek hedefi (Yıl 1)" },
             { value: "%100", label: "Şeffaflık + güven odaklı yaklaşım" },
           ].map((stat) => (
-            <div key={stat.label} className="rounded-xl border border-dark-100 bg-white p-6 text-center">
+            <div key={stat.label} className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6 text-center">
               <span className="text-3xl font-bold text-primary-600">{stat.value}</span>
-              <p className="mt-1 text-sm text-dark-500">{stat.label}</p>
+              <p className="mt-1 text-sm text-dark-500 dark:text-dark-400">{stat.label}</p>
             </div>
           ))}
         </div>
 
         {/* Misyon & Vizyon */}
         <div className="mb-12 grid gap-6 md:grid-cols-2">
-          <div className="rounded-xl border border-dark-100 bg-white p-6">
-            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+          <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 dark:bg-primary-900/30 text-primary-600">
               <Target size={20} />
             </div>
-            <h2 className="text-xl font-bold text-dark-900">Misyon</h2>
-            <p className="mt-2 text-sm text-dark-600">
+            <h2 className="text-xl font-bold text-dark-900 dark:text-dark-50">Misyon</h2>
+            <p className="mt-2 text-sm text-dark-600 dark:text-dark-300">
               Elektronik ürün seçiminde karmaşayı azaltmak: teknik detayları anlaşılır hale getirerek,
               kullanıcıya doğru ürünü doğru ihtiyaç için seçtirmek.
             </p>
           </div>
-          <div className="rounded-xl border border-dark-100 bg-white p-6">
-            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+          <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 dark:bg-primary-900/30 text-primary-600">
               <Eye size={20} />
             </div>
-            <h2 className="text-xl font-bold text-dark-900">Vizyon</h2>
-            <p className="mt-2 text-sm text-dark-600">
+            <h2 className="text-xl font-bold text-dark-900 dark:text-dark-50">Vizyon</h2>
+            <p className="mt-2 text-sm text-dark-600 dark:text-dark-300">
               İçerik otoritesiyle başlayan yolculuğu, güven mekanizmaları ve ölçeklenebilir altyapıyla
               büyütüp Türkiye&apos;nin en büyük elektronik platformuna taşımak.
             </p>
@@ -68,7 +68,7 @@ export default function AboutPage() {
 
         {/* Values */}
         <div className="mb-12">
-          <h2 className="mb-6 text-center text-2xl font-bold text-dark-900">Neden Fiyatcim?</h2>
+          <h2 className="mb-6 text-center text-2xl font-bold text-dark-900 dark:text-dark-50">Neden Fiyatcim?</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[
               {
@@ -87,12 +87,12 @@ export default function AboutPage() {
                 desc: "İhtiyaca göre yönlendirme, sade ve anlaşılır deneyim. Binlerce ürün arasından senin için doğru olanı bul.",
               },
             ].map((item) => (
-              <div key={item.title} className="rounded-xl border border-dark-100 bg-white p-6">
-                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+              <div key={item.title} className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 dark:bg-primary-900/30 text-primary-600">
                   <item.icon size={20} />
                 </div>
-                <h3 className="font-bold text-dark-900">{item.title}</h3>
-                <p className="mt-2 text-sm text-dark-600">{item.desc}</p>
+                <h3 className="font-bold text-dark-900 dark:text-dark-50">{item.title}</h3>
+                <p className="mt-2 text-sm text-dark-600 dark:text-dark-300">{item.desc}</p>
               </div>
             ))}
           </div>

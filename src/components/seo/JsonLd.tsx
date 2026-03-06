@@ -50,25 +50,37 @@ export function buildWebSiteSchema() {
     url: "https://www.fiyatcim.com",
     potentialAction: {
       "@type": "SearchAction",
-      target: "https://www.fiyatcim.com/urunler?search={search_term_string}",
+      target: "https://www.fiyatcim.com/ara?q={search_term_string}",
       "query-input": "required name=search_term_string",
     },
   };
+}
+
+interface ReviewSchemaInput {
+  author: string;
+  rating: number;
+  comment: string;
+  date: string;
 }
 
 interface ProductSchemaInput {
   name: string;
   description: string;
   slug: string;
+  sku?: string;
   price: number;
   salePrice?: number | null;
   stock: number;
   brand: string;
   imageUrl: string;
+  reviewCount?: number;
+  averageRating?: number;
+  reviews?: ReviewSchemaInput[];
 }
 
 export function buildProductSchema(product: ProductSchemaInput) {
-  return {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const schema: Record<string, any> = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
@@ -92,6 +104,43 @@ export function buildProductSchema(product: ProductSchemaInput) {
       },
     },
   };
+
+  // SKU
+  if (product.sku) {
+    schema.sku = product.sku;
+  }
+
+  // AggregateRating (only if reviews exist)
+  if (product.reviewCount && product.reviewCount > 0 && product.averageRating) {
+    schema.aggregateRating = {
+      "@type": "AggregateRating",
+      ratingValue: product.averageRating.toFixed(1),
+      reviewCount: product.reviewCount,
+      bestRating: 5,
+      worstRating: 1,
+    };
+  }
+
+  // Individual reviews (max 5 for schema)
+  if (product.reviews && product.reviews.length > 0) {
+    schema.review = product.reviews.slice(0, 5).map((r) => ({
+      "@type": "Review",
+      author: {
+        "@type": "Person",
+        name: r.author,
+      },
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: r.rating,
+        bestRating: 5,
+        worstRating: 1,
+      },
+      reviewBody: r.comment,
+      datePublished: r.date,
+    }));
+  }
+
+  return schema;
 }
 
 interface FAQItem {

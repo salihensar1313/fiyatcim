@@ -109,7 +109,7 @@ export default function ImageUploader({ value, onChange, label = "Gorsel", maxWi
   return (
     <div>
       <div className="mb-1 flex items-center justify-between">
-        <label className="block text-sm font-medium text-dark-700">{label}</label>
+        <label className="block text-sm font-medium text-dark-700 dark:text-dark-200">{label}</label>
         <button
           type="button"
           onClick={() => setMode(mode === "upload" ? "url" : "upload")}
@@ -159,7 +159,7 @@ export default function ImageUploader({ value, onChange, label = "Gorsel", maxWi
           ) : (
             <>
               <Upload size={24} className="mb-2 text-dark-400" />
-              <p className="text-sm text-dark-600">
+              <p className="text-sm text-dark-600 dark:text-dark-300">
                 Tiklayin veya dosyayi surukleyin
               </p>
               <p className="mt-1 text-xs text-dark-400">PNG, JPG, WebP — Max 5MB (otomatik optimize edilir)</p>

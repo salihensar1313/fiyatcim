@@ -23,9 +23,9 @@ export default async function CategoryCards() {
             <Link
               key={cat.id}
               href={`/kategori/${cat.slug}`}
-              className="group flex flex-col overflow-hidden rounded-xl border border-dark-100 bg-white shadow-sm transition-shadow hover:shadow-lg"
+              className="group flex flex-col overflow-hidden rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 shadow-sm transition-shadow hover:shadow-lg dark:border-dark-700 dark:bg-dark-800"
             >
-              <div className="aspect-[4/3] overflow-hidden bg-dark-50">
+              <div className="aspect-[4/3] overflow-hidden bg-dark-50 dark:bg-dark-700">
                 {cat.image_url?.startsWith("data:") ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -44,7 +44,7 @@ export default async function CategoryCards() {
                 )}
               </div>
               <div className="flex items-center justify-between px-4 py-3">
-                <h3 className="text-sm font-bold text-dark-900 sm:text-base">{cat.name}</h3>
+                <h3 className="text-sm font-bold text-dark-900 dark:text-dark-50 sm:text-base dark:text-dark-50">{cat.name}</h3>
                 <ChevronRight size={18} className="text-primary-600 transition-transform group-hover:translate-x-1" />
               </div>
             </Link>

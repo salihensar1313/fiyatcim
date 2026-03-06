@@ -123,14 +123,14 @@ export default function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-dark-100 bg-white px-4 lg:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-dark-100 bg-white dark:bg-dark-800 px-4 lg:px-6">
       <div className="flex items-center gap-3">
         {onMenuToggle && (
-          <button onClick={onMenuToggle} className="rounded-lg p-2 text-dark-400 hover:bg-dark-50 hover:text-dark-600 lg:hidden">
+          <button onClick={onMenuToggle} className="rounded-lg p-2 text-dark-400 hover:bg-dark-50 hover:text-dark-600 dark:text-dark-300 lg:hidden">
             <Menu size={20} />
           </button>
         )}
-        <h2 className="text-lg font-bold text-dark-900">Admin Panel</h2>
+        <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">Admin Panel</h2>
       </div>
 
       <div className="flex items-center gap-4">
@@ -138,7 +138,7 @@ export default function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setOpen(!open)}
-            className="relative rounded-lg p-2 text-dark-400 hover:bg-dark-50 hover:text-dark-600"
+            className="relative rounded-lg p-2 text-dark-400 hover:bg-dark-50 hover:text-dark-600 dark:text-dark-300"
           >
             <Bell size={20} />
             {unreadCount > 0 && (
@@ -150,10 +150,10 @@ export default function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
 
           {/* Dropdown */}
           {open && (
-            <div className="absolute right-0 top-full mt-2 w-80 overflow-hidden rounded-xl border border-dark-100 bg-white shadow-xl">
+            <div className="absolute right-0 top-full mt-2 w-80 overflow-hidden rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 shadow-xl">
               {/* Header */}
               <div className="flex items-center justify-between border-b border-dark-100 px-4 py-3">
-                <h4 className="text-sm font-bold text-dark-900">Bildirimler</h4>
+                <h4 className="text-sm font-bold text-dark-900 dark:text-dark-50">Bildirimler</h4>
                 <div className="flex items-center gap-2">
                   {unreadCount > 0 && (
                     <button
@@ -193,10 +193,10 @@ export default function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center justify-between">
-                            <p className="text-sm font-medium text-dark-900">{notif.title}</p>
+                            <p className="text-sm font-medium text-dark-900 dark:text-dark-50">{notif.title}</p>
                             {!notif.read && <span className="h-2 w-2 shrink-0 rounded-full bg-primary-600" />}
                           </div>
-                          <p className="text-xs text-dark-500 truncate">{notif.message}</p>
+                          <p className="text-xs text-dark-500 dark:text-dark-400 truncate">{notif.message}</p>
                           <p className="mt-0.5 text-[10px] text-dark-400">
                             {new Date(notif.created_at).toLocaleDateString("tr-TR")}
                           </p>
@@ -207,7 +207,7 @@ export default function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
                 ) : (
                   <div className="flex flex-col items-center py-8 text-center">
                     <Bell size={32} className="mb-2 text-dark-200" />
-                    <p className="text-sm text-dark-500">Bildirim yok</p>
+                    <p className="text-sm text-dark-500 dark:text-dark-400">Bildirim yok</p>
                   </div>
                 )}
               </div>
@@ -221,7 +221,7 @@ export default function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
             <User size={16} />
           </div>
           <div className="hidden sm:block">
-            <p className="text-xs font-semibold text-dark-900">{profile?.ad} {profile?.soyad}</p>
+            <p className="text-xs font-semibold text-dark-900 dark:text-dark-50">{profile?.ad} {profile?.soyad}</p>
             <p className="text-xs text-dark-400">{user?.email}</p>
           </div>
           <button

@@ -34,19 +34,19 @@ function OrderSuccessContent() {
   };
 
   return (
-    <div className="bg-dark-50 pb-16">
+    <div className="bg-dark-50 dark:bg-dark-900 pb-16">
       <div className="container mx-auto flex min-h-[60vh] items-center justify-center px-4">
         <div className="max-w-lg text-center">
           <div className="mx-auto mb-6 flex h-24 w-24 animate-bounce items-center justify-center rounded-full bg-green-100" style={{ animationDuration: "1s", animationIterationCount: "2" }}>
             <CheckCircle size={48} className="text-green-600" />
           </div>
 
-          <h1 className="text-2xl font-bold text-dark-900">{"Sipari\u015Finiz Al\u0131nd\u0131!"}</h1>
-          <p className="mt-2 text-dark-600">
+          <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">{"Sipari\u015Finiz Al\u0131nd\u0131!"}</h1>
+          <p className="mt-2 text-dark-600 dark:text-dark-300">
             {"Sipari\u015Finiz ba\u015Far\u0131yla olu\u015Fturuldu. Sipari\u015F detaylar\u0131n\u0131z e-posta adresinize g\u00F6nderilecektir."}
           </p>
 
-          <div className="mt-6 rounded-xl border-2 border-green-200 bg-green-50 p-5">
+          <div className="mt-6 rounded-xl border-2 border-green-200 bg-green-50 dark:bg-green-900/30 p-5">
             <p className="text-sm font-medium text-green-700">{"Sipari\u015F Numaran\u0131z"}</p>
             <div className="mt-2 flex items-center justify-center gap-3">
               <span className="text-2xl font-extrabold tracking-wider text-green-800">
@@ -54,7 +54,7 @@ function OrderSuccessContent() {
               </span>
               <button
                 onClick={handleCopy}
-                className="inline-flex items-center gap-1 rounded-lg border border-green-300 bg-white px-3 py-1.5 text-xs font-medium text-green-700 transition-colors hover:bg-green-100"
+                className="inline-flex items-center gap-1 rounded-lg border border-green-300 bg-white dark:bg-dark-800 px-3 py-1.5 text-xs font-medium text-green-700 transition-colors hover:bg-green-100"
                 title={"Sipari\u015F numaras\u0131n\u0131 kopyala"}
               >
                 {copied ? (
@@ -76,10 +76,10 @@ function OrderSuccessContent() {
           </div>
 
           {order && (
-            <div className="mt-4 rounded-xl border border-dark-100 bg-white p-4">
+            <div className="mt-4 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-4">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-dark-500">{"Sipari\u015F Tarihi"}</span>
-                <span className="font-medium text-dark-900">
+                <span className="text-dark-500 dark:text-dark-400">{"Sipari\u015F Tarihi"}</span>
+                <span className="font-medium text-dark-900 dark:text-dark-50">
                   {new Date(order.created_at).toLocaleDateString("tr-TR", {
                     day: "numeric",
                     month: "long",
@@ -90,11 +90,11 @@ function OrderSuccessContent() {
                 </span>
               </div>
               <div className="mt-2 flex items-center justify-between text-sm">
-                <span className="text-dark-500">{"\u00DCr\u00FCn Say\u0131s\u0131"}</span>
-                <span className="font-medium text-dark-900">{order.items?.length ?? 0} {"\u00FCr\u00FCn"}</span>
+                <span className="text-dark-500 dark:text-dark-400">{"\u00DCr\u00FCn Say\u0131s\u0131"}</span>
+                <span className="font-medium text-dark-900 dark:text-dark-50">{order.items?.length ?? 0} {"\u00FCr\u00FCn"}</span>
               </div>
               <div className="mt-2 flex items-center justify-between border-t border-dark-100 pt-2">
-                <span className="font-bold text-dark-900">Toplam</span>
+                <span className="font-bold text-dark-900 dark:text-dark-50">Toplam</span>
                 <span className="text-lg font-bold text-primary-600">{formatPrice(order.total)}</span>
               </div>
             </div>
@@ -110,7 +110,7 @@ function OrderSuccessContent() {
             </Link>
             <Link
               href="/urunler"
-              className="flex items-center justify-center gap-2 rounded-lg border border-dark-200 px-6 py-3 text-sm font-semibold text-dark-700 hover:bg-dark-50"
+              className="flex items-center justify-center gap-2 rounded-lg border border-dark-200 px-6 py-3 text-sm font-semibold text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:bg-dark-800"
             >
               {"Al\u0131\u015Fveri\u015Fe Devam"}
               <ArrowRight size={16} />

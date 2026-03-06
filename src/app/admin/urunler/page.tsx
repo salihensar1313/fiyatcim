@@ -102,13 +102,13 @@ export default function AdminProductsPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-dark-900">Ürünler</h1>
-          <p className="text-sm text-dark-500">{filtered.length} ürün</p>
+          <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">Ürünler</h1>
+          <p className="text-sm text-dark-500 dark:text-dark-400">{filtered.length} ürün</p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={handleExportCSV}
-            className="flex items-center gap-2 rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 hover:bg-dark-50"
+            className="flex items-center gap-2 rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:bg-dark-800"
           >
             <Download size={16} />
             CSV
@@ -124,7 +124,7 @@ export default function AdminProductsPage() {
       </div>
 
       {/* Filters */}
-      <div className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-dark-100 bg-white p-3">
+      <div className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-3">
         <div className="relative flex-1">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-400" />
           <input
@@ -150,19 +150,19 @@ export default function AdminProductsPage() {
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-dark-100 bg-white">
+      <div className="overflow-hidden rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-dark-100 bg-dark-50">
+            <thead className="border-b border-dark-100 bg-dark-50 dark:bg-dark-800">
               <tr>
-                <th className="px-4 py-3 font-semibold text-dark-700">Ürün</th>
-                <th className="px-4 py-3 font-semibold text-dark-700">SKU</th>
-                <th className="px-4 py-3 font-semibold text-dark-700">Kategori</th>
-                <th className="px-4 py-3 font-semibold text-dark-700">Marka</th>
-                <th className="px-4 py-3 font-semibold text-dark-700">Fiyat</th>
-                <th className="px-4 py-3 font-semibold text-dark-700">Stok</th>
-                <th className="px-4 py-3 font-semibold text-dark-700">Durum</th>
-                <th className="px-4 py-3 font-semibold text-dark-700">İşlemler</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Ürün</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">SKU</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Kategori</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Marka</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Fiyat</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Stok</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Durum</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">İşlemler</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-dark-50">
@@ -174,14 +174,14 @@ export default function AdminProductsPage() {
                 return (
                   <tr key={product.id} className="hover:bg-dark-50/50">
                     <td className="max-w-[200px] px-4 py-3">
-                      <p className="truncate font-medium text-dark-900">{product.name}</p>
+                      <p className="truncate font-medium text-dark-900 dark:text-dark-50">{product.name}</p>
                     </td>
-                    <td className="px-4 py-3 text-dark-500">{product.sku}</td>
-                    <td className="px-4 py-3 text-dark-500">{cat?.name}</td>
-                    <td className="px-4 py-3 text-dark-500">{brand?.name}</td>
+                    <td className="px-4 py-3 text-dark-500 dark:text-dark-400">{product.sku}</td>
+                    <td className="px-4 py-3 text-dark-500 dark:text-dark-400">{cat?.name}</td>
+                    <td className="px-4 py-3 text-dark-500 dark:text-dark-400">{brand?.name}</td>
                     <td className="px-4 py-3">
                       <div className="flex flex-col">
-                        <span className="font-medium text-dark-900">
+                        <span className="font-medium text-dark-900 dark:text-dark-50">
                           {formatUSD(product.sale_price_usd || product.price_usd)}
                         </span>
                         <span className="text-xs text-primary-600">
@@ -203,21 +203,21 @@ export default function AdminProductsPage() {
                       <div className="flex items-center gap-1">
                         <Link
                           href={`/urunler/${product.slug}`}
-                          className="rounded p-1.5 text-dark-400 hover:bg-dark-100 hover:text-dark-600"
+                          className="rounded p-1.5 text-dark-400 hover:bg-dark-100 hover:text-dark-600 dark:text-dark-300"
                           title="Görüntüle"
                         >
                           <Eye size={14} />
                         </Link>
                         <button
                           onClick={() => handleEdit(product)}
-                          className="rounded p-1.5 text-dark-400 hover:bg-blue-50 hover:text-blue-600"
+                          className="rounded p-1.5 text-dark-400 hover:bg-blue-50 dark:bg-blue-900/30 hover:text-blue-600"
                           title="Düzenle"
                         >
                           <Edit size={14} />
                         </button>
                         <button
                           onClick={() => setDeleteTarget(product)}
-                          className="rounded p-1.5 text-dark-400 hover:bg-red-50 hover:text-red-600"
+                          className="rounded p-1.5 text-dark-400 hover:bg-red-50 dark:bg-red-900/30 hover:text-red-600"
                           title="Sil"
                         >
                           <Trash2 size={14} />
@@ -233,7 +233,7 @@ export default function AdminProductsPage() {
 
         {filtered.length === 0 && (
           <div className="py-12 text-center">
-            <p className="text-dark-500">Ürün bulunamadı.</p>
+            <p className="text-dark-500 dark:text-dark-400">Ürün bulunamadı.</p>
           </div>
         )}
       </div>

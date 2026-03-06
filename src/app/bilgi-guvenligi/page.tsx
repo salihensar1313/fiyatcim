@@ -76,7 +76,7 @@ const MEASURES = [
 
 export default function BilgiGuvenligiPage() {
   return (
-    <div className="bg-dark-50 pb-16">
+    <div className="bg-dark-50 dark:bg-dark-900 pb-16">
       <div className="container mx-auto px-4 py-4">
         <Breadcrumb items={[{ label: "Bilgi Güvenliği Politikası" }]} />
       </div>
@@ -97,7 +97,7 @@ export default function BilgiGuvenligiPage() {
         <div className="mx-auto max-w-3xl space-y-8">
           {/* Temel İlkeler */}
           <section>
-            <h2 className="mb-4 text-xl font-bold text-dark-900">Temel Güvenlik İlkelerimiz</h2>
+            <h2 className="mb-4 text-xl font-bold text-dark-900 dark:text-dark-50">Temel Güvenlik İlkelerimiz</h2>
             <div className="grid gap-4 sm:grid-cols-3">
               {PRINCIPLES.map((p) => (
                 <div
@@ -105,22 +105,22 @@ export default function BilgiGuvenligiPage() {
                   className={`rounded-xl border ${p.border} ${p.bg} p-5 text-center`}
                 >
                   <p.icon size={32} className={`mx-auto mb-2 ${p.color}`} />
-                  <h3 className="text-sm font-bold text-dark-900">{p.title}</h3>
-                  <p className="mt-1 text-xs text-dark-600">{p.desc}</p>
+                  <h3 className="text-sm font-bold text-dark-900 dark:text-dark-50">{p.title}</h3>
+                  <p className="mt-1 text-xs text-dark-600 dark:text-dark-300">{p.desc}</p>
                 </div>
               ))}
             </div>
           </section>
 
           {/* Amaç ve Kapsam */}
-          <section className="rounded-xl border border-dark-100 bg-white p-6">
-            <h2 className="mb-3 text-lg font-bold text-dark-900">Amaç ve Kapsam</h2>
-            <p className="text-sm leading-relaxed text-dark-600">
+          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+            <h2 className="mb-3 text-lg font-bold text-dark-900 dark:text-dark-50">Amaç ve Kapsam</h2>
+            <p className="text-sm leading-relaxed text-dark-600 dark:text-dark-300">
               Bu politika, Fiyatcim.com&apos;un sahip olduğu, işlediği veya eriştiği tüm bilgi
               varlıklarının korunmasını amaçlar. Politika; tüm çalışanları, iş ortaklarını,
               tedarikçileri ve Fiyatcim bilgi sistemlerine erişimi olan tüm tarafları kapsar.
             </p>
-            <p className="mt-2 text-sm leading-relaxed text-dark-600">
+            <p className="mt-2 text-sm leading-relaxed text-dark-600 dark:text-dark-300">
               Bilgi güvenliği yönetim sistemimiz; uluslararası standartlar ve ulusal
               mevzuat doğrultusunda tasarlanmış olup sürekli iyileştirme prensibiyle yönetilir.
             </p>
@@ -128,14 +128,14 @@ export default function BilgiGuvenligiPage() {
 
           {/* Teknik & İdari Tedbirler */}
           {MEASURES.map((m) => (
-            <section key={m.category} className="rounded-xl border border-dark-100 bg-white p-6">
-              <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-dark-900">
+            <section key={m.category} className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+              <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-dark-900 dark:text-dark-50">
                 <m.icon size={20} className="text-primary-600" />
                 {m.category}
               </h2>
               <ul className="space-y-2">
                 {m.items.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-dark-600">
+                  <li key={i} className="flex items-start gap-2 text-sm text-dark-600 dark:text-dark-300">
                     <CheckCircle size={14} className="mt-0.5 shrink-0 text-green-500" />
                     {item}
                   </li>
@@ -145,7 +145,7 @@ export default function BilgiGuvenligiPage() {
           ))}
 
           {/* Ödeme Güvenliği */}
-          <section className="rounded-xl border border-green-200 bg-green-50 p-6">
+          <section className="rounded-xl border border-green-200 bg-green-50 dark:bg-green-900/30 p-6">
             <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-green-800">
               <Lock size={20} />
               Ödeme Güvenliği
@@ -168,12 +168,12 @@ export default function BilgiGuvenligiPage() {
           </section>
 
           {/* Güvenlik İhlali */}
-          <section className="rounded-xl border border-dark-100 bg-white p-6">
-            <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-dark-900">
+          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+            <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-dark-900 dark:text-dark-50">
               <AlertTriangle size={20} className="text-orange-500" />
               Güvenlik İhlali Bildirimi
             </h2>
-            <p className="text-sm text-dark-600">
+            <p className="text-sm text-dark-600 dark:text-dark-300">
               Olası bir güvenlik ihlali tespit edilmesi halinde; ilgili kişiler ve KVKK uyarınca
               Kişisel Verileri Koruma Kurulu en kısa sürede bilgilendirilir. İhlalin etkilerini
               azaltmak için derhal müdahale planı devreye alınır.
@@ -181,12 +181,12 @@ export default function BilgiGuvenligiPage() {
           </section>
 
           {/* İletişim */}
-          <section className="rounded-xl border border-dark-100 bg-white p-6">
-            <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-dark-900">
+          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+            <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-dark-900 dark:text-dark-50">
               <Eye size={20} className="text-primary-600" />
               Politika Güncellemeleri ve İletişim
             </h2>
-            <p className="text-sm text-dark-600">
+            <p className="text-sm text-dark-600 dark:text-dark-300">
               Bu politika düzenli olarak gözden geçirilir ve gerektiğinde güncellenir.
               Güncellemeler web sitemiz üzerinden duyurulur. Bilgi güvenliği ile ilgili
               sorularınız için{" "}
