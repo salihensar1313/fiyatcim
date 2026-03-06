@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import WhatsAppButton from "@/components/layout/Navbar";
+import WhatsAppWidget from "@/components/layout/WhatsAppWidget";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import ScrollToTop from "@/components/ui/ScrollToTop";
 
@@ -22,7 +22,7 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
       <Header />
       <main className="flex-1 pb-16 lg:pb-0">{children}</main>
       <Footer />
-      <WhatsAppButton />
+      <WhatsAppWidget />
       <MobileBottomNav />
       <ScrollToTop />
     </>

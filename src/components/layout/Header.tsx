@@ -22,6 +22,7 @@ import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useCurrency } from "@/context/CurrencyContext";
 import MobileMenu from "./MobileMenu";
+import NotificationBell from "@/components/ui/NotificationBell";
 
 const MEGA_MENU_DATA = [
   {
@@ -190,6 +191,9 @@ export default function Header() {
                   </span>
                 )}
               </Link>
+
+              {/* Notifications */}
+              <NotificationBell />
 
               {/* Cart */}
               <Link
