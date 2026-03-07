@@ -33,7 +33,7 @@ export default function Modal({ isOpen, onClose, title, children, size = "md" }:
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="fixed inset-0 bg-black/50" onClick={onClose} />
-      <div className={cn("relative w-full rounded-xl bg-white dark:bg-dark-800 p-6 shadow-xl dark:bg-dark-800", sizes[size])}>
+      <div className={cn("relative w-full rounded-xl bg-white dark:bg-dark-800 p-6 shadow-xl", sizes[size])}>
         {title && (
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-lg font-semibold text-dark-900 dark:text-dark-50">{title}</h3>

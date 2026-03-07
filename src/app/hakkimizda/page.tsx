@@ -35,7 +35,7 @@ export default function AboutPage() {
             { value: "100+", label: "Marka ve kategori ölçek hedefi (Yıl 1)" },
             { value: "%100", label: "Şeffaflık + güven odaklı yaklaşım" },
           ].map((stat) => (
-            <div key={stat.label} className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6 text-center">
+            <div key={stat.label} className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6 text-center">
               <span className="text-3xl font-bold text-primary-600">{stat.value}</span>
               <p className="mt-1 text-sm text-dark-500 dark:text-dark-400">{stat.label}</p>
             </div>
@@ -44,7 +44,7 @@ export default function AboutPage() {
 
         {/* Misyon & Vizyon */}
         <div className="mb-12 grid gap-6 md:grid-cols-2">
-          <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+          <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
             <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 dark:bg-primary-900/30 text-primary-600">
               <Target size={20} />
             </div>
@@ -54,7 +54,7 @@ export default function AboutPage() {
               kullanıcıya doğru ürünü doğru ihtiyaç için seçtirmek.
             </p>
           </div>
-          <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+          <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
             <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 dark:bg-primary-900/30 text-primary-600">
               <Eye size={20} />
             </div>
@@ -87,7 +87,7 @@ export default function AboutPage() {
                 desc: "İhtiyaca göre yönlendirme, sade ve anlaşılır deneyim. Binlerce ürün arasından senin için doğru olanı bul.",
               },
             ].map((item) => (
-              <div key={item.title} className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+              <div key={item.title} className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
                 <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 dark:bg-primary-900/30 text-primary-600">
                   <item.icon size={20} />
                 </div>

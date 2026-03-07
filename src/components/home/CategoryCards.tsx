@@ -23,7 +23,7 @@ export default async function CategoryCards() {
             <Link
               key={cat.id}
               href={`/kategori/${cat.slug}`}
-              className="group flex flex-col overflow-hidden rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 shadow-sm transition-shadow hover:shadow-lg dark:border-dark-700 dark:bg-dark-800"
+              className="group flex flex-col overflow-hidden rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 shadow-sm transition-shadow hover:shadow-lg"
             >
               <div className="aspect-[4/3] overflow-hidden bg-dark-50 dark:bg-dark-700">
                 {cat.image_url?.startsWith("data:") ? (

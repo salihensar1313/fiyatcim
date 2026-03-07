@@ -94,7 +94,7 @@ export default function AdminSettingsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="mb-4 flex gap-1 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-1">
+      <div className="mb-4 flex gap-1 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-1">
         {tabs.map((tab) => (
           <button
             key={tab.key}
@@ -112,7 +112,7 @@ export default function AdminSettingsPage() {
       </div>
 
       {/* Content */}
-      <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+      <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
         {/* Genel Ayarlar */}
         {activeTab === "genel" && (
           <div className="grid gap-4 sm:grid-cols-2">

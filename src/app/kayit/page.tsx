@@ -206,17 +206,17 @@ export default function RegisterPage() {
       </div>
 
       <div className="container mx-auto flex justify-center px-4">
-        <div className="w-full max-w-md rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-8">
+        <div className="w-full max-w-md rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-8">
           {/* Step Indicator */}
           <div className="mb-6 flex items-center justify-center gap-2">
             {steps.map((s, i) => (
               <div key={s.key} className="flex items-center gap-2">
-                {i > 0 && <div className="h-px w-6 bg-dark-200" />}
+                {i > 0 && <div className="h-px w-6 bg-dark-200 dark:bg-dark-600" />}
                 <div
                   className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium ${
                     i <= currentStepIndex
                       ? "bg-primary-600 text-white"
-                      : "bg-dark-100 text-dark-400"
+                      : "bg-dark-100 dark:bg-dark-700 text-dark-400 dark:text-dark-300"
                   }`}
                 >
                   <s.icon size={14} />
@@ -243,7 +243,7 @@ export default function RegisterPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="ornek@email.com"
                     required
-                    className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                    className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
                   />
                 </div>
 
@@ -275,8 +275,8 @@ export default function RegisterPage() {
               {/* Demo bilgisi — sadece demo modda */}
               {IS_DEMO && (
                 <div className="mb-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 p-3">
-                  <p className="text-xs font-semibold text-blue-700">Demo Modu</p>
-                  <p className="mt-0.5 text-xs text-blue-600">Doğrulama kodu: <span className="font-mono font-bold">123456</span></p>
+                  <p className="text-xs font-semibold text-blue-700 dark:text-blue-300">Demo Modu</p>
+                  <p className="mt-0.5 text-xs text-blue-600 dark:text-blue-400">Doğrulama kodu: <span className="font-mono font-bold">123456</span></p>
                 </div>
               )}
 
@@ -290,7 +290,7 @@ export default function RegisterPage() {
                     value={otpCode}
                     onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, OTP_LENGTH))}
                     placeholder="000000"
-                    className="w-full rounded-lg border border-dark-200 px-4 py-3 text-center font-mono text-2xl tracking-[0.5em] focus:border-primary-600 focus:outline-none"
+                    className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-3 text-center font-mono text-2xl tracking-[0.5em] focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
                     disabled={lockLeft > 0}
                   />
                 </div>
@@ -367,7 +367,7 @@ export default function RegisterPage() {
                       onChange={(e) => setAd(e.target.value)}
                       placeholder="Adınız"
                       required
-                      className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                      className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
                     />
                   </div>
                   <div>
@@ -378,7 +378,7 @@ export default function RegisterPage() {
                       onChange={(e) => setSoyad(e.target.value)}
                       placeholder="Soyadınız"
                       required
-                      className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                      className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
                     />
                   </div>
                 </div>
@@ -396,7 +396,7 @@ export default function RegisterPage() {
                     placeholder="90 5XX XXX XX XX"
                     inputMode="numeric"
                     maxLength={16}
-                    className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                    className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
                   />
                 </div>
 
@@ -410,7 +410,7 @@ export default function RegisterPage() {
                       placeholder="En az 6 karakter"
                       required
                       minLength={6}
-                      className="w-full rounded-lg border border-dark-200 px-4 py-2.5 pr-10 text-sm focus:border-primary-600 focus:outline-none"
+                      className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 pr-10 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
                     />
                     <button
                       type="button"
@@ -430,7 +430,7 @@ export default function RegisterPage() {
                     onChange={(e) => setPasswordConfirm(e.target.value)}
                     placeholder="Şifrenizi tekrar girin"
                     required
-                    className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                    className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
                   />
                 </div>
 
@@ -477,7 +477,7 @@ export default function RegisterPage() {
 
               <div className="space-y-3">
                 {/* KVKK — zorunlu */}
-                <label className="flex items-start gap-3 rounded-lg border border-dark-100 p-3 transition-colors hover:bg-dark-50 dark:bg-dark-800">
+                <label className="flex items-start gap-3 rounded-lg border border-dark-100 dark:border-dark-700 p-3 transition-colors hover:bg-dark-50 dark:hover:bg-dark-700 dark:bg-dark-800">
                   <input
                     type="checkbox"
                     checked={agreeKVKK}
@@ -493,7 +493,7 @@ export default function RegisterPage() {
                 </label>
 
                 {/* Kullanım Koşulları — zorunlu */}
-                <label className="flex items-start gap-3 rounded-lg border border-dark-100 p-3 transition-colors hover:bg-dark-50 dark:bg-dark-800">
+                <label className="flex items-start gap-3 rounded-lg border border-dark-100 dark:border-dark-700 p-3 transition-colors hover:bg-dark-50 dark:hover:bg-dark-700 dark:bg-dark-800">
                   <input
                     type="checkbox"
                     checked={agreeTerms}
@@ -509,7 +509,7 @@ export default function RegisterPage() {
                 </label>
 
                 {/* Gizlilik — zorunlu */}
-                <label className="flex items-start gap-3 rounded-lg border border-dark-100 p-3 transition-colors hover:bg-dark-50 dark:bg-dark-800">
+                <label className="flex items-start gap-3 rounded-lg border border-dark-100 dark:border-dark-700 p-3 transition-colors hover:bg-dark-50 dark:hover:bg-dark-700 dark:bg-dark-800">
                   <input
                     type="checkbox"
                     checked={agreePrivacy}
@@ -525,7 +525,7 @@ export default function RegisterPage() {
                 </label>
 
                 {/* Marketing — opsiyonel */}
-                <label className="flex items-start gap-3 rounded-lg border border-dark-100 p-3 transition-colors hover:bg-dark-50 dark:bg-dark-800">
+                <label className="flex items-start gap-3 rounded-lg border border-dark-100 dark:border-dark-700 p-3 transition-colors hover:bg-dark-50 dark:hover:bg-dark-700 dark:bg-dark-800">
                   <input
                     type="checkbox"
                     checked={agreeMarketing}

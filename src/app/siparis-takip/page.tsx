@@ -106,7 +106,7 @@ function OrderTrackingContent() {
         </p>
 
         {/* Search Form */}
-        <div className="mt-6 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+        <div className="mt-6 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Sipariş Numarası</label>
@@ -114,7 +114,7 @@ function OrderTrackingContent() {
                 value={orderNo}
                 onChange={(e) => setOrderNo(e.target.value)}
                 placeholder="FC-2026-123456"
-                className="w-full rounded-lg border border-dark-200 px-3 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-3 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
               />
             </div>
             <div>
@@ -124,7 +124,7 @@ function OrderTrackingContent() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="ornek@email.com"
-                className="w-full rounded-lg border border-dark-200 px-3 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-3 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
               />
             </div>
           </div>
@@ -148,7 +148,7 @@ function OrderTrackingContent() {
         {foundOrder && (
           <div className="mt-6 space-y-4">
             {/* Order Header */}
-            <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+            <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs text-dark-400">Sipariş No</p>
@@ -184,7 +184,7 @@ function OrderTrackingContent() {
 
             {/* Progress Steps — G37: Kargo Bar */}
             {foundOrder.status !== "cancelled" && foundOrder.status !== "refunded" && (
-              <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+              <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
                 <h3 className="mb-4 text-sm font-bold text-dark-900 dark:text-dark-50">Sipariş Durumu</h3>
                 <div className="flex items-center justify-between">
                   {STATUS_STEPS.map((step, i) => {
@@ -197,7 +197,7 @@ function OrderTrackingContent() {
                           <div className={`flex h-10 w-10 items-center justify-center rounded-full ${
                             status === "completed" ? "bg-green-500 text-white" :
                             status === "active" ? "bg-primary-600 text-white" :
-                            "bg-dark-100 text-dark-400"
+                            "bg-dark-100 dark:bg-dark-700 text-dark-400"
                           }`}>
                             <Icon size={18} />
                           </div>
@@ -210,7 +210,7 @@ function OrderTrackingContent() {
                         {i < STATUS_STEPS.length - 1 && (
                           <div className="mx-2 flex-1">
                             <div className={`h-0.5 w-full ${
-                              status === "completed" ? "bg-green-500" : "bg-dark-200"
+                              status === "completed" ? "bg-green-500" : "bg-dark-200 dark:bg-dark-600"
                             }`} />
                           </div>
                         )}
@@ -223,7 +223,7 @@ function OrderTrackingContent() {
 
             {/* Tracking Info */}
             {foundOrder.tracking_no && (
-              <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+              <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
                 <h3 className="mb-2 text-sm font-bold text-dark-900 dark:text-dark-50">Kargo Bilgileri</h3>
                 <div className="flex items-center gap-3">
                   <Truck size={18} className="text-primary-600" />
@@ -238,7 +238,7 @@ function OrderTrackingContent() {
             )}
 
             {/* Order Items */}
-            <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+            <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
               <h3 className="mb-4 text-sm font-bold text-dark-900 dark:text-dark-50">Sipariş Detayı</h3>
               <div className="space-y-3">
                 {foundOrder.items?.map((item) => (
@@ -280,7 +280,7 @@ function OrderTrackingContent() {
             </div>
 
             {/* Delivery Address */}
-            <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+            <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
               <h3 className="mb-2 text-sm font-bold text-dark-900 dark:text-dark-50">Teslimat Adresi</h3>
               <p className="text-sm text-dark-600 dark:text-dark-300">
                 {foundOrder.shipping_address.ad} {foundOrder.shipping_address.soyad}

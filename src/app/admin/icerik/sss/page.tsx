@@ -145,7 +145,7 @@ export default function AdminFAQPage() {
 
       {/* Form */}
       {formOpen && (
-        <div className="mb-6 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+        <div className="mb-6 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
           <h3 className="mb-4 text-lg font-bold text-dark-900 dark:text-dark-50">
             {editing ? "Soruyu Düzenle" : "Yeni SSS"}
           </h3>
@@ -198,7 +198,7 @@ export default function AdminFAQPage() {
       )}
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800">
+      <div className="overflow-hidden rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="border-b border-dark-100 bg-dark-50 dark:bg-dark-800">

@@ -39,7 +39,7 @@ export default function LoginPage() {
       </div>
 
       <div className="container mx-auto flex justify-center px-4">
-        <div className="w-full max-w-md rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-8">
+        <div className="w-full max-w-md rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-8">
           <div className="mb-6 text-center">
             <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">Giriş Yap</h1>
             <p className="mt-1 text-sm text-dark-500 dark:text-dark-400">Hesabınıza giriş yaparak devam edin</p>
@@ -54,7 +54,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="ornek@email.com"
                 required
-                className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
               />
             </div>
 
@@ -67,7 +67,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Şifreniz"
                   required
-                  className="w-full rounded-lg border border-dark-200 px-4 py-2.5 pr-10 text-sm focus:border-primary-600 focus:outline-none"
+                  className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 pr-10 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
                 />
                 <button
                   type="button"
@@ -105,9 +105,9 @@ export default function LoginPage() {
           {/* Demo bilgisi — sadece demo modda göster */}
           {IS_DEMO && (
             <div className="mt-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 p-3">
-              <p className="text-xs font-semibold text-blue-700">Demo Giriş Bilgileri:</p>
-              <p className="mt-1 text-xs text-blue-600">Admin: admin@fiyatcim.com / admin123</p>
-              <p className="text-xs text-blue-600">Kullanıcı: Herhangi bir e-posta / 6+ karakter şifre</p>
+              <p className="text-xs font-semibold text-blue-700 dark:text-blue-300">Demo Giriş Bilgileri:</p>
+              <p className="mt-1 text-xs text-blue-600 dark:text-blue-400">Admin: admin@fiyatcim.com / admin123</p>
+              <p className="text-xs text-blue-600 dark:text-blue-400">Kullanıcı: Herhangi bir e-posta / 6+ karakter şifre</p>
             </div>
           )}
         </div>

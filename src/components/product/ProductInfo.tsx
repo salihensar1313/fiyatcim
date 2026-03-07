@@ -92,18 +92,18 @@ export default function ProductInfo({ product }: ProductInfoProps) {
 
       {/* G15: Taksit Bilgisi */}
       {effectivePrice >= 500 && effectivePrice > 0 && (
-        <div className="rounded-lg border border-blue-100 bg-blue-50 p-3">
-          <p className="text-xs font-medium text-blue-700">
+        <div className="rounded-lg border border-blue-100 bg-blue-50 dark:border-blue-900 dark:bg-blue-900/20 p-3">
+          <p className="text-xs font-medium text-blue-700 dark:text-blue-300">
             Taksit Seçenekleri
           </p>
           <div className="mt-1 flex flex-wrap gap-2">
             {[3, 6, 9, 12].map((ay) => (
-              <span key={ay} className="rounded bg-white dark:bg-dark-800 px-2 py-1 text-xs font-medium text-blue-600 shadow-sm">
+              <span key={ay} className="rounded bg-white dark:bg-dark-700 px-2 py-1 text-xs font-medium text-blue-600 dark:text-blue-300 shadow-sm">
                 {ay} Taksit: {formatPrice(effectivePrice / ay)}/ay
               </span>
             ))}
           </div>
-          <p className="mt-1.5 text-[10px] text-blue-500">
+          <p className="mt-1.5 text-[10px] text-blue-500 dark:text-blue-400">
             Demo: Gerçek taksit bilgisi ödeme adımında hesaplanır.
           </p>
         </div>
@@ -111,9 +111,9 @@ export default function ProductInfo({ product }: ProductInfoProps) {
 
       {/* G16: Stok FOMO */}
       {product.stock > 0 && product.stock <= 10 && (
-        <div className="flex items-center gap-2 rounded-lg border border-orange-200 bg-orange-50 p-3">
+        <div className="flex items-center gap-2 rounded-lg border border-orange-200 bg-orange-50 dark:border-orange-900 dark:bg-orange-900/20 p-3">
           <span className="text-lg">🔥</span>
-          <p className="text-xs font-medium text-orange-700">
+          <p className="text-xs font-medium text-orange-700 dark:text-orange-300">
             Bu ürün çok talep görüyor! Son <span className="font-bold">{product.stock} adet</span> kaldı.
           </p>
         </div>
@@ -136,7 +136,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
           {inCart ? (
             <>
               {/* In-cart quantity controls */}
-              <div className="flex items-center rounded-lg border border-green-200 bg-green-50">
+              <div className="flex items-center rounded-lg border border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-900/20">
                 <button
                   onClick={() => {
                     const cartItem = items.find((i) => i.product_id === product.id);
@@ -147,7 +147,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
                       updateQuantity(product.id, (cartItem?.qty || 1) - 1);
                     }
                   }}
-                  className="flex h-11 w-11 items-center justify-center rounded-l-lg text-green-700 transition-colors hover:bg-green-100"
+                  className="flex h-11 w-11 items-center justify-center rounded-l-lg text-green-700 dark:text-green-400 transition-colors hover:bg-green-100 dark:hover:bg-green-900/30"
                 >
                   {(items.find((i) => i.product_id === product.id)?.qty || 0) <= 1 ? (
                     <Trash2 size={16} />
@@ -155,7 +155,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
                     <Minus size={16} />
                   )}
                 </button>
-                <span className="min-w-[3rem] text-center text-sm font-bold text-green-700">
+                <span className="min-w-[3rem] text-center text-sm font-bold text-green-700 dark:text-green-400">
                   {items.find((i) => i.product_id === product.id)?.qty || 0}
                 </span>
                 <button
@@ -168,14 +168,14 @@ export default function ProductInfo({ product }: ProductInfoProps) {
                   disabled={
                     (items.find((i) => i.product_id === product.id)?.qty || 0) >= product.stock
                   }
-                  className="flex h-11 w-11 items-center justify-center rounded-r-lg text-green-700 transition-colors hover:bg-green-100 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="flex h-11 w-11 items-center justify-center rounded-r-lg text-green-700 dark:text-green-400 transition-colors hover:bg-green-100 dark:hover:bg-green-900/30 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <Plus size={16} />
                 </button>
               </div>
 
               {/* Sepette label */}
-              <div className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-50 px-6 py-3 text-sm font-bold text-green-700">
+              <div className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-50 dark:bg-green-900/20 px-6 py-3 text-sm font-bold text-green-700 dark:text-green-400">
                 <ShoppingCart size={18} />
                 Sepette
               </div>
@@ -183,7 +183,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
           ) : (
             <>
               {/* Quantity selector */}
-              <div className="flex items-center rounded-lg border border-dark-200">
+              <div className="flex items-center rounded-lg border border-dark-200 dark:border-dark-600">
                 <button
                   onClick={() => setQty(Math.max(1, qty - 1))}
                   className="px-3 py-2 text-dark-600 dark:text-dark-300 hover:text-dark-900 dark:text-dark-50"
@@ -218,8 +218,8 @@ export default function ProductInfo({ product }: ProductInfoProps) {
             }}
             className={`rounded-lg border p-3 transition-all ${
               inWishlist
-                ? "border-primary-200 bg-primary-50 text-primary-600"
-                : "border-dark-200 text-dark-400 hover:border-primary-300 hover:text-primary-600"
+                ? "border-primary-200 bg-primary-50 dark:border-primary-800 dark:bg-primary-900/20 text-primary-600"
+                : "border-dark-200 dark:border-dark-600 text-dark-400 hover:border-primary-300 hover:text-primary-600"
             }`}
           >
             <Heart size={18} className={inWishlist ? "fill-current" : ""} />
@@ -228,7 +228,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       )}
 
       {/* Shipping & Features */}
-      <div className="space-y-3 rounded-xl border border-dark-100 bg-dark-50 p-4">
+      <div className="space-y-3 rounded-xl border border-dark-100 dark:border-dark-700 bg-dark-50 dark:bg-dark-800 p-4">
         <div className="flex items-center gap-3">
           <Truck size={18} className="text-primary-600" />
           <div>

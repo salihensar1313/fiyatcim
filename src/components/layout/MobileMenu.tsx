@@ -29,7 +29,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
 
       {/* Menu */}
       <div
-        className={`fixed left-0 top-0 z-50 flex h-full w-80 max-w-[85vw] transform flex-col bg-white dark:bg-dark-800 shadow-2xl transition-transform duration-300 dark:bg-dark-800 ${
+        className={`fixed left-0 top-0 z-50 flex h-full w-80 max-w-[85vw] transform flex-col bg-white dark:bg-dark-800 shadow-2xl transition-transform duration-300 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >

@@ -13,7 +13,7 @@ export default async function TrustBadges() {
   const badges = await getTrustBadges(client);
 
   return (
-    <section className="border-y border-dark-100 bg-white dark:bg-dark-800 py-6 sm:py-8 dark:border-dark-700 dark:bg-dark-800">
+    <section className="border-y border-dark-100 bg-white dark:bg-dark-800 py-6 sm:py-8 dark:border-dark-700">
       <div className="container-custom">
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-8">
           {badges.map((badge) => {

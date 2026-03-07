@@ -93,7 +93,7 @@ export default function GuvenliAlisverisPage() {
           </div>
 
           {/* Güvenli Alışveriş İpuçları */}
-          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+          <section className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
             <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-dark-900 dark:text-dark-50">
               <Eye size={20} className="text-primary-600" />
               Güvenli Alışveriş İpuçları
@@ -143,7 +143,7 @@ export default function GuvenliAlisverisPage() {
           </section>
 
           {/* Sahte Site Tanıma */}
-          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+          <section className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
             <h2 className="mb-3 text-lg font-bold text-dark-900 dark:text-dark-50">
               Sahte E-posta ve Web Sitelerini Nasıl Tanırım?
             </h2>
@@ -207,7 +207,7 @@ export default function GuvenliAlisverisPage() {
           </section>
 
           {/* Kişisel Verilerin Korunması Linki */}
-          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+          <section className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
             <h2 className="mb-3 text-lg font-bold text-dark-900 dark:text-dark-50">Kişisel Verilerin Korunması</h2>
             <p className="text-sm text-dark-600 dark:text-dark-300">
               Kişisel verilerinizin nasıl toplandığı, işlendiği ve korunduğu hakkında detaylı

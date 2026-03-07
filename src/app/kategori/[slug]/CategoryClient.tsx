@@ -127,7 +127,7 @@ export default function CategoryClient({ slug }: Props) {
             <Link
               key={c.id}
               href={`/kategori/${c.slug}`}
-              className="rounded-full border border-dark-200 bg-white dark:bg-dark-800 dark:border-dark-600 dark:bg-dark-800 px-4 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 transition-colors hover:border-primary-300 hover:text-primary-600"
+              className="rounded-full border border-dark-200 bg-white dark:border-dark-600 dark:bg-dark-800 px-4 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 transition-colors hover:border-primary-300 hover:text-primary-600"
             >
               {c.name}
             </Link>
@@ -135,7 +135,7 @@ export default function CategoryClient({ slug }: Props) {
         </div>
 
         {/* Toolbar */}
-        <div className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-3">
+        <div className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-3">
           <ProductFiltersPanel
             filterGroups={filterGroups}
             filters={specFilters}
@@ -190,7 +190,7 @@ export default function CategoryClient({ slug }: Props) {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 py-16">
+              <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 py-16">
                 <h3 className="text-lg font-semibold text-dark-900 dark:text-dark-50">Bu filtrelere uygun ürün bulunamadı</h3>
                 <p className="mt-1 text-sm text-dark-500 dark:text-dark-400">Farklı bir filtre kombinasyonu deneyin.</p>
                 {activeFilterCount > 0 && (

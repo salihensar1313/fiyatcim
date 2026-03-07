@@ -63,7 +63,7 @@ export default function AdminKampanyaPage() {
         </button>
       </div>
 
-      <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+      <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
         <div className="space-y-4">
           {/* Active Toggle */}
           <div className="flex items-center justify-between rounded-lg border border-dark-100 p-4">

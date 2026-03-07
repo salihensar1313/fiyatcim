@@ -76,12 +76,12 @@ export default function ProductTabs({ product }: ProductTabsProps) {
       {/* Tab Headers with scroll */}
       <div className="relative">
         {showLeftFade && (
-          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-8 bg-gradient-to-r from-white to-transparent" />
+          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-8 bg-gradient-to-r from-white dark:from-dark-800 to-transparent" />
         )}
 
         <div
           ref={tabsRef}
-          className="scrollbar-hide flex overflow-x-auto border-b border-dark-200"
+          className="scrollbar-hide flex overflow-x-auto border-b border-dark-200 dark:border-dark-600"
           onScroll={checkScroll}
         >
           {tabs.map((tab) => (
@@ -114,7 +114,7 @@ export default function ProductTabs({ product }: ProductTabsProps) {
         </div>
 
         {showRightFade && (
-          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-8 bg-gradient-to-l from-white to-transparent" />
+          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-8 bg-gradient-to-l from-white dark:from-dark-800 to-transparent" />
         )}
       </div>
 
@@ -131,34 +131,34 @@ export default function ProductTabs({ product }: ProductTabsProps) {
             {/* Highlights */}
             <div className="grid gap-4 sm:grid-cols-3">
               {product.warranty_months > 0 && (
-                <div className="flex items-start gap-3 rounded-lg border border-green-200 bg-green-50 p-4">
-                  <Shield size={20} className="mt-0.5 shrink-0 text-green-600" />
+                <div className="flex items-start gap-3 rounded-lg border border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-900/20 p-4">
+                  <Shield size={20} className="mt-0.5 shrink-0 text-green-600 dark:text-green-400" />
                   <div>
-                    <p className="text-sm font-semibold text-green-800">
+                    <p className="text-sm font-semibold text-green-800 dark:text-green-300">
                       {product.warranty_months} Ay Garanti
                     </p>
-                    <p className="mt-0.5 text-xs text-green-700">Üretici garantisi kapsamında</p>
+                    <p className="mt-0.5 text-xs text-green-700 dark:text-green-400">Üretici garantisi kapsamında</p>
                   </div>
                 </div>
               )}
-              <div className="flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
-                <Truck size={20} className="mt-0.5 shrink-0 text-blue-600" />
+              <div className="flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-900/20 p-4">
+                <Truck size={20} className="mt-0.5 shrink-0 text-blue-600 dark:text-blue-400" />
                 <div>
-                  <p className="text-sm font-semibold text-blue-800">
+                  <p className="text-sm font-semibold text-blue-800 dark:text-blue-300">
                     {product.shipping_type === "kurulum" ? "Ücretsiz Kurulum" : "Hızlı Kargo"}
                   </p>
-                  <p className="mt-0.5 text-xs text-blue-700">
+                  <p className="mt-0.5 text-xs text-blue-700 dark:text-blue-400">
                     {product.shipping_type === "kurulum"
                       ? "Profesyonel ekip ile montaj"
                       : "2.000₺ üzeri ücretsiz"}
                   </p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 rounded-lg border border-purple-200 bg-purple-50 p-4">
-                <Package size={20} className="mt-0.5 shrink-0 text-purple-600" />
+              <div className="flex items-start gap-3 rounded-lg border border-purple-200 bg-purple-50 dark:border-purple-900 dark:bg-purple-900/20 p-4">
+                <Package size={20} className="mt-0.5 shrink-0 text-purple-600 dark:text-purple-400" />
                 <div>
-                  <p className="text-sm font-semibold text-purple-800">14 Gün İade</p>
-                  <p className="mt-0.5 text-xs text-purple-700">Koşulsuz iade ve değişim</p>
+                  <p className="text-sm font-semibold text-purple-800 dark:text-purple-300">14 Gün İade</p>
+                  <p className="mt-0.5 text-xs text-purple-700 dark:text-purple-400">Koşulsuz iade ve değişim</p>
                 </div>
               </div>
             </div>
@@ -185,11 +185,11 @@ export default function ProductTabs({ product }: ProductTabsProps) {
         )}
 
         {activeTab === "specs" && (
-          <div className="overflow-hidden rounded-lg border border-dark-100">
+          <div className="overflow-hidden rounded-lg border border-dark-100 dark:border-dark-700">
             <table className="w-full">
               <tbody>
                 {Object.entries(product.specs).map(([key, value], index) => (
-                  <tr key={key} className={index % 2 === 0 ? "bg-dark-50" : "bg-white dark:bg-dark-800"}>
+                  <tr key={key} className={index % 2 === 0 ? "bg-dark-50 dark:bg-dark-700" : "bg-white dark:bg-dark-800"}>
                     <td className="w-1/3 px-4 py-3 text-sm font-semibold text-dark-700 dark:text-dark-200">{key}</td>
                     <td className="px-4 py-3 text-sm text-dark-600 dark:text-dark-300">{value}</td>
                   </tr>

@@ -280,7 +280,7 @@ export default function ProductFilter({
 
       {/* Desktop sidebar */}
       <aside className="hidden w-64 shrink-0 lg:block">
-        <div className="sticky top-24 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-5">
+        <div className="sticky top-24 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-5">
           {filterContent}
         </div>
       </aside>

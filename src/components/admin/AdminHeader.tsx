@@ -150,7 +150,7 @@ export default function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
 
           {/* Dropdown */}
           {open && (
-            <div className="absolute right-0 top-full mt-2 w-80 overflow-hidden rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 shadow-xl">
+            <div className="absolute right-0 top-full mt-2 w-80 overflow-hidden rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 shadow-xl">
               {/* Header */}
               <div className="flex items-center justify-between border-b border-dark-100 px-4 py-3">
                 <h4 className="text-sm font-bold text-dark-900 dark:text-dark-50">Bildirimler</h4>

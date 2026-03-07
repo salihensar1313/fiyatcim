@@ -79,7 +79,7 @@ export default function AccountPage() {
       <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">Kullanıcı Bilgilerim</h1>
 
       {/* Tabs */}
-      <div className="border-b border-dark-200">
+      <div className="border-b border-dark-200 dark:border-dark-700">
         <div className="flex gap-6">
           {tabs.map((t) => (
             <button
@@ -99,7 +99,7 @@ export default function AccountPage() {
 
       {/* Tab: Üyelik Bilgilerim */}
       {tab === "profile" && (
-        <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+        <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
           <h2 className="mb-1 text-lg font-bold text-dark-900 dark:text-dark-50">Profil Bilgileri</h2>
           <p className="mb-5 text-sm text-dark-500 dark:text-dark-400">
             Kişisel bilgilerinizi buradan güncelleyebilirsiniz.
@@ -123,7 +123,7 @@ export default function AccountPage() {
                     type="text"
                     value={ad}
                     onChange={(e) => setAd(e.target.value)}
-                    className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                    className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
                   />
                 </div>
                 <div>
@@ -132,7 +132,7 @@ export default function AccountPage() {
                     type="text"
                     value={soyad}
                     onChange={(e) => setSoyad(e.target.value)}
-                    className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                    className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
                   />
                 </div>
               </div>
@@ -144,7 +144,7 @@ export default function AccountPage() {
                   value={telefon}
                   onChange={(e) => setTelefon(e.target.value)}
                   placeholder="05XX XXX XX XX"
-                  className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                  className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
                 />
                 {telefonChanged && IS_DEMO && (
                   <p className="mt-1 text-xs text-orange-600">
@@ -169,7 +169,7 @@ export default function AccountPage() {
 
       {/* Tab: İletişim Bilgileri */}
       {tab === "contact" && (
-        <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+        <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
           <h2 className="mb-1 text-lg font-bold text-dark-900 dark:text-dark-50">İletişim Bilgileri</h2>
           <p className="mb-5 text-sm text-dark-500 dark:text-dark-400">
             E-posta adresinizi ve telefon numaranızı görüntüleyin.
@@ -177,7 +177,7 @@ export default function AccountPage() {
 
           <div className="space-y-5">
             {/* E-posta */}
-            <div className="flex items-center justify-between rounded-lg border border-dark-100 px-4 py-3">
+            <div className="flex items-center justify-between rounded-lg border border-dark-100 dark:border-dark-700 px-4 py-3">
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-dark-50 dark:bg-dark-800">
                   <Mail size={16} className="text-dark-500 dark:text-dark-400" />
@@ -197,7 +197,7 @@ export default function AccountPage() {
             </div>
 
             {/* Telefon */}
-            <div className="flex items-center justify-between rounded-lg border border-dark-100 px-4 py-3">
+            <div className="flex items-center justify-between rounded-lg border border-dark-100 dark:border-dark-700 px-4 py-3">
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-dark-50 dark:bg-dark-800">
                   <Phone size={16} className="text-dark-500 dark:text-dark-400" />

@@ -76,7 +76,7 @@ function OrderSuccessContent() {
           </div>
 
           {order && (
-            <div className="mt-4 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-4">
+            <div className="mt-4 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-4">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-dark-500 dark:text-dark-400">{"Sipari\u015F Tarihi"}</span>
                 <span className="font-medium text-dark-900 dark:text-dark-50">

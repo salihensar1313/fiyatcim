@@ -15,6 +15,7 @@ import {
   Home,
   Fingerprint,
   Package,
+  GitCompareArrows,
 } from "lucide-react";
 import { SITE_FULL_NAME } from "@/lib/constants";
 import { useCart } from "@/context/CartContext";
@@ -24,6 +25,7 @@ import MobileMenu from "./MobileMenu";
 import NotificationBell from "@/components/ui/NotificationBell";
 import SearchAutocomplete from "./SearchAutocomplete";
 import DarkModeToggle from "@/components/ui/DarkModeToggle";
+import { useCompare } from "@/hooks/useCompare";
 
 const MEGA_MENU_DATA = [
   {
@@ -85,6 +87,7 @@ export default function Header() {
   const { getItemCount } = useCart();
   const { getCount: getWishlistCount } = useWishlist();
   const { usdTry, isLoading: currencyLoading } = useCurrency();
+  const { compareCount } = useCompare();
 
   const cartCount = getItemCount();
   const wishlistCount = getWishlistCount();
@@ -104,6 +107,7 @@ export default function Header() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (megaTimeoutRef.current) clearTimeout(megaTimeoutRef.current);
     };
   }, [handleScroll]);
 
@@ -168,6 +172,20 @@ export default function Header() {
                 )}
               </Link>
 
+              {/* Compare */}
+              <Link
+                href="/karsilastir"
+                className="relative rounded-lg p-2 text-dark-300 hover:text-white"
+                title="Karşılaştır"
+              >
+                <GitCompareArrows size={22} />
+                {compareCount > 0 && (
+                  <span className="absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary-600 text-[10px] font-bold text-white">
+                    {compareCount}
+                  </span>
+                )}
+              </Link>
+
               {/* Dark Mode Toggle */}
               <DarkModeToggle />
 
@@ -226,7 +244,7 @@ export default function Header() {
                 {/* Mega dropdown */}
                 {activeMega === megaItem.key && (
                   <div
-                    className="absolute left-0 top-full z-40 w-72 rounded-b-xl border border-t-0 border-dark-100 bg-white dark:bg-dark-800 py-3 shadow-xl dark:border-dark-700 dark:bg-dark-800"
+                    className="absolute left-0 top-full z-40 w-72 rounded-b-xl border border-t-0 border-dark-100 bg-white dark:bg-dark-800 py-3 shadow-xl dark:border-dark-700"
                     onMouseEnter={() => handleMegaEnter(megaItem.key)}
                     onMouseLeave={handleMegaLeave}
                   >

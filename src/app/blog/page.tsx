@@ -27,7 +27,7 @@ export default async function BlogPage() {
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => (
-            <article key={post.id} className="overflow-hidden rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 transition-shadow hover:shadow-md">
+            <article key={post.id} className="overflow-hidden rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 transition-shadow hover:shadow-md">
               <div className="aspect-video bg-dark-100" />
               <div className="p-5">
                 <div className="mb-2 flex items-center gap-2">

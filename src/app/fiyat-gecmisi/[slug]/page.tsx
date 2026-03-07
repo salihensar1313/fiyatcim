@@ -90,7 +90,7 @@ export default function PriceHistoryPage() {
 
       <div className="container mx-auto px-4">
         {/* Product Summary Card */}
-        <div className="mb-8 rounded-xl border border-dark-200 bg-white dark:bg-dark-800 dark:border-dark-600 dark:bg-dark-800 p-6">
+        <div className="mb-8 rounded-xl border border-dark-200 bg-white dark:border-dark-600 dark:bg-dark-800 p-6">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
             {/* Product Image */}
             <div className="relative h-32 w-32 flex-shrink-0 overflow-hidden rounded-lg bg-dark-50 dark:bg-dark-800">
@@ -135,7 +135,7 @@ export default function PriceHistoryPage() {
         </div>
 
         {/* Price History Chart (full size) */}
-        <div className="rounded-xl border border-dark-200 bg-white dark:bg-dark-800 dark:border-dark-600 dark:bg-dark-800 p-6">
+        <div className="rounded-xl border border-dark-200 bg-white dark:border-dark-600 dark:bg-dark-800 p-6">
           <PriceHistoryChart productId={product.id} currentPrice={currentPrice} />
         </div>
 
@@ -150,7 +150,7 @@ export default function PriceHistoryPage() {
                 <Link
                   key={rp.id}
                   href={`/fiyat-gecmisi/${rp.slug}`}
-                  className="group rounded-lg border border-dark-200 bg-white dark:bg-dark-800 dark:border-dark-600 dark:bg-dark-800 p-4 transition-shadow hover:shadow-md"
+                  className="group rounded-lg border border-dark-200 bg-white dark:border-dark-600 dark:bg-dark-800 p-4 transition-shadow hover:shadow-md"
                 >
                   <div className="relative mx-auto mb-3 h-20 w-20 overflow-hidden rounded bg-dark-50 dark:bg-dark-800">
                     <Image

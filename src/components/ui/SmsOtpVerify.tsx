@@ -93,7 +93,7 @@ export default function SmsOtpVerify({ phone, onVerified, onBack }: SmsOtpVerify
   return (
     <div className="space-y-4">
       <div className="text-center">
-        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary-100">
+        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900/30">
           <Smartphone size={24} className="text-primary-600" />
         </div>
         <h2 className="text-xl font-bold text-dark-900 dark:text-dark-50">SMS Doğrulama</h2>
@@ -104,9 +104,9 @@ export default function SmsOtpVerify({ phone, onVerified, onBack }: SmsOtpVerify
 
       {/* Demo bilgisi */}
       {IS_DEMO && (
-        <div className="rounded-lg bg-blue-50 p-3">
-          <p className="text-xs font-semibold text-blue-700">Demo Modu</p>
-          <p className="mt-0.5 text-xs text-blue-600">
+        <div className="rounded-lg bg-blue-50 dark:bg-blue-900/30 p-3">
+          <p className="text-xs font-semibold text-blue-700 dark:text-blue-300">Demo Modu</p>
+          <p className="mt-0.5 text-xs text-blue-600 dark:text-blue-400">
             SMS doğrulama kodu: <span className="font-mono font-bold">123456</span>
           </p>
         </div>
@@ -121,19 +121,19 @@ export default function SmsOtpVerify({ phone, onVerified, onBack }: SmsOtpVerify
           value={otpCode}
           onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, "").slice(0, OTP_LENGTH))}
           placeholder="000000"
-          className="w-full rounded-lg border border-dark-200 px-4 py-3 text-center font-mono text-2xl tracking-[0.5em] focus:border-primary-600 focus:outline-none"
+          className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-3 text-center font-mono text-2xl tracking-[0.5em] focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
           disabled={lockLeft > 0}
         />
       </div>
 
       {lockLeft > 0 && (
-        <div className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">
+        <div className="rounded-lg bg-red-50 dark:bg-red-900/30 px-4 py-2 text-sm text-red-600">
           Hesap kilitlendi. {lockLeft} saniye bekleyin.
         </div>
       )}
 
       {error && lockLeft === 0 && (
-        <div className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">{error}</div>
+        <div className="rounded-lg bg-red-50 dark:bg-red-900/30 px-4 py-2 text-sm text-red-600">{error}</div>
       )}
 
       <button

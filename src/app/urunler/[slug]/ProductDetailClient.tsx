@@ -14,6 +14,7 @@ import { incrementViewCount } from "@/hooks/useTrendingProducts";
 import AlertButtons from "@/components/product/AlertButtons";
 import ProductAlternatives from "@/components/product/ProductAlternatives";
 import SmartRecommendations from "@/components/product/SmartRecommendations";
+import BoughtAlsoViewed from "@/components/product/BoughtAlsoViewed";
 import Link from "next/link";
 
 interface Props {
@@ -69,13 +70,14 @@ export default function ProductDetailClient({ initialProduct }: Props) {
           </div>
         </div>
 
-        <div id="product-tabs" className="mt-12 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+        <div id="product-tabs" className="mt-12 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
           <ProductTabs product={product} />
         </div>
 
         <RelatedProducts productId={product.id} categoryId={product.category_id} />
       </div>
 
+      <BoughtAlsoViewed productId={product.id} />
       <ProductAlternatives product={product} />
       <SmartRecommendations product={product} />
 

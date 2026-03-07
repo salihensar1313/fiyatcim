@@ -52,7 +52,7 @@ export default function QATab({ product }: QATabProps) {
   return (
     <div className="space-y-6">
       {/* Ask Question Form */}
-      <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+      <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
         <h4 className="mb-1 text-base font-bold text-dark-900 dark:text-dark-50">Ürün Hakkında Soru Sor</h4>
         <p className="mb-4 text-xs text-dark-400">
           Satıcıya veya diğer kullanıcılara bu ürün hakkında soru sorabilirsiniz.

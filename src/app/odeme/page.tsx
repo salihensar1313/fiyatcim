@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CreditCard, Truck, FileText, MapPin, Plus, Smartphone } from "lucide-react";
 import SmsOtpVerify from "@/components/ui/SmsOtpVerify";
+import CartRecommendations from "@/components/product/CartRecommendations";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useOrders } from "@/context/OrderContext";
 import { useAddresses } from "@/context/AddressContext";
 import { formatPrice, formatUSD } from "@/lib/utils";
+import { TURKISH_PROVINCES } from "@/lib/constants";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 
 export default function CheckoutPage() {
@@ -104,9 +106,9 @@ export default function CheckoutPage() {
             const isActive = thisIdx <= currentIdx;
             return (
               <div key={s.key} className="flex items-center gap-2">
-                {i > 0 && <div className="h-px w-4 bg-dark-200 sm:w-8" />}
+                {i > 0 && <div className="h-px w-4 bg-dark-200 dark:bg-dark-600 sm:w-8" />}
                 <div className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium sm:px-4 ${
-                  isActive ? "bg-primary-600 text-white" : "bg-dark-100 text-dark-500 dark:text-dark-400"
+                  isActive ? "bg-primary-600 text-white" : "bg-dark-100 dark:bg-dark-700 text-dark-500 dark:text-dark-400"
                 }`}>
                   <s.icon size={16} />
                   {s.label}
@@ -123,7 +125,7 @@ export default function CheckoutPage() {
               <div className="space-y-4">
                 {/* Kayıtlı Adresler */}
                 {userAddresses.length > 0 && (
-                  <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+                  <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
                     <h2 className="mb-4 text-lg font-bold text-dark-900 dark:text-dark-50">Kayıtlı Adreslerim</h2>
                     <div className="space-y-3">
                       {userAddresses.map((addr) => (
@@ -207,7 +209,7 @@ export default function CheckoutPage() {
 
                 {/* Manuel Adres Formu */}
                 {(userAddresses.length === 0 || showManualForm) && (
-                  <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+                  <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
                     <h2 className="mb-4 text-lg font-bold text-dark-900 dark:text-dark-50">Teslimat Adresi</h2>
                     <div className="space-y-4">
                       <div className="grid gap-4 sm:grid-cols-2">
@@ -216,7 +218,7 @@ export default function CheckoutPage() {
                           <input
                             type="text" required value={address.ad}
                             onChange={(e) => setAddress({ ...address, ad: e.target.value })}
-                            className={`w-full rounded-lg border px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none ${addressAttempted && !address.ad.trim() ? "border-red-400" : "border-dark-200"}`}
+                            className={`w-full rounded-lg border dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400 ${addressAttempted && !address.ad.trim() ? "border-red-400" : "border-dark-200 dark:border-dark-600"}`}
                           />
                         </div>
                         <div>
@@ -224,7 +226,7 @@ export default function CheckoutPage() {
                           <input
                             type="text" required value={address.soyad}
                             onChange={(e) => setAddress({ ...address, soyad: e.target.value })}
-                            className={`w-full rounded-lg border px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none ${addressAttempted && !address.soyad.trim() ? "border-red-400" : "border-dark-200"}`}
+                            className={`w-full rounded-lg border dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400 ${addressAttempted && !address.soyad.trim() ? "border-red-400" : "border-dark-200 dark:border-dark-600"}`}
                           />
                         </div>
                       </div>
@@ -241,7 +243,7 @@ export default function CheckoutPage() {
                           placeholder="90 5XX XXX XX XX"
                           inputMode="numeric"
                           maxLength={16}
-                          className={`w-full rounded-lg border px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none ${addressAttempted && address.telefon.length < 12 ? "border-red-400" : "border-dark-200"}`}
+                          className={`w-full rounded-lg border dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400 ${addressAttempted && address.telefon.length < 12 ? "border-red-400" : "border-dark-200 dark:border-dark-600"}`}
                         />
                       </div>
                       <div className="grid gap-4 sm:grid-cols-3">
@@ -250,10 +252,10 @@ export default function CheckoutPage() {
                           <select
                             required value={address.il}
                             onChange={(e) => setAddress({ ...address, il: e.target.value, ilce: "" })}
-                            className={`w-full rounded-lg border bg-white dark:bg-dark-800 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none ${addressAttempted && !address.il ? "border-red-400" : "border-dark-200"}`}
+                            className={`w-full rounded-lg border dark:bg-dark-800 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none ${addressAttempted && !address.il ? "border-red-400" : "border-dark-200 dark:border-dark-600"}`}
                           >
                             <option value="">İl Seçin</option>
-                            {["Adana","Adıyaman","Afyonkarahisar","Ağrı","Amasya","Ankara","Antalya","Artvin","Aydın","Balıkesir","Bilecik","Bingöl","Bitlis","Bolu","Burdur","Bursa","Çanakkale","Çankırı","Çorum","Denizli","Diyarbakır","Edirne","Elazığ","Erzincan","Erzurum","Eskişehir","Gaziantep","Giresun","Gümüşhane","Hakkari","Hatay","Isparta","Mersin","İstanbul","İzmir","Kars","Kastamonu","Kayseri","Kırklareli","Kırşehir","Kocaeli","Konya","Kütahya","Malatya","Manisa","Kahramanmaraş","Mardin","Muğla","Muş","Nevşehir","Niğde","Ordu","Rize","Sakarya","Samsun","Siirt","Sinop","Sivas","Tekirdağ","Tokat","Trabzon","Tunceli","Şanlıurfa","Uşak","Van","Yozgat","Zonguldak","Aksaray","Bayburt","Karaman","Kırıkkale","Batman","Şırnak","Bartın","Ardahan","Iğdır","Yalova","Karabük","Kilis","Osmaniye","Düzce"].map((il) => (
+                            {TURKISH_PROVINCES.map((il) => (
                               <option key={il} value={il}>{il}</option>
                             ))}
                           </select>
@@ -264,7 +266,7 @@ export default function CheckoutPage() {
                             type="text" required value={address.ilce}
                             onChange={(e) => setAddress({ ...address, ilce: e.target.value })}
                             placeholder="İlçe yazın"
-                            className={`w-full rounded-lg border px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none ${addressAttempted && !address.ilce.trim() ? "border-red-400" : "border-dark-200"}`}
+                            className={`w-full rounded-lg border dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400 ${addressAttempted && !address.ilce.trim() ? "border-red-400" : "border-dark-200 dark:border-dark-600"}`}
                           />
                         </div>
                         <div>
@@ -272,7 +274,7 @@ export default function CheckoutPage() {
                           <input
                             type="text" value={address.posta_kodu}
                             onChange={(e) => setAddress({ ...address, posta_kodu: e.target.value })}
-                            className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                            className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
                           />
                         </div>
                       </div>
@@ -282,7 +284,7 @@ export default function CheckoutPage() {
                           rows={3} required value={address.adres}
                           onChange={(e) => setAddress({ ...address, adres: e.target.value })}
                           placeholder="Mahalle, sokak, bina no, daire no..."
-                          className={`w-full rounded-lg border px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none ${addressAttempted && !address.adres.trim() ? "border-red-400" : "border-dark-200"}`}
+                          className={`w-full rounded-lg border dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400 ${addressAttempted && !address.adres.trim() ? "border-red-400" : "border-dark-200 dark:border-dark-600"}`}
                         />
                       </div>
 
@@ -305,7 +307,7 @@ export default function CheckoutPage() {
             )}
 
             {step === "sms" && (
-              <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+              <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
                 <SmsOtpVerify
                   phone={address.telefon}
                   onVerified={() => setStep("payment")}
@@ -315,7 +317,7 @@ export default function CheckoutPage() {
             )}
 
             {step === "payment" && (
-              <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+              <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
                 <h2 className="mb-4 text-lg font-bold text-dark-900 dark:text-dark-50">Ödeme Yöntemi</h2>
                 <div className="rounded-lg bg-blue-50 dark:bg-blue-900/30 p-4">
                   <div className="flex items-center gap-2">
@@ -331,7 +333,7 @@ export default function CheckoutPage() {
                 <div className="mt-6 space-y-2">
                   <h3 className="mb-2 text-sm font-bold text-dark-900 dark:text-dark-50">Sözleşme Onayları</h3>
 
-                  <label className="flex items-start gap-2.5 rounded-lg border border-dark-100 p-2.5 text-sm transition-colors hover:bg-dark-50 dark:bg-dark-800">
+                  <label className="flex items-start gap-2.5 rounded-lg border border-dark-100 dark:border-dark-700 p-2.5 text-sm transition-colors hover:bg-dark-50 dark:hover:bg-dark-700 dark:bg-dark-800">
                     <input type="checkbox" checked={agreeSales} onChange={(e) => setAgreeSales(e.target.checked)}
                       className="mt-0.5 h-4 w-4 rounded border-dark-300 text-primary-600 focus:ring-primary-500" />
                     <span className="text-dark-700 dark:text-dark-200">
@@ -340,7 +342,7 @@ export default function CheckoutPage() {
                     </span>
                   </label>
 
-                  <label className="flex items-start gap-2.5 rounded-lg border border-dark-100 p-2.5 text-sm transition-colors hover:bg-dark-50 dark:bg-dark-800">
+                  <label className="flex items-start gap-2.5 rounded-lg border border-dark-100 dark:border-dark-700 p-2.5 text-sm transition-colors hover:bg-dark-50 dark:hover:bg-dark-700 dark:bg-dark-800">
                     <input type="checkbox" checked={agreePreInfo} onChange={(e) => setAgreePreInfo(e.target.checked)}
                       className="mt-0.5 h-4 w-4 rounded border-dark-300 text-primary-600 focus:ring-primary-500" />
                     <span className="text-dark-700 dark:text-dark-200">
@@ -349,7 +351,7 @@ export default function CheckoutPage() {
                     </span>
                   </label>
 
-                  <label className="flex items-start gap-2.5 rounded-lg border border-dark-100 p-2.5 text-sm transition-colors hover:bg-dark-50 dark:bg-dark-800">
+                  <label className="flex items-start gap-2.5 rounded-lg border border-dark-100 dark:border-dark-700 p-2.5 text-sm transition-colors hover:bg-dark-50 dark:hover:bg-dark-700 dark:bg-dark-800">
                     <input type="checkbox" checked={agreeKVKK} onChange={(e) => setAgreeKVKK(e.target.checked)}
                       className="mt-0.5 h-4 w-4 rounded border-dark-300 text-primary-600 focus:ring-primary-500" />
                     <span className="text-dark-700 dark:text-dark-200">
@@ -358,7 +360,7 @@ export default function CheckoutPage() {
                     </span>
                   </label>
 
-                  <label className="flex items-start gap-2.5 rounded-lg border border-dark-100 p-2.5 text-sm transition-colors hover:bg-dark-50 dark:bg-dark-800">
+                  <label className="flex items-start gap-2.5 rounded-lg border border-dark-100 dark:border-dark-700 p-2.5 text-sm transition-colors hover:bg-dark-50 dark:hover:bg-dark-700 dark:bg-dark-800">
                     <input type="checkbox" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)}
                       className="mt-0.5 h-4 w-4 rounded border-dark-300 text-primary-600 focus:ring-primary-500" />
                     <span className="text-dark-700 dark:text-dark-200">
@@ -367,7 +369,7 @@ export default function CheckoutPage() {
                     </span>
                   </label>
 
-                  <label className="flex items-start gap-2.5 rounded-lg border border-dark-100 p-2.5 text-sm transition-colors hover:bg-dark-50 dark:bg-dark-800">
+                  <label className="flex items-start gap-2.5 rounded-lg border border-dark-100 dark:border-dark-700 p-2.5 text-sm transition-colors hover:bg-dark-50 dark:hover:bg-dark-700 dark:bg-dark-800">
                     <input type="checkbox" checked={agreeMarketing} onChange={(e) => setAgreeMarketing(e.target.checked)}
                       className="mt-0.5 h-4 w-4 rounded border-dark-300 text-primary-600 focus:ring-primary-500" />
                     <span className="text-dark-700 dark:text-dark-200">
@@ -379,7 +381,7 @@ export default function CheckoutPage() {
                 <div className="mt-4 flex gap-3">
                   <button
                     onClick={() => setStep(IS_DEMO ? "sms" : "address")}
-                    className="rounded-lg border border-dark-200 px-6 py-3 text-sm font-semibold text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:bg-dark-800"
+                    className="rounded-lg border border-dark-200 dark:border-dark-600 px-6 py-3 text-sm font-semibold text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:hover:bg-dark-700 dark:bg-dark-800"
                   >
                     Geri
                   </button>
@@ -411,9 +413,16 @@ export default function CheckoutPage() {
             )}
           </div>
 
+          {/* Checkout Recommendations */}
+          {step === "address" && (
+            <div className="lg:col-span-2">
+              <CartRecommendations />
+            </div>
+          )}
+
           {/* Order Summary */}
           <div>
-            <div className="sticky top-24 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+            <div className="sticky top-24 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
               <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-dark-900 dark:text-dark-50">
                 <FileText size={18} />
                 Sipariş Özeti

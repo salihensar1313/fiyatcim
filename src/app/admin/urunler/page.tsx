@@ -8,6 +8,7 @@ import type { Category, Brand, Product } from "@/types";
 import { formatPrice, formatUSD, getStockStatus } from "@/lib/utils";
 import Badge from "@/components/ui/Badge";
 import { useProducts } from "@/context/ProductContext";
+import { useActivityLog } from "@/context/ActivityLogContext";
 import { useToast } from "@/components/ui/Toast";
 import dynamic from "next/dynamic";
 const ProductFormModal = dynamic(() => import("@/components/admin/ProductFormModal"), { ssr: false });
@@ -16,6 +17,7 @@ import { exportCSV } from "@/lib/csv";
 
 export default function AdminProductsPage() {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
+  const { addLog } = useActivityLog();
   const [categories, setCategories] = useState<Category[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
 
@@ -62,15 +64,18 @@ export default function AdminProductsPage() {
   const handleSave = (data: Omit<Product, "id" | "created_at">) => {
     if (editingProduct) {
       updateProduct(editingProduct.id, data);
+      addLog("product_update", `"${data.name}" ürünü güncellendi`, "product", editingProduct.id);
       showToast("Ürün güncellendi", "success");
     } else {
       addProduct(data);
+      addLog("product_create", `"${data.name}" ürünü eklendi`, "product");
       showToast("Yeni ürün eklendi", "success");
     }
   };
 
   const handleDelete = () => {
     if (deleteTarget) {
+      addLog("product_delete", `"${deleteTarget.name}" ürünü silindi`, "product", deleteTarget.id);
       deleteProduct(deleteTarget.id);
       showToast("Ürün silindi", "info");
       setDeleteTarget(null);
@@ -124,7 +129,7 @@ export default function AdminProductsPage() {
       </div>
 
       {/* Filters */}
-      <div className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-3">
+      <div className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-3">
         <div className="relative flex-1">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-400" />
           <input
@@ -150,7 +155,7 @@ export default function AdminProductsPage() {
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800">
+      <div className="overflow-hidden rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="border-b border-dark-100 bg-dark-50 dark:border-dark-700 dark:bg-dark-900">

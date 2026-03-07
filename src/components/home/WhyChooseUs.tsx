@@ -50,7 +50,7 @@ export default function WhyChooseUs() {
             return (
               <div
                 key={f.id}
-                className="flex gap-4 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6 transition-shadow hover:shadow-md dark:border-dark-700 dark:bg-dark-800"
+                className="flex gap-4 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6 transition-shadow hover:shadow-md"
               >
                 <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-600 dark:bg-primary-900/30">
                   <IconComp size={28} />

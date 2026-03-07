@@ -5,8 +5,9 @@ import { MapPin, Plus, Pencil, Trash2, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useAddresses } from "@/context/AddressContext";
 import type { SavedAddress } from "@/types";
+import { TURKISH_PROVINCES } from "@/lib/constants";
 
-const ILLER = ["Adana","Adıyaman","Afyonkarahisar","Ağrı","Amasya","Ankara","Antalya","Artvin","Aydın","Balıkesir","Bilecik","Bingöl","Bitlis","Bolu","Burdur","Bursa","Çanakkale","Çankırı","Çorum","Denizli","Diyarbakır","Edirne","Elazığ","Erzincan","Erzurum","Eskişehir","Gaziantep","Giresun","Gümüşhane","Hakkari","Hatay","Isparta","Mersin","İstanbul","İzmir","Kars","Kastamonu","Kayseri","Kırklareli","Kırşehir","Kocaeli","Konya","Kütahya","Malatya","Manisa","Kahramanmaraş","Mardin","Muğla","Muş","Nevşehir","Niğde","Ordu","Rize","Sakarya","Samsun","Siirt","Sinop","Sivas","Tekirdağ","Tokat","Trabzon","Tunceli","Şanlıurfa","Uşak","Van","Yozgat","Zonguldak","Aksaray","Bayburt","Karaman","Kırıkkale","Batman","Şırnak","Bartın","Ardahan","Iğdır","Yalova","Karabük","Kilis","Osmaniye","Düzce"];
+const ILLER = TURKISH_PROVINCES;
 
 const EMPTY_FORM = {
   baslik: "",
@@ -108,7 +109,7 @@ export default function AddressesPage() {
           {userAddresses.map((addr) => (
             <div
               key={addr.id}
-              className="relative rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-5"
+              className="relative rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-5"
             >
               <div className="mb-3 flex items-center justify-between">
                 <h3 className="flex items-center gap-2 font-semibold text-dark-900 dark:text-dark-50">
@@ -118,7 +119,7 @@ export default function AddressesPage() {
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => openEdit(addr)}
-                    className="rounded-lg p-1.5 text-dark-400 hover:bg-dark-50 hover:text-dark-700 dark:text-dark-200"
+                    className="rounded-lg p-1.5 text-dark-400 hover:bg-dark-50 dark:hover:bg-dark-700 hover:text-dark-700 dark:text-dark-200"
                     title="Düzenle"
                   >
                     <Pencil size={15} />
@@ -133,7 +134,7 @@ export default function AddressesPage() {
                       </button>
                       <button
                         onClick={() => setDeleteConfirm(null)}
-                        className="rounded-lg px-2 py-1 text-xs font-medium text-dark-500 dark:text-dark-400 hover:bg-dark-50 dark:bg-dark-800"
+                        className="rounded-lg px-2 py-1 text-xs font-medium text-dark-500 dark:text-dark-400 hover:bg-dark-50 dark:hover:bg-dark-700 dark:bg-dark-800"
                       >
                         İptal
                       </button>
@@ -166,7 +167,7 @@ export default function AddressesPage() {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 py-20">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 py-20">
           <MapPin size={56} className="mb-4 text-dark-200" />
           <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">Kayıtlı Adresiniz Yok</h2>
           <p className="mt-2 text-sm text-dark-500 dark:text-dark-400">
@@ -190,7 +191,7 @@ export default function AddressesPage() {
               <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">
                 {editingId ? "Adresi Düzenle" : "Yeni Adres Ekle"}
               </h2>
-              <button onClick={closeForm} className="rounded-lg p-1 text-dark-400 hover:bg-dark-50 hover:text-dark-700 dark:text-dark-200">
+              <button onClick={closeForm} className="rounded-lg p-1 text-dark-400 hover:bg-dark-50 dark:hover:bg-dark-700 hover:text-dark-700 dark:text-dark-200">
                 <X size={20} />
               </button>
             </div>
@@ -206,7 +207,7 @@ export default function AddressesPage() {
                   placeholder="Örn: Ev, İş"
                   value={form.baslik}
                   onChange={(e) => setForm({ ...form, baslik: e.target.value })}
-                  className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                  className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
                 />
               </div>
 
@@ -220,7 +221,7 @@ export default function AddressesPage() {
                     type="text"
                     value={form.ad}
                     onChange={(e) => setForm({ ...form, ad: e.target.value })}
-                    className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                    className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
                   />
                 </div>
                 <div>
@@ -231,7 +232,7 @@ export default function AddressesPage() {
                     type="text"
                     value={form.soyad}
                     onChange={(e) => setForm({ ...form, soyad: e.target.value })}
-                    className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                    className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
                   />
                 </div>
               </div>
@@ -248,7 +249,7 @@ export default function AddressesPage() {
                   placeholder="90 5XX XXX XX XX"
                   inputMode="numeric"
                   maxLength={16}
-                  className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                  className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
                 />
               </div>
 
@@ -261,7 +262,7 @@ export default function AddressesPage() {
                   <select
                     value={form.il}
                     onChange={(e) => setForm({ ...form, il: e.target.value, ilce: "" })}
-                    className="w-full rounded-lg border border-dark-200 bg-white dark:bg-dark-800 dark:border-dark-600 dark:bg-dark-800 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                    className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-800 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
                   >
                     <option value="">İl Seçin</option>
                     {ILLER.map((il) => (
@@ -278,7 +279,7 @@ export default function AddressesPage() {
                     placeholder="İlçe yazın"
                     value={form.ilce}
                     onChange={(e) => setForm({ ...form, ilce: e.target.value })}
-                    className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                    className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
                   />
                 </div>
                 <div>
@@ -287,7 +288,7 @@ export default function AddressesPage() {
                     type="text"
                     value={form.posta_kodu}
                     onChange={(e) => setForm({ ...form, posta_kodu: e.target.value })}
-                    className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                    className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
                   />
                 </div>
               </div>
@@ -302,7 +303,7 @@ export default function AddressesPage() {
                   placeholder="Mahalle, sokak, bina no, daire no..."
                   value={form.adres}
                   onChange={(e) => setForm({ ...form, adres: e.target.value })}
-                  className="w-full rounded-lg border border-dark-200 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                  className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
                 />
               </div>
 
@@ -317,7 +318,7 @@ export default function AddressesPage() {
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={closeForm}
-                  className="rounded-lg border border-dark-200 px-5 py-2.5 text-sm font-semibold text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:bg-dark-800"
+                  className="rounded-lg border border-dark-200 dark:border-dark-600 px-5 py-2.5 text-sm font-semibold text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:hover:bg-dark-700 dark:bg-dark-800"
                 >
                   İptal
                 </button>

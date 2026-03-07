@@ -15,7 +15,7 @@ export default function TermsPage() {
         <Breadcrumb items={[{ label: "Kullanım Koşulları" }]} />
       </div>
       <div className="container mx-auto px-4">
-        <div className="mx-auto max-w-3xl rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-8">
+        <div className="mx-auto max-w-3xl rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-8">
           <h1 className="mb-6 text-2xl font-bold text-dark-900 dark:text-dark-50">Kullanım Koşulları</h1>
           <div className="space-y-4 text-sm leading-relaxed text-dark-600 dark:text-dark-300">
             <p>Bu web sitesini kullanarak aşağıdaki koşulları kabul etmiş sayılırsınız.</p>

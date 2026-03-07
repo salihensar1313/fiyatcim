@@ -63,8 +63,8 @@ export default function AlertButtons({ product }: AlertButtonsProps) {
             onClick={handlePriceAlert}
             className={`flex w-full items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all ${
               hasPriceAlert
-                ? "border-green-200 bg-green-50 text-green-700 hover:bg-green-100"
-                : "border-dark-200 text-dark-700 dark:text-dark-200 hover:bg-dark-50"
+                ? "border-green-200 bg-green-50 text-green-700 hover:bg-green-100 dark:border-green-900 dark:bg-green-900/20 dark:text-green-400 dark:hover:bg-green-900/30"
+                : "border-dark-200 dark:border-dark-600 text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:hover:bg-dark-700"
             }`}
           >
             {hasPriceAlert ? (
@@ -82,7 +82,7 @@ export default function AlertButtons({ product }: AlertButtonsProps) {
 
           {/* Price input */}
           {showPriceInput && !hasPriceAlert && (
-            <div className="mt-2 flex items-center gap-2 rounded-lg border border-dark-200 bg-dark-50 p-3">
+            <div className="mt-2 flex items-center gap-2 rounded-lg border border-dark-200 dark:border-dark-600 bg-dark-50 dark:bg-dark-700 p-3">
               <div className="flex-1">
                 <label className="mb-1 block text-xs text-dark-500 dark:text-dark-400">
                   Hedef fiyat (mevcut: {formatPrice(currentPrice)})
@@ -93,7 +93,7 @@ export default function AlertButtons({ product }: AlertButtonsProps) {
                   onChange={(e) => setTargetPrice(Number(e.target.value))}
                   min={1}
                   max={currentPrice - 1}
-                  className="w-full rounded border border-dark-200 px-3 py-1.5 text-sm outline-none focus:border-primary-500"
+                  className="w-full rounded border border-dark-200 dark:border-dark-600 bg-white dark:bg-dark-800 dark:text-dark-100 px-3 py-1.5 text-sm outline-none focus:border-primary-500"
                 />
               </div>
               <button
@@ -120,8 +120,8 @@ export default function AlertButtons({ product }: AlertButtonsProps) {
           onClick={handleStockAlert}
           className={`flex w-full items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all ${
             hasStockAlert
-              ? "border-green-200 bg-green-50 text-green-700 hover:bg-green-100"
-              : "border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100"
+              ? "border-green-200 bg-green-50 text-green-700 hover:bg-green-100 dark:border-green-900 dark:bg-green-900/20 dark:text-green-400 dark:hover:bg-green-900/30"
+              : "border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100 dark:border-orange-900 dark:bg-orange-900/20 dark:text-orange-400 dark:hover:bg-orange-900/30"
           }`}
         >
           {hasStockAlert ? (

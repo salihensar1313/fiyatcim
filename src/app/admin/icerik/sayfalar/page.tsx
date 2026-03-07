@@ -133,7 +133,7 @@ export default function AdminSayfalarPage() {
       {tab === "whyChooseUs" && (
         <div className="space-y-4">
           {data.whyChooseUs.map((feature, idx) => (
-            <div key={feature.id} className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-5">
+            <div key={feature.id} className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-5">
               <div className="mb-3 flex items-center gap-2">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 text-xs font-bold text-primary-600">
                   {idx + 1}
@@ -186,7 +186,7 @@ export default function AdminSayfalarPage() {
 
       {/* Newsletter Tab */}
       {tab === "newsletter" && (
-        <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+        <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
           <div className="space-y-4">
             <div>
               <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Başlık</label>

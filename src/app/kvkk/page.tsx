@@ -37,7 +37,7 @@ export default function KVKKPage() {
           </div>
 
           {/* Veri Sorumlusu */}
-          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+          <section className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
             <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-dark-900 dark:text-dark-50">
               <FileText size={20} className="text-primary-600" />
               Veri Sorumlusu
@@ -56,7 +56,7 @@ export default function KVKKPage() {
           </section>
 
           {/* İşlenen Kişisel Veriler */}
-          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+          <section className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
             <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-dark-900 dark:text-dark-50">
               <Eye size={20} className="text-primary-600" />
               İşlenen Kişisel Veriler
@@ -89,7 +89,7 @@ export default function KVKKPage() {
           </section>
 
           {/* İşleme Amaçları */}
-          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+          <section className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
             <h2 className="mb-3 text-lg font-bold text-dark-900 dark:text-dark-50">Kişisel Verilerin İşlenme Amaçları</h2>
             <ul className="space-y-2 text-sm text-dark-600 dark:text-dark-300">
               {[
@@ -113,7 +113,7 @@ export default function KVKKPage() {
           </section>
 
           {/* Aktarım */}
-          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+          <section className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
             <h2 className="mb-3 text-lg font-bold text-dark-900 dark:text-dark-50">Kişisel Verilerin Aktarılması</h2>
             <p className="mb-3 text-sm text-dark-600 dark:text-dark-300">
               Kişisel verileriniz, KVKK&apos;nın 8. ve 9. maddelerinde belirtilen koşullar
@@ -136,7 +136,7 @@ export default function KVKKPage() {
           </section>
 
           {/* Saklama Süreleri */}
-          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+          <section className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
             <h2 className="mb-3 text-lg font-bold text-dark-900 dark:text-dark-50">Saklama Süreleri</h2>
             <p className="text-sm text-dark-600 dark:text-dark-300">
               Kişisel verileriniz, işleme amacının gerektirdiği süre boyunca ve ilgili mevzuatta
@@ -170,7 +170,7 @@ export default function KVKKPage() {
           </section>
 
           {/* Haklar */}
-          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+          <section className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
             <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-dark-900 dark:text-dark-50">
               <Trash2 size={20} className="text-primary-600" />
               KVKK Kapsamında Haklarınız

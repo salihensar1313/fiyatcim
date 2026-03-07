@@ -22,7 +22,7 @@ export default function CartSummary() {
   const freeShippingProgress = Math.min((subtotal / threshold) * 100, 100);
 
   return (
-    <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+    <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
       <h3 className="mb-4 text-lg font-bold text-dark-900 dark:text-dark-50">Sipariş Özeti</h3>
 
       {/* Free shipping progress */}

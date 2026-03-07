@@ -53,7 +53,7 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
         <div className="grid gap-6 lg:grid-cols-4">
           {/* Sidebar */}
           <div className="space-y-2">
-            <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-4">
+            <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-4">
               {/* User Info */}
               <div className="mb-4 flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-sm font-bold text-primary-600">

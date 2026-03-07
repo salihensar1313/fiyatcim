@@ -113,7 +113,7 @@ export default function BilgiGuvenligiPage() {
           </section>
 
           {/* Amaç ve Kapsam */}
-          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+          <section className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
             <h2 className="mb-3 text-lg font-bold text-dark-900 dark:text-dark-50">Amaç ve Kapsam</h2>
             <p className="text-sm leading-relaxed text-dark-600 dark:text-dark-300">
               Bu politika, Fiyatcim.com&apos;un sahip olduğu, işlediği veya eriştiği tüm bilgi
@@ -128,7 +128,7 @@ export default function BilgiGuvenligiPage() {
 
           {/* Teknik & İdari Tedbirler */}
           {MEASURES.map((m) => (
-            <section key={m.category} className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+            <section key={m.category} className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
               <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-dark-900 dark:text-dark-50">
                 <m.icon size={20} className="text-primary-600" />
                 {m.category}
@@ -168,7 +168,7 @@ export default function BilgiGuvenligiPage() {
           </section>
 
           {/* Güvenlik İhlali */}
-          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+          <section className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
             <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-dark-900 dark:text-dark-50">
               <AlertTriangle size={20} className="text-orange-500" />
               Güvenlik İhlali Bildirimi
@@ -181,7 +181,7 @@ export default function BilgiGuvenligiPage() {
           </section>
 
           {/* İletişim */}
-          <section className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+          <section className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
             <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-dark-900 dark:text-dark-50">
               <Eye size={20} className="text-primary-600" />
               Politika Güncellemeleri ve İletişim

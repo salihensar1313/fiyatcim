@@ -14,6 +14,9 @@ import {
   ArrowLeft,
   Globe,
   X,
+  Warehouse,
+  BarChart3,
+  Activity,
 } from "lucide-react";
 import { SITE_NAME } from "@/lib/constants";
 
@@ -21,10 +24,13 @@ const menuItems = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { label: "Ürünler", href: "/admin/urunler", icon: Package },
   { label: "Siparişler", href: "/admin/siparisler", icon: ShoppingBag },
+  { label: "Stok", href: "/admin/stok", icon: Warehouse },
   { label: "Kuponlar", href: "/admin/kuponlar", icon: Tag },
   { label: "İadeler", href: "/admin/iadeler", icon: RotateCcw },
   { label: "Müşteriler", href: "/admin/musteriler", icon: Users },
   { label: "İçerik", href: "/admin/icerik", icon: FileText },
+  { label: "Raporlar", href: "/admin/raporlar", icon: BarChart3 },
+  { label: "Aktivite", href: "/admin/aktivite", icon: Activity },
   { label: "SEO", href: "/admin/seo", icon: Globe },
   { label: "Ayarlar", href: "/admin/ayarlar", icon: Settings },
 ];

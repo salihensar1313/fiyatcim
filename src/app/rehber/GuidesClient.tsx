@@ -30,14 +30,14 @@ export default function GuidesClient({ posts }: Props) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Rehberlerde ara..."
-            className="w-full rounded-xl border border-dark-200 bg-white dark:bg-dark-800 dark:border-dark-600 dark:bg-dark-800 py-3 pl-10 pr-4 text-sm focus:border-primary-600 focus:outline-none"
+            className="w-full rounded-xl border border-dark-200 bg-white dark:border-dark-600 dark:bg-dark-800 py-3 pl-10 pr-4 text-sm focus:border-primary-600 focus:outline-none"
           />
         </div>
       </div>
 
       {/* Guides Grid */}
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 py-20">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 py-20">
           <BookOpen size={48} className="mb-4 text-dark-200" />
           <p className="text-dark-500 dark:text-dark-400">
             {search ? "Aramanizla eslesen rehber bulunamadi." : "Henuz rehber eklenmemis."}
@@ -49,7 +49,7 @@ export default function GuidesClient({ posts }: Props) {
             <Link
               key={blog.id}
               href={`/blog/${blog.slug}`}
-              className="group overflow-hidden rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 transition-shadow hover:shadow-md"
+              className="group overflow-hidden rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 transition-shadow hover:shadow-md"
             >
               <div className="aspect-video bg-dark-100" />
               <div className="p-5">

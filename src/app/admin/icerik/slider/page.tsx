@@ -159,7 +159,7 @@ export default function AdminSliderPage() {
 
       {/* Form */}
       {formOpen && (
-        <div className="mb-6 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+        <div className="mb-6 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
           <h3 className="mb-4 text-lg font-bold text-dark-900 dark:text-dark-50">
             {editing ? "Slaytı Düzenle" : "Yeni Slayt"}
           </h3>
@@ -219,7 +219,7 @@ export default function AdminSliderPage() {
       {/* Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {slides.map((slide) => (
-          <div key={slide.id} className="overflow-hidden rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800">
+          <div key={slide.id} className="overflow-hidden rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800">
             <div className="relative h-32 bg-dark-200">
               {slide.image ? (
                 slide.image.startsWith("data:") ? (
@@ -266,7 +266,7 @@ export default function AdminSliderPage() {
       </div>
 
       {slides.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 py-20">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 py-20">
           <p className="text-dark-500 dark:text-dark-400">Henüz slider yok.</p>
         </div>
       )}

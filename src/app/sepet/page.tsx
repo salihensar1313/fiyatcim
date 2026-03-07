@@ -6,6 +6,7 @@ import { useCart } from "@/context/CartContext";
 import CartItemComponent from "@/components/cart/CartItem";
 import CartSummary from "@/components/cart/CartSummary";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import CartRecommendations from "@/components/product/CartRecommendations";
 
 export default function CartPage() {
   const { items, clearCart, getItemCount } = useCart();
@@ -54,7 +55,7 @@ export default function CartPage() {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 py-20">
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 py-20">
             <ShoppingCart size={64} className="mb-4 text-dark-200" />
             <h2 className="text-xl font-bold text-dark-900 dark:text-dark-50">Sepetiniz Boş</h2>
             <p className="mt-2 text-dark-500 dark:text-dark-400">
@@ -68,6 +69,9 @@ export default function CartPage() {
             </Link>
           </div>
         )}
+
+        {/* Bunu Alanlar Şunları da Aldı */}
+        {items.length > 0 && <CartRecommendations />}
       </div>
     </div>
   );

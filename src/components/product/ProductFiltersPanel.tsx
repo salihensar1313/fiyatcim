@@ -94,7 +94,7 @@ export default function ProductFiltersPanel({
       )}
 
       {/* Price range */}
-      <div className="rounded-lg border border-dark-200 bg-white dark:bg-dark-800 dark:border-dark-600 dark:bg-dark-800">
+      <div className="rounded-lg border border-dark-200 bg-white dark:border-dark-600 dark:bg-dark-800">
         <button
           onClick={() => toggleGroup("_price")}
           className="flex w-full items-center justify-between p-3 text-sm font-semibold text-dark-700 dark:text-dark-200"
@@ -131,7 +131,7 @@ export default function ProductFiltersPanel({
 
       {/* Spec filter groups */}
       {filterGroups.map((group) => (
-        <div key={group.key} className="rounded-lg border border-dark-200 bg-white dark:bg-dark-800 dark:border-dark-600 dark:bg-dark-800">
+        <div key={group.key} className="rounded-lg border border-dark-200 bg-white dark:border-dark-600 dark:bg-dark-800">
           <button
             onClick={() => toggleGroup(group.key)}
             className="flex w-full items-center justify-between p-3 text-sm font-semibold text-dark-700 dark:text-dark-200"
@@ -175,7 +175,7 @@ export default function ProductFiltersPanel({
       {/* Mobile filter button */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="flex items-center gap-2 rounded-lg border border-dark-200 bg-white dark:bg-dark-800 dark:border-dark-600 dark:bg-dark-800 px-4 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 lg:hidden"
+        className="flex items-center gap-2 rounded-lg border border-dark-200 bg-white dark:border-dark-600 dark:bg-dark-800 px-4 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 lg:hidden"
       >
         <SlidersHorizontal size={16} />
         Filtreler

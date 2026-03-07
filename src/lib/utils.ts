@@ -88,3 +88,68 @@ export function getStockStatus(stock: number, criticalStock: number): {
   if (stock <= criticalStock) return { label: "Son Birkaç Ürün", color: "text-orange-600" };
   return { label: "Stokta", color: "text-green-600" };
 }
+
+// ==========================================
+// ADMIN UTILITIES
+// ==========================================
+
+export function timeAgo(date: string | null | undefined): string {
+  if (!date) return "Bilinmiyor";
+
+  const now = Date.now();
+  const then = new Date(date).getTime();
+
+  if (isNaN(then)) return "Geçersiz tarih";
+
+  const diff = now - then;
+
+  // Future date
+  if (diff < 0) return "Az önce";
+
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const weeks = Math.floor(days / 7);
+  const months = Math.floor(days / 30);
+  const years = Math.floor(days / 365);
+
+  if (seconds < 60) return "Az önce";
+  if (minutes < 60) return `${minutes} dakika önce`;
+  if (hours < 24) return `${hours} saat önce`;
+  if (days < 7) return `${days} gün önce`;
+  if (weeks < 5) return `${weeks} hafta önce`;
+  if (months < 12) return `${months} ay önce`;
+  return `${years} yıl önce`;
+}
+
+export function downloadCsv(
+  filename: string,
+  headers: string[],
+  rows: (string | number | null | undefined)[][]
+): void {
+  const escape = (val: string | number | null | undefined): string => {
+    if (val == null) return "";
+    const str = String(val);
+    if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+  };
+
+  const csvContent = [
+    headers.map(escape).join(","),
+    ...rows.map((row) => row.map(escape).join(",")),
+  ].join("\n");
+
+  // BOM for Turkish characters in Excel
+  const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}

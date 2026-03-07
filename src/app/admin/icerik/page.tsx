@@ -73,7 +73,7 @@ export default function AdminContentPage() {
           <Link
             key={section.label}
             href={section.href}
-            className="cursor-pointer rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6 transition-shadow hover:shadow-md"
+            className="cursor-pointer rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6 transition-shadow hover:shadow-md"
           >
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-50 dark:bg-primary-900/30 text-primary-600">
               <section.icon size={24} />

@@ -89,7 +89,7 @@ export default function AdminSeoPage() {
       {/* Pages List */}
       <div className="space-y-4">
         {pages.map((page) => (
-          <div key={page.path} className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-5">
+          <div key={page.path} className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-5">
             {editingPath === page.path ? (
               /* Edit Mode */
               <div className="space-y-4">

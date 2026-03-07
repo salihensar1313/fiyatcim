@@ -30,7 +30,7 @@ export default function OrdersPage() {
       <h1 className="mb-6 text-2xl font-bold text-dark-900 dark:text-dark-50">Siparişlerim</h1>
 
       {orders.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 py-20">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 py-20">
           <Package size={56} className="mb-4 text-dark-200" />
           <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">Henüz Siparişiniz Yok</h2>
           <p className="mt-2 text-sm text-dark-500 dark:text-dark-400">
@@ -46,7 +46,7 @@ export default function OrdersPage() {
       ) : (
         <div className="space-y-4">
           {orders.map((order) => (
-            <div key={order.id} className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-4 sm:p-6">
+            <div key={order.id} className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-4 sm:p-6">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p className="font-mono text-sm font-bold text-dark-900 dark:text-dark-50">{order.order_no}</p>

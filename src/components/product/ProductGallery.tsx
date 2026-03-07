@@ -39,7 +39,7 @@ export default function ProductGallery({ images, productName, categoryId }: Prod
   return (
     <div className="space-y-4">
       {/* Main Image with Hover Zoom */}
-      <div className="relative overflow-hidden rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800">
+      <div className="relative overflow-hidden rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800">
         <div
           ref={imgContainerRef}
           className="relative aspect-square cursor-crosshair"

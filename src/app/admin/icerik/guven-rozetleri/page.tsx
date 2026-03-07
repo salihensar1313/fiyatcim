@@ -137,7 +137,7 @@ export default function AdminGuvenRozetleriPage() {
 
       {/* Form */}
       {formOpen && (
-        <div className="mb-6 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+        <div className="mb-6 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
           <h3 className="mb-4 text-lg font-bold text-dark-900 dark:text-dark-50">
             {editing ? "Rozeti Düzenle" : "Yeni Rozet"}
           </h3>
@@ -195,7 +195,7 @@ export default function AdminGuvenRozetleriPage() {
         {items.map((item) => {
           const IconComp = ICON_MAP[item.icon] || Award;
           return (
-            <div key={item.id} className="flex items-start gap-4 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-5">
+            <div key={item.id} className="flex items-start gap-4 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-5">
               <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary-50 dark:bg-primary-900/30 text-primary-600">
                 <IconComp size={20} />
               </div>
@@ -225,7 +225,7 @@ export default function AdminGuvenRozetleriPage() {
       </div>
 
       {items.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 py-20">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 py-20">
           <p className="text-dark-500 dark:text-dark-400">Henüz rozet yok.</p>
         </div>
       )}

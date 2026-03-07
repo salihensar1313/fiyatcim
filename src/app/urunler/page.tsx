@@ -160,7 +160,7 @@ function ProductsContent() {
           />
 
           <div className="min-w-0 flex-1">
-            <div className="mb-4 rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-3">
+            <div className="mb-4 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-3">
               <div className="flex items-center gap-2">
                 <div className="relative min-w-0 flex-1">
                   <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-400" />
@@ -238,7 +238,7 @@ function ProductsContent() {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 py-16">
+              <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 py-16">
                 <Search size={48} className="mb-4 text-dark-200" />
                 <h3 className="text-lg font-semibold text-dark-900 dark:text-dark-50">Ürün Bulunamadı</h3>
                 <p className="mt-1 text-sm text-dark-500 dark:text-dark-400">Farklı filtreler veya arama terimleri deneyebilirsiniz.</p>

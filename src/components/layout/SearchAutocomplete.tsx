@@ -128,7 +128,7 @@ export default function SearchAutocomplete({ onClose, className = "", isMobile =
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
           placeholder="Ürün, marka veya kategori ara..."
-          className="w-full rounded-lg border border-dark-200 bg-white dark:bg-dark-800 dark:border-dark-600 dark:bg-dark-800 py-2.5 pl-10 pr-10 text-sm text-dark-800 dark:text-dark-100 placeholder-dark-400 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-400"
+          className="w-full rounded-lg border border-dark-200 bg-white dark:border-dark-600 dark:bg-dark-800 py-2.5 pl-10 pr-10 text-sm text-dark-800 dark:text-dark-100 placeholder-dark-400 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-400"
           autoComplete="off"
         />
         {query && (
@@ -148,7 +148,7 @@ export default function SearchAutocomplete({ onClose, className = "", isMobile =
       {showDropdown && (
         <div
           ref={dropdownRef}
-          className={`absolute left-0 right-0 top-full z-50 mt-1 max-h-[70vh] overflow-y-auto rounded-lg border border-dark-200 bg-white dark:bg-dark-800 dark:border-dark-600 dark:bg-dark-800 shadow-xl dark:border-dark-600 dark:bg-dark-800 ${
+          className={`absolute left-0 right-0 top-full z-50 mt-1 max-h-[70vh] overflow-y-auto rounded-lg border border-dark-200 bg-white dark:border-dark-600 dark:bg-dark-800 shadow-xl ${
             isMobile ? "fixed left-4 right-4 top-auto" : ""
           }`}
         >

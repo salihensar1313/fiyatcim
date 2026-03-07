@@ -16,6 +16,7 @@ import CookieConsent from "@/components/ui/CookieConsent";
 import GoogleAnalytics from "@/components/seo/GoogleAnalytics";
 import WebVitals from "@/components/analytics/WebVitals";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { ActivityLogProvider } from "@/context/ActivityLogContext";
 import JsonLd, { buildOrganizationSchema, buildWebSiteSchema, buildLocalBusinessSchema } from "@/components/seo/JsonLd";
 
 const inter = Inter({
@@ -103,10 +104,12 @@ export default function RootLayout({
               <CartProvider>
                 <WishlistProvider>
                 <AddressProvider>
+                <ActivityLogProvider>
                   <ToastProvider>
                     <LayoutShell>{children}</LayoutShell>
                     <CookieConsent />
                   </ToastProvider>
+                </ActivityLogProvider>
                 </AddressProvider>
                 </WishlistProvider>
               </CartProvider>

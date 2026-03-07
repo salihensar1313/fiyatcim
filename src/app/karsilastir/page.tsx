@@ -74,7 +74,7 @@ export default function ComparePage() {
         </div>
 
         {/* Comparison Table */}
-        <div className="overflow-x-auto rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800">
+        <div className="overflow-x-auto rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800">
           <table className="w-full min-w-[600px]">
             {/* Product Images & Names */}
             <thead>

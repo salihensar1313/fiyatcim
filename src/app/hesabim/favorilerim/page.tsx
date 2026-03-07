@@ -29,7 +29,7 @@ export default function WishlistPage() {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 py-20">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 py-20">
           <Heart size={56} className="mb-4 text-dark-200" />
           <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">Favori Listeniz Boş</h2>
           <p className="mt-2 text-sm text-dark-500 dark:text-dark-400">

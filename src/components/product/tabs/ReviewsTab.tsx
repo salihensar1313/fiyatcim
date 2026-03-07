@@ -144,7 +144,7 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
   return (
     <div className="space-y-8">
       {/* === Rating Summary — Hepsiburada Style === */}
-      <div className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-6">
+      <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
           {/* Product Thumbnail */}
           <div className="hidden shrink-0 sm:block">
@@ -358,7 +358,7 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
             </button>
 
             {showSortMenu && (
-              <div className="absolute right-0 z-20 mt-1 w-44 overflow-hidden rounded-lg border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 shadow-lg">
+              <div className="absolute right-0 z-20 mt-1 w-44 overflow-hidden rounded-lg border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 shadow-lg">
                 {SORT_OPTIONS.map((option) => (
                   <button
                     key={option.value}
@@ -387,7 +387,7 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
           {(showPhotosOnly ? sortedReviews.filter((r) => r.images && r.images.length > 0) : sortedReviews).map((review) => {
             const userVote = user ? getUserVote(review.id, user.id) : null;
             return (
-              <div key={review.id} className="rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800 p-5">
+              <div key={review.id} className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-5">
                 {/* Header */}
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">

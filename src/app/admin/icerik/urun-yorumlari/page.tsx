@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Star, Check, X, Trash2 } from "lucide-react";
 import { getAllReviews, updateReviewApproval, deleteReviewFromDB } from "@/lib/queries";
 import { useToast } from "@/components/ui/Toast";
+import { useActivityLog } from "@/context/ActivityLogContext";
 import { formatDate } from "@/lib/utils";
 import type { Review } from "@/types";
 
@@ -16,6 +17,7 @@ export default function AdminProductReviewsPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<FilterMode>("pending");
   const { showToast } = useToast();
+  const { addLog } = useActivityLog();
 
   useEffect(() => {
     if (IS_DEMO) {
@@ -32,6 +34,7 @@ export default function AdminProductReviewsPage() {
     const ok = await updateReviewApproval(id, true);
     if (ok) {
       setReviews((prev) => prev.map((r) => (r.id === id ? { ...r, is_approved: true } : r)));
+      addLog("review_approve", `Yorum onaylandı (ID: ${id.slice(0, 8)})`, "review", id);
       showToast("Yorum onaylandı", "success");
     } else {
       showToast("İşlem başarısız", "error");
@@ -42,6 +45,7 @@ export default function AdminProductReviewsPage() {
     const ok = await updateReviewApproval(id, false);
     if (ok) {
       setReviews((prev) => prev.map((r) => (r.id === id ? { ...r, is_approved: false } : r)));
+      addLog("review_reject", `Yorum reddedildi (ID: ${id.slice(0, 8)})`, "review", id);
       showToast("Yorum reddedildi", "success");
     } else {
       showToast("İşlem başarısız", "error");

@@ -103,7 +103,7 @@ export default function PriceHistoryChart({ productId, currentPrice, compact = f
 
       {/* SVG Chart */}
       {chartData && (
-        <div className="overflow-hidden rounded-lg border border-dark-200 bg-white dark:bg-dark-800 dark:border-dark-600 dark:bg-dark-800">
+        <div className="overflow-hidden rounded-lg border border-dark-200 bg-white dark:border-dark-600 dark:bg-dark-800">
           <svg viewBox={`0 0 ${width} ${height}`} className="w-full" preserveAspectRatio="xMidYMid meet">
             <defs>
               <linearGradient id={`gradient-${productId}`} x1="0" y1="0" x2="0" y2="1">
@@ -241,7 +241,7 @@ function StatCard({
   valueColor?: string;
 }) {
   return (
-    <div className="rounded-lg border border-dark-200 bg-white dark:bg-dark-800 dark:border-dark-600 dark:bg-dark-800 p-3">
+    <div className="rounded-lg border border-dark-200 bg-white dark:border-dark-600 dark:bg-dark-800 p-3">
       <div className="flex items-center gap-1.5 text-xs text-dark-500 dark:text-dark-400">
         {icon}
         {label}
