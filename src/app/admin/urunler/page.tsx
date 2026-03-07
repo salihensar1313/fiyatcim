@@ -132,13 +132,13 @@ export default function AdminProductsPage() {
             placeholder="Ürün adı veya SKU ara..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-lg border border-dark-200 py-2 pl-9 pr-3 text-sm focus:border-primary-600 focus:outline-none"
+            className="w-full rounded-lg border border-dark-200 bg-white py-2 pl-9 pr-3 text-sm text-dark-900 focus:border-primary-600 focus:outline-none dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-400"
           />
         </div>
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
-          className="rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+          className="rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 focus:border-primary-600 focus:outline-none dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100"
         >
           <option value="">Tüm Kategoriler</option>
           {categories.map((cat) => (
@@ -153,7 +153,7 @@ export default function AdminProductsPage() {
       <div className="overflow-hidden rounded-xl border border-dark-100 bg-white dark:bg-dark-800 dark:border-dark-700 dark:bg-dark-800">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-dark-100 bg-dark-50 dark:bg-dark-800">
+            <thead className="border-b border-dark-100 bg-dark-50 dark:border-dark-700 dark:bg-dark-900">
               <tr>
                 <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Ürün</th>
                 <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">SKU</th>
@@ -165,20 +165,20 @@ export default function AdminProductsPage() {
                 <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">İşlemler</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-dark-50">
+            <tbody className="divide-y divide-dark-50 dark:divide-dark-700">
               {filtered.map((product) => {
                 const cat = categories.find((c) => c.id === product.category_id);
                 const brand = brands.find((b) => b.id === product.brand_id);
                 const stock = getStockStatus(product.stock, product.critical_stock);
 
                 return (
-                  <tr key={product.id} className="hover:bg-dark-50/50">
+                  <tr key={product.id} className="hover:bg-dark-50/50 dark:hover:bg-dark-700/50">
                     <td className="max-w-[200px] px-4 py-3">
                       <p className="truncate font-medium text-dark-900 dark:text-dark-50">{product.name}</p>
                     </td>
-                    <td className="px-4 py-3 text-dark-500 dark:text-dark-400">{product.sku}</td>
-                    <td className="px-4 py-3 text-dark-500 dark:text-dark-400">{cat?.name}</td>
-                    <td className="px-4 py-3 text-dark-500 dark:text-dark-400">{brand?.name}</td>
+                    <td className="px-4 py-3 text-dark-500 dark:text-dark-300">{product.sku}</td>
+                    <td className="px-4 py-3 text-dark-500 dark:text-dark-300">{cat?.name}</td>
+                    <td className="px-4 py-3 text-dark-500 dark:text-dark-300">{brand?.name}</td>
                     <td className="px-4 py-3">
                       <div className="flex flex-col">
                         <span className="font-medium text-dark-900 dark:text-dark-50">

@@ -136,7 +136,7 @@ export default function Header() {
 
             {/* Logo */}
             <Link href="/" className="flex items-center">
-              <Image src="/images/logo-white.png" alt={SITE_FULL_NAME} width={140} height={40} priority className="h-10 w-auto sm:h-12" />
+              <Image src="/images/logo-white.png" alt={SITE_FULL_NAME} width={180} height={50} priority className="h-12 w-auto sm:h-14" />
             </Link>
 
             {/* Exchange Rate Badge */}
