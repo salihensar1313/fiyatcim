@@ -1,18 +1,21 @@
 import { Suspense } from "react";
+import dynamic from "next/dynamic";
 import JsonLd, { buildOrganizationSchema, buildWebSiteSchema } from "@/components/seo/JsonLd";
 import HeroSlider from "@/components/home/HeroSlider";
 import PromoBanner from "@/components/home/PromoBanner";
 import CategoryCards from "@/components/home/CategoryCards";
 import FeaturedProducts from "@/components/home/FeaturedProducts";
-import BestSellers from "@/components/home/BestSellers";
-import FlashSale from "@/components/home/FlashSale";
-import TrendingProducts from "@/components/home/TrendingProducts";
-import CampaignRadar from "@/components/home/CampaignRadar";
-import TrustBadges from "@/components/home/TrustBadges";
-import WhyChooseUs from "@/components/home/WhyChooseUs";
-import Newsletter from "@/components/home/Newsletter";
-import BlogPreview from "@/components/home/BlogPreview";
-import Testimonials from "@/components/home/Testimonials";
+
+// Below-the-fold: dynamic imports for code splitting
+const FlashSale = dynamic(() => import("@/components/home/FlashSale"));
+const BestSellers = dynamic(() => import("@/components/home/BestSellers"));
+const TrendingProducts = dynamic(() => import("@/components/home/TrendingProducts"));
+const CampaignRadar = dynamic(() => import("@/components/home/CampaignRadar"));
+const TrustBadges = dynamic(() => import("@/components/home/TrustBadges"));
+const WhyChooseUs = dynamic(() => import("@/components/home/WhyChooseUs"));
+const Newsletter = dynamic(() => import("@/components/home/Newsletter"));
+const BlogPreview = dynamic(() => import("@/components/home/BlogPreview"));
+const Testimonials = dynamic(() => import("@/components/home/Testimonials"));
 
 /**
  * Ana sayfa bölüm sırası (Sprint 2C — G9-G14):

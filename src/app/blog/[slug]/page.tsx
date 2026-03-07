@@ -6,6 +6,7 @@ import { getBlogPostBySlug } from "@/lib/queries";
 import { formatDate } from "@/lib/utils";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { SITE_NAME } from "@/lib/constants";
+import JsonLd, { buildArticleSchema, buildBreadcrumbSchema } from "@/components/seo/JsonLd";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
@@ -32,7 +33,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   if (!post) notFound();
 
   return (
-    <div className="bg-dark-50 dark:bg-dark-900 pb-16">
+    <>
+      <JsonLd data={buildArticleSchema({ title: post.title, slug: post.slug, excerpt: post.excerpt || "", created_at: post.created_at, category: post.category })} />
+      <JsonLd data={buildBreadcrumbSchema([{ name: "Blog", href: "/blog" }, { name: post.title }])} />
+      <div className="bg-dark-50 dark:bg-dark-900 pb-16">
       <div className="container mx-auto px-4 py-4">
         <Breadcrumb items={[{ label: "Blog", href: "/blog" }, { label: post.title }]} />
       </div>
@@ -67,5 +71,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </article>
       </div>
     </div>
+    </>
   );
 }

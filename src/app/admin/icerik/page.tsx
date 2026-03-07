@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FileText, Image, HelpCircle, Megaphone, Grid3X3, ShieldCheck, Layout, MessageSquare } from "lucide-react";
+import { FileText, Image, HelpCircle, Megaphone, Grid3X3, ShieldCheck, Layout, MessageSquare, Star } from "lucide-react";
 
 export default function AdminContentPage() {
   const sections = [
@@ -40,6 +40,12 @@ export default function AdminContentPage() {
       desc: "Neden Biz ve Bülten bölümleri",
       icon: Layout,
       href: "/admin/icerik/sayfalar",
+    },
+    {
+      label: "Ürün Yorumları",
+      desc: "Ürün değerlendirmeleri moderasyonu",
+      icon: Star,
+      href: "/admin/icerik/urun-yorumlari",
     },
     {
       label: "Müşteri Yorumları",

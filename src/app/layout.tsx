@@ -14,6 +14,7 @@ import { CurrencyProvider } from "@/context/CurrencyContext";
 import { ToastProvider } from "@/components/ui/Toast";
 import CookieConsent from "@/components/ui/CookieConsent";
 import GoogleAnalytics from "@/components/seo/GoogleAnalytics";
+import WebVitals from "@/components/analytics/WebVitals";
 import { ThemeProvider } from "@/context/ThemeContext";
 import JsonLd, { buildOrganizationSchema, buildWebSiteSchema, buildLocalBusinessSchema } from "@/components/seo/JsonLd";
 
@@ -89,6 +90,7 @@ export default function RootLayout({
       </head>
       <body className="flex min-h-screen flex-col font-sans antialiased">
         <GoogleAnalytics />
+        <WebVitals />
         <JsonLd data={buildOrganizationSchema()} />
         <JsonLd data={buildWebSiteSchema()} />
         <JsonLd data={buildLocalBusinessSchema()} />

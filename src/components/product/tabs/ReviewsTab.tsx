@@ -103,7 +103,9 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
   const sortedReviews = getSortedReviews(sortBy);
   const productImage = CATEGORY_IMAGES[product.category_id] || "/images/categories/alarm.png";
 
-  const handleSubmitReview = () => {
+  const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+
+  const handleSubmitReview = async () => {
     if (!user) {
       showToast("Yorum yapmak için giriş yapmalısınız", "error");
       return;
@@ -112,7 +114,7 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
       showToast("Lütfen bir yorum yazın", "error");
       return;
     }
-    addReview({
+    await addReview({
       product_id: product.id,
       user_id: user.id,
       rating: reviewRating,
@@ -124,7 +126,12 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
     setReviewRating(5);
     setReviewImages([]);
     setShowForm(false);
-    showToast("Değerlendirmeniz eklendi!", "success");
+    showToast(
+      IS_DEMO
+        ? "Değerlendirmeniz eklendi!"
+        : "Değerlendirmeniz gönderildi! Onaylandıktan sonra yayınlanacaktır.",
+      "success"
+    );
   };
 
   const handleOpenForm = () => {

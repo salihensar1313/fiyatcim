@@ -163,6 +163,34 @@ export function buildFAQSchema(items: FAQItem[]) {
   };
 }
 
+// --- Article Schema ---
+
+interface ArticleSchemaInput {
+  title: string;
+  slug: string;
+  excerpt: string;
+  created_at: string;
+  category: string;
+}
+
+export function buildArticleSchema(post: ArticleSchemaInput) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt,
+    url: `https://www.fiyatcim.com/blog/${post.slug}`,
+    datePublished: post.created_at,
+    author: { "@type": "Organization", name: "Fiyatcim" },
+    publisher: {
+      "@type": "Organization",
+      name: "Fiyatcim",
+      logo: { "@type": "ImageObject", url: "https://www.fiyatcim.com/images/logo.png" },
+    },
+    articleSection: post.category,
+  };
+}
+
 // --- BreadcrumbList Schema ---
 
 interface BreadcrumbItem {

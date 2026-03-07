@@ -13,6 +13,7 @@ import type {
   Testimonial,
   TrustBadge,
   Coupon,
+  Review,
 } from "@/types";
 import {
   categories as seedCategories,
@@ -714,4 +715,169 @@ export async function getAllActiveProducts(client?: SupabaseClient): Promise<Pro
   const result = (data ?? []).map((row) => mapProduct(row as Record<string, unknown>));
   logger.info("query_ok", { fn: "getAllActiveProducts", rows: result.length, ms: performance.now() - start });
   return result;
+}
+
+// ==========================================
+// REVIEWS
+// ==========================================
+
+function mapReview(row: Record<string, unknown>): Review {
+  const images = row.images;
+  return {
+    id: row.id as string,
+    product_id: row.product_id as string,
+    user_id: row.user_id as string,
+    rating: row.rating as number,
+    comment: (row.comment as string) ?? "",
+    images: Array.isArray(images) ? (images as string[]) : [],
+    is_approved: (row.is_approved as boolean) ?? false,
+    created_at: (row.created_at as string) ?? new Date().toISOString(),
+    helpful_yes: (row.helpful_yes as number) ?? 0,
+    helpful_no: (row.helpful_no as number) ?? 0,
+    profile: row.profile ? (row.profile as Review["profile"]) : undefined,
+  };
+}
+
+export async function getProductReviews(productId: string, client?: SupabaseClient): Promise<Review[]> {
+  const start = performance.now();
+  if (IS_DEMO) return [];
+
+  const supabase = getSupabase(client);
+  const { data, error } = await supabase
+    .from("reviews")
+    .select("*, profile:profiles(ad, soyad)")
+    .eq("product_id", productId)
+    .eq("is_approved", true)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    logger.error("query_failed", { fn: "getProductReviews", error: error.message, ms: performance.now() - start });
+    return [];
+  }
+
+  const result = (data ?? []).map((row) => mapReview(row as Record<string, unknown>));
+  logger.info("query_ok", { fn: "getProductReviews", rows: result.length, ms: performance.now() - start });
+  return result;
+}
+
+export async function getAllReviews(client?: SupabaseClient): Promise<Review[]> {
+  const start = performance.now();
+  if (IS_DEMO) return [];
+
+  const supabase = getSupabase(client);
+  const { data, error } = await supabase
+    .from("reviews")
+    .select("*, profile:profiles(ad, soyad)")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    logger.error("query_failed", { fn: "getAllReviews", error: error.message, ms: performance.now() - start });
+    return [];
+  }
+
+  const result = (data ?? []).map((row) => mapReview(row as Record<string, unknown>));
+  logger.info("query_ok", { fn: "getAllReviews", rows: result.length, ms: performance.now() - start });
+  return result;
+}
+
+export async function addReviewToDB(
+  review: { product_id: string; user_id: string; rating: number; comment: string; images?: string[] },
+  client?: SupabaseClient
+): Promise<Review | null> {
+  const start = performance.now();
+  if (IS_DEMO) return null;
+
+  const supabase = getSupabase(client);
+  const { data, error } = await supabase
+    .from("reviews")
+    .insert({
+      product_id: review.product_id,
+      user_id: review.user_id,
+      rating: review.rating,
+      comment: review.comment,
+      images: review.images ?? [],
+      is_approved: false,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    logger.error("query_failed", { fn: "addReviewToDB", error: error.message, ms: performance.now() - start });
+    return null;
+  }
+
+  logger.info("query_ok", { fn: "addReviewToDB", ms: performance.now() - start });
+  return mapReview(data as Record<string, unknown>);
+}
+
+export async function updateReviewApproval(
+  reviewId: string,
+  isApproved: boolean,
+  client?: SupabaseClient
+): Promise<boolean> {
+  if (IS_DEMO) return true;
+
+  const supabase = getSupabase(client);
+  const { error } = await supabase
+    .from("reviews")
+    .update({ is_approved: isApproved })
+    .eq("id", reviewId);
+
+  if (error) {
+    logger.error("query_failed", { fn: "updateReviewApproval", error: error.message });
+    return false;
+  }
+  return true;
+}
+
+export async function deleteReviewFromDB(reviewId: string, client?: SupabaseClient): Promise<boolean> {
+  if (IS_DEMO) return true;
+
+  const supabase = getSupabase(client);
+  const { error } = await supabase.from("reviews").delete().eq("id", reviewId);
+
+  if (error) {
+    logger.error("query_failed", { fn: "deleteReviewFromDB", error: error.message });
+    return false;
+  }
+  return true;
+}
+
+export async function upsertReviewVote(
+  reviewId: string,
+  userId: string,
+  vote: "yes" | "no",
+  client?: SupabaseClient
+): Promise<boolean> {
+  if (IS_DEMO) return true;
+
+  const supabase = getSupabase(client);
+  const { error } = await supabase
+    .from("review_votes")
+    .upsert(
+      { review_id: reviewId, user_id: userId, vote },
+      { onConflict: "review_id,user_id" }
+    );
+
+  if (error) {
+    logger.error("query_failed", { fn: "upsertReviewVote", error: error.message });
+    return false;
+  }
+
+  // Update helpful counts on the review
+  const { data: votes } = await supabase
+    .from("review_votes")
+    .select("vote")
+    .eq("review_id", reviewId);
+
+  if (votes) {
+    const yesCount = votes.filter((v) => v.vote === "yes").length;
+    const noCount = votes.filter((v) => v.vote === "no").length;
+    await supabase
+      .from("reviews")
+      .update({ helpful_yes: yesCount, helpful_no: noCount })
+      .eq("id", reviewId);
+  }
+
+  return true;
 }

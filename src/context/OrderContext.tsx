@@ -58,6 +58,39 @@ function generateId(): string {
   return `order-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
+// Fire-and-forget order confirmation email
+function sendOrderEmail(order: Order, email: string, customerName: string) {
+  const items = (order.items || []).map((item) => ({
+    name: item.name_snapshot,
+    quantity: item.qty,
+    price: item.sale_price_snapshot ?? item.price_snapshot,
+  }));
+
+  const addr = order.shipping_address;
+  const shippingAddress = addr
+    ? `${addr.ad} ${addr.soyad}, ${addr.adres}, ${addr.ilce}/${addr.il}`
+    : "";
+
+  fetch("/api/email/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      type: "order_confirmation",
+      to: email,
+      data: {
+        orderNo: order.order_no,
+        customerName,
+        items,
+        subtotal: order.subtotal,
+        shipping: order.shipping,
+        discount: order.discount,
+        total: order.total,
+        shippingAddress,
+      },
+    }),
+  }).catch((err) => console.error("[Email] Failed to send order confirmation:", err));
+}
+
 // ==========================================
 // PROVIDER
 // ==========================================
@@ -139,6 +172,15 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     };
 
     setOrders((prev) => [order, ...prev]);
+
+    // Send order confirmation email (fire-and-forget)
+    if (params.user?.email) {
+      const name = params.customerName
+        ? `${params.customerName.ad} ${params.customerName.soyad}`
+        : "Değerli Müşterimiz";
+      sendOrderEmail(order, params.user.email, name);
+    }
+
     return order;
   }, []);
 
