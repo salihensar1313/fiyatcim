@@ -385,19 +385,21 @@ export default function RegisterPage() {
 
                 <div>
                   <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Telefon</label>
-                  <input
-                    type="tel"
-                    value={telefon.replace(/(\d{2})(\d{3})(\d{0,3})(\d{0,2})(\d{0,2})/, (_m: string, a: string, b: string, c: string, d: string, e: string) => [a, b, c, d, e].filter(Boolean).join(" "))}
-                    onChange={(e) => {
-                      const raw = e.target.value.replace(/[^0-9]/g, "");
-                      if (raw.length < 3 || !raw.startsWith("905")) return;
-                      if (raw.length <= 12) setTelefon(raw);
-                    }}
-                    placeholder="90 5XX XXX XX XX"
-                    inputMode="numeric"
-                    maxLength={16}
-                    className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
-                  />
+                  <div className="flex">
+                    <span className="inline-flex items-center rounded-l-lg border border-r-0 border-dark-200 dark:border-dark-600 bg-dark-50 dark:bg-dark-600 px-3 text-sm font-medium text-dark-500 dark:text-dark-300">+90</span>
+                    <input
+                      type="tel"
+                      value={telefon.slice(2)}
+                      onChange={(e) => {
+                        const raw = e.target.value.replace(/[^0-9]/g, "").slice(0, 10);
+                        setTelefon("90" + raw);
+                      }}
+                      placeholder="5XX XXX XX XX"
+                      inputMode="numeric"
+                      maxLength={10}
+                      className="w-full rounded-r-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -476,6 +478,26 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-3">
+                <div className="flex items-center justify-end">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (allMandatoryChecked) {
+                        setAgreeKVKK(false);
+                        setAgreeTerms(false);
+                        setAgreePrivacy(false);
+                      } else {
+                        setAgreeKVKK(true);
+                        setAgreeTerms(true);
+                        setAgreePrivacy(true);
+                      }
+                    }}
+                    className="text-xs font-medium text-primary-600 hover:underline"
+                  >
+                    {allMandatoryChecked ? "Tüm Seçimleri Kaldır" : "Zorunlu Sözleşmeleri Onayla"}
+                  </button>
+                </div>
+
                 {/* KVKK — zorunlu */}
                 <label className="flex items-start gap-3 rounded-lg border border-dark-100 dark:border-dark-700 p-3 transition-colors hover:bg-dark-50 dark:hover:bg-dark-700 dark:bg-dark-800">
                   <input

@@ -131,7 +131,7 @@ export default function ImageUploader({ value, onChange, label = "Gorsel", maxWi
         <input
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+          className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-600 focus:outline-none dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
           placeholder="/images/hero/hero-main.png"
         />
       ) : (
@@ -145,10 +145,10 @@ export default function ImageUploader({ value, onChange, label = "Gorsel", maxWi
           onClick={() => !compressing && fileRef.current?.click()}
           className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-4 py-6 transition-colors ${
             compressing
-              ? "border-primary-500 bg-primary-50"
+              ? "border-primary-500 bg-primary-50 dark:bg-primary-900/20"
               : dragOver
-                ? "border-primary-500 bg-primary-50"
-                : "border-dark-200 bg-dark-50 hover:border-primary-400 hover:bg-primary-50/50"
+                ? "border-primary-500 bg-primary-50 dark:bg-primary-900/20"
+                : "border-dark-200 bg-dark-50 hover:border-primary-400 hover:bg-primary-50/50 dark:border-dark-600 dark:bg-dark-700 dark:hover:border-primary-500 dark:hover:bg-dark-600"
           }`}
         >
           {compressing ? (
@@ -180,7 +180,7 @@ export default function ImageUploader({ value, onChange, label = "Gorsel", maxWi
       {/* Preview */}
       {hasImage && (
         <div className="relative mt-3 inline-block">
-          <div className="overflow-hidden rounded-lg border border-dark-200">
+          <div className="overflow-hidden rounded-lg border border-dark-200 dark:border-dark-600">
             {isBase64 ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={value} alt="Onizleme" className="h-24 w-auto max-w-[200px] object-contain" />

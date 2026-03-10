@@ -106,13 +106,11 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Info */}
       <div className="flex flex-1 flex-col p-4">
         {/* Brand */}
-        <span className="text-xs font-medium uppercase tracking-wider text-dark-400">
-          {product.brand_id === "brand-1" ? "Hikvision" :
-           product.brand_id === "brand-2" ? "Dahua" :
-           product.brand_id === "brand-3" ? "Ajax" :
-           product.brand_id === "brand-4" ? "Paradox" :
-           product.brand_id === "brand-5" ? "ZKTeco" : "Samsung"}
-        </span>
+        {product.brand?.name && (
+          <span className="text-xs font-medium uppercase tracking-wider text-dark-400">
+            {product.brand.name}
+          </span>
+        )}
 
         {/* Name */}
         <Link
@@ -124,7 +122,14 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Rating */}
         <div className="mt-2">
-          <Rating rating={4.5} size="sm" />
+          {product.reviews && product.reviews.length > 0 ? (
+            <Rating
+              rating={product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length}
+              size="sm"
+            />
+          ) : (
+            <span className="text-xs text-dark-400">Henüz değerlendirme yok</span>
+          )}
         </div>
 
         {/* Price — USD + TL */}

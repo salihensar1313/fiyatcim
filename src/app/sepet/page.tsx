@@ -1,15 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingCart, Trash2 } from "lucide-react";
+import { ShoppingCart, Trash2, ArrowRight } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { formatPrice } from "@/lib/utils";
 import CartItemComponent from "@/components/cart/CartItem";
 import CartSummary from "@/components/cart/CartSummary";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import CartRecommendations from "@/components/product/CartRecommendations";
 
 export default function CartPage() {
-  const { items, clearCart, getItemCount } = useCart();
+  const { items, clearCart, getItemCount, getTotal } = useCart();
   const itemCount = getItemCount();
 
   return (
@@ -70,9 +71,31 @@ export default function CartPage() {
           </div>
         )}
 
+        {/* Boş Sepette Öne Çıkan Ürünler */}
+        {items.length === 0 && <CartRecommendations />}
+
         {/* Bunu Alanlar Şunları da Aldı */}
         {items.length > 0 && <CartRecommendations />}
       </div>
+
+      {/* Sticky Mobile CTA */}
+      {items.length > 0 && (
+        <div className="fixed bottom-16 left-0 right-0 z-30 border-t border-dark-200 bg-white dark:border-dark-700 dark:bg-dark-800 p-3 shadow-lg lg:hidden">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-xs text-dark-500 dark:text-dark-400">Toplam</p>
+              <p className="text-lg font-bold text-dark-900 dark:text-dark-50">{formatPrice(getTotal())}</p>
+            </div>
+            <Link
+              href="/odeme"
+              className="flex items-center gap-2 rounded-lg bg-primary-600 px-6 py-3 text-sm font-bold text-white hover:bg-primary-700"
+            >
+              Ödemeye Geç
+              <ArrowRight size={16} />
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

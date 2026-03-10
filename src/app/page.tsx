@@ -21,17 +21,17 @@ const Testimonials = dynamic(() => import("@/components/home/Testimonials"));
  * Ana sayfa bölüm sırası (Sprint 2C — G9-G14):
  * 1. HeroSlider — Ana banner
  * 2. PromoBanner — Kampanya barı
- * 3. CategoryCards — Ürün kategorileri
- * 4. FeaturedProducts — Öne çıkan ürünler
- * 5. FlashSale — Flaş indirimler (countdown)
- * 6. BestSellers — Öne çıkan indirimler
- * 7. TrendingProducts — Trend ürünler
- * 8. CampaignRadar — Kampanya radar
- * 9. TrustBadges — Güven rozeti barı
- * 7. WhyChooseUs — Neden biz
- * 8. Newsletter — E-posta abonelik
- * 9. BlogPreview — Blog önizleme
- * 10. Testimonials — Müşteri yorumları
+ * 3. TrustBadges — Güven rozeti barı (Sprint 2: yukarı taşındı)
+ * 4. CategoryCards — Ürün kategorileri
+ * 5. FeaturedProducts — Öne çıkan ürünler
+ * 6. FlashSale — Flaş indirimler (countdown)
+ * 7. BestSellers — Öne çıkan indirimler
+ * 8. TrendingProducts — Trend ürünler
+ * 9. CampaignRadar — Kampanya radar
+ * 10. WhyChooseUs — Neden biz
+ * 11. Newsletter — E-posta abonelik
+ * 12. BlogPreview — Blog önizleme
+ * 13. Testimonials — Müşteri yorumları
  */
 export default function HomePage() {
   return (
@@ -42,6 +42,9 @@ export default function HomePage() {
         <HeroSlider />
       </Suspense>
       <PromoBanner />
+      <Suspense fallback={<div className="border-y border-dark-100 bg-white dark:bg-dark-800 py-6 sm:py-8"><div className="container-custom"><div className="grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-8">{Array.from({ length: 4 }).map((_, i) => (<div key={i} className="h-12 animate-pulse rounded bg-dark-50 dark:bg-dark-800" />))}</div></div></div>}>
+        <TrustBadges />
+      </Suspense>
       <Suspense fallback={<div className="py-12 sm:py-16"><div className="container-custom"><div className="grid grid-cols-2 gap-4 lg:grid-cols-4">{Array.from({ length: 4 }).map((_, i) => (<div key={i} className="h-48 animate-pulse rounded-xl bg-dark-100" />))}</div></div></div>}>
         <CategoryCards />
       </Suspense>
@@ -52,9 +55,6 @@ export default function HomePage() {
       <BestSellers />
       <TrendingProducts />
       <CampaignRadar />
-      <Suspense fallback={<div className="border-y border-dark-100 bg-white dark:bg-dark-800 py-6 sm:py-8"><div className="container-custom"><div className="grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-8">{Array.from({ length: 4 }).map((_, i) => (<div key={i} className="h-12 animate-pulse rounded bg-dark-50 dark:bg-dark-800" />))}</div></div></div>}>
-        <TrustBadges />
-      </Suspense>
       <WhyChooseUs />
       <Newsletter />
       <Suspense fallback={<div className="py-12 sm:py-16"><div className="container-custom"><div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{Array.from({ length: 3 }).map((_, i) => (<div key={i} className="h-72 animate-pulse rounded-xl bg-dark-100" />))}</div></div></div>}>

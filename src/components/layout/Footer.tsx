@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, Mail, Clock, Instagram, Youtube, Linkedin } from "lucide-react";
+import { MapPin, Mail, Clock, Instagram, Youtube, Linkedin, ShieldCheck } from "lucide-react";
 import { FOOTER_LINKS, CONTACT, SOCIAL, SITE_FULL_NAME, SITE_DESCRIPTION } from "@/lib/constants";
 
 export default function Footer() {
@@ -154,11 +154,15 @@ export default function Footer() {
           <p className="text-xs text-dark-500 dark:text-dark-400">
             &copy; {new Date().getFullYear()} Fiyatcim.com. Tüm hakları saklıdır.
           </p>
-          <div className="flex items-center gap-2 text-xs text-dark-500 dark:text-dark-400">
-            <span className="rounded bg-dark-800 px-2 py-1">Visa</span>
-            <span className="rounded bg-dark-800 px-2 py-1">Mastercard</span>
-            <span className="rounded bg-dark-800 px-2 py-1">Troy</span>
-            <span className="rounded bg-dark-800 px-2 py-1">Havale/EFT</span>
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <span className="flex items-center gap-1 rounded-full bg-green-900/40 px-2.5 py-1 font-medium text-green-400">
+              <ShieldCheck size={12} />
+              SSL
+            </span>
+            <span className="rounded-full bg-dark-800 px-2.5 py-1 font-medium text-dark-400">Visa</span>
+            <span className="rounded-full bg-dark-800 px-2.5 py-1 font-medium text-dark-400">Mastercard</span>
+            <span className="rounded-full bg-dark-800 px-2.5 py-1 font-medium text-dark-400">Troy</span>
+            <span className="rounded-full bg-dark-800 px-2.5 py-1 font-medium text-dark-400">Havale/EFT</span>
           </div>
         </div>
       </div>

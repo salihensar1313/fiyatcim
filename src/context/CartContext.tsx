@@ -24,6 +24,7 @@ interface CartContextType {
   setCouponCode: (code: string | null) => void;
   discount: number;
   setDiscount: (amount: number) => void;
+  isCartLoaded: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -33,10 +34,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [couponCode, setCouponCode] = useState<string | null>(null);
   const [discount, setDiscount] = useState(0);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [loadedKey, setLoadedKey] = useState<string | null>(null);
 
   // G1: Kullanıcı bazlı storage key — her kullanıcının sepeti ayrı
   const storageKey = useMemo(() => `fiyatcim_cart_${user?.id || "guest"}`, [user?.id]);
+
+  // isLoaded: storageKey ile loadedKey eşleştiğinde true (key değişince otomatik false olur)
+  const isLoaded = loadedKey === storageKey;
 
   // localStorage'dan yükle — user değişince tetiklenir (safeGetJSON ile — GATE 3)
   useEffect(() => {
@@ -53,7 +57,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems(validItems);
     setCouponCode(typeof data.couponCode === "string" ? data.couponCode : null);
     setDiscount(0);
-    setIsLoaded(true);
+    setLoadedKey(storageKey);
   }, [storageKey]);
 
   // localStorage'a kaydet — safeSetJSON ile (GATE 3)
@@ -155,6 +159,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setCouponCode,
         discount,
         setDiscount,
+        isCartLoaded: isLoaded,
       }}
     >
       {children}

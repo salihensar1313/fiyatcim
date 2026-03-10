@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Trash2, Minus, Plus } from "lucide-react";
 import type { CartItem as CartItemType } from "@/types";
 import { formatPrice, getEffectivePrice, getDiscountPercent } from "@/lib/utils";
 import { useCart } from "@/context/CartContext";
+import { CATEGORY_IMAGES } from "@/lib/constants";
 import PriceDisplay from "@/components/ui/PriceDisplay";
 import GiftWrapOption from "./GiftWrapOption";
 
@@ -41,8 +43,14 @@ export default function CartItem({ item }: CartItemProps) {
     <div className="flex gap-4 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-4">
       {/* Image */}
       <Link href={`/urunler/${product.slug}`} className="shrink-0">
-        <div className="flex h-24 w-24 items-center justify-center rounded-lg bg-dark-50">
-          <div className="h-14 w-14 rounded bg-dark-100" />
+        <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-lg bg-dark-50 dark:bg-white/10">
+          <Image
+            src={CATEGORY_IMAGES[product.category_id] || "/images/categories/alarm.png"}
+            alt={product.name}
+            width={96}
+            height={96}
+            className="h-full w-full object-contain p-1"
+          />
         </div>
       </Link>
 

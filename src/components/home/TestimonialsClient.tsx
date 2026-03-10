@@ -25,8 +25,8 @@ export default function TestimonialsClient({ items }: Props) {
     <section className="bg-dark-900 py-12 sm:py-16">
       <div className="container-custom">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-white sm:text-3xl">Musteri Yorumlari</h2>
-          <p className="mt-2 text-dark-400">Binlerce mutlu musterimizden bazilari</p>
+          <h2 className="text-2xl font-bold text-white sm:text-3xl">Müşteri Yorumları</h2>
+          <p className="mt-2 text-dark-400">Binlerce mutlu müşterimizden bazıları</p>
         </div>
 
         <div className="relative mx-auto mt-8 max-w-2xl">

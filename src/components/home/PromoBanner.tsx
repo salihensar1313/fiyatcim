@@ -15,8 +15,8 @@ interface PromoBannerData {
 const STORAGE_KEY = "fiyatcim_promo_banner";
 
 const defaultBanner: PromoBannerData = {
-  title: "Yeni Sezon Indirimleri!",
-  description: "Guvenlik kamera setlerinde %30'a varan indirimler.",
+  title: "Yeni Sezon İndirimleri!",
+  description: "Güvenlik kamera setlerinde %30'a varan indirimler.",
   link: "/urunler?sale=true",
   active: true,
 };
@@ -48,7 +48,7 @@ export default function PromoBanner() {
             href={banner.link}
             className="flex shrink-0 items-center gap-1.5 rounded-full bg-white dark:bg-dark-800 px-5 py-2 text-sm font-bold text-primary-600 transition-colors hover:bg-primary-50"
           >
-            Incele
+            İncele
             <ArrowRight size={14} />
           </Link>
         </div>

@@ -105,7 +105,7 @@ export default function AdminProductsPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">Ürünler</h1>
           <p className="text-sm text-dark-500 dark:text-dark-400">{filtered.length} ürün</p>
@@ -113,14 +113,14 @@ export default function AdminProductsPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={handleExportCSV}
-            className="flex items-center gap-2 rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:bg-dark-800"
+            className="flex items-center gap-2 rounded-lg border border-dark-200 px-3 py-2 text-sm font-medium text-dark-700 hover:bg-dark-50 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-200 dark:hover:bg-dark-600"
           >
             <Download size={16} />
-            CSV
+            <span className="hidden sm:inline">CSV</span>
           </button>
           <button
             onClick={handleAddNew}
-            className="flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700"
+            className="flex items-center gap-2 rounded-lg bg-primary-600 px-3 py-2 text-sm font-semibold text-white hover:bg-primary-700 sm:px-4"
           >
             <Plus size={16} />
             Yeni Ürün
@@ -215,14 +215,14 @@ export default function AdminProductsPage() {
                         </Link>
                         <button
                           onClick={() => handleEdit(product)}
-                          className="rounded p-1.5 text-dark-400 hover:bg-blue-50 dark:bg-blue-900/30 hover:text-blue-600"
+                          className="rounded p-1.5 text-dark-400 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/30"
                           title="Düzenle"
                         >
                           <Edit size={14} />
                         </button>
                         <button
                           onClick={() => setDeleteTarget(product)}
-                          className="rounded p-1.5 text-dark-400 hover:bg-red-50 dark:bg-red-900/30 hover:text-red-600"
+                          className="rounded p-1.5 text-dark-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30"
                           title="Sil"
                         >
                           <Trash2 size={14} />

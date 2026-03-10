@@ -16,13 +16,13 @@ export default async function BlogPreview() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="section-title">Blog &amp; Haberler</h2>
-            <p className="section-subtitle">Guvenlik dunyasindan son gelismeler</p>
+            <p className="section-subtitle">Güvenlik dünyasından son gelişmeler</p>
           </div>
           <Link
             href="/blog"
             className="hidden items-center gap-1 text-sm font-semibold text-primary-600 hover:text-primary-700 sm:flex"
           >
-            Tum Yazilar
+            Tüm Yazılar
             <ArrowRight size={16} />
           </Link>
         </div>
@@ -53,7 +53,7 @@ export default async function BlogPreview() {
                 </h3>
                 <p className="mt-2 line-clamp-2 text-sm text-dark-500 dark:text-dark-400">{post.excerpt}</p>
                 <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary-600">
-                  Devamini Oku
+                  Devamını Oku
                   <ArrowRight size={14} />
                 </span>
               </div>

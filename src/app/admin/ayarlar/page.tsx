@@ -102,7 +102,7 @@ export default function AdminSettingsPage() {
             className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
               activeTab === tab.key
                 ? "bg-primary-600 text-white"
-                : "text-dark-500 dark:text-dark-400 hover:bg-dark-50 hover:text-dark-700 dark:text-dark-200"
+                : "text-dark-500 hover:bg-dark-50 hover:text-dark-700 dark:text-dark-300 dark:hover:bg-dark-700 dark:hover:text-dark-100"
             }`}
           >
             <tab.icon size={16} />
@@ -121,7 +121,7 @@ export default function AdminSettingsPage() {
               <input
                 value={settings.siteName}
                 onChange={(e) => updateField("siteName", e.target.value)}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
               />
             </div>
             <div>
@@ -129,7 +129,7 @@ export default function AdminSettingsPage() {
               <input
                 value={settings.siteFullName}
                 onChange={(e) => updateField("siteFullName", e.target.value)}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
               />
             </div>
             <div>
@@ -137,7 +137,7 @@ export default function AdminSettingsPage() {
               <input
                 value={settings.phone}
                 onChange={(e) => updateField("phone", e.target.value)}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
               />
             </div>
             <div>
@@ -145,7 +145,7 @@ export default function AdminSettingsPage() {
               <input
                 value={settings.email}
                 onChange={(e) => updateField("email", e.target.value)}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
               />
             </div>
             <div className="sm:col-span-2">
@@ -153,7 +153,7 @@ export default function AdminSettingsPage() {
               <input
                 value={settings.address}
                 onChange={(e) => updateField("address", e.target.value)}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
               />
             </div>
             <div>
@@ -161,7 +161,7 @@ export default function AdminSettingsPage() {
               <input
                 value={settings.instagram}
                 onChange={(e) => updateField("instagram", e.target.value)}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
               />
             </div>
             <div>
@@ -169,7 +169,7 @@ export default function AdminSettingsPage() {
               <input
                 value={settings.facebook}
                 onChange={(e) => updateField("facebook", e.target.value)}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
               />
             </div>
           </div>
@@ -184,7 +184,7 @@ export default function AdminSettingsPage() {
                 type="number"
                 value={settings.freeShippingThreshold}
                 onChange={(e) => updateField("freeShippingThreshold", Number(e.target.value))}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
               />
             </div>
             <div>
@@ -193,7 +193,7 @@ export default function AdminSettingsPage() {
                 type="number"
                 value={settings.defaultShippingFee}
                 onChange={(e) => updateField("defaultShippingFee", Number(e.target.value))}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
               />
             </div>
           </div>
@@ -203,7 +203,7 @@ export default function AdminSettingsPage() {
         {activeTab === "odeme" && (
           <div>
             {/* GATE 6: Demo güvenlik uyarısı */}
-            <div className="mb-6 rounded-lg border border-amber-300 bg-amber-50 p-4">
+            <div className="mb-6 rounded-lg border border-amber-300 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-900/20">
               <div className="flex items-start gap-3">
                 <AlertTriangle size={20} className="mt-0.5 shrink-0 text-amber-600" />
                 <div>
@@ -223,7 +223,7 @@ export default function AdminSettingsPage() {
                   type="password"
                   value={settings.paymentApiKey}
                   onChange={(e) => updateField("paymentApiKey", e.target.value)}
-                  className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                  className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
                   placeholder="iyzico / PayTR API Key"
                 />
               </div>
@@ -233,7 +233,7 @@ export default function AdminSettingsPage() {
                   type="password"
                   value={settings.paymentSecretKey}
                   onChange={(e) => updateField("paymentSecretKey", e.target.value)}
-                  className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                  className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
                   placeholder="Secret Key"
                 />
               </div>
@@ -245,7 +245,7 @@ export default function AdminSettingsPage() {
         {activeTab === "eposta" && (
           <div>
             {/* GATE 6: Demo güvenlik uyarısı */}
-            <div className="mb-6 rounded-lg border border-amber-300 bg-amber-50 p-4">
+            <div className="mb-6 rounded-lg border border-amber-300 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-900/20">
               <div className="flex items-start gap-3">
                 <AlertTriangle size={20} className="mt-0.5 shrink-0 text-amber-600" />
                 <div>
@@ -265,7 +265,7 @@ export default function AdminSettingsPage() {
                   type="text"
                   value={settings.smtpHost}
                   onChange={(e) => updateField("smtpHost", e.target.value)}
-                  className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                  className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
                   placeholder="smtp.example.com"
                 />
               </div>
@@ -275,7 +275,7 @@ export default function AdminSettingsPage() {
                   type="text"
                   value={settings.smtpPort}
                   onChange={(e) => updateField("smtpPort", e.target.value)}
-                  className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                  className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
                   placeholder="587"
                 />
               </div>
@@ -285,7 +285,7 @@ export default function AdminSettingsPage() {
                   type="text"
                   value={settings.smtpUser}
                   onChange={(e) => updateField("smtpUser", e.target.value)}
-                  className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                  className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
                   placeholder="noreply@fiyatcim.com"
                 />
               </div>
@@ -295,7 +295,7 @@ export default function AdminSettingsPage() {
                   type="password"
                   value={settings.smtpPass}
                   onChange={(e) => updateField("smtpPass", e.target.value)}
-                  className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                  className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
                   placeholder="SMTP şifresi"
                 />
               </div>

@@ -24,11 +24,11 @@ export default function SearchAutocomplete({ onClose, className = "", isMobile =
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const hasResults = suggestions.products.length > 0 || suggestions.categories.length > 0 || suggestions.brands.length > 0;
-  const showDropdown = isOpen && (query.length >= 3 ? true : history.length > 0 || popularSearches.length > 0);
+  const showDropdown = isOpen && (query.length >= 1 || history.length > 0 || popularSearches.length > 0);
 
   // Build flat list of navigable items for keyboard nav
   const getNavigableItems = useCallback(() => {
-    if (query.length >= 3 && hasResults) {
+    if (query.length >= 2 && hasResults) {
       const items: { type: string; value: string; url: string }[] = [];
       for (const r of suggestions.products) {
         items.push({ type: "product", value: r.product.name, url: `/urunler/${r.product.slug}` });
@@ -152,8 +152,8 @@ export default function SearchAutocomplete({ onClose, className = "", isMobile =
             isMobile ? "fixed left-4 right-4 top-auto" : ""
           }`}
         >
-          {/* Query >= 3 chars: show grouped results */}
-          {query.length >= 3 ? (
+          {/* Query >= 2 chars: show grouped results */}
+          {query.length >= 2 ? (
             hasResults ? (
               <div className="py-2">
                 {/* Products */}
@@ -272,6 +272,11 @@ export default function SearchAutocomplete({ onClose, className = "", isMobile =
                 </div>
               )
             )
+          ) : query.length === 1 ? (
+            /* 1 karakter: ipucu */
+            <div className="p-3 text-center text-sm text-dark-500 dark:text-dark-400">
+              En az 2 karakter girin...
+            </div>
           ) : (
             /* No query: show history + popular */
             <div className="py-2">
@@ -345,7 +350,7 @@ export default function SearchAutocomplete({ onClose, className = "", isMobile =
           )}
 
           {/* Loading indicator */}
-          {isSearching && query.length >= 3 && (
+          {isSearching && query.length >= 2 && (
             <div className="flex items-center justify-center p-3">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-500 border-t-transparent" />
               <span className="ml-2 text-xs text-dark-400">Aranıyor...</span>

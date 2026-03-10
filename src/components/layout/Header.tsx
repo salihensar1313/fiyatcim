@@ -10,14 +10,15 @@ import {
   Menu,
   Heart,
   ChevronDown,
-  Shield,
-  Camera,
-  Home,
-  Fingerprint,
   Package,
   GitCompareArrows,
+  Phone,
+  ShieldCheck,
+  RotateCcw,
+  Truck,
 } from "lucide-react";
-import { SITE_FULL_NAME } from "@/lib/constants";
+import { SITE_FULL_NAME, CONTACT } from "@/lib/constants";
+import { MEGA_MENU_DATA } from "@/lib/nav";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useCurrency } from "@/context/CurrencyContext";
@@ -26,57 +27,6 @@ import NotificationBell from "@/components/ui/NotificationBell";
 import SearchAutocomplete from "./SearchAutocomplete";
 import DarkModeToggle from "@/components/ui/DarkModeToggle";
 import { useCompare } from "@/hooks/useCompare";
-
-const MEGA_MENU_DATA = [
-  {
-    key: "alarm",
-    label: "Alarm Sistemleri",
-    href: "/kategori/alarm-sistemleri",
-    icon: Shield,
-    items: [
-      { label: "Kablosuz Alarm Setleri", href: "/urunler?search=kablosuz+alarm" },
-      { label: "Kablolu Alarm Panelleri", href: "/urunler?search=kablolu+alarm" },
-      { label: "Alarm Sensörleri", href: "/urunler?search=alarm+sensör" },
-      { label: "Alarm Aksesuarları", href: "/urunler?search=alarm+aksesuar" },
-    ],
-  },
-  {
-    key: "kamera",
-    label: "Güvenlik Kameraları",
-    href: "/kategori/guvenlik-kameralari",
-    icon: Camera,
-    items: [
-      { label: "IP Kamera Sistemleri", href: "/urunler?search=ip+kamera" },
-      { label: "Analog Kamera Setleri", href: "/urunler?search=analog+kamera" },
-      { label: "NVR / DVR Kayıt Cihazları", href: "/urunler?search=nvr+dvr" },
-      { label: "Kamera Aksesuarları", href: "/urunler?search=kamera+aksesuar" },
-    ],
-  },
-  {
-    key: "akilli-ev",
-    label: "Akıllı Ev",
-    href: "/kategori/akilli-ev-sistemleri",
-    icon: Home,
-    items: [
-      { label: "Akıllı Priz & Anahtar", href: "/urunler?search=akıllı+priz" },
-      { label: "Akıllı Aydınlatma", href: "/urunler?search=akıllı+aydınlatma" },
-      { label: "Akıllı Sensörler", href: "/urunler?search=akıllı+sensör" },
-      { label: "Akıllı Ev Hub", href: "/urunler?search=akıllı+ev+hub" },
-    ],
-  },
-  {
-    key: "gecis",
-    label: "Geçiş Kontrol",
-    href: "/kategori/gecis-kontrol-sistemleri",
-    icon: Fingerprint,
-    items: [
-      { label: "Parmak İzi Sistemleri", href: "/urunler?search=parmak+izi" },
-      { label: "Kartlı Geçiş", href: "/urunler?search=kartlı+geçiş" },
-      { label: "Turnike Sistemleri", href: "/urunler?search=turnike" },
-      { label: "Kapı Otomasyonu", href: "/urunler?search=kapı+otomasyon" },
-    ],
-  },
-];
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -127,6 +77,36 @@ export default function Header() {
           isScrolled ? "shadow-lg" : ""
         }`}
       >
+        {/* Trust Bar — Desktop Only */}
+        <div className="hidden border-b border-dark-800 bg-dark-950 py-1.5 lg:block">
+          <div className="container-custom flex items-center justify-between text-xs text-dark-400">
+            <div className="flex items-center gap-4">
+              <span className="flex items-center gap-1.5">
+                <Phone size={12} className="text-primary-500" />
+                {CONTACT.phone}
+              </span>
+              <span className="text-dark-600">|</span>
+              <span>{CONTACT.workingHours}</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <span className="flex items-center gap-1.5 text-green-400">
+                <ShieldCheck size={13} />
+                SSL Güvenli Alışveriş
+              </span>
+              <span className="text-dark-600">|</span>
+              <span className="flex items-center gap-1.5">
+                <RotateCcw size={12} />
+                14 Gün İade Garantisi
+              </span>
+              <span className="text-dark-600">|</span>
+              <span className="flex items-center gap-1.5">
+                <Truck size={12} />
+                2.000₺+ Ücretsiz Kargo
+              </span>
+            </div>
+          </div>
+        </div>
+
         {/* Dark Top Bar */}
         <div className="bg-dark-900">
           <div className="container-custom flex items-center justify-between gap-4 py-3">
@@ -139,8 +119,8 @@ export default function Header() {
             </button>
 
             {/* Logo */}
-            <Link href="/" className="flex items-center">
-              <Image src="/images/logo-white.png" alt={SITE_FULL_NAME} width={180} height={50} priority className="h-12 w-auto sm:h-14" />
+            <Link href="/" className="flex shrink-0 items-center">
+              <Image src="/images/logo-white.png" alt={SITE_FULL_NAME} width={180} height={50} priority className="h-10 w-auto sm:h-14" />
             </Link>
 
             {/* Exchange Rate Badge */}
@@ -172,19 +152,19 @@ export default function Header() {
                 )}
               </Link>
 
-              {/* Compare */}
-              <Link
-                href="/karsilastir"
-                className="relative rounded-lg p-2 text-dark-300 hover:text-white"
-                title="Karşılaştır"
-              >
-                <GitCompareArrows size={22} />
-                {compareCount > 0 && (
+              {/* Compare — only show when items are in compare list */}
+              {compareCount > 0 && (
+                <Link
+                  href="/karsilastir"
+                  className="relative rounded-lg p-2 text-dark-300 hover:text-white"
+                  title="Karşılaştır"
+                >
+                  <GitCompareArrows size={22} />
                   <span className="absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary-600 text-[10px] font-bold text-white">
                     {compareCount}
                   </span>
-                )}
-              </Link>
+                </Link>
+              )}
 
               {/* Dark Mode Toggle */}
               <DarkModeToggle />
@@ -253,7 +233,7 @@ export default function Header() {
                       <megaItem.icon size={18} className="text-primary-600" />
                       <Link
                         href={megaItem.href}
-                        className="text-sm font-bold text-dark-900 dark:text-dark-50 hover:text-primary-600 dark:text-dark-50"
+                        className="text-sm font-bold text-dark-900 hover:text-primary-600 dark:text-dark-50"
                       >
                         Tümünü Gör
                       </Link>
@@ -264,7 +244,7 @@ export default function Header() {
                       <Link
                         key={sub.label}
                         href={sub.href}
-                        className="block px-4 py-2 text-sm text-dark-600 dark:text-dark-300 transition-colors hover:bg-primary-50 hover:text-primary-700 dark:text-dark-300 dark:hover:bg-dark-700"
+                        className="block px-4 py-2 text-sm text-dark-600 transition-colors hover:bg-primary-50 hover:text-primary-700 dark:text-dark-300 dark:hover:bg-dark-700"
                       >
                         {sub.label}
                       </Link>

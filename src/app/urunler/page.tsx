@@ -4,7 +4,7 @@ import { Suspense, useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { LayoutGrid, List, Search } from "lucide-react";
 import { getAllActiveProducts, getCategories, getBrands } from "@/lib/queries";
-import { getEffectivePrice } from "@/lib/utils";
+import { getEffectivePrice, formatPrice } from "@/lib/utils";
 import type { Product, Category, Brand, ViewMode } from "@/types";
 import ProductCard from "@/components/product/ProductCard";
 import ProductFilter from "@/components/product/ProductFilter";
@@ -103,6 +103,16 @@ function ProductsContent() {
       case "name_asc":
         result.sort((a, b) => a.name.localeCompare(b.name, "tr"));
         break;
+      case "discount_desc":
+        result.sort((a, b) => {
+          const aDisc = a.sale_price ? (a.price - a.sale_price) / a.price : 0;
+          const bDisc = b.sale_price ? (b.price - b.sale_price) / b.price : 0;
+          return bDisc - aDisc;
+        });
+        break;
+      case "stock_asc":
+        result.sort((a, b) => a.stock - b.stock);
+        break;
     }
 
     return result;
@@ -182,6 +192,8 @@ function ProductsContent() {
                   <option value="price_asc">Fiyat ↑</option>
                   <option value="price_desc">Fiyat ↓</option>
                   <option value="name_asc">A-Z</option>
+                  <option value="discount_desc">En Yüksek İndirim</option>
+                  <option value="stock_asc">Stok Azalan</option>
                 </select>
 
                 <div className="hidden items-center gap-1 rounded-lg border border-dark-200 p-1 sm:flex">
@@ -201,7 +213,7 @@ function ProductsContent() {
               </div>
             </div>
 
-            {(filters.category || filters.brand || filters.minRating || filters.stockOnly) && (
+            {(filters.category || filters.brand || filters.minRating || filters.stockOnly || filters.minPrice !== undefined || filters.maxPrice !== undefined) && (
               <div className="mb-4 flex flex-wrap items-center gap-2">
                 <span className="text-sm text-dark-500 dark:text-dark-400">Aktif Filtreler:</span>
                 {filters.category && (
@@ -226,6 +238,12 @@ function ProductsContent() {
                   <span className="flex items-center gap-1 rounded-full bg-green-50 dark:bg-green-900/30 px-3 py-1 text-xs font-medium text-green-700">
                     Stokta
                     <button onClick={() => handleFilterChange({ ...filters, stockOnly: undefined })} className="ml-1 hover:text-green-900">&times;</button>
+                  </span>
+                )}
+                {(filters.minPrice !== undefined || filters.maxPrice !== undefined) && (
+                  <span className="flex items-center gap-1 rounded-full bg-primary-50 dark:bg-primary-900/30 px-3 py-1 text-xs font-medium text-primary-700">
+                    {filters.minPrice ? formatPrice(filters.minPrice) : "0₺"} – {filters.maxPrice ? formatPrice(filters.maxPrice) : "∞"}
+                    <button onClick={() => handleFilterChange({ ...filters, minPrice: undefined, maxPrice: undefined })} className="ml-1 hover:text-primary-900">&times;</button>
                   </span>
                 )}
               </div>

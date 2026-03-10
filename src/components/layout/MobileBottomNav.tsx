@@ -2,20 +2,24 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Grid3X3, ShoppingCart, User } from "lucide-react";
+import { Home, Grid3X3, ShoppingCart, Heart, User } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 
 const NAV_ITEMS = [
   { label: "Ana Sayfa", href: "/", icon: Home, key: "home" },
   { label: "Kategoriler", href: "/urunler", icon: Grid3X3, key: "categories" },
   { label: "Sepet", href: "/sepet", icon: ShoppingCart, key: "cart" },
+  { label: "Favoriler", href: "/hesabim/favorilerim", icon: Heart, key: "wishlist" },
   { label: "Hesabım", href: "/hesabim", icon: User, key: "account" },
 ];
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
   const { getItemCount } = useCart();
+  const { getCount: getWishlistCount } = useWishlist();
   const cartCount = getItemCount();
+  const wishlistCount = getWishlistCount();
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -41,6 +45,11 @@ export default function MobileBottomNav() {
                 {item.key === "cart" && cartCount > 0 && (
                   <span className="absolute -right-2.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary-600 text-[9px] font-bold text-white">
                     {cartCount > 99 ? "99+" : cartCount}
+                  </span>
+                )}
+                {item.key === "wishlist" && wishlistCount > 0 && (
+                  <span className="absolute -right-2.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary-600 text-[9px] font-bold text-white">
+                    {wishlistCount > 99 ? "99+" : wishlistCount}
                   </span>
                 )}
               </div>

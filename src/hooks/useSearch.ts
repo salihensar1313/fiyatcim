@@ -32,7 +32,7 @@ export function useSearch(options: UseSearchOptions = {}): UseSearchReturn {
   useEffect(() => {
     if (timerRef.current) clearTimeout(timerRef.current);
 
-    if (query.trim().length < 3) {
+    if (query.trim().length < 2) {
       setDebouncedQuery("");
       setIsSearching(false);
       return;

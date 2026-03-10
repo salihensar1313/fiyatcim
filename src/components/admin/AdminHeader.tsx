@@ -150,9 +150,9 @@ export default function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
 
           {/* Dropdown */}
           {open && (
-            <div className="absolute right-0 top-full mt-2 w-80 overflow-hidden rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 shadow-xl">
+            <div className="absolute right-0 top-full mt-2 w-72 overflow-hidden rounded-xl border border-dark-100 bg-white shadow-xl dark:border-dark-700 dark:bg-dark-800 sm:w-80">
               {/* Header */}
-              <div className="flex items-center justify-between border-b border-dark-100 px-4 py-3">
+              <div className="flex items-center justify-between border-b border-dark-100 px-4 py-3 dark:border-dark-700">
                 <h4 className="text-sm font-bold text-dark-900 dark:text-dark-50">Bildirimler</h4>
                 <div className="flex items-center gap-2">
                   {unreadCount > 0 && (
@@ -184,8 +184,8 @@ export default function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
                       <div
                         key={notif.id}
                         onClick={() => markOneRead(notif.id)}
-                        className={`flex cursor-pointer items-start gap-3 border-b border-dark-50 px-4 py-3 transition-colors hover:bg-dark-50 ${
-                          !notif.read ? "bg-primary-50/30" : ""
+                        className={`flex cursor-pointer items-start gap-3 border-b border-dark-50 px-4 py-3 transition-colors hover:bg-dark-50 dark:border-dark-700 dark:hover:bg-dark-700/50 ${
+                          !notif.read ? "bg-primary-50/30 dark:bg-primary-900/20" : ""
                         }`}
                       >
                         <div className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${colorClass}`}>

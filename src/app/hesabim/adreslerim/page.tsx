@@ -79,16 +79,15 @@ export default function AddressesPage() {
     closeForm();
   };
 
-  const formatPhone = (raw: string) =>
-    raw.replace(
-      /(\d{2})(\d{3})(\d{0,3})(\d{0,2})(\d{0,2})/,
-      (_m, a, b, c, d, e) => [a, b, c, d, e].filter(Boolean).join(" ")
-    );
+  const formatPhone = (raw: string) => {
+    if (!raw || raw.length < 2) return raw || "";
+    const num = raw.startsWith("90") ? raw.slice(2) : raw;
+    return "+90 " + num;
+  };
 
   const handlePhoneChange = (val: string) => {
-    const raw = val.replace(/[^0-9]/g, "");
-    if (raw.length < 3 || !raw.startsWith("905")) return;
-    if (raw.length <= 12) setForm({ ...form, telefon: raw });
+    const raw = val.replace(/[^0-9]/g, "").slice(0, 10);
+    setForm({ ...form, telefon: "90" + raw });
   };
 
   return (
@@ -242,15 +241,18 @@ export default function AddressesPage() {
                 <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">
                   Telefon <span className="text-primary-600">*</span>
                 </label>
-                <input
-                  type="tel"
-                  value={formatPhone(form.telefon)}
-                  onChange={(e) => handlePhoneChange(e.target.value)}
-                  placeholder="90 5XX XXX XX XX"
-                  inputMode="numeric"
-                  maxLength={16}
-                  className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
-                />
+                <div className="flex">
+                  <span className="inline-flex items-center rounded-l-lg border border-r-0 border-dark-200 dark:border-dark-600 bg-dark-50 dark:bg-dark-600 px-3 text-sm font-medium text-dark-500 dark:text-dark-300">+90</span>
+                  <input
+                    type="tel"
+                    value={form.telefon.slice(2)}
+                    onChange={(e) => handlePhoneChange(e.target.value)}
+                    placeholder="5XX XXX XX XX"
+                    inputMode="numeric"
+                    maxLength={10}
+                    className="w-full rounded-r-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
+                  />
+                </div>
               </div>
 
               {/* İl / İlçe / Posta Kodu */}

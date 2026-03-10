@@ -18,9 +18,9 @@ const ICON_MAP: Record<string, React.ElementType> = {
 };
 
 const defaultFeatures: FeatureItem[] = [
-  { id: "wcu-1", title: "Guvenilir Marka", desc: "Ajax, Hikvision, Dahua gibi dunya lideri markalarla calisiyor, yalnizca orijinal ve garantili urunler sunuyoruz.", icon: "Shield" },
-  { id: "wcu-2", title: "Profesyonel Destek", desc: "Deneyimli teknik ekibimiz ile ucretsiz kesif, profesyonel kurulum ve satis sonrasi destek hizmeti veriyoruz.", icon: "Wrench" },
-  { id: "wcu-3", title: "Kaliteli Urunler", desc: "Tum urunlerimiz minimum 2 yil uretici garantisi ile gelir. Sertifikali uzman ekibimiz her zaman yaninizda.", icon: "Award" },
+  { id: "wcu-1", title: "Güvenilir Marka", desc: "Ajax, Hikvision, Dahua gibi dünya lideri markalarla çalışıyor, yalnızca orijinal ve garantili ürünler sunuyoruz.", icon: "Shield" },
+  { id: "wcu-2", title: "Profesyonel Destek", desc: "Deneyimli teknik ekibimiz ile ücretsiz keşif, profesyonel kurulum ve satış sonrası destek hizmeti veriyoruz.", icon: "Wrench" },
+  { id: "wcu-3", title: "Kaliteli Ürünler", desc: "Tüm ürünlerimiz minimum 2 yıl üretici garantisi ile gelir. Sertifikalı uzman ekibimiz her zaman yanınızda.", icon: "Award" },
 ];
 
 export default function WhyChooseUs() {
@@ -41,7 +41,7 @@ export default function WhyChooseUs() {
       <div className="container-custom">
         <div className="text-center">
           <h2 className="section-title">Neden Fiyatcim?</h2>
-          <p className="section-subtitle">Guvenliginiz bizim onceligimiz</p>
+          <p className="section-subtitle">Güvenliğiniz bizim önceliğimiz</p>
         </div>
 
         <div className="mt-8 grid gap-6 sm:grid-cols-3">

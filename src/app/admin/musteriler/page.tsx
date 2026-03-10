@@ -81,7 +81,7 @@ export default function AdminCustomersPage() {
         </div>
         <button
           onClick={handleExportCSV}
-          className="flex items-center gap-2 rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:bg-dark-800"
+          className="flex items-center gap-2 rounded-lg border border-dark-200 px-3 py-2 text-sm font-medium text-dark-700 hover:bg-dark-50 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-200 dark:hover:bg-dark-600"
         >
           <Download size={16} />
           CSV
@@ -96,7 +96,7 @@ export default function AdminCustomersPage() {
           placeholder="İsim, e-posta veya telefon ara..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 bg-transparent text-sm outline-none placeholder:text-dark-400"
+          className="flex-1 bg-transparent text-sm text-dark-900 outline-none placeholder:text-dark-400 dark:text-dark-100"
         />
       </div>
 
@@ -104,7 +104,7 @@ export default function AdminCustomersPage() {
       <div className="overflow-hidden rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-dark-100 bg-dark-50 dark:bg-dark-800">
+            <thead className="border-b border-dark-100 bg-dark-50 dark:border-dark-700 dark:bg-dark-800/50">
               <tr>
                 <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Ad Soyad</th>
                 <th className="hidden px-4 py-3 font-semibold text-dark-700 dark:text-dark-200 sm:table-cell">E-posta</th>
@@ -113,9 +113,9 @@ export default function AdminCustomersPage() {
                 <th className="px-4 py-3 text-right font-semibold text-dark-700 dark:text-dark-200">İşlem</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-dark-50">
+            <tbody className="divide-y divide-dark-50 dark:divide-dark-700">
               {filtered.map((customer) => (
-                <tr key={customer.user_id} className="hover:bg-dark-50/50">
+                <tr key={customer.user_id} className="hover:bg-dark-50/50 dark:hover:bg-dark-700/50">
                   <td className="px-4 py-3">
                     <div className="font-medium text-dark-900 dark:text-dark-50">{customer.ad} {customer.soyad}</div>
                     <div className="text-xs text-dark-400 sm:hidden">{customer.email || "-"}</div>
@@ -128,7 +128,7 @@ export default function AdminCustomersPage() {
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={() => setEditingCustomer(customer)}
-                      className="rounded-lg p-2 text-dark-400 hover:bg-primary-50 dark:bg-primary-900/30 hover:text-primary-600"
+                      className="rounded-lg p-2 text-dark-400 hover:bg-primary-50 hover:text-primary-600 dark:hover:bg-primary-900/30"
                       title="Düzenle"
                     >
                       <Pencil size={16} />

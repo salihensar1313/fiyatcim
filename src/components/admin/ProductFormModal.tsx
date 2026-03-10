@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import type { Product, Category, Brand } from "@/types";
 import { getCategories, getBrands } from "@/lib/queries";
+import { ADMIN_INPUT, ADMIN_SELECT, ADMIN_TEXTAREA } from "@/lib/admin-classes";
 
 interface ProductFormModalProps {
   isOpen: boolean;
@@ -146,33 +147,34 @@ export default function ProductFormModal({
 
   if (!isOpen) return null;
 
+  const inputClass = (field?: string) =>
+    `${ADMIN_INPUT} ${field && errors[field] ? "!border-red-400 !focus:border-red-500 dark:!border-red-500" : ""}`;
+
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 pt-8">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative w-full max-w-2xl rounded-xl bg-white dark:bg-dark-800 shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-2 pt-4 sm:p-4 sm:pt-8">
+      <div className="fixed inset-0 bg-black/50" onClick={onClose} />
+      <div className="relative mx-auto w-full max-w-[calc(100vw-1rem)] rounded-xl bg-white shadow-xl dark:bg-dark-800 sm:max-w-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-dark-100 px-6 py-4">
-          <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">
+        <div className="flex items-center justify-between border-b border-dark-100 px-4 py-3 dark:border-dark-700 sm:px-6 sm:py-4">
+          <h2 className="text-base font-bold text-dark-900 dark:text-dark-50 sm:text-lg">
             {product ? "Ürün Düzenle" : "Yeni Ürün Ekle"}
           </h2>
-          <button onClick={onClose} className="rounded-lg p-2 text-dark-400 hover:bg-dark-50">
+          <button onClick={onClose} className="rounded-lg p-2 text-dark-400 hover:bg-dark-50 dark:hover:bg-dark-700">
             <X size={20} />
           </button>
         </div>
 
         {/* Form */}
-        <div className="max-h-[70vh] space-y-5 overflow-y-auto px-6 py-5">
+        <div className="max-h-[75vh] space-y-4 overflow-y-auto px-4 py-4 sm:max-h-[70vh] sm:space-y-5 sm:px-6 sm:py-5">
           {/* Name & SKU */}
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
             <div>
               <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Ürün Adı *</label>
               <input
                 type="text"
                 value={form.name}
                 onChange={(e) => handleNameChange(e.target.value)}
-                className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none ${
-                  errors.name ? "border-red-300 focus:border-red-500" : "border-dark-200 focus:border-primary-600"
-                }`}
+                className={inputClass("name")}
                 placeholder="Ürün adını girin"
               />
               {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
@@ -183,9 +185,7 @@ export default function ProductFormModal({
                 type="text"
                 value={form.sku}
                 onChange={(e) => setForm((prev) => ({ ...prev, sku: e.target.value }))}
-                className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none ${
-                  errors.sku ? "border-red-300 focus:border-red-500" : "border-dark-200 focus:border-primary-600"
-                }`}
+                className={inputClass("sku")}
                 placeholder="SKU-001"
               />
               {errors.sku && <p className="mt-1 text-xs text-red-500">{errors.sku}</p>}
@@ -199,18 +199,18 @@ export default function ProductFormModal({
               type="text"
               value={form.slug}
               onChange={(e) => setForm((prev) => ({ ...prev, slug: e.target.value }))}
-              className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm text-dark-500 dark:text-dark-400 focus:border-primary-600 focus:outline-none"
+              className={ADMIN_INPUT}
             />
           </div>
 
           {/* Category & Brand */}
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
             <div>
               <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Kategori</label>
               <select
                 value={form.category_id}
                 onChange={(e) => setForm((prev) => ({ ...prev, category_id: e.target.value }))}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={`${ADMIN_SELECT} w-full`}
               >
                 {categories.map((cat) => (
                   <option key={cat.id} value={cat.id}>
@@ -224,7 +224,7 @@ export default function ProductFormModal({
               <select
                 value={form.brand_id}
                 onChange={(e) => setForm((prev) => ({ ...prev, brand_id: e.target.value }))}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={`${ADMIN_SELECT} w-full`}
               >
                 {brands.map((brand) => (
                   <option key={brand.id} value={brand.id}>
@@ -236,16 +236,14 @@ export default function ProductFormModal({
           </div>
 
           {/* USD Price & Sale Price */}
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
             <div>
               <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Fiyat ($) *</label>
               <input
                 type="number"
                 value={form.price_usd || ""}
                 onChange={(e) => setForm((prev) => ({ ...prev, price_usd: Number(e.target.value) }))}
-                className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none ${
-                  errors.price_usd ? "border-red-300 focus:border-red-500" : "border-dark-200 focus:border-primary-600"
-                }`}
+                className={inputClass("price_usd")}
                 min={0}
                 step={1}
               />
@@ -262,7 +260,7 @@ export default function ProductFormModal({
                     sale_price_usd: e.target.value ? Number(e.target.value) : null,
                   }))
                 }
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={ADMIN_INPUT}
                 min={0}
                 step={1}
                 placeholder="Opsiyonel"
@@ -271,16 +269,14 @@ export default function ProductFormModal({
           </div>
 
           {/* TL Price & Sale Price & Stock */}
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-3 sm:gap-4">
             <div>
               <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Fiyat (₺) *</label>
               <input
                 type="number"
                 value={form.price || ""}
                 onChange={(e) => setForm((prev) => ({ ...prev, price: Number(e.target.value) }))}
-                className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none ${
-                  errors.price ? "border-red-300 focus:border-red-500" : "border-dark-200 focus:border-primary-600"
-                }`}
+                className={inputClass("price")}
                 min={0}
                 step={0.01}
               />
@@ -297,7 +293,7 @@ export default function ProductFormModal({
                     sale_price: e.target.value ? Number(e.target.value) : null,
                   }))
                 }
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={ADMIN_INPUT}
                 min={0}
                 step={0.01}
                 placeholder="Opsiyonel"
@@ -309,9 +305,7 @@ export default function ProductFormModal({
                 type="number"
                 value={form.stock}
                 onChange={(e) => setForm((prev) => ({ ...prev, stock: Number(e.target.value) }))}
-                className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none ${
-                  errors.stock ? "border-red-300 focus:border-red-500" : "border-dark-200 focus:border-primary-600"
-                }`}
+                className={inputClass("stock")}
                 min={0}
               />
               {errors.stock && <p className="mt-1 text-xs text-red-500">{errors.stock}</p>}
@@ -319,14 +313,14 @@ export default function ProductFormModal({
           </div>
 
           {/* Warranty, Shipping, Status */}
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-3 sm:gap-4">
             <div>
               <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Garanti (ay)</label>
               <input
                 type="number"
                 value={form.warranty_months}
                 onChange={(e) => setForm((prev) => ({ ...prev, warranty_months: Number(e.target.value) }))}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={ADMIN_INPUT}
                 min={0}
               />
             </div>
@@ -337,7 +331,7 @@ export default function ProductFormModal({
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, shipping_type: e.target.value as "kargo" | "kurulum" }))
                 }
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={`${ADMIN_SELECT} w-full`}
               >
                 <option value="kargo">Kargo</option>
                 <option value="kurulum">Kurulum</option>
@@ -363,7 +357,7 @@ export default function ProductFormModal({
               type="text"
               value={form.short_desc}
               onChange={(e) => setForm((prev) => ({ ...prev, short_desc: e.target.value }))}
-              className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+              className={ADMIN_INPUT}
               placeholder="Kısa ürün açıklaması"
             />
           </div>
@@ -375,7 +369,7 @@ export default function ProductFormModal({
               value={form.description}
               onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
               rows={4}
-              className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+              className={ADMIN_TEXTAREA}
               placeholder="Detaylı ürün açıklaması"
             />
           </div>
@@ -386,7 +380,7 @@ export default function ProductFormModal({
             {Object.entries(form.specs).length > 0 && (
               <div className="mb-2 space-y-1">
                 {Object.entries(form.specs).map(([key, value]) => (
-                  <div key={key} className="flex items-center gap-2 rounded bg-dark-50 px-3 py-1.5 text-sm">
+                  <div key={key} className="flex items-center gap-2 rounded bg-dark-50 px-3 py-1.5 text-sm dark:bg-dark-700">
                     <span className="font-medium text-dark-700 dark:text-dark-200">{key}:</span>
                     <span className="text-dark-500 dark:text-dark-400">{value}</span>
                     <button
@@ -399,24 +393,24 @@ export default function ProductFormModal({
                 ))}
               </div>
             )}
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row">
               <input
                 type="text"
                 value={specKey}
                 onChange={(e) => setSpecKey(e.target.value)}
                 placeholder="Özellik adı"
-                className="flex-1 rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={`${ADMIN_INPUT} sm:flex-1`}
               />
               <input
                 type="text"
                 value={specValue}
                 onChange={(e) => setSpecValue(e.target.value)}
                 placeholder="Değer"
-                className="flex-1 rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={`${ADMIN_INPUT} sm:flex-1`}
               />
               <button
                 onClick={addSpec}
-                className="rounded-lg bg-dark-100 px-3 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-200"
+                className="rounded-lg bg-dark-100 px-3 py-2 text-sm font-medium text-dark-700 hover:bg-dark-200 dark:bg-dark-600 dark:text-dark-200 dark:hover:bg-dark-500"
               >
                 Ekle
               </button>
@@ -425,10 +419,10 @@ export default function ProductFormModal({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-3 border-t border-dark-100 px-6 py-4">
+        <div className="flex justify-end gap-3 border-t border-dark-100 px-4 py-3 dark:border-dark-700 sm:px-6 sm:py-4">
           <button
             onClick={onClose}
-            className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50"
+            className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 hover:bg-dark-50 dark:border-dark-600 dark:text-dark-200 dark:hover:bg-dark-700"
           >
             İptal
           </button>

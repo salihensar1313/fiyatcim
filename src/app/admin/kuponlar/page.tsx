@@ -6,6 +6,7 @@ import Badge from "@/components/ui/Badge";
 import { useCoupons } from "@/context/CouponContext";
 import { useToast } from "@/components/ui/Toast";
 import { exportCSV } from "@/lib/csv";
+import { ADMIN_INPUT, ADMIN_SELECT } from "@/lib/admin-classes";
 import dynamic from "next/dynamic";
 import type { Coupon } from "@/types";
 
@@ -116,7 +117,7 @@ export default function AdminCouponsPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">Kuponlar</h1>
           <p className="text-sm text-dark-500 dark:text-dark-400">{coupons.length} kupon</p>
@@ -124,14 +125,14 @@ export default function AdminCouponsPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={handleExportCSV}
-            className="flex items-center gap-2 rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:bg-dark-800"
+            className="flex items-center gap-2 rounded-lg border border-dark-200 px-3 py-2 text-sm font-medium text-dark-700 hover:bg-dark-50 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-200 dark:hover:bg-dark-600"
           >
             <Download size={16} />
-            CSV
+            <span className="hidden sm:inline">CSV</span>
           </button>
           <button
             onClick={openNew}
-            className="flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700"
+            className="flex items-center gap-2 rounded-lg bg-primary-600 px-3 py-2 text-sm font-semibold text-white hover:bg-primary-700 sm:px-4"
           >
             <Plus size={16} />
             Yeni Kupon
@@ -145,13 +146,13 @@ export default function AdminCouponsPage() {
           <h3 className="mb-4 text-lg font-bold text-dark-900 dark:text-dark-50">
             {editing ? "Kuponu Düzenle" : "Yeni Kupon"}
           </h3>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
             <div>
               <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Kupon Kodu *</label>
               <input
                 value={code}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm uppercase focus:border-primary-600 focus:outline-none"
+                className={`${ADMIN_INPUT} uppercase`}
                 placeholder="HOSGELDIN"
               />
             </div>
@@ -160,7 +161,7 @@ export default function AdminCouponsPage() {
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value as "percent" | "fixed")}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={`${ADMIN_SELECT} w-full`}
               >
                 <option value="percent">Yüzde (%)</option>
                 <option value="fixed">Sabit Tutar (₺)</option>
@@ -174,7 +175,7 @@ export default function AdminCouponsPage() {
                 type="number"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={ADMIN_INPUT}
                 min="0"
               />
             </div>
@@ -184,7 +185,7 @@ export default function AdminCouponsPage() {
                 type="number"
                 value={minCart}
                 onChange={(e) => setMinCart(e.target.value)}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={ADMIN_INPUT}
                 min="0"
               />
             </div>
@@ -194,7 +195,7 @@ export default function AdminCouponsPage() {
                 type="number"
                 value={maxUses}
                 onChange={(e) => setMaxUses(e.target.value)}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={ADMIN_INPUT}
                 min="0"
                 placeholder="Sınırsız"
               />
@@ -205,7 +206,7 @@ export default function AdminCouponsPage() {
                 type="date"
                 value={expiry}
                 onChange={(e) => setExpiry(e.target.value)}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={ADMIN_INPUT}
               />
             </div>
             <div className="flex items-center gap-2">
@@ -220,7 +221,7 @@ export default function AdminCouponsPage() {
             </div>
           </div>
           <div className="mt-4 flex justify-end gap-3">
-            <button onClick={resetForm} className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:bg-dark-800">
+            <button onClick={resetForm} className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 hover:bg-dark-50 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-200 dark:hover:bg-dark-600">
               İptal
             </button>
             <button onClick={handleSave} className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700">
@@ -234,7 +235,7 @@ export default function AdminCouponsPage() {
       <div className="overflow-hidden rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-dark-100 bg-dark-50 dark:bg-dark-800">
+            <thead className="border-b border-dark-100 bg-dark-50 dark:border-dark-700 dark:bg-dark-800/50">
               <tr>
                 <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Kod</th>
                 <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">İndirim</th>
@@ -245,13 +246,13 @@ export default function AdminCouponsPage() {
                 <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">İşlemler</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-dark-50">
+            <tbody className="divide-y divide-dark-50 dark:divide-dark-700">
               {coupons.map((coupon) => {
                 const isExpired = coupon.expiry && new Date(coupon.expiry) < new Date();
                 const isExhausted = coupon.max_uses !== null && coupon.used_count >= coupon.max_uses;
 
                 return (
-                  <tr key={coupon.id} className="hover:bg-dark-50/50">
+                  <tr key={coupon.id} className="hover:bg-dark-50/50 dark:hover:bg-dark-700/50">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <Tag size={14} className="text-primary-600" />
@@ -287,14 +288,14 @@ export default function AdminCouponsPage() {
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => openEdit(coupon)}
-                          className="rounded p-1.5 text-dark-400 hover:bg-blue-50 dark:bg-blue-900/30 hover:text-blue-600"
+                          className="rounded p-1.5 text-dark-400 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/30"
                           title="Düzenle"
                         >
                           <Edit size={14} />
                         </button>
                         <button
                           onClick={() => setDeleteTarget(coupon)}
-                          className="rounded p-1.5 text-dark-400 hover:bg-red-50 dark:bg-red-900/30 hover:text-red-600"
+                          className="rounded p-1.5 text-dark-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/30"
                           title="Sil"
                         >
                           <Trash2 size={14} />

@@ -21,12 +21,26 @@ export default function CartRecommendations() {
   const { getAllOrders } = useOrders();
 
   const recommendations = useMemo(() => {
-    if (items.length === 0) return [];
+    const activeProducts = products.filter(
+      (p) => p.is_active && !p.deleted_at && p.stock > 0
+    );
+
+    // Sepet boşsa: indirimli / popüler ürünleri göster
+    if (items.length === 0) {
+      return activeProducts
+        .filter((p) => p.sale_price && p.sale_price < p.price)
+        .sort((a, b) => {
+          const aDisc = (a.price - (a.sale_price || a.price)) / a.price;
+          const bDisc = (b.price - (b.sale_price || b.price)) / b.price;
+          return bDisc - aDisc;
+        })
+        .slice(0, 4);
+    }
 
     const orders = getAllOrders();
     const cartProductIds = new Set(items.map((i) => i.product_id));
-    const activeProducts = products.filter(
-      (p) => p.is_active && !p.deleted_at && p.stock > 0 && !cartProductIds.has(p.id)
+    const filteredProducts = activeProducts.filter(
+      (p) => !cartProductIds.has(p.id)
     );
 
     // Sepetteki ürünleri içeren siparişleri bul
@@ -51,7 +65,7 @@ export default function CartRecommendations() {
       if (p) cartCategories.add(p.category_id);
     });
 
-    const scored = activeProducts.map((p) => {
+    const scored = filteredProducts.map((p) => {
       let score = 0;
 
       // Birlikte satılma verisi
@@ -73,7 +87,7 @@ export default function CartRecommendations() {
     const hasCoData = scored.some((s) => s.score > 0);
 
     if (!hasCoData) {
-      return activeProducts
+      return filteredProducts
         .filter((p) => cartCategories.has(p.category_id))
         .sort((a, b) => {
           const aDisc = a.sale_price ? (a.price - a.sale_price) / a.price : 0;
@@ -96,10 +110,10 @@ export default function CartRecommendations() {
     <section className="mt-10">
       <h2 className="flex items-center gap-2 text-lg font-bold text-dark-900 dark:text-dark-50">
         <ShoppingBag size={20} className="text-primary-600" />
-        Bunu Alanlar Şunları da Aldı
+        {items.length > 0 ? "Bunu Alanlar Şunları da Aldı" : "Öne Çıkan Ürünler"}
       </h2>
       <p className="mt-1 text-sm text-dark-500 dark:text-dark-400">
-        Sepetindeki ürünlere göre öneriler
+        {items.length > 0 ? "Sepetindeki ürünlere göre öneriler" : "En çok tercih edilen güvenlik ürünleri"}
       </p>
 
       <div className="mt-4 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">

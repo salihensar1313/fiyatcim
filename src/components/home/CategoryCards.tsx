@@ -14,8 +14,8 @@ export default async function CategoryCards() {
     <section className="py-12 sm:py-16">
       <div className="container-custom">
         <div className="text-center">
-          <h2 className="section-title">Urun Kategorileri</h2>
-          <p className="section-subtitle">Ihtiyaciniza uygun elektronik urunleri kesfedin</p>
+          <h2 className="section-title">Ürün Kategorileri</h2>
+          <p className="section-subtitle">İhtiyacınıza uygun güvenlik ürünlerini keşfedin</p>
         </div>
 
         <div className="mt-8 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">

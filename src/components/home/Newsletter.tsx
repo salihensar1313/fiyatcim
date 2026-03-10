@@ -9,8 +9,8 @@ const STORAGE_KEY = "fiyatcim_homepage_sections";
 export default function Newsletter() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [title, setTitle] = useState("Firsatlardan Haberdar Olun");
-  const [subtitle, setSubtitle] = useState("Ozel indirimler, yeni urunler ve kampanya bilgilerini e-posta ile alin.");
+  const [title, setTitle] = useState("Fırsatlardan Haberdar Olun");
+  const [subtitle, setSubtitle] = useState("Özel indirimler, yeni ürünler ve kampanya bilgilerini e-posta ile alın.");
 
   useEffect(() => {
     const stored = safeGetJSON<{ newsletter?: { title?: string; subtitle?: string } }>(STORAGE_KEY, {});
@@ -46,7 +46,7 @@ export default function Newsletter() {
             <div className="mt-6 flex items-center justify-center gap-2 rounded-lg bg-green-900/30 p-4">
               <CheckCircle size={20} className="text-green-400" />
               <p className="text-sm font-medium text-green-400">
-                Basariyla kaydoldunuz! Indirimlerden ilk siz haberdar olacaksiniz.
+                Başarıyla kaydoldunuz! İndirimlerden ilk siz haberdar olacaksınız.
               </p>
             </div>
           ) : (
@@ -70,7 +70,7 @@ export default function Newsletter() {
           )}
 
           <p className="mt-3 text-xs text-dark-500 dark:text-dark-400">
-            Istediginiz zaman abonelikten cikabilirsiniz.
+            İstediğiniz zaman abonelikten çıkabilirsiniz.
           </p>
         </div>
       </div>

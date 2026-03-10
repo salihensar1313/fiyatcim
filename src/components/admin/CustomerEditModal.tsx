@@ -59,11 +59,11 @@ export default function CustomerEditModal({ customer, onClose, onSaved }: Custom
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative w-full max-w-lg rounded-xl bg-white dark:bg-dark-800 shadow-xl">
+      <div className="relative mx-auto w-full max-w-[95vw] rounded-xl bg-white dark:bg-dark-800 shadow-xl sm:max-w-lg">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-dark-100 px-6 py-4">
+        <div className="flex items-center justify-between border-b border-dark-100 px-6 py-4 dark:border-dark-700">
           <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">Müşteri Düzenle</h2>
-          <button onClick={onClose} className="rounded-lg p-1.5 text-dark-400 hover:bg-dark-50 hover:text-dark-600 dark:text-dark-300">
+          <button onClick={onClose} className="rounded-lg p-1.5 text-dark-400 hover:bg-dark-50 hover:text-dark-600 dark:text-dark-300 dark:hover:bg-dark-700">
             <X size={20} />
           </button>
         </div>
@@ -71,7 +71,7 @@ export default function CustomerEditModal({ customer, onClose, onSaved }: Custom
         {/* Body */}
         <div className="max-h-[70vh] overflow-y-auto px-6 py-5">
           {/* Read-only info */}
-          <div className="mb-6 space-y-3 rounded-lg bg-dark-50 p-4">
+          <div className="mb-6 space-y-3 rounded-lg bg-dark-50 p-4 dark:bg-dark-700">
             <div className="flex items-center gap-2 text-sm text-dark-600 dark:text-dark-300">
               <Mail size={14} className="text-dark-400" />
               <span className="font-medium">E-posta:</span>
@@ -105,7 +105,7 @@ export default function CustomerEditModal({ customer, onClose, onSaved }: Custom
                     type="text"
                     value={ad}
                     onChange={(e) => setAd(e.target.value)}
-                    className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                    className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
                   />
                 </div>
                 <div>
@@ -114,7 +114,7 @@ export default function CustomerEditModal({ customer, onClose, onSaved }: Custom
                     type="text"
                     value={soyad}
                     onChange={(e) => setSoyad(e.target.value)}
-                    className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                    className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
                   />
                 </div>
               </div>
@@ -125,14 +125,14 @@ export default function CustomerEditModal({ customer, onClose, onSaved }: Custom
                   value={telefon}
                   onChange={(e) => setTelefon(e.target.value)}
                   placeholder="05XX XXX XX XX"
-                  className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                  className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
                 />
               </div>
             </div>
           </div>
 
           {/* Password section */}
-          <div className="border-t border-dark-100 pt-4">
+          <div className="border-t border-dark-100 pt-4 dark:border-dark-700">
             {!showPasswordSection ? (
               <button
                 onClick={() => setShowPasswordSection(true)}
@@ -153,7 +153,7 @@ export default function CustomerEditModal({ customer, onClose, onSaved }: Custom
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Yeni şifre (min 6 karakter)"
-                    className="flex-1 rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                    className="flex-1 rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
                   />
                   <button
                     onClick={handleChangePassword}
@@ -170,10 +170,10 @@ export default function CustomerEditModal({ customer, onClose, onSaved }: Custom
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-3 border-t border-dark-100 px-6 py-4">
+        <div className="flex justify-end gap-3 border-t border-dark-100 px-6 py-4 dark:border-dark-700">
           <button
             onClick={onClose}
-            className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50"
+            className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-700 hover:bg-dark-50 dark:border-dark-600 dark:text-dark-200 dark:hover:bg-dark-700"
           >
             İptal
           </button>

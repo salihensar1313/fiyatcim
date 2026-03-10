@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { CreditCard, Truck, FileText, MapPin, Plus, Smartphone } from "lucide-react";
+import { CreditCard, Truck, FileText, MapPin, Plus, Smartphone, LogIn, UserX } from "lucide-react";
 import SmsOtpVerify from "@/components/ui/SmsOtpVerify";
 import CartRecommendations from "@/components/product/CartRecommendations";
 import { useCart } from "@/context/CartContext";
@@ -16,12 +16,12 @@ import Breadcrumb from "@/components/ui/Breadcrumb";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, getSubtotal, getShipping, getTotal, discount, couponCode, clearCart } = useCart();
+  const { items, getSubtotal, getShipping, getTotal, discount, couponCode, clearCart, isCartLoaded } = useCart();
   const { user, isLoading } = useAuth();
   const { createOrder } = useOrders();
   const { addresses } = useAddresses();
 
-  const userAddresses = addresses.filter((a) => a.user_id === user?.id);
+  const userAddresses = user ? addresses.filter((a) => a.user_id === user.id) : [];
 
   const [step, setStep] = useState<"address" | "sms" | "payment">("address");
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
@@ -31,6 +31,7 @@ export default function CheckoutPage() {
   });
   const [addressAttempted, setAddressAttempted] = useState(false);
   const [orderCompleted, setOrderCompleted] = useState(false);
+  const [guestMode, setGuestMode] = useState(false);
 
   // G7: Checkout agreements — tümü default false
   const [agreeSales, setAgreeSales] = useState(false);
@@ -57,16 +58,60 @@ export default function CheckoutPage() {
     setStep(IS_DEMO ? "sms" : "payment");
   };
 
-  // G3: Hydration-safe redirect — render body'de router.push YASAK
   useEffect(() => {
-    if (!isLoading && !user) router.push("/giris");
-  }, [isLoading, user, router]);
+    if (!isLoading && isCartLoaded && items.length === 0 && !orderCompleted) router.push("/sepet");
+  }, [items, router, orderCompleted, isCartLoaded, isLoading]);
 
-  useEffect(() => {
-    if (items.length === 0 && !orderCompleted) router.push("/sepet");
-  }, [items, router, orderCompleted]);
+  if (isLoading || !isCartLoaded) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-600 border-t-transparent" />
+      </div>
+    );
+  }
 
-  if (isLoading || !user || (items.length === 0 && !orderCompleted)) {
+  // Misafir checkout veya giriş seçimi
+  if (!user && !guestMode) {
+    return (
+      <div className="bg-dark-50 dark:bg-dark-900 pb-16">
+        <div className="container mx-auto px-4 py-4">
+          <Breadcrumb items={[{ label: "Sepet", href: "/sepet" }, { label: "Ödeme" }]} />
+        </div>
+        <div className="container mx-auto flex justify-center px-4">
+          <div className="w-full max-w-lg space-y-4">
+            <h1 className="text-center text-2xl font-bold text-dark-900 dark:text-dark-50">Nasıl devam etmek istersiniz?</h1>
+            <p className="text-center text-sm text-dark-500 dark:text-dark-400">Sipariş vermek için giriş yapabilir veya misafir olarak devam edebilirsiniz.</p>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Link
+                href="/giris?redirect=/odeme"
+                className="flex flex-col items-center gap-3 rounded-xl border border-dark-200 bg-white dark:border-dark-700 dark:bg-dark-800 p-6 text-center transition-all hover:border-primary-400 hover:shadow-md"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900/30">
+                  <LogIn size={22} className="text-primary-600" />
+                </div>
+                <span className="text-base font-bold text-dark-900 dark:text-dark-50">Giriş Yap</span>
+                <span className="text-xs text-dark-500 dark:text-dark-400">Siparişlerinizi takip edin, adreslerinizi kaydedin</span>
+              </Link>
+
+              <button
+                onClick={() => setGuestMode(true)}
+                className="flex flex-col items-center gap-3 rounded-xl border border-dark-200 bg-white dark:border-dark-700 dark:bg-dark-800 p-6 text-center transition-all hover:border-primary-400 hover:shadow-md"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-dark-100 dark:bg-dark-700">
+                  <UserX size={22} className="text-dark-500 dark:text-dark-400" />
+                </div>
+                <span className="text-base font-bold text-dark-900 dark:text-dark-50">Misafir Olarak Devam Et</span>
+                <span className="text-xs text-dark-500 dark:text-dark-400">Hesap oluşturmadan hızlıca sipariş verin</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (items.length === 0 && !orderCompleted) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-600 border-t-transparent" />
@@ -232,19 +277,21 @@ export default function CheckoutPage() {
                       </div>
                       <div>
                         <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Telefon <span className="text-primary-600">*</span></label>
-                        <input
-                          type="tel" required
-                          value={address.telefon.replace(/(\d{2})(\d{3})(\d{0,3})(\d{0,2})(\d{0,2})/, (_m, a, b, c, d, e) => [a, b, c, d, e].filter(Boolean).join(" "))}
-                          onChange={(e) => {
-                            const raw = e.target.value.replace(/[^0-9]/g, "");
-                            if (raw.length < 3 || !raw.startsWith("905")) return;
-                            if (raw.length <= 12) setAddress({ ...address, telefon: raw });
-                          }}
-                          placeholder="90 5XX XXX XX XX"
-                          inputMode="numeric"
-                          maxLength={16}
-                          className={`w-full rounded-lg border dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400 ${addressAttempted && address.telefon.length < 12 ? "border-red-400" : "border-dark-200 dark:border-dark-600"}`}
-                        />
+                        <div className="flex">
+                          <span className="inline-flex items-center rounded-l-lg border border-r-0 border-dark-200 dark:border-dark-600 bg-dark-50 dark:bg-dark-600 px-3 text-sm font-medium text-dark-500 dark:text-dark-300">+90</span>
+                          <input
+                            type="tel" required
+                            value={address.telefon.slice(2)}
+                            onChange={(e) => {
+                              const raw = e.target.value.replace(/[^0-9]/g, "").slice(0, 10);
+                              setAddress({ ...address, telefon: "90" + raw });
+                            }}
+                            placeholder="5XX XXX XX XX"
+                            inputMode="numeric"
+                            maxLength={10}
+                            className={`w-full rounded-r-lg border dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400 ${addressAttempted && address.telefon.length < 12 ? "border-red-400" : "border-dark-200 dark:border-dark-600"}`}
+                          />
+                        </div>
                       </div>
                       <div className="grid gap-4 sm:grid-cols-3">
                         <div>
@@ -331,7 +378,28 @@ export default function CheckoutPage() {
                 </div>
                 {/* G7: Zorunlu Sözleşme Onayları */}
                 <div className="mt-6 space-y-2">
-                  <h3 className="mb-2 text-sm font-bold text-dark-900 dark:text-dark-50">Sözleşme Onayları</h3>
+                  <div className="mb-2 flex items-center justify-between">
+                    <h3 className="text-sm font-bold text-dark-900 dark:text-dark-50">Sözleşme Onayları</h3>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (allMandatoryAgreed) {
+                          setAgreeSales(false);
+                          setAgreePreInfo(false);
+                          setAgreeKVKK(false);
+                          setAgreeTerms(false);
+                        } else {
+                          setAgreeSales(true);
+                          setAgreePreInfo(true);
+                          setAgreeKVKK(true);
+                          setAgreeTerms(true);
+                        }
+                      }}
+                      className="text-xs font-medium text-primary-600 hover:underline"
+                    >
+                      {allMandatoryAgreed ? "Tüm Seçimleri Kaldır" : "Zorunlu Sözleşmeleri Onayla"}
+                    </button>
+                  </div>
 
                   <label className="flex items-start gap-2.5 rounded-lg border border-dark-100 dark:border-dark-700 p-2.5 text-sm transition-colors hover:bg-dark-50 dark:hover:bg-dark-700 dark:bg-dark-800">
                     <input type="checkbox" checked={agreeSales} onChange={(e) => setAgreeSales(e.target.checked)}
@@ -476,6 +544,40 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+
+      {/* Sticky Mobile CTA — Checkout */}
+      {step === "payment" && (
+        <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-dark-200 bg-white dark:border-dark-700 dark:bg-dark-800 p-3 shadow-lg lg:hidden">
+          <div className="flex flex-col gap-2">
+            {!allMandatoryAgreed && (
+              <p className="text-center text-xs text-red-500">Devam etmek için sözleşmeleri onaylayın</p>
+            )}
+            <button
+              disabled={!allMandatoryAgreed}
+              onClick={() => {
+                const order = createOrder({
+                  items,
+                  shippingAddress: address,
+                  billingAddress: address,
+                  user: user ? { id: user.id, email: user.email } : null,
+                  customerName: { ad: address.ad, soyad: address.soyad },
+                  subtotal,
+                  shipping,
+                  discount,
+                  total,
+                  couponCode,
+                });
+                setOrderCompleted(true);
+                clearCart();
+                router.push(`/siparis-basarili?order=${order.order_no}`);
+              }}
+              className="w-full rounded-lg bg-primary-600 py-3 text-sm font-bold text-white hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Siparişi Tamamla ({formatPrice(total)})
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -96,7 +96,7 @@ export default function AdminSeoPage() {
                 <div className="flex items-center gap-2">
                   <FileText size={16} className="text-primary-600" />
                   <span className="text-sm font-bold text-dark-900 dark:text-dark-50">{page.label}</span>
-                  <span className="rounded bg-dark-100 px-2 py-0.5 text-xs text-dark-500 dark:text-dark-400">{page.path}</span>
+                  <span className="rounded bg-dark-100 px-2 py-0.5 text-xs text-dark-500 dark:bg-dark-700 dark:text-dark-400">{page.path}</span>
                 </div>
 
                 <div>
@@ -110,7 +110,7 @@ export default function AdminSeoPage() {
                     type="text"
                     value={editTitle}
                     onChange={(e) => setEditTitle(e.target.value)}
-                    className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                    className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
                   />
                   {editTitle.length > 60 && (
                     <p className="mt-1 text-xs text-red-600">Title 60 karakteri aşıyor, Google&apos;da kesilebilir.</p>
@@ -128,7 +128,7 @@ export default function AdminSeoPage() {
                     value={editDesc}
                     onChange={(e) => setEditDesc(e.target.value)}
                     rows={3}
-                    className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                    className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
                   />
                   {editDesc.length > 160 && (
                     <p className="mt-1 text-xs text-red-600">Description 160 karakteri aşıyor, Google&apos;da kesilebilir.</p>
@@ -136,12 +136,12 @@ export default function AdminSeoPage() {
                 </div>
 
                 {/* Google Preview */}
-                <div className="rounded-lg border border-dark-200 bg-dark-50 p-4">
-                  <p className="text-xs font-medium text-dark-400 mb-2">Google Önizlemesi:</p>
+                <div className="rounded-lg border border-dark-200 bg-dark-50 p-4 dark:border-dark-600 dark:bg-dark-700">
+                  <p className="mb-2 text-xs font-medium text-dark-400">Google Önizlemesi:</p>
                   <div>
-                    <p className="text-lg text-blue-700 hover:underline cursor-pointer truncate">{editTitle || "Başlık giriniz"}</p>
-                    <p className="text-sm text-green-700">{`www.fiyatcim.com${page.path}`}</p>
-                    <p className="text-sm text-dark-600 dark:text-dark-300 line-clamp-2">{editDesc || "Açıklama giriniz"}</p>
+                    <p className="cursor-pointer truncate text-lg text-blue-700 hover:underline dark:text-blue-400">{editTitle || "Başlık giriniz"}</p>
+                    <p className="text-sm text-green-700 dark:text-green-400">{`www.fiyatcim.com${page.path}`}</p>
+                    <p className="line-clamp-2 text-sm text-dark-600 dark:text-dark-300">{editDesc || "Açıklama giriniz"}</p>
                   </div>
                 </div>
 
@@ -155,7 +155,7 @@ export default function AdminSeoPage() {
                   </button>
                   <button
                     onClick={cancelEdit}
-                    className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-600 dark:text-dark-300 hover:bg-dark-50 dark:bg-dark-800"
+                    className="rounded-lg border border-dark-200 px-4 py-2 text-sm font-medium text-dark-600 hover:bg-dark-50 dark:border-dark-600 dark:text-dark-300 dark:hover:bg-dark-700"
                   >
                     İptal
                   </button>
@@ -165,13 +165,13 @@ export default function AdminSeoPage() {
               /* View Mode */
               <div
                 onClick={() => startEdit(page)}
-                className="cursor-pointer transition-colors hover:bg-dark-50 -m-5 p-5 rounded-xl"
+                className="cursor-pointer transition-colors hover:bg-dark-50 dark:hover:bg-dark-700/50 -m-5 p-5 rounded-xl"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <FileText size={16} className="text-primary-600" />
                     <span className="text-sm font-bold text-dark-900 dark:text-dark-50">{page.label}</span>
-                    <span className="rounded bg-dark-100 px-2 py-0.5 text-xs text-dark-500 dark:text-dark-400">{page.path}</span>
+                    <span className="rounded bg-dark-100 px-2 py-0.5 text-xs text-dark-500 dark:bg-dark-700 dark:text-dark-400">{page.path}</span>
                   </div>
                   <span className="text-xs text-primary-600">Düzenle</span>
                 </div>
