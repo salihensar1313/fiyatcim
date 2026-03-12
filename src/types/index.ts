@@ -60,6 +60,7 @@ export interface Profile {
   soyad: string;
   telefon: string;
   role: "user" | "admin";
+  avatar?: string;
   created_at?: string;
 }
 
@@ -334,3 +335,59 @@ export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
   failed: "Başarısız",
   refunded: "İade Edildi",
 };
+
+// ==========================================
+// RETURN (İADE) TYPES
+// ==========================================
+
+export type ReturnReason =
+  | "defective"
+  | "wrong_item"
+  | "changed_mind"
+  | "damaged"
+  | "other";
+
+export const RETURN_REASON_LABELS: Record<ReturnReason, string> = {
+  defective: "Arızalı / Kusurlu Ürün",
+  wrong_item: "Yanlış Ürün Gönderildi",
+  changed_mind: "Fikir Değişikliği",
+  damaged: "Hasarlı / Kırık Ürün",
+  other: "Diğer",
+};
+
+export type ReturnStatus = "pending" | "approved" | "rejected" | "completed";
+
+export const RETURN_STATUS_LABELS: Record<ReturnStatus, string> = {
+  pending: "Beklemede",
+  approved: "Onaylandı",
+  rejected: "Reddedildi",
+  completed: "Tamamlandı",
+};
+
+export interface ReturnRequestItem {
+  productId: string;
+  productName: string;
+  qty: number;
+  price: number;
+}
+
+export interface ReturnRequest {
+  id: string;
+  returnNumber: string;
+  orderId: string;
+  orderNumber: string;
+  customerId?: string;
+  customerName: string;
+  items: ReturnRequestItem[];
+  reason: ReturnReason;
+  description?: string;
+  status: ReturnStatus;
+  requestedAt: string;
+  updatedAt: string;
+  approvedAt?: string;
+  rejectedAt?: string;
+  completedAt?: string;
+  rejectionReason?: string;
+  refundAmount?: number;
+  notes?: string;
+}
