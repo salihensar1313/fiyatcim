@@ -313,11 +313,11 @@ export default function ChatBot() {
   };
 
   return (
-    <div className="fixed bottom-[5.5rem] right-4 z-[55] sm:bottom-6 sm:right-6">
+    <div className="fixed bottom-[7.5rem] right-3 z-[55] sm:bottom-8 sm:right-8">
       {/* ─── Chat Panel ─── */}
       {isOpen && (
-        <div className="mb-3 flex w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-dark-200 dark:bg-dark-900 dark:ring-dark-700 sm:w-96"
-          style={{ maxHeight: "min(500px, 70vh)" }}
+        <div className="mb-3 flex w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-dark-200 dark:bg-dark-900 dark:ring-dark-700 sm:w-[28rem]"
+          style={{ maxHeight: "min(600px, 75vh)" }}
           role="dialog"
           aria-label="CimBot Destek Asistanı"
         >
@@ -346,7 +346,7 @@ export default function ChatBot() {
           </div>
 
           {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto px-4 py-4" style={{ minHeight: "200px" }} aria-live="polite" aria-relevant="additions">
+          <div className="flex-1 overflow-y-auto px-4 py-4" style={{ minHeight: "280px" }} aria-live="polite" aria-relevant="additions">
             <div className="flex flex-col gap-3">
               {messages.map((msg) => (
                 <div
@@ -503,8 +503,8 @@ export default function ChatBot() {
         onClick={() => (isOpen ? setIsOpen(false) : handleOpen())}
         className={`group relative flex items-center justify-center rounded-full transition-all duration-200 hover:scale-110 ${
           isOpen
-            ? "h-12 w-12 bg-dark-700 shadow-lg hover:bg-dark-600 hover:shadow-xl"
-            : "h-16 w-16 sm:h-24 sm:w-24"
+            ? "h-14 w-14 bg-dark-700 shadow-lg hover:bg-dark-600 hover:shadow-xl"
+            : "h-28 w-28 sm:h-32 sm:w-32"
         }`}
         aria-label={isOpen ? "CimBot'u kapat" : "CimBot'u aç"}
         aria-expanded={isOpen}
@@ -517,7 +517,7 @@ export default function ChatBot() {
             alt="CimBot"
             width={96}
             height={96}
-            className="h-16 w-16 sm:h-24 sm:w-24 animate-cimbot-wave object-contain drop-shadow-lg"
+            className="h-28 w-28 sm:h-32 sm:w-32 animate-cimbot-wave object-contain drop-shadow-lg"
           />
         )}
 
@@ -529,7 +529,7 @@ export default function ChatBot() {
 
       {/* Pulse animation (only when closed) */}
       {!isOpen && (
-        <span className="absolute bottom-0 right-0 -z-10 h-16 w-16 sm:h-24 sm:w-24 animate-ping rounded-full bg-primary-600/30" />
+        <span className="absolute bottom-0 right-0 -z-10 h-28 w-28 sm:h-32 sm:w-32 animate-ping rounded-full bg-primary-600/30" />
       )}
     </div>
   );
