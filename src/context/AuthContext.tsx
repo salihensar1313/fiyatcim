@@ -135,22 +135,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const mapped = mapProfile(data as Record<string, unknown>);
         setProfile(mapped);
 
-        // If profile ad/soyad is empty, try to fill from Google metadata
+        // If profile ad/soyad is empty, try to fill from auth user_metadata (Google OAuth etc.)
         if (!mapped.ad || !mapped.soyad || !mapped.avatar) {
           try {
             const { data: { user: authUser } } = await supabase.auth.getUser();
-            if (authUser?.app_metadata?.provider === "google" || authUser?.user_metadata?.iss?.includes("google")) {
-              const meta = authUser.user_metadata || {};
-              const fullName = (meta.full_name || meta.name || "").trim();
+            const meta = authUser?.user_metadata || {};
+            const fullName = ((meta.full_name || meta.name || "") as string).trim();
+
+            if (fullName) {
               const nameParts = fullName.split(" ");
-              const googleAd = nameParts[0] || "";
-              const googleSoyad = nameParts.slice(1).join(" ") || "";
-              const googleAvatar = (meta.avatar_url || meta.picture || "") as string;
+              const metaAd = nameParts[0] || "";
+              const metaSoyad = nameParts.slice(1).join(" ") || "";
+              const metaAvatar = ((meta.avatar_url || meta.picture || "") as string);
 
               const updates: Record<string, string> = {};
-              if (!mapped.ad && googleAd) updates.ad = googleAd;
-              if (!mapped.soyad && googleSoyad) updates.soyad = googleSoyad;
-              if (!mapped.avatar && googleAvatar) updates.avatar = googleAvatar;
+              if (!mapped.ad && metaAd) updates.ad = metaAd;
+              if (!mapped.soyad && metaSoyad) updates.soyad = metaSoyad;
+              if (!mapped.avatar && metaAvatar) updates.avatar = metaAvatar;
 
               if (Object.keys(updates).length > 0) {
                 await supabase.from("profiles").update(updates).eq("user_id", userId);
@@ -158,7 +159,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               }
             }
           } catch (e) {
-            console.error("Google metadata sync error:", e);
+            console.error("Metadata sync error:", e);
           }
         }
       } else {
