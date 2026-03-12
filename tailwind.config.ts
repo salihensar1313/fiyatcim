@@ -3,7 +3,6 @@ import type { Config } from "tailwindcss";
 const config: Config = {
   darkMode: "class",
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
@@ -47,6 +46,32 @@ const config: Config = {
           lg: "4rem",
           xl: "5rem",
         },
+      },
+      keyframes: {
+        "bounce-in": {
+          "0%": { opacity: "0", transform: "scale(0.8) translateY(10px)" },
+          "60%": { opacity: "1", transform: "scale(1.05) translateY(-2px)" },
+          "100%": { opacity: "1", transform: "scale(1) translateY(0)" },
+        },
+        "fade-in": {
+          "0%": { opacity: "0", transform: "translateY(5px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "cimbot-wave": {
+          "0%, 55%, 100%": { transform: "rotate(0deg) scale(1)" },
+          "60%": { transform: "rotate(-18deg) scale(1.15)" },
+          "65%": { transform: "rotate(18deg) scale(1.15)" },
+          "70%": { transform: "rotate(-18deg) scale(1.12)" },
+          "75%": { transform: "rotate(14deg) scale(1.1)" },
+          "80%": { transform: "rotate(-10deg) scale(1.06)" },
+          "85%": { transform: "rotate(6deg) scale(1.03)" },
+          "90%": { transform: "rotate(0deg) scale(1)" },
+        },
+      },
+      animation: {
+        "bounce-in": "bounce-in 0.4s ease-out",
+        "fade-in": "fade-in 0.3s ease-out",
+        "cimbot-wave": "cimbot-wave 5s ease-in-out infinite",
       },
     },
   },

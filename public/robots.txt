@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /giris
+Disallow: /kayit
+Disallow: /hesabim/
+Disallow: /odeme
+Disallow: /sepet
+Disallow: /siparis-basarili
+
+Sitemap: https://www.fiyatcim.com/sitemap.xml
