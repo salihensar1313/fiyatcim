@@ -7,6 +7,7 @@ import { Eye, EyeOff, UserPlus, Mail, ShieldCheck, ArrowLeft, ArrowRight, User, 
 import SmsOtpVerify from "@/components/ui/SmsOtpVerify";
 import { useAuth } from "@/context/AuthContext";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import { validatePassword, getPasswordStrength, PASSWORD_MIN_LENGTH } from "@/lib/password";
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 const DEMO_OTP = "123456";
@@ -147,8 +148,9 @@ export default function RegisterPage() {
       setError("Geçerli bir telefon numarası girin.");
       return;
     }
-    if (password.length < 6) {
-      setError("Şifre en az 6 karakter olmalıdır.");
+    const pwCheck = validatePassword(password);
+    if (!pwCheck.valid) {
+      setError(pwCheck.error!);
       return;
     }
     if (password !== passwordConfirm) {
@@ -447,9 +449,9 @@ export default function RegisterPage() {
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="En az 6 karakter"
+                      placeholder="En az 8 karakter, büyük/küçük harf + rakam"
                       required
-                      minLength={6}
+                      minLength={PASSWORD_MIN_LENGTH}
                       className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 pr-10 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
                     />
                     <button
@@ -461,38 +463,28 @@ export default function RegisterPage() {
                     </button>
                   </div>
                   {/* Password strength indicator */}
-                  {password.length > 0 && (
-                    <div className="mt-2">
-                      <div className="flex gap-1">
-                        {[1, 2, 3, 4].map((level) => {
-                          const strength =
-                            (password.length >= 6 ? 1 : 0) +
-                            (/[A-Z]/.test(password) ? 1 : 0) +
-                            (/[0-9]/.test(password) ? 1 : 0) +
-                            (/[^A-Za-z0-9]/.test(password) ? 1 : 0);
-                          const colors = ["bg-red-500", "bg-orange-500", "bg-yellow-500", "bg-green-500"];
-                          return (
+                  {password.length > 0 && (() => {
+                    const strength = getPasswordStrength(password);
+                    const colors = ["bg-red-500", "bg-orange-500", "bg-yellow-500", "bg-green-500"];
+                    const labels = ["Zayıf", "Orta", "Güçlü", "Çok Güçlü"];
+                    return (
+                      <div className="mt-2">
+                        <div className="flex gap-1">
+                          {[1, 2, 3, 4].map((level) => (
                             <div
                               key={level}
                               className={`h-1 flex-1 rounded-full ${
                                 level <= strength ? colors[strength - 1] : "bg-dark-200 dark:bg-dark-600"
                               }`}
                             />
-                          );
-                        })}
+                          ))}
+                        </div>
+                        <p className="mt-1 text-xs text-dark-500">
+                          {labels[strength - 1] || "Çok Kısa"} — En az {PASSWORD_MIN_LENGTH} karakter, büyük/küçük harf ve rakam gerekli
+                        </p>
                       </div>
-                      <p className="mt-1 text-xs text-dark-500">
-                        {(() => {
-                          const s =
-                            (password.length >= 6 ? 1 : 0) +
-                            (/[A-Z]/.test(password) ? 1 : 0) +
-                            (/[0-9]/.test(password) ? 1 : 0) +
-                            (/[^A-Za-z0-9]/.test(password) ? 1 : 0);
-                          return s <= 1 ? "Zayıf" : s === 2 ? "Orta" : s === 3 ? "Güçlü" : "Çok Güçlü";
-                        })()}
-                      </p>
-                    </div>
-                  )}
+                    );
+                  })()}
                 </div>
 
                 <div>

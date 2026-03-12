@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState, useCallback, ReactNode 
 import type { Profile } from "@/types";
 import { safeGetJSON, safeSetJSON, safeRemove } from "@/lib/safe-storage";
 import { createClient } from "@/lib/supabase/client";
+import { validatePassword } from "@/lib/password";
 
 interface User {
   id: string;
@@ -130,7 +131,61 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const loadUser = async (userId: string, email: string) => {
       setUser({ id: userId, email });
       const { data } = await supabase.from("profiles").select("*").eq("user_id", userId).single();
-      if (data) setProfile(mapProfile(data as Record<string, unknown>));
+      if (data) {
+        const mapped = mapProfile(data as Record<string, unknown>);
+        setProfile(mapped);
+
+        // If profile ad/soyad is empty, try to fill from Google metadata
+        if (!mapped.ad || !mapped.soyad || !mapped.avatar) {
+          try {
+            const { data: { user: authUser } } = await supabase.auth.getUser();
+            if (authUser?.app_metadata?.provider === "google" || authUser?.user_metadata?.iss?.includes("google")) {
+              const meta = authUser.user_metadata || {};
+              const fullName = (meta.full_name || meta.name || "").trim();
+              const nameParts = fullName.split(" ");
+              const googleAd = nameParts[0] || "";
+              const googleSoyad = nameParts.slice(1).join(" ") || "";
+              const googleAvatar = (meta.avatar_url || meta.picture || "") as string;
+
+              const updates: Record<string, string> = {};
+              if (!mapped.ad && googleAd) updates.ad = googleAd;
+              if (!mapped.soyad && googleSoyad) updates.soyad = googleSoyad;
+              if (!mapped.avatar && googleAvatar) updates.avatar = googleAvatar;
+
+              if (Object.keys(updates).length > 0) {
+                await supabase.from("profiles").update(updates).eq("user_id", userId);
+                setProfile((prev) => prev ? { ...prev, ...updates } : prev);
+              }
+            }
+          } catch (e) {
+            console.error("Google metadata sync error:", e);
+          }
+        }
+      } else {
+        // No profile exists — create one (Google OAuth user without profile)
+        try {
+          const { data: { user: authUser } } = await supabase.auth.getUser();
+          const meta = authUser?.user_metadata || {};
+          const fullName = (meta.full_name || meta.name || "").trim();
+          const nameParts = fullName.split(" ");
+          const googleAd = nameParts[0] || "";
+          const googleSoyad = nameParts.slice(1).join(" ") || "";
+          const googleAvatar = (meta.avatar_url || meta.picture || "") as string;
+
+          const newProfile = {
+            user_id: userId,
+            ad: googleAd,
+            soyad: googleSoyad,
+            telefon: "",
+            role: "user" as const,
+            avatar: googleAvatar || null,
+          };
+          await supabase.from("profiles").insert(newProfile);
+          setProfile(mapProfile(newProfile as unknown as Record<string, unknown>));
+        } catch (e) {
+          console.error("Profile creation error:", e);
+        }
+      }
     };
 
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -238,8 +293,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!email || !password || !ad || !soyad) {
       return { error: "Tüm alanlar zorunludur." };
     }
-    if (password.length < 6) {
-      return { error: "Şifre en az 6 karakter olmalıdır." };
+    const pwCheck = validatePassword(password);
+    if (!pwCheck.valid) {
+      return { error: pwCheck.error! };
     }
 
     if (IS_DEMO_MODE) {
@@ -359,8 +415,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ADMIN: Change any user password
   // ========================================
   const adminChangePassword = useCallback(async (email: string, newPassword: string): Promise<{ error?: string }> => {
-    if (!newPassword || newPassword.length < 6) {
-      return { error: "Şifre en az 6 karakter olmalıdır." };
+    const pwCheck = validatePassword(newPassword);
+    if (!pwCheck.valid) {
+      return { error: pwCheck.error! };
     }
     if (IS_DEMO_MODE) {
       const hashes = safeGetJSON<Record<string, string>>("fiyatcim_demo_pw_hashes", {});

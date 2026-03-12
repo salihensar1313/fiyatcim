@@ -159,13 +159,13 @@ export default function CustomerEditModal({ customer, onClose, onSaved }: Custom
                   />
                   <button
                     onClick={handleChangePassword}
-                    disabled={!newPassword || newPassword.length < 6}
+                    disabled={!newPassword || newPassword.length < 8}
                     className="shrink-0 rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600 disabled:opacity-50"
                   >
                     Değiştir
                   </button>
                 </div>
-                <p className="mt-1 text-xs text-dark-400">Yeni şifre en az 6 karakter olmalıdır.</p>
+                <p className="mt-1 text-xs text-dark-400">En az 8 karakter, büyük/küçük harf ve rakam gerekli.</p>
               </div>
             )}
           </div>

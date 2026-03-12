@@ -29,25 +29,39 @@ export async function GET(request: Request) {
         } = await supabase.auth.getUser();
 
         if (user) {
+          const meta = user.user_metadata || {};
+          const fullName = (meta.full_name || meta.name || "").trim();
+          const nameParts = fullName.split(" ");
+          const googleAd = nameParts[0] || "";
+          const googleSoyad = nameParts.slice(1).join(" ") || "";
+          const googleAvatar = (meta.avatar_url || meta.picture || "") as string;
+
           // Check if profile exists
           const { data: existingProfile } = await supabase
             .from("profiles")
-            .select("user_id")
+            .select("user_id, ad, soyad, avatar")
             .eq("user_id", user.id)
             .single();
 
-          // If no profile, create one from Google user metadata
           if (!existingProfile) {
-            const meta = user.user_metadata || {};
-            const fullName = (meta.full_name || meta.name || "").trim();
-            const nameParts = fullName.split(" ");
-            await supabase.from("profiles").upsert({
+            // No profile — create from Google metadata
+            await supabase.from("profiles").insert({
               user_id: user.id,
-              ad: nameParts[0] || "",
-              soyad: nameParts.slice(1).join(" ") || "",
+              ad: googleAd,
+              soyad: googleSoyad,
               telefon: "",
               role: "user",
+              avatar: googleAvatar || null,
             });
+          } else {
+            // Profile exists but ad/soyad empty — update from Google metadata
+            const updates: Record<string, string> = {};
+            if (!existingProfile.ad && googleAd) updates.ad = googleAd;
+            if (!existingProfile.soyad && googleSoyad) updates.soyad = googleSoyad;
+            if (!existingProfile.avatar && googleAvatar) updates.avatar = googleAvatar;
+            if (Object.keys(updates).length > 0) {
+              await supabase.from("profiles").update(updates).eq("user_id", user.id);
+            }
           }
         }
 
