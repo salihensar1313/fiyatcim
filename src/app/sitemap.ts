@@ -5,11 +5,19 @@ import { getCategories, getAllActiveProducts, getBlogPosts } from "@/lib/queries
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date().toISOString();
 
-  const [categories, products, blogPosts] = await Promise.all([
-    getCategories(),
-    getAllActiveProducts(),
-    getBlogPosts(),
-  ]);
+  let categories: Awaited<ReturnType<typeof getCategories>> = [];
+  let products: Awaited<ReturnType<typeof getAllActiveProducts>> = [];
+  let blogPosts: Awaited<ReturnType<typeof getBlogPosts>> = [];
+
+  try {
+    [categories, products, blogPosts] = await Promise.all([
+      getCategories(),
+      getAllActiveProducts(),
+      getBlogPosts(),
+    ]);
+  } catch {
+    // Build sırasında DB bağlantısı yoksa sadece statik sayfaları döndür
+  }
 
   // Statik sayfalar
   const staticPages: MetadataRoute.Sitemap = [
