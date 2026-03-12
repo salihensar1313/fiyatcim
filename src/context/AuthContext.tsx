@@ -130,9 +130,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const loadUser = async (userId: string, email: string) => {
       setUser({ id: userId, email });
-      const { data } = await supabase.from("profiles").select("*").eq("user_id", userId).single();
+      const { data, error: profileError } = await supabase.from("profiles").select("*").eq("user_id", userId).single();
+      console.log("[AuthContext] loadUser — userId:", userId, "profile:", data ? "found" : "NOT found", "error:", profileError?.message || "none");
       if (data) {
         const mapped = mapProfile(data as Record<string, unknown>);
+        console.log("[AuthContext] mapped profile — ad:", JSON.stringify(mapped.ad), "soyad:", JSON.stringify(mapped.soyad), "avatar:", mapped.avatar ? "has" : "none");
         setProfile(mapped);
 
         // If profile ad/soyad is empty, try to fill from auth user_metadata (Google OAuth etc.)
@@ -141,6 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const { data: { user: authUser } } = await supabase.auth.getUser();
             const meta = authUser?.user_metadata || {};
             const fullName = ((meta.full_name || meta.name || "") as string).trim();
+            console.log("[AuthContext] Metadata sync — fullName:", fullName, "meta:", JSON.stringify(meta));
 
             if (fullName) {
               const nameParts = fullName.split(" ");
@@ -154,8 +157,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               if (!mapped.avatar && metaAvatar) updates.avatar = metaAvatar;
 
               if (Object.keys(updates).length > 0) {
-                await supabase.from("profiles").update(updates).eq("user_id", userId);
-                setProfile((prev) => prev ? { ...prev, ...updates } : prev);
+                console.log("[AuthContext] Updating profile with:", JSON.stringify(updates));
+                const { error: updateError } = await supabase.from("profiles").update(updates).eq("user_id", userId);
+                if (updateError) {
+                  console.error("[AuthContext] Profile update FAILED:", updateError.message, updateError.code, updateError.details);
+                } else {
+                  console.log("[AuthContext] Profile update SUCCESS");
+                  setProfile((prev) => prev ? { ...prev, ...updates } : prev);
+                }
               }
             }
           } catch (e) {
