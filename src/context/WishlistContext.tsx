@@ -39,6 +39,20 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     safeSetJSON(storageKey, items);
   }, [items, isLoaded, storageKey]);
 
+  // Cross-tab sync via storage event
+  useEffect(() => {
+    const handler = (e: StorageEvent) => {
+      if (e.key !== storageKey || !e.newValue) return;
+      try {
+        const data = JSON.parse(e.newValue);
+        const validItems = Array.isArray(data) ? data.filter((id: unknown): id is string => typeof id === "string") : [];
+        setItems(validItems);
+      } catch { /* ignore malformed data */ }
+    };
+    window.addEventListener("storage", handler);
+    return () => window.removeEventListener("storage", handler);
+  }, [storageKey]);
+
   const addItem = useCallback((productId: string) => {
     setItems((prev) => (prev.includes(productId) ? prev : [...prev, productId]));
   }, []);

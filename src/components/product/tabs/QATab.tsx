@@ -54,7 +54,7 @@ export default function QATab({ product }: QATabProps) {
       {/* Ask Question Form */}
       <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
         <h4 className="mb-1 text-base font-bold text-dark-900 dark:text-dark-50">Ürün Hakkında Soru Sor</h4>
-        <p className="mb-4 text-xs text-dark-400">
+        <p className="mb-4 text-xs text-dark-500">
           Satıcıya veya diğer kullanıcılara bu ürün hakkında soru sorabilirsiniz.
         </p>
 
@@ -110,7 +110,7 @@ export default function QATab({ product }: QATabProps) {
                       <span className="text-sm font-semibold text-dark-900 dark:text-dark-50">
                         {q.profile?.ad || "Anonim"} {q.profile?.soyad?.charAt(0) || ""}.
                       </span>
-                      <span className="text-xs text-dark-400">{formatDate(q.created_at)}</span>
+                      <span className="text-xs text-dark-500">{formatDate(q.created_at)}</span>
                     </div>
                     <p className="mt-1 text-sm text-dark-700 dark:text-dark-200">{q.question}</p>
                   </div>
@@ -130,7 +130,7 @@ export default function QATab({ product }: QATabProps) {
                           Satıcı
                         </span>
                         {q.answered_at && (
-                          <span className="text-xs text-dark-400">{formatDate(q.answered_at)}</span>
+                          <span className="text-xs text-dark-500">{formatDate(q.answered_at)}</span>
                         )}
                       </div>
                       <p className="mt-1 text-sm text-dark-600 dark:text-dark-300">{q.answer}</p>
@@ -165,7 +165,7 @@ export default function QATab({ product }: QATabProps) {
                       </button>
                     </div>
                   ) : (
-                    <p className="text-center text-xs text-dark-400">
+                    <p className="text-center text-xs text-dark-500">
                       Henüz cevaplanmadı. Satıcı en kısa sürede cevap verecektir.
                     </p>
                   )}
@@ -178,7 +178,7 @@ export default function QATab({ product }: QATabProps) {
         <div className="py-12 text-center">
           <MessageCircle size={48} className="mx-auto mb-3 text-dark-200" />
           <p className="text-dark-500 dark:text-dark-400">Henüz soru sorulmamış.</p>
-          <p className="mt-1 text-sm text-dark-400">
+          <p className="mt-1 text-sm text-dark-500">
             Bu ürün hakkında merak ettiklerinizi sorun!
           </p>
         </div>

@@ -39,6 +39,7 @@ export default function CheckoutPage() {
   const [agreeKVKK, setAgreeKVKK] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreeMarketing, setAgreeMarketing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const allMandatoryAgreed = agreeSales && agreePreInfo && agreeKVKK && agreeTerms;
 
@@ -58,8 +59,10 @@ export default function CheckoutPage() {
     setStep(IS_DEMO ? "sms" : "payment");
   };
 
+  // Redirect to cart only when both auth and cart are fully loaded and cart is empty
   useEffect(() => {
-    if (!isLoading && isCartLoaded && items.length === 0 && !orderCompleted) router.push("/sepet");
+    if (isLoading || !isCartLoaded) return; // Wait for both to settle
+    if (items.length === 0 && !orderCompleted) router.push("/sepet");
   }, [items, router, orderCompleted, isCartLoaded, isLoading]);
 
   if (isLoading || !isCartLoaded) {
@@ -441,7 +444,7 @@ export default function CheckoutPage() {
                     <input type="checkbox" checked={agreeMarketing} onChange={(e) => setAgreeMarketing(e.target.checked)}
                       className="mt-0.5 h-4 w-4 rounded border-dark-300 text-primary-600 focus:ring-primary-500" />
                     <span className="text-dark-700 dark:text-dark-200">
-                      Kampanya ve indirimlerden haberdar olmak istiyorum. <span className="text-dark-400">(Opsiyonel)</span>
+                      Kampanya ve indirimlerden haberdar olmak istiyorum. <span className="text-dark-500">(Opsiyonel)</span>
                     </span>
                   </label>
                 </div>
@@ -454,27 +457,34 @@ export default function CheckoutPage() {
                     Geri
                   </button>
                   <button
-                    disabled={!allMandatoryAgreed}
+                    disabled={!allMandatoryAgreed || isSubmitting}
                     onClick={async () => {
-                      const order = await createOrder({
-                        items,
-                        shippingAddress: address,
-                        billingAddress: address,
-                        user: user ? { id: user.id, email: user.email } : null,
-                        customerName: { ad: address.ad, soyad: address.soyad },
-                        subtotal,
-                        shipping,
-                        discount,
-                        total,
-                        couponCode,
-                      });
-                      setOrderCompleted(true);
-                      clearCart();
-                      router.push(`/siparis-basarili?order=${order.order_no}`);
+                      if (isSubmitting) return;
+                      setIsSubmitting(true);
+                      try {
+                        const safeTotal = Math.max(0, total);
+                        const order = await createOrder({
+                          items,
+                          shippingAddress: address,
+                          billingAddress: address,
+                          user: user ? { id: user.id, email: user.email } : null,
+                          customerName: { ad: address.ad, soyad: address.soyad },
+                          subtotal,
+                          shipping,
+                          discount,
+                          total: safeTotal,
+                          couponCode,
+                        });
+                        setOrderCompleted(true);
+                        clearCart();
+                        router.push(`/siparis-basarili?order=${order.order_no}`);
+                      } catch {
+                        setIsSubmitting(false);
+                      }
                     }}
                     className="flex-1 rounded-lg bg-primary-600 px-6 py-3 text-sm font-bold text-white hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    Siparişi Tamamla (Demo)
+                    {isSubmitting ? "Sipariş oluşturuluyor..." : "Siparişi Tamamla (Demo)"}
                   </button>
                 </div>
               </div>
@@ -500,7 +510,7 @@ export default function CheckoutPage() {
                 {items.map((item) => (
                   <div key={item.product_id} className="flex items-center justify-between text-sm">
                     <span className="truncate text-dark-600 dark:text-dark-300">
-                      {item.product?.name} <span className="text-dark-400">x{item.qty}</span>
+                      {item.product?.name} <span className="text-dark-500">x{item.qty}</span>
                     </span>
                     <div className="shrink-0 text-right">
                       <span className="font-medium text-dark-900 dark:text-dark-50">
@@ -553,27 +563,34 @@ export default function CheckoutPage() {
               <p className="text-center text-xs text-red-500">Devam etmek için sözleşmeleri onaylayın</p>
             )}
             <button
-              disabled={!allMandatoryAgreed}
+              disabled={!allMandatoryAgreed || isSubmitting}
               onClick={async () => {
-                const order = await createOrder({
-                  items,
-                  shippingAddress: address,
-                  billingAddress: address,
-                  user: user ? { id: user.id, email: user.email } : null,
-                  customerName: { ad: address.ad, soyad: address.soyad },
-                  subtotal,
-                  shipping,
-                  discount,
-                  total,
-                  couponCode,
-                });
-                setOrderCompleted(true);
-                clearCart();
-                router.push(`/siparis-basarili?order=${order.order_no}`);
+                if (isSubmitting) return;
+                setIsSubmitting(true);
+                try {
+                  const safeTotal = Math.max(0, total);
+                  const order = await createOrder({
+                    items,
+                    shippingAddress: address,
+                    billingAddress: address,
+                    user: user ? { id: user.id, email: user.email } : null,
+                    customerName: { ad: address.ad, soyad: address.soyad },
+                    subtotal,
+                    shipping,
+                    discount,
+                    total: safeTotal,
+                    couponCode,
+                  });
+                  setOrderCompleted(true);
+                  clearCart();
+                  router.push(`/siparis-basarili?order=${order.order_no}`);
+                } catch {
+                  setIsSubmitting(false);
+                }
               }}
               className="w-full rounded-lg bg-primary-600 py-3 text-sm font-bold text-white hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Siparişi Tamamla ({formatPrice(total)})
+              {isSubmitting ? "Sipariş oluşturuluyor..." : `Siparişi Tamamla (${formatPrice(total)})`}
             </button>
           </div>
         </div>

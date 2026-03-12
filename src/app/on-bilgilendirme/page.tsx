@@ -69,7 +69,7 @@ export default function PreInformationPage() {
               Tuketici Hakem Heyetleri ve Tuketici Mahkemeleri&apos;ne basvuru hakkiniz saklıdır.
             </p>
 
-            <p className="mt-6 text-xs text-dark-400">Son guncelleme: Mart 2026</p>
+            <p className="mt-6 text-xs text-dark-500">Son guncelleme: Mart 2026</p>
           </div>
         </div>
       </div>

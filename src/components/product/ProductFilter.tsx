@@ -165,7 +165,7 @@ export default function ProductFilter({
                 onChange={(e) => updateFilter({ minPrice: e.target.value ? Number(e.target.value) : undefined })}
                 className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
               />
-              <span className="text-dark-400">-</span>
+              <span className="text-dark-500">-</span>
               <input
                 type="number"
                 placeholder="Max"

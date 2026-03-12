@@ -32,7 +32,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
       </button>
       {pages.map((page, i) =>
         page === "..." ? (
-          <span key={`dots-${i}`} className="px-2 text-dark-400">...</span>
+          <span key={`dots-${i}`} className="px-2 text-dark-500">...</span>
         ) : (
           <button
             key={page}

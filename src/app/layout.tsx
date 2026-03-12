@@ -59,19 +59,27 @@ export const metadata: Metadata = {
     canonical: SITE_URL,
   },
   openGraph: {
+    type: "website",
+    locale: "tr_TR",
+    url: "https://fiyatcim.com",
+    siteName: "Fiyatcim.com",
     title: SITE_FULL_NAME,
     description: SITE_DESCRIPTION,
-    url: SITE_URL,
-    siteName: "Fiyatcim",
-    locale: "tr_TR",
-    type: "website",
-    images: [{ url: `${SITE_URL}/images/og-image.png`, width: 1200, height: 630, alt: "Fiyatcim.com" }],
+    images: [
+      {
+        url: "/images/og-default.png",
+        width: 1200,
+        height: 630,
+        alt: "Fiyatcim.com - Alarm ve Güvenlik Sistemleri",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
+    site: "@fiyatcim",
     title: SITE_FULL_NAME,
     description: SITE_DESCRIPTION,
-    images: [`${SITE_URL}/images/og-image.png`],
+    images: ["/images/og-default.png"],
   },
 };
 

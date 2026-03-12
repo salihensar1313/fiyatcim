@@ -79,7 +79,7 @@ export default function DistanceSalesAgreementPage() {
             <p className="mt-6 font-medium text-dark-700 dark:text-dark-200">
               Alici, isbu sozlesmeyi elektronik ortamda onaylayarak tum sartlari kabul etmis sayilir.
             </p>
-            <p className="mt-6 text-xs text-dark-400">Son guncelleme: Mart 2026</p>
+            <p className="mt-6 text-xs text-dark-500">Son guncelleme: Mart 2026</p>
           </div>
         </div>
       </div>

@@ -64,11 +64,11 @@ export default function CartItem({ item }: CartItemProps) {
             >
               {product.name}
             </Link>
-            <p className="mt-0.5 text-xs text-dark-400">SKU: {product.sku}</p>
+            <p className="mt-0.5 text-xs text-dark-500">SKU: {product.sku}</p>
           </div>
           <button
             onClick={() => removeItem(product.id)}
-            className="shrink-0 rounded-lg p-1.5 text-dark-400 transition-colors hover:bg-red-50 hover:text-red-600"
+            className="shrink-0 rounded-lg p-1.5 text-dark-500 transition-colors hover:bg-red-50 hover:text-red-600"
           >
             <Trash2 size={16} />
           </button>

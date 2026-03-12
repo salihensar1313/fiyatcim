@@ -43,7 +43,7 @@ export default async function BlogPreview() {
               <div className="p-5">
                 <div className="flex items-center gap-2">
                   <span className="badge-red">{post.category}</span>
-                  <span className="flex items-center gap-1 text-xs text-dark-400">
+                  <span className="flex items-center gap-1 text-xs text-dark-500">
                     <Calendar size={12} />
                     {formatDate(post.created_at)}
                   </span>

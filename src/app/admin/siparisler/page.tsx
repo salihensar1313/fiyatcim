@@ -173,6 +173,22 @@ export default function AdminOrdersPage() {
     });
   };
 
+  // Export all filtered orders to CSV
+  const handleExportCSV = () => {
+    if (filtered.length === 0) return;
+    const headers = ["Sipariş No", "Müşteri", "E-posta", "Tarih", "Durum", "Toplam"];
+    const rows = filtered.map((o) => [
+      o.order_no,
+      `${o.shipping_address.ad} ${o.shipping_address.soyad}`,
+      o.customer_email || "",
+      new Date(o.created_at).toLocaleDateString("tr-TR"),
+      ORDER_STATUS_LABELS[o.status],
+      o.total,
+    ]);
+    const today = new Date().toISOString().slice(0, 10);
+    downloadCsv(`siparisler-${today}.csv`, headers, rows);
+  };
+
   // Invoice print
   const handlePrintInvoice = (order: Order) => {
     const addr = order.shipping_address;
@@ -252,6 +268,14 @@ export default function AdminOrdersPage() {
           <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">Siparişler</h1>
           <p className="text-sm text-dark-500 dark:text-dark-400">{orders.length} sipariş</p>
         </div>
+        <button
+          onClick={handleExportCSV}
+          disabled={filtered.length === 0}
+          className="flex items-center gap-2 rounded-lg border border-dark-200 bg-white px-4 py-2 text-sm font-medium text-dark-700 transition-colors hover:bg-dark-50 disabled:opacity-50 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-200 dark:hover:bg-dark-600"
+        >
+          <Download size={16} />
+          CSV İndir
+        </button>
       </div>
 
       {/* Search */}

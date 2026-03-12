@@ -24,7 +24,7 @@ export default function GuidesClient({ posts }: Props) {
       {/* Search */}
       <div className="mb-8">
         <div className="relative">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-400" />
+          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-500" />
           <input
             type="text"
             value={search}
@@ -57,7 +57,7 @@ export default function GuidesClient({ posts }: Props) {
                   <span className="rounded-full bg-primary-50 dark:bg-primary-900/30 px-2.5 py-0.5 text-xs font-medium text-primary-700">
                     {blog.category}
                   </span>
-                  <span className="flex items-center gap-1 text-xs text-dark-400">
+                  <span className="flex items-center gap-1 text-xs text-dark-500">
                     <Calendar size={12} />
                     {formatDate(blog.created_at)}
                   </span>

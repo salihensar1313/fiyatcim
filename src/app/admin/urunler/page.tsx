@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { Plus, Search, Edit, Trash2, Eye, Download } from "lucide-react";
+import { Plus, Search, Edit, Trash2, Eye, Download, CheckSquare, Square } from "lucide-react";
 import Link from "next/link";
 import { getCategories, getBrands } from "@/lib/queries";
 import type { Category, Brand, Product } from "@/types";
@@ -28,11 +28,15 @@ export default function AdminProductsPage() {
   const { showToast } = useToast();
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
+  const [brandFilter, setBrandFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"" | "active" | "inactive">("");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   // Modal state
   const [formOpen, setFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Product | null>(null);
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
 
   const filtered = useMemo(() => {
     let result = products.filter((p) => !p.deleted_at);
@@ -48,8 +52,18 @@ export default function AdminProductsPage() {
       result = result.filter((p) => p.category_id === categoryFilter);
     }
 
+    if (brandFilter) {
+      result = result.filter((p) => p.brand_id === brandFilter);
+    }
+
+    if (statusFilter === "active") {
+      result = result.filter((p) => p.is_active);
+    } else if (statusFilter === "inactive") {
+      result = result.filter((p) => !p.is_active);
+    }
+
     return result;
-  }, [products, search, categoryFilter]);
+  }, [products, search, categoryFilter, brandFilter, statusFilter]);
 
   const handleAddNew = () => {
     setEditingProduct(null);
@@ -80,6 +94,36 @@ export default function AdminProductsPage() {
       showToast("Ürün silindi", "info");
       setDeleteTarget(null);
     }
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filtered.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filtered.map((p) => p.id)));
+    }
+  };
+
+  const handleBulkDelete = () => {
+    selectedIds.forEach((id) => {
+      const p = products.find((pr) => pr.id === id);
+      if (p) {
+        deleteProduct(id);
+        addLog("product_delete", `"${p.name}" ürünü toplu silme ile silindi`, "product", id);
+      }
+    });
+    showToast(`${selectedIds.size} ürün silindi`, "info");
+    setSelectedIds(new Set());
+    setBulkDeleteOpen(false);
   };
 
   const handleExportCSV = () => {
@@ -128,6 +172,28 @@ export default function AdminProductsPage() {
         </div>
       </div>
 
+      {/* Bulk Actions Bar */}
+      {selectedIds.size > 0 && (
+        <div className="mb-4 flex items-center gap-3 rounded-xl border border-primary-200 bg-primary-50 dark:border-primary-800 dark:bg-primary-900/20 p-3">
+          <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
+            {selectedIds.size} ürün seçildi
+          </span>
+          <button
+            onClick={() => setBulkDeleteOpen(true)}
+            className="flex items-center gap-1.5 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700"
+          >
+            <Trash2 size={14} />
+            Toplu Sil
+          </button>
+          <button
+            onClick={() => setSelectedIds(new Set())}
+            className="ml-auto text-xs font-medium text-dark-500 hover:text-dark-700 dark:text-dark-400"
+          >
+            Seçimi Temizle
+          </button>
+        </div>
+      )}
+
       {/* Filters */}
       <div className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-3">
         <div className="relative flex-1">
@@ -152,6 +218,27 @@ export default function AdminProductsPage() {
             </option>
           ))}
         </select>
+        <select
+          value={brandFilter}
+          onChange={(e) => setBrandFilter(e.target.value)}
+          className="rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 focus:border-primary-600 focus:outline-none dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100"
+        >
+          <option value="">Tüm Markalar</option>
+          {brands.map((b) => (
+            <option key={b.id} value={b.id}>
+              {b.name}
+            </option>
+          ))}
+        </select>
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value as "" | "active" | "inactive")}
+          className="rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 focus:border-primary-600 focus:outline-none dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100"
+        >
+          <option value="">Tüm Durumlar</option>
+          <option value="active">Aktif</option>
+          <option value="inactive">Pasif</option>
+        </select>
       </div>
 
       {/* Table */}
@@ -160,6 +247,11 @@ export default function AdminProductsPage() {
           <table className="w-full text-left text-sm">
             <thead className="border-b border-dark-100 bg-dark-50 dark:border-dark-700 dark:bg-dark-900">
               <tr>
+                <th className="w-10 px-3 py-3">
+                  <button onClick={toggleSelectAll} className="text-dark-400 hover:text-dark-600 dark:hover:text-dark-200">
+                    {selectedIds.size === filtered.length && filtered.length > 0 ? <CheckSquare size={16} /> : <Square size={16} />}
+                  </button>
+                </th>
                 <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Ürün</th>
                 <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">SKU</th>
                 <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Kategori</th>
@@ -178,6 +270,11 @@ export default function AdminProductsPage() {
 
                 return (
                   <tr key={product.id} className="hover:bg-dark-50/50 dark:hover:bg-dark-700/50">
+                    <td className="w-10 px-3 py-3">
+                      <button onClick={() => toggleSelect(product.id)} className="text-dark-400 hover:text-dark-600 dark:hover:text-dark-200">
+                        {selectedIds.has(product.id) ? <CheckSquare size={16} className="text-primary-600" /> : <Square size={16} />}
+                      </button>
+                    </td>
                     <td className="max-w-[200px] px-4 py-3">
                       <p className="truncate font-medium text-dark-900 dark:text-dark-50">{product.name}</p>
                     </td>
@@ -261,6 +358,18 @@ export default function AdminProductsPage() {
         variant="danger"
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
+      />
+
+      {/* Bulk Delete Confirm Modal */}
+      <ConfirmModal
+        isOpen={bulkDeleteOpen}
+        title="Toplu Ürün Silme"
+        message={`${selectedIds.size} ürünü silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`}
+        confirmLabel={`${selectedIds.size} Ürünü Sil`}
+        cancelLabel="İptal"
+        variant="danger"
+        onConfirm={handleBulkDelete}
+        onCancel={() => setBulkDeleteOpen(false)}
       />
     </div>
   );

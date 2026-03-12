@@ -30,6 +30,8 @@ export default function ProductCard({ product }: ProductCardProps) {
   const { toggleCompare, isInCompare, isFull } = useCompare();
   const inCompare = isInCompare(product.id);
   const flashSale = useCountdown(product.sale_ends_at);
+  const cartItem = items.find((i) => i.product_id === product.id);
+  const cartQty = cartItem?.qty || 0;
 
   return (
     <div className="card group relative flex flex-col overflow-hidden">
@@ -51,7 +53,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           </span>
         )}
         <PriceDropBadge productId={product.id} currentPrice={product.sale_price || product.price} />
-        {flashSale.ready && !flashSale.isExpired && product.sale_ends_at && (
+        {flashSale.ready && !flashSale.isExpired && product.sale_ends_at && product.stock > 0 && (
           <span className="flex items-center gap-1 rounded-full bg-yellow-500 px-2 py-1 text-xs font-bold text-white animate-pulse">
             <Zap size={12} />
             {String(flashSale.hours).padStart(2, "0")}:{String(flashSale.minutes).padStart(2, "0")}:{String(flashSale.seconds).padStart(2, "0")}
@@ -71,7 +73,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         >
           <Heart
             size={18}
-            className={inWishlist ? "fill-primary-600 text-primary-600" : "text-dark-400"}
+            className={inWishlist ? "fill-primary-600 text-primary-600" : "text-dark-500"}
           />
         </button>
         <button
@@ -89,7 +91,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         >
           <GitCompareArrows
             size={16}
-            className={inCompare ? "text-blue-600" : "text-dark-400"}
+            className={inCompare ? "text-blue-600" : "text-dark-500"}
           />
         </button>
       </div>
@@ -109,7 +111,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div className="flex flex-1 flex-col p-4">
         {/* Brand */}
         {product.brand?.name && (
-          <span className="text-xs font-medium uppercase tracking-wider text-dark-400">
+          <span className="text-xs font-medium uppercase tracking-wider text-dark-500">
             {product.brand.name}
           </span>
         )}
@@ -123,14 +125,19 @@ export default function ProductCard({ product }: ProductCardProps) {
         </Link>
 
         {/* Rating */}
-        <div className="mt-2">
+        <div className="mt-2 flex items-center gap-1.5">
           {product.reviews && product.reviews.length > 0 ? (
-            <Rating
-              rating={product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length}
-              size="sm"
-            />
+            <>
+              <Rating
+                rating={product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length}
+                size="sm"
+              />
+              <span className="text-xs text-dark-500">({product.reviews.length})</span>
+            </>
           ) : (
-            <span className="text-xs text-dark-400">Henüz değerlendirme yok</span>
+            <Link href={`/urunler/${product.slug}#degerlendirmeler`} className="text-xs text-primary-500 hover:text-primary-600 hover:underline">
+              İlk değerlendirmeyi yaz
+            </Link>
           )}
         </div>
 
@@ -143,7 +150,12 @@ export default function ProductCard({ product }: ProductCardProps) {
             salePriceTry={product.sale_price}
             size="sm"
           />
-          <span className={`mt-1 text-xs font-medium ${stock.color}`}>{stock.label}</span>
+          <div className="mt-1.5 flex items-center gap-2">
+            <span className={`text-xs font-medium ${stock.color}`}>{stock.label}</span>
+            {product.price >= 2000 && (
+              <span className="text-[10px] font-medium text-green-600 dark:text-green-400">Ücretsiz Kargo</span>
+            )}
+          </div>
         </div>
 
         {/* Add to Cart / Quantity Controls */}
@@ -153,35 +165,31 @@ export default function ProductCard({ product }: ProductCardProps) {
             <div className="flex flex-1 items-center justify-between rounded-lg border border-green-200 bg-green-50">
               <button
                 onClick={() => {
-                  const cartItem = items.find((i) => i.product_id === product.id);
-                  if (cartItem && cartItem.qty <= 1) {
+                  if (cartQty <= 1) {
                     removeItem(product.id);
                     showToast("Ürün sepetten çıkarıldı", "info");
                   } else {
-                    updateQuantity(product.id, (cartItem?.qty || 1) - 1);
+                    updateQuantity(product.id, cartQty - 1);
                   }
                 }}
                 className="flex h-10 w-10 items-center justify-center rounded-l-lg text-green-700 transition-colors hover:bg-green-100"
               >
-                {(items.find((i) => i.product_id === product.id)?.qty || 0) <= 1 ? (
+                {cartQty <= 1 ? (
                   <Trash2 size={15} />
                 ) : (
                   <Minus size={15} />
                 )}
               </button>
               <span className="min-w-[2rem] text-center text-sm font-bold text-green-700">
-                {items.find((i) => i.product_id === product.id)?.qty || 0}
+                {cartQty}
               </span>
               <button
                 onClick={() => {
-                  const cartItem = items.find((i) => i.product_id === product.id);
-                  if (cartItem && cartItem.qty < product.stock) {
-                    updateQuantity(product.id, cartItem.qty + 1);
+                  if (cartQty < product.stock) {
+                    updateQuantity(product.id, cartQty + 1);
                   }
                 }}
-                disabled={
-                  (items.find((i) => i.product_id === product.id)?.qty || 0) >= product.stock
-                }
+                disabled={cartQty >= product.stock}
                 className="flex h-10 w-10 items-center justify-center rounded-r-lg text-green-700 transition-colors hover:bg-green-100 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <Plus size={15} />
@@ -195,14 +203,14 @@ export default function ProductCard({ product }: ProductCardProps) {
               showToast("Ürün sepete eklendi", "success");
             }}
             disabled={product.stock === 0}
-            className={`mt-3 flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all ${
+            className={`mt-3 flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all active:scale-95 ${
               product.stock === 0
-                ? "cursor-not-allowed bg-dark-100 text-dark-400"
-                : "bg-primary-600 text-white hover:bg-primary-700"
+                ? "cursor-not-allowed bg-dark-200 text-dark-500 dark:bg-dark-700 dark:text-dark-400"
+                : "bg-primary-600 text-white hover:bg-primary-700 hover:shadow-md"
             }`}
           >
             <ShoppingCart size={16} />
-            {product.stock === 0 ? "Tükendi" : "Sepete Ekle"}
+            {product.stock === 0 ? "Stok Bildir" : "Sepete Ekle"}
           </button>
         )}
       </div>

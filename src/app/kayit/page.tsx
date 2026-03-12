@@ -165,6 +165,7 @@ export default function RegisterPage() {
 
   // Son adım: Kayıt tamamla
   const handleFinalSubmit = async () => {
+    if (loading) return; // Prevent double-submit
     setError("");
     if (!agreeKVKK || !agreeTerms || !agreePrivacy) {
       setError("Zorunlu sözleşmeleri kabul etmelisiniz.");
@@ -217,7 +218,7 @@ export default function RegisterPage() {
                   className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium ${
                     i <= currentStepIndex
                       ? "bg-primary-600 text-white"
-                      : "bg-dark-100 dark:bg-dark-700 text-dark-400 dark:text-dark-300"
+                      : "bg-dark-100 dark:bg-dark-700 text-dark-500 dark:text-dark-300"
                   }`}
                 >
                   <s.icon size={14} />
@@ -267,7 +268,7 @@ export default function RegisterPage() {
                   <div className="w-full border-t border-dark-200 dark:border-dark-600" />
                 </div>
                 <div className="relative flex justify-center text-xs">
-                  <span className="bg-white px-3 text-dark-400 dark:bg-dark-800 dark:text-dark-500">veya</span>
+                  <span className="bg-white px-3 text-dark-500 dark:bg-dark-800 dark:text-dark-400">veya</span>
                 </div>
               </div>
 
@@ -281,6 +282,8 @@ export default function RegisterPage() {
                   if (result.error) {
                     setError(result.error);
                     setGoogleLoading(false);
+                  } else if (IS_DEMO) {
+                    router.push("/hesabim");
                   }
                 }}
                 disabled={googleLoading}
@@ -307,11 +310,11 @@ export default function RegisterPage() {
                 </p>
               </div>
 
-              {/* Demo bilgisi — sadece demo modda */}
-              {IS_DEMO && (
+              {/* Demo bilgisi — sadece development ortamında göster */}
+              {IS_DEMO && process.env.NODE_ENV === "development" && (
                 <div className="mb-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 p-3">
                   <p className="text-xs font-semibold text-blue-700 dark:text-blue-300">Demo Modu</p>
-                  <p className="mt-0.5 text-xs text-blue-600 dark:text-blue-400">Doğrulama kodu: <span className="font-mono font-bold">123456</span></p>
+                  <p className="mt-0.5 text-xs text-blue-600 dark:text-blue-400">Herhangi bir 6 haneli kod ile doğrulama yapabilirsiniz.</p>
                 </div>
               )}
 
@@ -352,7 +355,7 @@ export default function RegisterPage() {
                 {/* Tekrar gönder */}
                 <div className="text-center">
                   {cooldownLeft > 0 ? (
-                    <p className="text-sm text-dark-400">
+                    <p className="text-sm text-dark-500">
                       Yeni kod göndermek için {cooldownLeft} saniye bekleyin
                     </p>
                   ) : (
@@ -452,7 +455,7 @@ export default function RegisterPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-400"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-500"
                     >
                       {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
@@ -478,7 +481,7 @@ export default function RegisterPage() {
                           );
                         })}
                       </div>
-                      <p className="mt-1 text-xs text-dark-400">
+                      <p className="mt-1 text-xs text-dark-500">
                         {(() => {
                           const s =
                             (password.length >= 6 ? 1 : 0) +
@@ -623,11 +626,11 @@ export default function RegisterPage() {
                     className="mt-0.5 h-4 w-4 rounded border-dark-300 text-primary-600 focus:ring-primary-500"
                   />
                   <span className="text-sm text-dark-700 dark:text-dark-200">
-                    Kampanya, indirim ve duyurulardan e-posta ile haberdar olmak istiyorum. <span className="text-dark-400">(Opsiyonel)</span>
+                    Kampanya, indirim ve duyurulardan e-posta ile haberdar olmak istiyorum. <span className="text-dark-500">(Opsiyonel)</span>
                   </span>
                 </label>
 
-                <p className="text-xs text-dark-400">
+                <p className="text-xs text-dark-500">
                   <span className="text-primary-600">*</span> ile işaretli alanlar zorunludur.
                 </p>
 

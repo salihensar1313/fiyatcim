@@ -185,7 +185,7 @@ export default function ProductTabs({ product }: ProductTabsProps) {
         )}
 
         {activeTab === "specs" && (
-          <div className="overflow-hidden rounded-lg border border-dark-100 dark:border-dark-700">
+          <div className="overflow-x-auto rounded-lg border border-dark-100 dark:border-dark-700">
             <table className="w-full">
               <tbody>
                 {Object.entries(product.specs).map(([key, value], index) => (

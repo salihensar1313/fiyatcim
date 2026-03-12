@@ -38,7 +38,7 @@ export default function ForgotPasswordPage() {
                 <span className="font-medium text-dark-700 dark:text-dark-200">{email}</span> adresine
                 şifre sıfırlama bağlantısı gönderildi.
               </p>
-              <p className="mt-1 text-xs text-dark-400">
+              <p className="mt-1 text-xs text-dark-500">
                 (Demo mod: Gerçek bir e-posta gönderilmemiştir.)
               </p>
               <Link

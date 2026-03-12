@@ -46,7 +46,7 @@ export default function WhatsAppWidget() {
               <p className="text-sm text-dark-700 dark:text-dark-200">
                 Merhaba! Size nasıl yardımcı olabiliriz? Ürünler, kurulum veya teknik destek hakkında sorularınızı bekliyoruz.
               </p>
-              <p className="mt-1 text-right text-[10px] text-dark-400">
+              <p className="mt-1 text-right text-[10px] text-dark-500">
                 {new Date().getHours().toString().padStart(2, "0")}:
                 {new Date().getMinutes().toString().padStart(2, "0")}
               </p>

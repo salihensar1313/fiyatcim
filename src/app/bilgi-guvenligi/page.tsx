@@ -197,7 +197,7 @@ export default function BilgiGuvenligiPage() {
             </p>
           </section>
 
-          <p className="text-center text-xs text-dark-400">Son güncelleme: Mart 2026</p>
+          <p className="text-center text-xs text-dark-500">Son güncelleme: Mart 2026</p>
         </div>
       </div>
     </div>

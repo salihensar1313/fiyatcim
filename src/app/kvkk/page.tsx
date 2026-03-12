@@ -61,7 +61,7 @@ export default function KVKKPage() {
               <Eye size={20} className="text-primary-600" />
               İşlenen Kişisel Veriler
             </h2>
-            <div className="overflow-hidden rounded-lg border border-dark-100">
+            <div className="overflow-x-auto rounded-lg border border-dark-100">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-dark-800 text-white">
@@ -143,7 +143,7 @@ export default function KVKKPage() {
               öngörülen zamanaşımı süreleri boyunca saklanır. Saklama süresinin sona ermesiyle
               birlikte veriler silinir, yok edilir veya anonim hale getirilir.
             </p>
-            <div className="mt-3 overflow-hidden rounded-lg border border-dark-100">
+            <div className="mt-3 overflow-x-auto rounded-lg border border-dark-100">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-dark-800 text-white">
@@ -234,7 +234,7 @@ export default function KVKKPage() {
             </p>
           </div>
 
-          <p className="text-center text-xs text-dark-400">Son güncelleme: Mart 2026</p>
+          <p className="text-center text-xs text-dark-500">Son güncelleme: Mart 2026</p>
         </div>
       </div>
     </div>

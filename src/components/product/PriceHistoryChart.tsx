@@ -70,7 +70,7 @@ export default function PriceHistoryChart({ productId, currentPrice, compact = f
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <BarChart3 className="mb-3 text-dark-300" size={48} />
         <p className="text-lg font-medium text-dark-600 dark:text-dark-300">Fiyat takibi başladı</p>
-        <p className="mt-1 text-sm text-dark-400">
+        <p className="mt-1 text-sm text-dark-500">
           Henüz yeterli veri yok. Fiyat değişimleri kaydedilmeye başlandı, yakında grafik hazır olacak.
         </p>
       </div>
@@ -179,7 +179,7 @@ export default function PriceHistoryChart({ productId, currentPrice, compact = f
           <StatCard
             label="Ortalama"
             value={formatPrice(stats.average)}
-            icon={<Minus size={16} className="text-dark-400" />}
+            icon={<Minus size={16} className="text-dark-500" />}
           />
           <StatCard
             label="Son 7 Gün"
@@ -195,7 +195,7 @@ export default function PriceHistoryChart({ productId, currentPrice, compact = f
                   : stats.change7d > 0
                     ? "text-red-600"
                     : "text-dark-600 dark:text-dark-300"
-                : "text-dark-400"
+                : "text-dark-500"
             }
             icon={<Calendar size={16} className="text-blue-500" />}
           />
@@ -247,7 +247,7 @@ function StatCard({
         {label}
       </div>
       <div className={`mt-1 text-sm font-bold ${valueColor}`}>{value}</div>
-      {sub && <div className="mt-0.5 text-xs text-dark-400">{sub}</div>}
+      {sub && <div className="mt-0.5 text-xs text-dark-500">{sub}</div>}
     </div>
   );
 }

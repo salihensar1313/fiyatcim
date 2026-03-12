@@ -78,7 +78,7 @@ const CouponContext = createContext<CouponContextType | undefined>(undefined);
 const STORAGE_KEY = "fiyatcim_coupons";
 const USED_COUPONS_KEY = "fiyatcim_used_coupons"; // { couponId: [userId, ...] }
 
-let nextId = seedCoupons.length + 1;
+// Removed module-level nextId counter (React Strict Mode safe)
 
 // ==========================================
 // PROVIDER
@@ -122,7 +122,7 @@ export function CouponProvider({ children }: { children: ReactNode }) {
   const addCoupon = useCallback((data: Omit<Coupon, "id" | "created_at" | "used_count">): Coupon => {
     const newCoupon: Coupon = {
       ...data,
-      id: `coupon-${nextId++}`,
+      id: `coupon-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
       used_count: 0,
       created_at: new Date().toISOString(),
     };

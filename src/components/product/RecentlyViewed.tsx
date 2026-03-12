@@ -32,7 +32,7 @@ export default function RecentlyViewed({ excludeId }: RecentlyViewedProps) {
   return (
     <section className="mt-12">
       <div className="mb-6 flex items-center gap-2">
-        <Clock size={20} className="text-dark-400" />
+        <Clock size={20} className="text-dark-500" />
         <h2 className="text-xl font-bold text-dark-900 dark:text-dark-50">Son Görüntülenen Ürünler</h2>
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

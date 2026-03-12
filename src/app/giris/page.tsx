@@ -12,12 +12,14 @@ const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirect") || "/hesabim";
+  const rawRedirect = searchParams.get("redirect") || "/hesabim";
+  const redirectTo = rawRedirect.startsWith("/") && !rawRedirect.startsWith("//") ? rawRedirect : "/hesabim";
   const { signIn, signInWithGoogle } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
+  const authError = searchParams.get("error");
+  const [error, setError] = useState(authError === "auth" ? "Google ile giriş yapılamadı. Lütfen tekrar deneyin." : "");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
@@ -75,7 +77,7 @@ function LoginForm() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-400"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-500"
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -107,7 +109,7 @@ function LoginForm() {
               <div className="w-full border-t border-dark-200 dark:border-dark-600" />
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className="bg-white px-3 text-dark-400 dark:bg-dark-800 dark:text-dark-500">veya</span>
+              <span className="bg-white px-3 text-dark-500 dark:bg-dark-800 dark:text-dark-400">veya</span>
             </div>
           </div>
 
@@ -121,8 +123,11 @@ function LoginForm() {
               if (result.error) {
                 setError(result.error);
                 setGoogleLoading(false);
+              } else if (IS_DEMO) {
+                // Demo mode: signInWithGoogle resolves immediately, redirect manually
+                router.push(redirectTo);
               }
-              // If no error, Supabase will redirect to Google OAuth
+              // Non-demo: Supabase will redirect to Google OAuth automatically
             }}
             disabled={googleLoading}
             className="flex w-full items-center justify-center gap-3 rounded-lg border border-dark-200 bg-white px-4 py-3 text-sm font-semibold text-dark-700 transition-all hover:border-dark-300 hover:bg-dark-50 hover:shadow-sm disabled:opacity-50 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-200 dark:hover:bg-dark-600"
@@ -145,12 +150,11 @@ function LoginForm() {
             </p>
           </div>
 
-          {/* Demo bilgisi — sadece demo modda göster */}
-          {IS_DEMO && (
+          {/* Demo bilgisi — sadece development ortamında göster */}
+          {IS_DEMO && process.env.NODE_ENV === "development" && (
             <div className="mt-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 p-3">
-              <p className="text-xs font-semibold text-blue-700 dark:text-blue-300">Demo Giriş Bilgileri:</p>
-              <p className="mt-1 text-xs text-blue-600 dark:text-blue-400">Admin: admin@fiyatcim.com / admin123</p>
-              <p className="text-xs text-blue-600 dark:text-blue-400">Kullanıcı: Herhangi bir e-posta / 6+ karakter şifre</p>
+              <p className="text-xs font-semibold text-blue-700 dark:text-blue-300">Demo Modu Aktif</p>
+              <p className="mt-1 text-xs text-blue-600 dark:text-blue-400">Herhangi bir e-posta ve 6+ karakter şifre ile giriş yapabilirsiniz.</p>
             </div>
           )}
         </div>

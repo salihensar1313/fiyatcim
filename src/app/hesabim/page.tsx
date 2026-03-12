@@ -215,7 +215,7 @@ export default function AccountPage() {
                   onChange={handleAvatarChange}
                   className="hidden"
                 />
-                <p className="text-xs text-dark-400">JPG, PNG veya WebP. Maks. 5MB.</p>
+                <p className="text-xs text-dark-500">JPG, PNG veya WebP. Maks. 5MB.</p>
               </div>
             </div>
           </div>

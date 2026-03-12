@@ -72,7 +72,7 @@ function AraContent() {
       {/* Search Form */}
       <form onSubmit={handleSearch} className="mx-auto mb-8 max-w-2xl">
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-400" size={20} />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-500" size={20} />
           <input
             type="text"
             value={query}
@@ -110,7 +110,7 @@ function AraContent() {
           /* No results */
           <div className="text-center">
             <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-dark-100">
-              <SearchX size={40} className="text-dark-400" />
+              <SearchX size={40} className="text-dark-500" />
             </div>
             <h2 className="text-xl font-bold text-dark-800 dark:text-dark-100">
               &quot;{queryParam}&quot; ile eşleşen ürün bulunamadı

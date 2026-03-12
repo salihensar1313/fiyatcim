@@ -66,6 +66,24 @@ export function CartProvider({ children }: { children: ReactNode }) {
     safeSetJSON(storageKey, { items, couponCode });
   }, [items, couponCode, isLoaded, storageKey]);
 
+  // Cross-tab sync via storage event
+  useEffect(() => {
+    const handler = (e: StorageEvent) => {
+      if (e.key !== storageKey || !e.newValue) return;
+      try {
+        const data = JSON.parse(e.newValue);
+        const validItems = (Array.isArray(data.items) ? data.items : []).filter(
+          (item: unknown): item is CartItem =>
+            typeof item === "object" && item !== null && "product_id" in item && "qty" in item
+        );
+        setItems(validItems);
+        setCouponCode(typeof data.couponCode === "string" ? data.couponCode : null);
+      } catch { /* ignore malformed data */ }
+    };
+    window.addEventListener("storage", handler);
+    return () => window.removeEventListener("storage", handler);
+  }, [storageKey]);
+
   const addItem = useCallback((product: Product, qty = 1) => {
     setItems((prev) => {
       const existing = prev.find((item) => item.product_id === product.id);
@@ -90,9 +108,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
       return;
     }
     setItems((prev) =>
-      prev.map((item) =>
-        item.product_id === productId ? { ...item, qty } : item
-      )
+      prev.map((item) => {
+        if (item.product_id !== productId) return item;
+        // Cap at stock limit
+        const maxQty = item.product?.stock ?? qty;
+        return { ...item, qty: Math.min(qty, maxQty) };
+      })
     );
   }, []);
 
@@ -132,7 +153,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items]);
 
   const getTotal = useCallback(() => {
-    return getSubtotal() - discount + getShipping() + getGiftWrapTotal();
+    return Math.max(0, getSubtotal() - discount + getShipping() + getGiftWrapTotal());
   }, [getSubtotal, discount, getShipping, getGiftWrapTotal]);
 
   const isInCart = useCallback(

@@ -211,6 +211,18 @@ export function OrderProvider({ children }: { children: ReactNode }) {
         product: item.product,
       }));
 
+      // Server-side recalculation: don't trust client-sent totals
+      const recalcSubtotal = params.items.reduce((sum, item) => {
+        const price = item.product?.sale_price || item.product?.price || 0;
+        return sum + price * item.qty;
+      }, 0);
+      const FREE_SHIPPING_THRESHOLD = 2000;
+      const SHIPPING_COST = 49.90;
+      const recalcShipping = recalcSubtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
+      // Use client-sent discount (coupon validation would be done separately)
+      const recalcDiscount = Math.min(Math.max(0, params.discount), recalcSubtotal);
+      const recalcTotal = Math.max(0, recalcSubtotal - recalcDiscount + recalcShipping);
+
       const initialLog: OrderStatusLog = {
         id: `log-${Date.now()}`,
         order_id: orderId,
@@ -228,15 +240,16 @@ export function OrderProvider({ children }: { children: ReactNode }) {
         payment_status: "success",
         payment_provider: null,
         payment_ref: null,
-        subtotal: params.subtotal,
-        shipping: params.shipping,
-        discount: params.discount,
-        total: params.total,
+        subtotal: recalcSubtotal,
+        shipping: recalcShipping,
+        discount: recalcDiscount,
+        total: recalcTotal,
         currency: "TRY",
         shipping_address: params.shippingAddress,
         billing_address: params.billingAddress,
         shipping_company: null,
         tracking_no: null,
+        customer_email: params.user?.email || "",
         notes: null,
         coupon_id: params.couponCode,
         created_at: now,

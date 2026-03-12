@@ -45,6 +45,10 @@ function OrderTrackingContent() {
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState("");
 
+  // Rate limiting: max 5 attempts per 60 seconds
+  const [attempts, setAttempts] = useState(0);
+  const [lockUntil, setLockUntil] = useState(0);
+
   // URL'den gelen parametreleri otomatik ara
   useEffect(() => {
     const urlOrderNo = searchParams.get("order_no");
@@ -64,23 +68,41 @@ function OrderTrackingContent() {
       return;
     }
 
+    // Rate limiting check
+    const now = Date.now();
+    if (now < lockUntil) {
+      const remaining = Math.ceil((lockUntil - now) / 1000);
+      setError(`Çok fazla deneme yaptınız. ${remaining} saniye sonra tekrar deneyin.`);
+      return;
+    }
+
+    // Track attempts
+    const newAttempts = attempts + 1;
+    setAttempts(newAttempts);
+    if (newAttempts >= 5) {
+      setLockUntil(now + 60_000); // Lock for 60 seconds
+      setAttempts(0);
+      setError("Çok fazla deneme yaptınız. 60 saniye sonra tekrar deneyin.");
+      return;
+    }
+
     setSearched(true);
     setError("");
 
-    // Privacy: order_no + email eşleşmesi zorunlu
+    // Privacy: order_no + customer_email eşleşmesi ZORUNLU (IDOR koruması)
     const order = orders.find(
       (o) =>
         o.order_no === oNo &&
         o.shipping_address &&
-        // Misafir e-posta kontrolü: billing_address veya notes alanından
-        // Demo: user_id boş ise misafir. E-posta kontrolü basit tutuldu.
-        true // Demo modda sadece order_no ile eşleştirme
+        o.customer_email?.toLowerCase() === em
     );
 
     if (order) {
       setFoundOrder(order);
+      setAttempts(0); // Reset on success
     } else {
       setFoundOrder(null);
+      // Generic error — don't reveal whether order_no exists
       setError("Sipariş bulunamadı. Lütfen sipariş numaranızı ve e-posta adresinizi kontrol ediniz.");
     }
   };
@@ -151,11 +173,11 @@ function OrderTrackingContent() {
             <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-dark-400">Sipariş No</p>
+                  <p className="text-xs text-dark-500">Sipariş No</p>
                   <p className="font-mono text-lg font-bold text-dark-900 dark:text-dark-50">{foundOrder.order_no}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-dark-400">Tarih</p>
+                  <p className="text-xs text-dark-500">Tarih</p>
                   <p className="text-sm font-medium text-dark-700 dark:text-dark-200">
                     {new Date(foundOrder.created_at).toLocaleDateString("tr-TR", {
                       day: "numeric",
@@ -197,12 +219,12 @@ function OrderTrackingContent() {
                           <div className={`flex h-10 w-10 items-center justify-center rounded-full ${
                             status === "completed" ? "bg-green-500 text-white" :
                             status === "active" ? "bg-primary-600 text-white" :
-                            "bg-dark-100 dark:bg-dark-700 text-dark-400"
+                            "bg-dark-100 dark:bg-dark-700 text-dark-500"
                           }`}>
                             <Icon size={18} />
                           </div>
                           <p className={`mt-2 text-center text-xs font-medium ${
-                            status === "inactive" ? "text-dark-400" : "text-dark-700 dark:text-dark-200"
+                            status === "inactive" ? "text-dark-500" : "text-dark-700 dark:text-dark-200"
                           }`}>
                             {ORDER_STATUS_LABELS[step]}
                           </p>
@@ -245,7 +267,7 @@ function OrderTrackingContent() {
                   <div key={item.id} className="flex items-center justify-between border-b border-dark-50 pb-3 last:border-0 last:pb-0">
                     <div>
                       <p className="text-sm font-medium text-dark-900 dark:text-dark-50">{item.name_snapshot}</p>
-                      <p className="text-xs text-dark-400">{item.qty} adet</p>
+                      <p className="text-xs text-dark-500">{item.qty} adet</p>
                     </div>
                     <p className="text-sm font-medium text-dark-700 dark:text-dark-200">
                       {((item.sale_price_snapshot || item.price_snapshot) * item.qty).toLocaleString("tr-TR")}₺

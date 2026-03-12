@@ -43,9 +43,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       if (next.length > 3) return next.slice(next.length - 3);
       return next;
     });
+    // Error toasts stay longer (5s), others auto-dismiss in 3s
+    const duration = type === "error" ? 5000 : 3000;
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 3000);
+    }, duration);
   }, []);
 
   const removeToast = useCallback((id: number) => {
@@ -56,7 +58,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={{ showToast }}>
       {children}
       {/* Toast Container */}
-      <div className="fixed bottom-4 right-4 z-[70] flex flex-col gap-2">
+      <div className="fixed bottom-24 left-4 right-4 z-[70] flex flex-col items-center gap-2 sm:left-auto sm:right-4 sm:items-end lg:bottom-6">
         {toasts.map((toast) => (
           <div
             key={toast.id}
@@ -69,7 +71,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             <span className="text-sm font-medium text-dark-800 dark:text-dark-100">{toast.message}</span>
             <button
               onClick={() => removeToast(toast.id)}
-              className="ml-2 text-dark-400 hover:text-dark-600 dark:text-dark-300"
+              className="ml-2 text-dark-500 hover:text-dark-600 dark:text-dark-300"
             >
               <X size={14} />
             </button>

@@ -31,7 +31,7 @@ interface AuthContextType {
   signOut: () => void;
   updateProfile: (data: Partial<Profile>) => void;
   adminUpdateUser: (userId: string, data: { ad: string; soyad: string; telefon: string }) => void;
-  adminChangePassword: (email: string, newPassword: string) => { error?: string };
+  adminChangePassword: (email: string, newPassword: string) => Promise<{ error?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -39,21 +39,32 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const AUTH_STORAGE_KEY = "fiyatcim_auth";
 const IS_DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
+/** Simple SHA-256 hash for demo password storage (NOT for production auth) */
+async function simpleHash(text: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(text + "_fiyatcim_salt");
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
 function translateAuthError(msg: string): string {
+  // Use generic messages to prevent email enumeration attacks
   const map: Record<string, string> = {
     "Invalid login credentials": "Geçersiz e-posta veya şifre.",
-    "Email not confirmed": "E-posta adresiniz henüz doğrulanmamış.",
-    "User not found": "Bu e-posta ile kayıtlı kullanıcı bulunamadı.",
+    "Email not confirmed": "Geçersiz e-posta veya şifre.",
+    "User not found": "Geçersiz e-posta veya şifre.",
     "Email rate limit exceeded": "Çok fazla deneme yaptınız. Lütfen biraz bekleyin.",
     "For security purposes, you can only request this after": "Güvenlik nedeniyle lütfen biraz bekleyip tekrar deneyin.",
-    "User already registered": "Bu e-posta adresi zaten kayıtlı.",
+    "User already registered": "Kayıt işleminiz alındı. Devam etmek için e-postanızı kontrol edin.",
     "Password should be at least 6 characters": "Şifre en az 6 karakter olmalıdır.",
     "Signup requires a valid password": "Geçerli bir şifre giriniz.",
   };
   for (const [en, tr] of Object.entries(map)) {
     if (msg.includes(en)) return tr;
   }
-  return msg;
+  // Never leak raw Supabase error messages to client
+  return "Bir hata oluştu. Lütfen tekrar deneyin.";
 }
 
 function mapProfile(data: Record<string, unknown>): Profile {
@@ -73,13 +84,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   // ========================================
-  // DEMO MODE: localStorage auth
+  // DEMO MODE: localStorage auth + httpOnly admin cookie
   // ========================================
   const persistDemo = useCallback((u: User | null, p: Profile | null) => {
     if (u) {
       safeSetJSON(AUTH_STORAGE_KEY, { user: u, profile: p });
+      // Set httpOnly admin cookie via API if admin role
+      if (p?.role === "admin") {
+        fetch("/api/auth/demo-admin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: u.id, email: u.email }),
+        }).catch(() => {});
+      }
     } else {
       safeRemove(AUTH_STORAGE_KEY);
+      // Clear admin cookie on logout
+      fetch("/api/auth/demo-admin", { method: "DELETE" }).catch(() => {});
     }
   }, []);
 
@@ -101,7 +122,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const supabase = createClient();
     let settled = false;
 
-    const settle = () => { if (!settled) { settled = true; setIsLoading(false); } };
+    const settle = () => { if (!settled) { settled = true; clearTimeout(timer); setIsLoading(false); } };
 
     // Timeout: 5s max bekle, sonra loading'i kapat
     const timer = setTimeout(settle, 5000);
@@ -143,26 +164,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     if (IS_DEMO_MODE) {
-      // Demo admin hesabı
-      if (email === "admin@fiyatcim.com" && password === "admin123") {
-        const u: User = { id: "user-admin", email };
-        const p: Profile = { user_id: "user-admin", ad: "Admin", soyad: "Fiyatcim", telefon: "05551234567", role: "admin" };
-        setUser(u);
-        setProfile(p);
-        persistDemo(u, p);
-        return {};
-      }
-
-      // Demo normal kullanıcı — kayıtlı şifre kontrolü
-      const passwords = safeGetJSON<Record<string, string>>("fiyatcim_demo_passwords", {});
-      const pwMap = typeof passwords === "object" && passwords ? passwords : {};
+      // Demo: kayıtlı kullanıcı kontrolü (şifre hash ile karşılaştırılır)
       const registeredUsers = safeGetJSON<RegisteredUser[]>("fiyatcim_registered_users", []);
       const regArr = Array.isArray(registeredUsers) ? registeredUsers : [];
       const registeredUser = regArr.find((ru) => ru.email === email);
 
-      // Kayıtlı kullanıcı + şifresi var → kontrol et
-      if (registeredUser && pwMap[email]) {
-        if (pwMap[email] !== password) {
+      if (registeredUser) {
+        // Kayıtlı kullanıcı — basit hash kontrolü
+        const hashes = safeGetJSON<Record<string, string>>("fiyatcim_demo_pw_hashes", {});
+        const hashMap = typeof hashes === "object" && hashes ? hashes : {};
+        const inputHash = await simpleHash(password);
+        if (hashMap[email] !== inputHash) {
           return { error: "Geçersiz e-posta veya şifre." };
         }
         const u: User = { id: registeredUser.user_id, email };
@@ -173,7 +185,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return {};
       }
 
-      // Kayıtlı değil veya şifresi yok → eski davranış (min 6 karakter)
+      // Kayıtlı değil → min 6 karakter ile demo giriş
       if (password.length >= 6) {
         const u: User = { id: "user-demo-" + Date.now(), email };
         const p: Profile = { user_id: u.id, ad: "", soyad: "", telefon: "", role: "user" };
@@ -244,11 +256,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         ...usersArray,
         { user_id: u.id, email, ad, soyad, telefon: tel, role: "user", created_at: new Date().toISOString() },
       ]);
-      // Store password for demo mode
-      const passwords = safeGetJSON<Record<string, string>>("fiyatcim_demo_passwords", {});
-      const pwMap = typeof passwords === "object" && passwords ? passwords : {};
-      pwMap[email] = password;
-      safeSetJSON("fiyatcim_demo_passwords", pwMap);
+      // Store password hash for demo mode (never store plaintext)
+      const hashes = safeGetJSON<Record<string, string>>("fiyatcim_demo_pw_hashes", {});
+      const hashMap = typeof hashes === "object" && hashes ? hashes : {};
+      hashMap[email] = await simpleHash(password);
+      safeSetJSON("fiyatcim_demo_pw_hashes", hashMap);
       return {};
     }
 
@@ -346,15 +358,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ========================================
   // ADMIN: Change any user password
   // ========================================
-  const adminChangePassword = useCallback((email: string, newPassword: string): { error?: string } => {
+  const adminChangePassword = useCallback(async (email: string, newPassword: string): Promise<{ error?: string }> => {
     if (!newPassword || newPassword.length < 6) {
       return { error: "Şifre en az 6 karakter olmalıdır." };
     }
     if (IS_DEMO_MODE) {
-      const passwords = safeGetJSON<Record<string, string>>("fiyatcim_demo_passwords", {});
-      const pwMap = typeof passwords === "object" && passwords ? passwords : {};
-      pwMap[email] = newPassword;
-      safeSetJSON("fiyatcim_demo_passwords", pwMap);
+      const hashes = safeGetJSON<Record<string, string>>("fiyatcim_demo_pw_hashes", {});
+      const hashMap = typeof hashes === "object" && hashes ? hashes : {};
+      hashMap[email] = await simpleHash(newPassword);
+      safeSetJSON("fiyatcim_demo_pw_hashes", hashMap);
       return {};
     }
     return { error: "Bu özellik demo modda çalışır." };

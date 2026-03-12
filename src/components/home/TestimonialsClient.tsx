@@ -26,7 +26,7 @@ export default function TestimonialsClient({ items }: Props) {
       <div className="container-custom">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-white sm:text-3xl">Müşteri Yorumları</h2>
-          <p className="mt-2 text-dark-400">Binlerce mutlu müşterimizden bazıları</p>
+          <p className="mt-2 text-dark-500">Binlerce mutlu müşterimizden bazıları</p>
         </div>
 
         <div className="relative mx-auto mt-8 max-w-2xl">
@@ -41,7 +41,7 @@ export default function TestimonialsClient({ items }: Props) {
               </div>
               <div>
                 <p className="font-semibold text-white">{items[current].name}</p>
-                <p className="text-sm text-dark-400">{items[current].company}</p>
+                <p className="text-sm text-dark-500">{items[current].company}</p>
               </div>
               <div className="ml-auto">
                 <Rating rating={items[current].rating} size="sm" />
@@ -52,7 +52,7 @@ export default function TestimonialsClient({ items }: Props) {
           <div className="mt-6 flex items-center justify-center gap-4">
             <button
               onClick={prev}
-              className="rounded-full bg-dark-800 p-2 text-dark-400 transition-colors hover:bg-dark-700 hover:text-white"
+              className="rounded-full bg-dark-800 p-2 text-dark-500 transition-colors hover:bg-dark-700 hover:text-white"
             >
               <ChevronLeft size={20} />
             </button>
@@ -69,7 +69,7 @@ export default function TestimonialsClient({ items }: Props) {
             </div>
             <button
               onClick={next}
-              className="rounded-full bg-dark-800 p-2 text-dark-400 transition-colors hover:bg-dark-700 hover:text-white"
+              className="rounded-full bg-dark-800 p-2 text-dark-500 transition-colors hover:bg-dark-700 hover:text-white"
             >
               <ChevronRight size={20} />
             </button>

@@ -151,7 +151,7 @@ export default function CategoryClient({ slug }: Props) {
           <div className="flex-1" />
 
           <div className="flex items-center gap-2">
-            <ArrowUpDown size={16} className="text-dark-400" />
+            <ArrowUpDown size={16} className="text-dark-500" />
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
@@ -167,13 +167,13 @@ export default function CategoryClient({ slug }: Props) {
           <div className="hidden items-center gap-1 rounded-lg border border-dark-200 p-1 sm:flex">
             <button
               onClick={() => setViewMode("grid")}
-              className={`rounded p-1.5 ${viewMode === "grid" ? "bg-primary-600 text-white" : "text-dark-400 hover:text-dark-600 dark:text-dark-300"}`}
+              className={`rounded p-1.5 ${viewMode === "grid" ? "bg-primary-600 text-white" : "text-dark-500 hover:text-dark-600 dark:text-dark-300"}`}
             >
               <LayoutGrid size={16} />
             </button>
             <button
               onClick={() => setViewMode("list")}
-              className={`rounded p-1.5 ${viewMode === "list" ? "bg-primary-600 text-white" : "text-dark-400 hover:text-dark-600 dark:text-dark-300"}`}
+              className={`rounded p-1.5 ${viewMode === "list" ? "bg-primary-600 text-white" : "text-dark-500 hover:text-dark-600 dark:text-dark-300"}`}
             >
               <List size={16} />
             </button>

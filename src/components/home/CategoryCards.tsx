@@ -44,8 +44,16 @@ export default async function CategoryCards() {
                 )}
               </div>
               <div className="flex items-center justify-between px-4 py-3">
-                <h3 className="text-sm font-bold text-dark-900 dark:text-dark-50 sm:text-base">{cat.name}</h3>
-                <ChevronRight size={18} className="text-primary-600 transition-transform group-hover:translate-x-1" />
+                <div>
+                  <h3 className="text-sm font-bold text-dark-900 dark:text-dark-50 sm:text-base">{cat.name}</h3>
+                  {cat.product_count != null && cat.product_count > 0 && (
+                    <p className="text-[11px] text-dark-500">{cat.product_count} ürün</p>
+                  )}
+                </div>
+                <span className="flex items-center gap-1 text-xs font-medium text-primary-600 opacity-0 transition-all group-hover:opacity-100">
+                  İncele
+                  <ChevronRight size={14} className="transition-transform group-hover:translate-x-0.5" />
+                </span>
               </div>
             </Link>
           ))}

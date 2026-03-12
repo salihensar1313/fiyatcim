@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { X, User, ShoppingCart, Heart, ChevronDown, LogIn, UserPlus, Package } from "lucide-react";
+import { useScrollLock } from "@/hooks/useScrollLock";
 import Link from "next/link";
 import { CONTACT } from "@/lib/constants";
 import { MEGA_MENU_DATA } from "@/lib/nav";
@@ -22,11 +23,46 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const wishlistCount = getWishlistCount();
   const [openCategory, setOpenCategory] = useState<string | null>(null);
 
+  useScrollLock(isOpen);
+
+  // Escape key handler
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    },
+    [onClose]
+  );
+
+  useEffect(() => {
+    if (isOpen) {
+      document.addEventListener("keydown", handleKeyDown);
+      return () => document.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [isOpen, handleKeyDown]);
+
+  // Close on resize past lg breakpoint (1024px)
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        onClose();
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isOpen, onClose]);
+
   return (
     <>
       {/* Overlay */}
       {isOpen && (
         <div
+          role="dialog"
+          aria-modal="true"
           className="fixed inset-0 z-40 bg-black/50 transition-opacity"
           onClick={onClose}
         />
@@ -43,6 +79,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           <span className="text-lg font-bold text-dark-900 dark:text-dark-50">Menü</span>
           <button
             onClick={onClose}
+            aria-label="Menüyü kapat"
             className="rounded-lg p-2 text-dark-500 dark:text-dark-400 hover:bg-dark-50 dark:hover:bg-dark-700"
           >
             <X size={20} />
@@ -64,6 +101,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               <Link
                 href="/sepet"
                 onClick={onClose}
+                aria-label={`Sepetim${cartCount > 0 ? ` (${cartCount} ürün)` : ""}`}
                 className="relative flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:hover:bg-dark-700"
               >
                 <ShoppingCart size={18} />
@@ -76,6 +114,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               <Link
                 href="/hesabim/favorilerim"
                 onClick={onClose}
+                aria-label={`Favorilerim${wishlistCount > 0 ? ` (${wishlistCount} ürün)` : ""}`}
                 className="relative flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:hover:bg-dark-700"
               >
                 <Heart size={18} />

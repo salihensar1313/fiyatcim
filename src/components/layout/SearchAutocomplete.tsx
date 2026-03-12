@@ -116,7 +116,7 @@ export default function SearchAutocomplete({ onClose, className = "", isMobile =
     <div className={`relative ${className}`}>
       {/* Search Input */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-400" size={18} />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-500" size={18} />
         <input
           ref={inputRef}
           type="text"
@@ -137,7 +137,7 @@ export default function SearchAutocomplete({ onClose, className = "", isMobile =
               setQuery("");
               inputRef.current?.focus();
             }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-400 hover:text-dark-600 dark:text-dark-300"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-500 hover:text-dark-600 dark:text-dark-300"
           >
             <X size={16} />
           </button>
@@ -159,7 +159,7 @@ export default function SearchAutocomplete({ onClose, className = "", isMobile =
                 {/* Products */}
                 {suggestions.products.length > 0 && (
                   <div>
-                    <div className="px-3 py-1.5 text-xs font-semibold uppercase text-dark-400">
+                    <div className="px-3 py-1.5 text-xs font-semibold uppercase text-dark-500">
                       Ürünler
                     </div>
                     {suggestions.products.map((r, i) => (
@@ -203,7 +203,7 @@ export default function SearchAutocomplete({ onClose, className = "", isMobile =
                 {/* Categories */}
                 {suggestions.categories.length > 0 && (
                   <div>
-                    <div className="px-3 py-1.5 text-xs font-semibold uppercase text-dark-400 border-t border-dark-100 mt-1 pt-2">
+                    <div className="px-3 py-1.5 text-xs font-semibold uppercase text-dark-500 border-t border-dark-100 mt-1 pt-2">
                       Kategoriler
                     </div>
                     {suggestions.categories.map((c, i) => (
@@ -219,10 +219,10 @@ export default function SearchAutocomplete({ onClose, className = "", isMobile =
                           activeIndex === suggestions.products.length + i ? "bg-dark-50" : ""
                         }`}
                       >
-                        <Tag size={16} className="text-dark-400" />
+                        <Tag size={16} className="text-dark-500" />
                         <span className="text-sm text-dark-700 dark:text-dark-200">{c.name}</span>
-                        <span className="ml-auto text-xs text-dark-400">{c.count} ürün</span>
-                        <ArrowRight size={14} className="text-dark-400" />
+                        <span className="ml-auto text-xs text-dark-500">{c.count} ürün</span>
+                        <ArrowRight size={14} className="text-dark-500" />
                       </button>
                     ))}
                   </div>
@@ -231,7 +231,7 @@ export default function SearchAutocomplete({ onClose, className = "", isMobile =
                 {/* Brands */}
                 {suggestions.brands.length > 0 && (
                   <div>
-                    <div className="px-3 py-1.5 text-xs font-semibold uppercase text-dark-400 border-t border-dark-100 mt-1 pt-2">
+                    <div className="px-3 py-1.5 text-xs font-semibold uppercase text-dark-500 border-t border-dark-100 mt-1 pt-2">
                       Markalar
                     </div>
                     {suggestions.brands.map((b, i) => (
@@ -247,10 +247,10 @@ export default function SearchAutocomplete({ onClose, className = "", isMobile =
                           activeIndex === suggestions.products.length + suggestions.categories.length + i ? "bg-dark-50" : ""
                         }`}
                       >
-                        <Building2 size={16} className="text-dark-400" />
+                        <Building2 size={16} className="text-dark-500" />
                         <span className="text-sm text-dark-700 dark:text-dark-200">{b.name}</span>
-                        <span className="ml-auto text-xs text-dark-400">{b.count} ürün</span>
-                        <ArrowRight size={14} className="text-dark-400" />
+                        <span className="ml-auto text-xs text-dark-500">{b.count} ürün</span>
+                        <ArrowRight size={14} className="text-dark-500" />
                       </button>
                     ))}
                   </div>
@@ -284,7 +284,7 @@ export default function SearchAutocomplete({ onClose, className = "", isMobile =
               {history.length > 0 && (
                 <div>
                   <div className="flex items-center justify-between px-3 py-1.5">
-                    <span className="text-xs font-semibold uppercase text-dark-400">
+                    <span className="text-xs font-semibold uppercase text-dark-500">
                       Son Aramalar
                     </span>
                     <button
@@ -301,7 +301,7 @@ export default function SearchAutocomplete({ onClose, className = "", isMobile =
                         activeIndex === i ? "bg-dark-50" : ""
                       }`}
                     >
-                      <Clock size={14} className="flex-shrink-0 text-dark-400" />
+                      <Clock size={14} className="flex-shrink-0 text-dark-500" />
                       <button
                         onClick={() => {
                           setQuery(term);
@@ -316,7 +316,7 @@ export default function SearchAutocomplete({ onClose, className = "", isMobile =
                           e.stopPropagation();
                           removeSearch(term);
                         }}
-                        className="text-dark-300 hover:text-dark-500 dark:text-dark-400"
+                        className="text-dark-300 hover:text-dark-400 dark:text-dark-400"
                       >
                         <X size={14} />
                       </button>
@@ -327,7 +327,7 @@ export default function SearchAutocomplete({ onClose, className = "", isMobile =
 
               {/* Popular searches */}
               <div className={history.length > 0 ? "border-t border-dark-100 mt-1 pt-1" : ""}>
-                <div className="px-3 py-1.5 text-xs font-semibold uppercase text-dark-400">
+                <div className="px-3 py-1.5 text-xs font-semibold uppercase text-dark-500">
                   Popüler Aramalar
                 </div>
                 {popularSearches.slice(0, 4).map((term, i) => (
@@ -353,7 +353,7 @@ export default function SearchAutocomplete({ onClose, className = "", isMobile =
           {isSearching && query.length >= 2 && (
             <div className="flex items-center justify-center p-3">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-500 border-t-transparent" />
-              <span className="ml-2 text-xs text-dark-400">Aranıyor...</span>
+              <span className="ml-2 text-xs text-dark-500">Aranıyor...</span>
             </div>
           )}
         </div>

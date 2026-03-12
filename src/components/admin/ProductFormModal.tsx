@@ -6,6 +6,7 @@ import type { Product, Category, Brand } from "@/types";
 import { getCategories, getBrands } from "@/lib/queries";
 import { ADMIN_INPUT, ADMIN_SELECT, ADMIN_TEXTAREA } from "@/lib/admin-classes";
 import { useCurrency } from "@/context/CurrencyContext";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 interface ProductFormModalProps {
   isOpen: boolean;
@@ -66,6 +67,7 @@ export default function ProductFormModal({
   const [brands, setBrands] = useState<Brand[]>([]);
   const { usdToTry } = useCurrency();
   const [tlAutoCalc, setTlAutoCalc] = useState(true);
+  const focusTrapRef = useFocusTrap<HTMLDivElement>();
 
   useEffect(() => {
     getCategories().then(setCategories).catch(console.error);
@@ -156,7 +158,7 @@ export default function ProductFormModal({
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-2 pt-4 sm:p-4 sm:pt-8">
       <div className="fixed inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative mx-auto w-full max-w-[calc(100vw-1rem)] rounded-xl bg-white shadow-xl dark:bg-dark-800 sm:max-w-2xl">
+      <div ref={focusTrapRef} className="relative mx-auto w-full max-w-[calc(100vw-1rem)] rounded-xl bg-white shadow-xl dark:bg-dark-800 sm:max-w-2xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-dark-100 px-4 py-3 dark:border-dark-700 sm:px-6 sm:py-4">
           <h2 className="text-base font-bold text-dark-900 dark:text-dark-50 sm:text-lg">

@@ -105,7 +105,7 @@ export default function NotificationBell() {
       {/* Bell button */}
       <button
         onClick={() => setOpen(!open)}
-        className="relative rounded-full p-2 text-dark-400 transition-colors hover:bg-dark-100 hover:text-dark-600 dark:text-dark-300"
+        className="relative rounded-full p-2 text-dark-500 transition-colors hover:bg-dark-100 hover:text-dark-600 dark:text-dark-300"
         aria-label="Bildirimler"
       >
         <Bell size={20} />
@@ -135,7 +135,7 @@ export default function NotificationBell() {
               {notifications.length > 0 && (
                 <button
                   onClick={clearAll}
-                  className="text-xs text-dark-400 hover:text-red-500"
+                  className="text-xs text-dark-500 hover:text-red-500"
                 >
                   Temizle
                 </button>
@@ -169,7 +169,7 @@ export default function NotificationBell() {
                         )}
                       </div>
                       <p className="mt-0.5 line-clamp-2 text-xs text-dark-500 dark:text-dark-400">{notif.message}</p>
-                      <p className="mt-1 text-[10px] text-dark-400">{formatDate(notif.created_at)}</p>
+                      <p className="mt-1 text-[10px] text-dark-500">{formatDate(notif.created_at)}</p>
                     </div>
                   </button>
                 );
@@ -177,7 +177,7 @@ export default function NotificationBell() {
             ) : (
               <div className="px-4 py-8 text-center">
                 <Bell size={32} className="mx-auto mb-2 text-dark-200" />
-                <p className="text-sm text-dark-400">Bildirim yok</p>
+                <p className="text-sm text-dark-500">Bildirim yok</p>
               </div>
             )}
           </div>

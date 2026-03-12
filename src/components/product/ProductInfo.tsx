@@ -41,7 +41,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
     <div className="space-y-5">
       {/* Brand */}
       {brand && (
-        <span className="text-sm font-medium uppercase tracking-wider text-dark-400">
+        <span className="text-sm font-medium uppercase tracking-wider text-dark-500">
           {brand.name}
         </span>
       )}
@@ -65,9 +65,9 @@ export default function ProductInfo({ product }: ProductInfoProps) {
             </span>
           </button>
         ) : (
-          <span className="text-sm text-dark-400">Henüz değerlendirme yok</span>
+          <span className="text-sm text-dark-500">Henüz değerlendirme yok</span>
         )}
-        <span className="text-sm text-dark-400">SKU: {product.sku}</span>
+        <span className="text-sm text-dark-500">SKU: {product.sku}</span>
       </div>
 
       {/* Short desc */}
@@ -88,7 +88,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
       </div>
 
       {/* KDV info */}
-      <p className="text-xs text-dark-400">KDV dahil fiyattır.</p>
+      <p className="text-xs text-dark-500">KDV dahil fiyattır.</p>
 
       {/* G15: Taksit Bilgisi */}
       {effectivePrice >= 500 && effectivePrice > 0 && (
@@ -126,7 +126,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         }`} />
         <span className={`text-sm font-medium ${stock.color}`}>{stock.label}</span>
         {product.stock > 0 && product.stock <= product.critical_stock && (
-          <span className="text-xs text-dark-400">(Son {product.stock} adet)</span>
+          <span className="text-xs text-dark-500">(Son {product.stock} adet)</span>
         )}
       </div>
 
@@ -219,7 +219,7 @@ export default function ProductInfo({ product }: ProductInfoProps) {
             className={`rounded-lg border p-3 transition-all ${
               inWishlist
                 ? "border-primary-200 bg-primary-50 dark:border-primary-800 dark:bg-primary-900/20 text-primary-600"
-                : "border-dark-200 dark:border-dark-600 text-dark-400 hover:border-primary-300 hover:text-primary-600"
+                : "border-dark-200 dark:border-dark-600 text-dark-500 hover:border-primary-300 hover:text-primary-600"
             }`}
           >
             <Heart size={18} className={inWishlist ? "fill-current" : ""} />

@@ -1,7 +1,15 @@
+import type { Metadata } from "next";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { getBlogPosts } from "@/lib/queries";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import GuidesClient from "./GuidesClient";
+
+export const metadata: Metadata = {
+  title: "Rehberler",
+  description:
+    "Güvenlik sistemleri hakkında uzman rehberler. Alarm, kamera, akıllı ev ve güvenlik ürünleri seçim rehberleri.",
+  alternates: { canonical: "/rehber" },
+};
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 

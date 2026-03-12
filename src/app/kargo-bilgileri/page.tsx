@@ -28,7 +28,7 @@ export default function ShippingInfoPage() {
             <p>Siparişiniz kargoya verildikten sonra takip numarası e-posta ve SMS ile bildirilir. Hesabım bölümünden kargo durumunuzu takip edebilirsiniz.</p>
             <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">Kurulum Dahil Ürünler</h2>
             <p>Kurulum hizmeti dahil ürünlerde teslimat, teknik ekip tarafından yerinde kurulum şeklinde yapılır. Kurulum randevusu sipariş sonrası telefonla planlanır.</p>
-            <p className="mt-6 text-xs text-dark-400">Son güncelleme: Şubat 2026</p>
+            <p className="mt-6 text-xs text-dark-500">Son güncelleme: Şubat 2026</p>
           </div>
         </div>
       </div>

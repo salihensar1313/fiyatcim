@@ -1,6 +1,10 @@
-"use client";
-
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Ödeme Başarısız",
+  robots: { index: false, follow: false },
+};
 import { XCircle, RefreshCw, ArrowRight } from "lucide-react";
 
 export default function OrderFailedPage() {

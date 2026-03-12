@@ -106,7 +106,7 @@ export default function PriceHistoryPage() {
             {/* Product Info */}
             <div className="flex-1">
               {product.brand && (
-                <span className="text-xs font-medium uppercase tracking-wider text-dark-400">
+                <span className="text-xs font-medium uppercase tracking-wider text-dark-500">
                   {product.brand.name}
                 </span>
               )}
@@ -118,7 +118,7 @@ export default function PriceHistoryPage() {
                   {formatPrice(currentPrice)}
                 </span>
                 {product.sale_price && product.sale_price < product.price && (
-                  <span className="text-sm text-dark-400 line-through">
+                  <span className="text-sm text-dark-500 line-through">
                     {formatPrice(product.price)}
                   </span>
                 )}

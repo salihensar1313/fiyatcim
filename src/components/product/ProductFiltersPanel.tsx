@@ -114,7 +114,7 @@ export default function ProductFiltersPanel({
                 }
                 className="w-full rounded border border-dark-200 px-2 py-1.5 text-sm"
               />
-              <span className="text-dark-400">-</span>
+              <span className="text-dark-500">-</span>
               <input
                 type="number"
                 placeholder={`${priceRange.max}`}
@@ -160,7 +160,7 @@ export default function ProductFiltersPanel({
                     className="h-4 w-4 rounded border-dark-300 text-primary-600 focus:ring-primary-500"
                   />
                   <span className="flex-1 text-sm text-dark-700 dark:text-dark-200">{option.label}</span>
-                  <span className="text-xs text-dark-400">({option.count})</span>
+                  <span className="text-xs text-dark-500">({option.count})</span>
                 </label>
               ))}
             </div>

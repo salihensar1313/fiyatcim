@@ -41,7 +41,7 @@ export default async function BlogPage() {
                   <span className="rounded-full bg-primary-50 dark:bg-primary-900/30 px-2.5 py-0.5 text-xs font-medium text-primary-700">
                     {post.category}
                   </span>
-                  <span className="flex items-center gap-1 text-xs text-dark-400">
+                  <span className="flex items-center gap-1 text-xs text-dark-500">
                     <Calendar size={12} />
                     {formatDate(post.created_at)}
                   </span>

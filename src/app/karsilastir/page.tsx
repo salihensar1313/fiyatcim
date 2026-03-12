@@ -99,7 +99,7 @@ export default function ComparePage() {
                       </Link>
                       <button
                         onClick={() => removeFromCompare(product.id)}
-                        className="text-dark-400 hover:text-red-600"
+                        className="text-dark-500 hover:text-red-600"
                       >
                         <Trash2 size={14} />
                       </button>

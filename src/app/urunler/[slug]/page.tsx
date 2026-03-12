@@ -15,6 +15,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const title = product.seo_title || `${product.name} | ${SITE_NAME}`;
   const description = product.seo_desc || product.short_desc || `${product.name} - En uygun fiyatlarla Fiyatcim.com'da`;
 
+  const productImage = CATEGORY_IMAGES[product.category_id]
+    || (product.category ? CATEGORY_IMAGES_BY_SLUG[product.category.slug] : null)
+    || "/images/categories/alarm.png";
+
   return {
     title,
     description,
@@ -22,7 +26,24 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title: product.name,
       description,
       url: `${SITE_URL}/urunler/${product.slug}`,
-      type: "website",
+      siteName: "Fiyatcim.com",
+      locale: "tr_TR",
+      type: "article",
+      images: [
+        {
+          url: productImage,
+          width: 1200,
+          height: 630,
+          alt: product.name,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      site: "@fiyatcim",
+      title: product.name,
+      description,
+      images: [productImage],
     },
     alternates: {
       canonical: `${SITE_URL}/urunler/${product.slug}`,

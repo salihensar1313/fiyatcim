@@ -164,7 +164,7 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
               {averageRating > 0 ? averageRating.toFixed(1).replace(".", ",") : "0,0"}
             </p>
             <Rating rating={averageRating} size="sm" />
-            <p className="mt-1 text-xs text-dark-400">
+            <p className="mt-1 text-xs text-dark-500">
               {reviews.length} değerlendirme
             </p>
           </div>
@@ -186,7 +186,7 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
                       style={{ width: `${pct}%` }}
                     />
                   </div>
-                  <span className="w-6 text-right text-xs text-dark-400">{count}</span>
+                  <span className="w-6 text-right text-xs text-dark-500">{count}</span>
                 </div>
               );
             })}
@@ -250,7 +250,7 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
                 />
               </button>
             ))}
-            <span className="ml-2 text-sm text-dark-400">
+            <span className="ml-2 text-sm text-dark-500">
               {hoverRating || reviewRating}/5
             </span>
           </div>
@@ -294,14 +294,14 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
                 {reviewImages.length < MAX_IMAGES && (
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="flex h-16 w-16 flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-dark-200 text-dark-400 transition-colors hover:border-primary-400 hover:text-primary-600"
+                    className="flex h-16 w-16 flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-dark-200 text-dark-500 transition-colors hover:border-primary-400 hover:text-primary-600"
                   >
                     <Camera size={18} />
                     <span className="text-[10px]">Ekle</span>
                   </button>
                 )}
               </div>
-              <p className="mt-1.5 text-xs text-dark-400">
+              <p className="mt-1.5 text-xs text-dark-500">
                 En fazla {MAX_IMAGES} fotoğraf (max 5MB/adet)
               </p>
             </div>
@@ -310,7 +310,7 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
           <div className="mt-3 flex items-center justify-between">
             <button
               onClick={() => setShowForm(false)}
-              className="text-sm text-dark-400 hover:text-dark-600 dark:text-dark-300"
+              className="text-sm text-dark-500 hover:text-dark-600 dark:text-dark-300"
             >
               Vazgeç
             </button>
@@ -399,7 +399,7 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
                         {review.profile?.ad || "Anonim"}{" "}
                         {review.profile?.soyad?.charAt(0) || ""}.
                       </p>
-                      <p className="text-xs text-dark-400">{formatDate(review.created_at)}</p>
+                      <p className="text-xs text-dark-500">{formatDate(review.created_at)}</p>
                     </div>
                   </div>
                   <Rating rating={review.rating} size="sm" />
@@ -428,7 +428,7 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
 
                 {/* Helpful voting */}
                 <div className="mt-4 flex items-center gap-4 border-t border-dark-50 pt-3">
-                  <span className="text-xs text-dark-400">Bu değerlendirme faydalı oldu mu?</span>
+                  <span className="text-xs text-dark-500">Bu değerlendirme faydalı oldu mu?</span>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => {
@@ -441,7 +441,7 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
                       className={`flex items-center gap-1 rounded-md px-2.5 py-1 text-xs transition-colors ${
                         userVote === "yes"
                           ? "bg-green-100 font-semibold text-green-700"
-                          : "text-dark-400 hover:bg-dark-50 hover:text-green-600"
+                          : "text-dark-500 hover:bg-dark-50 hover:text-green-600"
                       }`}
                     >
                       <ThumbsUp size={13} />
@@ -458,7 +458,7 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
                       className={`flex items-center gap-1 rounded-md px-2.5 py-1 text-xs transition-colors ${
                         userVote === "no"
                           ? "bg-red-100 font-semibold text-red-700"
-                          : "text-dark-400 hover:bg-dark-50 hover:text-red-600"
+                          : "text-dark-500 hover:bg-dark-50 hover:text-red-600"
                       }`}
                     >
                       <ThumbsDown size={13} />
@@ -474,7 +474,7 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
         <div className="py-12 text-center">
           <Star size={48} className="mx-auto mb-3 text-dark-200" />
           <p className="text-dark-500 dark:text-dark-400">Henüz değerlendirme yapılmamış.</p>
-          <p className="mt-1 text-sm text-dark-400">İlk değerlendirmeyi siz yapın!</p>
+          <p className="mt-1 text-sm text-dark-500">İlk değerlendirmeyi siz yapın!</p>
           {!showForm && (
             <button
               onClick={handleOpenForm}

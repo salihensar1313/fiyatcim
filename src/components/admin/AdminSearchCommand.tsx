@@ -95,6 +95,11 @@ export default function AdminSearchCommand() {
     return items;
   }, [query, products, orders]);
 
+  // Reset selected index when results change
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [results.length]);
+
   // Keyboard navigation
   useEffect(() => {
     if (!isOpen) return;

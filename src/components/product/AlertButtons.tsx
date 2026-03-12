@@ -105,7 +105,7 @@ export default function AlertButtons({ product }: AlertButtonsProps) {
               </button>
               <button
                 onClick={() => setShowPriceInput(false)}
-                className="text-sm text-dark-400 hover:text-dark-600 dark:text-dark-300"
+                className="text-sm text-dark-500 hover:text-dark-600 dark:text-dark-300"
               >
                 İptal
               </button>

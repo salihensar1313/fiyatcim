@@ -16,6 +16,7 @@ import {
   Shield,
   LogOut,
   Moon,
+  Info,
   Sun,
   Monitor,
   ChevronRight,
@@ -76,14 +77,19 @@ const LOGGED_IN_MENU: MenuItem[] = [
 
 export default function AccountDropdown() {
   const [isOpen, setIsOpen] = useState(false);
+  const [focusedIndex, setFocusedIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const menuItemsRef = useRef<(HTMLElement | null)[]>([]);
   const pathname = usePathname();
   const router = useRouter();
   const { user, profile, isAdmin, signOut, signInWithGoogle } = useAuth();
   const { theme, setTheme, mounted: themeMounted } = useTheme();
 
-  const close = useCallback(() => setIsOpen(false), []);
+  const close = useCallback(() => {
+    setIsOpen(false);
+    setFocusedIndex(-1);
+  }, []);
 
   // Close on route change
   useEffect(() => {
@@ -101,14 +107,63 @@ export default function AccountDropdown() {
     return () => document.removeEventListener("mousedown", handler);
   }, [close]);
 
-  // Close on Escape
+  // Keyboard navigation: Escape, ArrowDown, ArrowUp, Home, End
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
+      if (!isOpen) return;
+
+      if (e.key === "Escape") {
+        close();
+        return;
+      }
+
+      const items = menuItemsRef.current.filter(Boolean) as HTMLElement[];
+      const count = items.length;
+      if (count === 0) return;
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        const next = focusedIndex < count - 1 ? focusedIndex + 1 : 0;
+        setFocusedIndex(next);
+        items[next]?.focus();
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        const prev = focusedIndex > 0 ? focusedIndex - 1 : count - 1;
+        setFocusedIndex(prev);
+        items[prev]?.focus();
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        setFocusedIndex(0);
+        items[0]?.focus();
+      } else if (e.key === "End") {
+        e.preventDefault();
+        setFocusedIndex(count - 1);
+        items[count - 1]?.focus();
+      }
     };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
-  }, [close]);
+  }, [isOpen, focusedIndex, close]);
+
+  // Reset menu item refs when dropdown opens/closes
+  useEffect(() => {
+    if (!isOpen) {
+      menuItemsRef.current = [];
+    }
+  }, [isOpen]);
+
+  // Helper to register menu item refs
+  const menuItemRefIndex = useRef(0);
+  useEffect(() => {
+    // Reset the index counter on each render when open
+    menuItemRefIndex.current = 0;
+  });
+
+  const registerMenuItemRef = useCallback((el: HTMLElement | null) => {
+    if (el && !menuItemsRef.current.includes(el)) {
+      menuItemsRef.current.push(el);
+    }
+  }, []);
 
   // Cleanup hover timeout
   useEffect(() => {
@@ -117,13 +172,16 @@ export default function AccountDropdown() {
     };
   }, []);
 
-  /* ─── Hover handlers ─── */
+  /* ─── Hover handlers (desktop only, skip on touch devices) ─── */
   const handleMouseEnter = () => {
+    // Skip hover on touch devices to prevent hover+click conflict
+    if (window.matchMedia("(pointer: coarse)").matches) return;
     if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
     setIsOpen(true);
   };
 
   const handleMouseLeave = () => {
+    if (window.matchMedia("(pointer: coarse)").matches) return;
     hoverTimeoutRef.current = setTimeout(() => setIsOpen(false), 200);
   };
 
@@ -218,7 +276,7 @@ export default function AccountDropdown() {
                   <p className="text-[15px] font-bold text-dark-900 dark:text-dark-50">
                     Hoş Geldiniz!
                   </p>
-                  <p className="text-xs text-dark-400 dark:text-dark-400">
+                  <p className="text-xs text-dark-500 dark:text-dark-400">
                     Hesabınıza giriş yapın
                   </p>
                 </div>
@@ -227,8 +285,9 @@ export default function AccountDropdown() {
               {/* Giris Yap — Primary CTA */}
               <Link
                 href="/giris"
-                className="mb-2.5 flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-4 py-3 text-sm font-bold text-white shadow-sm transition-all hover:bg-primary-700 hover:shadow-md"
+                className="mb-2.5 flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-4 py-3 text-sm font-bold text-white shadow-sm transition-all hover:bg-primary-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1"
                 role="menuitem"
+                ref={registerMenuItemRef}
                 onClick={close}
               >
                 Giriş Yap
@@ -238,24 +297,24 @@ export default function AccountDropdown() {
               {/* Google ile Giriş Yap */}
               <button
                 onClick={handleGoogleSignIn}
-                className="mb-2.5 flex w-full items-center justify-center gap-2.5 rounded-xl border border-dark-200 bg-white px-4 py-3 text-sm font-semibold text-dark-700 shadow-sm transition-all hover:border-dark-300 hover:bg-dark-50 hover:shadow-md dark:border-dark-500 dark:bg-dark-700 dark:text-dark-200 dark:hover:bg-dark-600"
+                className="mb-2.5 flex w-full items-center justify-center gap-2.5 rounded-xl border border-dark-200 bg-white px-4 py-3 text-sm font-semibold text-dark-700 shadow-sm transition-all hover:border-dark-300 hover:bg-dark-50 hover:shadow-md dark:border-dark-500 dark:bg-dark-700 dark:text-dark-200 dark:hover:bg-dark-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1"
                 role="menuitem"
+                ref={registerMenuItemRef}
               >
                 <GoogleIcon size={18} />
                 Google ile Giriş Yap
               </button>
 
-              {/* Kayit Ol — text link */}
-              <p className="text-center text-[13px] text-dark-500 dark:text-dark-400">
-                Hesabınız yok mu?{" "}
-                <Link
-                  href="/kayit"
-                  className="font-semibold text-primary-600 hover:text-primary-700 hover:underline dark:text-primary-400"
-                  onClick={close}
-                >
-                  Ücretsiz Kayıt Ol
-                </Link>
-              </p>
+              {/* Kayit Ol — Prominent CTA */}
+              <Link
+                href="/kayit"
+                className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-primary-600 px-4 py-2.5 text-sm font-bold text-primary-600 transition-all hover:bg-primary-50 dark:border-primary-500 dark:text-primary-400 dark:hover:bg-primary-950 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1"
+                role="menuitem"
+                ref={registerMenuItemRef}
+                onClick={close}
+              >
+                Ücretsiz Kayıt Ol
+              </Link>
             </div>
           )}
 
@@ -280,14 +339,14 @@ export default function AccountDropdown() {
                   <p className="truncate text-[15px] font-bold text-dark-900 dark:text-dark-50">
                     {fullName || "Kullanıcı"}
                   </p>
-                  <p className="truncate text-xs text-dark-400 dark:text-dark-400">
+                  <p className="truncate text-xs text-dark-500 dark:text-dark-400">
                     {email}
                   </p>
                 </div>
                 {/* Settings shortcut */}
                 <Link
                   href="/hesabim"
-                  className="rounded-lg p-2 text-dark-400 transition-colors hover:bg-dark-100 hover:text-dark-600 dark:hover:bg-dark-700 dark:hover:text-dark-200"
+                  className="rounded-lg p-2 text-dark-500 transition-colors hover:bg-dark-100 hover:text-dark-600 dark:hover:bg-dark-700 dark:hover:text-dark-200"
                   onClick={close}
                   title="Hesap Ayarları"
                 >
@@ -311,11 +370,12 @@ export default function AccountDropdown() {
                 <Link
                   key={item.label}
                   href={href}
-                  className="flex items-center gap-3 px-5 py-2.5 text-sm text-dark-700 transition-colors hover:bg-dark-50 hover:text-primary-600 dark:text-dark-200 dark:hover:bg-dark-700 dark:hover:text-primary-400"
+                  className="flex items-center gap-3 px-5 py-2.5 text-sm text-dark-700 transition-colors hover:bg-dark-50 hover:text-primary-600 dark:text-dark-200 dark:hover:bg-dark-700 dark:hover:text-primary-400 focus:outline-none focus:bg-dark-50 focus:text-primary-600 dark:focus:bg-dark-700"
                   role="menuitem"
+                  ref={registerMenuItemRef}
                   onClick={close}
                 >
-                  <Icon size={18} className="shrink-0 text-dark-400" />
+                  <Icon size={18} className="shrink-0 text-dark-500" />
                   {item.label}
                 </Link>
               );
@@ -329,8 +389,9 @@ export default function AccountDropdown() {
               <div className="py-1.5">
                 <Link
                   href="/admin"
-                  className="flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-primary-600 transition-colors hover:bg-primary-50 dark:text-primary-400 dark:hover:bg-primary-950"
+                  className="flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-primary-600 transition-colors hover:bg-primary-50 dark:text-primary-400 dark:hover:bg-primary-950 focus:outline-none focus:bg-primary-50 dark:focus:bg-primary-950"
                   role="menuitem"
+                  ref={registerMenuItemRef}
                   onClick={close}
                 >
                   <Shield size={18} className="shrink-0" />
@@ -343,11 +404,27 @@ export default function AccountDropdown() {
           {/* Divider */}
           <div className="mx-4 h-px bg-dark-100 dark:bg-dark-600" />
 
+          {/* Help & Support */}
+          <Link
+            href="/sss"
+            className="flex items-center gap-3 px-5 py-2.5 text-sm text-dark-700 transition-colors hover:bg-dark-50 hover:text-primary-600 dark:text-dark-200 dark:hover:bg-dark-700 dark:hover:text-primary-400 focus:outline-none focus:bg-dark-50 focus:text-primary-600 dark:focus:bg-dark-700"
+            role="menuitem"
+            ref={registerMenuItemRef}
+            onClick={close}
+          >
+            <Info size={18} className="shrink-0 text-dark-500" />
+            Yardım & Destek
+          </Link>
+
+          {/* Divider */}
+          <div className="mx-4 h-px bg-dark-100 dark:bg-dark-600" />
+
           {/* Dark Mode Toggle Row */}
           <button
             onClick={cycleTheme}
-            className="flex w-full items-center justify-between px-5 py-2.5 text-sm text-dark-700 transition-colors hover:bg-dark-50 dark:text-dark-200 dark:hover:bg-dark-700"
+            className="flex w-full items-center justify-between px-5 py-2.5 text-sm text-dark-700 transition-colors hover:bg-dark-50 dark:text-dark-200 dark:hover:bg-dark-700 focus:outline-none focus:bg-dark-50 dark:focus:bg-dark-700"
             role="menuitem"
+            ref={registerMenuItemRef}
           >
             <span className="flex items-center gap-3">
               {themeIcon}
@@ -364,8 +441,9 @@ export default function AccountDropdown() {
               <div className="mx-4 h-px bg-dark-100 dark:bg-dark-600" />
               <button
                 onClick={handleSignOut}
-                className="flex w-full items-center gap-3 px-5 py-2.5 text-sm font-medium text-red-500 transition-colors hover:bg-red-50 dark:hover:bg-red-950"
+                className="flex w-full items-center gap-3 px-5 py-2.5 text-sm font-medium text-red-500 transition-colors hover:bg-red-50 dark:hover:bg-red-950 focus:outline-none focus:bg-red-50 dark:focus:bg-red-950"
                 role="menuitem"
+                ref={registerMenuItemRef}
               >
                 <LogOut size={18} className="shrink-0" />
                 Çıkış Yap

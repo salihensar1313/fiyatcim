@@ -65,10 +65,12 @@ export function ReturnProvider({ children }: { children: ReactNode }) {
     }
 
     // Non-demo: Supabase
+    let isMounted = true;
     const loadFromSupabase = async () => {
       try {
         const supabase = createClient();
         const { data: { user } } = await supabase.auth.getUser();
+        if (!isMounted) return;
         if (!user) {
           setReturns([]);
           setIsLoaded(true);
@@ -76,12 +78,14 @@ export function ReturnProvider({ children }: { children: ReactNode }) {
         }
 
         const { data: profile } = await supabase.from("profiles").select("role").eq("user_id", user.id).single();
+        if (!isMounted) return;
         const isAdmin = profile?.role === "admin";
         let query = supabase.from("returns").select("*").order("requested_at", { ascending: false });
         if (!isAdmin) {
           query = query.eq("user_id", user.id);
         }
         const { data, error } = await query;
+        if (!isMounted) return;
         if (error) {
           console.error("[ReturnContext] load failed:", error.message);
           setReturns([]);
@@ -105,13 +109,16 @@ export function ReturnProvider({ children }: { children: ReactNode }) {
           })));
         }
       } catch (err) {
+        if (!isMounted) return;
         console.error("[ReturnContext] unexpected error:", err);
         setReturns([]);
       } finally {
-        setIsLoaded(true);
+        if (isMounted) setIsLoaded(true);
       }
     };
     loadFromSupabase();
+
+    return () => { isMounted = false; };
   }, []);
 
   // Persist demo

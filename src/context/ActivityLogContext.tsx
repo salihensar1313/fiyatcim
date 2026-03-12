@@ -31,6 +31,7 @@ export function ActivityLogProvider({ children }: { children: ReactNode }) {
     }
 
     // Non-demo: load from audit_logs
+    let isMounted = true;
     const supabase = createClient();
     supabase
       .from("audit_logs")
@@ -38,6 +39,7 @@ export function ActivityLogProvider({ children }: { children: ReactNode }) {
       .order("created_at", { ascending: false })
       .limit(MAX_ENTRIES)
       .then(({ data, error }) => {
+        if (!isMounted) return;
         if (error) {
           console.error("[ActivityLog] load failed:", error.message);
           setLogs([]);
@@ -54,6 +56,8 @@ export function ActivityLogProvider({ children }: { children: ReactNode }) {
         }
         setIsLoaded(true);
       });
+
+    return () => { isMounted = false; };
   }, []);
 
   // Persist demo

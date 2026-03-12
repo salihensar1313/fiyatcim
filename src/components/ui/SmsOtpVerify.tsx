@@ -148,7 +148,7 @@ export default function SmsOtpVerify({ phone, onVerified, onBack }: SmsOtpVerify
       {/* Tekrar gönder */}
       <div className="text-center">
         {cooldownLeft > 0 ? (
-          <p className="text-sm text-dark-400">
+          <p className="text-sm text-dark-500">
             Yeni kod göndermek için {cooldownLeft} saniye bekleyin
           </p>
         ) : (

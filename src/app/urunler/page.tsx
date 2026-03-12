@@ -11,10 +11,11 @@ import ProductFilter from "@/components/product/ProductFilter";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import Pagination from "@/components/ui/Pagination";
 import { PAGINATION } from "@/lib/constants";
+import { ProductGridSkeleton } from "@/components/ui/Skeleton";
 
 export default function ProductsPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-[50vh] items-center justify-center"><span className="text-dark-400">Yükleniyor...</span></div>}>
+    <Suspense fallback={<div className="container mx-auto px-4 py-8"><ProductGridSkeleton count={8} /></div>}>
       <ProductsContent />
     </Suspense>
   );
@@ -136,9 +137,7 @@ function ProductsContent() {
           <Breadcrumb items={[{ label: "Ürünler" }]} />
         </div>
         <div className="container mx-auto px-4">
-          <div className="flex justify-center py-20">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-600 border-t-transparent" />
-          </div>
+          <ProductGridSkeleton count={8} />
         </div>
       </div>
     );
@@ -173,7 +172,7 @@ function ProductsContent() {
             <div className="mb-4 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-3">
               <div className="flex items-center gap-2">
                 <div className="relative min-w-0 flex-1">
-                  <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-400" />
+                  <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-500" />
                   <input
                     type="text"
                     placeholder="Ürün ara..."
@@ -199,13 +198,13 @@ function ProductsContent() {
                 <div className="hidden items-center gap-1 rounded-lg border border-dark-200 p-1 sm:flex">
                   <button
                     onClick={() => setViewMode("grid")}
-                    className={`rounded p-1.5 ${viewMode === "grid" ? "bg-primary-600 text-white" : "text-dark-400 hover:text-dark-600 dark:text-dark-300"}`}
+                    className={`rounded p-1.5 ${viewMode === "grid" ? "bg-primary-600 text-white" : "text-dark-500 hover:text-dark-600 dark:text-dark-300"}`}
                   >
                     <LayoutGrid size={16} />
                   </button>
                   <button
                     onClick={() => setViewMode("list")}
-                    className={`rounded p-1.5 ${viewMode === "list" ? "bg-primary-600 text-white" : "text-dark-400 hover:text-dark-600 dark:text-dark-300"}`}
+                    className={`rounded p-1.5 ${viewMode === "list" ? "bg-primary-600 text-white" : "text-dark-500 hover:text-dark-600 dark:text-dark-300"}`}
                   >
                     <List size={16} />
                   </button>

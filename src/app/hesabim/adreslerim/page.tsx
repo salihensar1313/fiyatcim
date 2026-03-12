@@ -118,7 +118,7 @@ export default function AddressesPage() {
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => openEdit(addr)}
-                    className="rounded-lg p-1.5 text-dark-400 hover:bg-dark-50 dark:hover:bg-dark-700 hover:text-dark-700 dark:text-dark-200"
+                    className="rounded-lg p-1.5 text-dark-500 hover:bg-dark-50 dark:hover:bg-dark-700 hover:text-dark-700 dark:text-dark-200"
                     title="Düzenle"
                   >
                     <Pencil size={15} />
@@ -141,7 +141,7 @@ export default function AddressesPage() {
                   ) : (
                     <button
                       onClick={() => setDeleteConfirm(addr.id)}
-                      className="rounded-lg p-1.5 text-dark-400 hover:bg-red-50 dark:bg-red-900/30 hover:text-red-600"
+                      className="rounded-lg p-1.5 text-dark-500 hover:bg-red-50 dark:bg-red-900/30 hover:text-red-600"
                       title="Sil"
                     >
                       <Trash2 size={15} />
@@ -159,7 +159,7 @@ export default function AddressesPage() {
                 {addr.ilce} / {addr.il}
                 {addr.posta_kodu && ` - ${addr.posta_kodu}`}
               </p>
-              <p className="mt-1 text-sm text-dark-400">
+              <p className="mt-1 text-sm text-dark-500">
                 {formatPhone(addr.telefon)}
               </p>
             </div>
@@ -190,7 +190,7 @@ export default function AddressesPage() {
               <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">
                 {editingId ? "Adresi Düzenle" : "Yeni Adres Ekle"}
               </h2>
-              <button onClick={closeForm} className="rounded-lg p-1 text-dark-400 hover:bg-dark-50 dark:hover:bg-dark-700 hover:text-dark-700 dark:text-dark-200">
+              <button onClick={closeForm} className="rounded-lg p-1 text-dark-500 hover:bg-dark-50 dark:hover:bg-dark-700 hover:text-dark-700 dark:text-dark-200">
                 <X size={20} />
               </button>
             </div>

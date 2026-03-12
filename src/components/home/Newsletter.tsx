@@ -38,7 +38,7 @@ export default function Newsletter() {
           <h2 className="text-xl font-bold text-white sm:text-2xl">
             {title}
           </h2>
-          <p className="mt-2 text-sm text-dark-400">
+          <p className="mt-2 text-sm text-dark-500">
             {subtitle}
           </p>
 

@@ -29,7 +29,7 @@ export default function PrivacyPage() {
             <p>Sitemizde kullanıcı deneyimini iyileştirmek için çerezler kullanılmaktadır. Çerez tercihlerinizi tarayıcınızdan yönetebilirsiniz.</p>
             <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">İletişim</h2>
             <p>Gizlilik politikamız hakkında sorularınız için destek@fiyatcim.com adresinden bize ulaşabilirsiniz.</p>
-            <p className="mt-6 text-xs text-dark-400">Son güncelleme: Şubat 2026</p>
+            <p className="mt-6 text-xs text-dark-500">Son güncelleme: Şubat 2026</p>
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { X, User, Lock, Calendar, Mail, Shield } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/components/ui/Toast";
 import { formatDate } from "@/lib/utils";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 interface CustomerData {
   user_id: string;
@@ -25,6 +26,7 @@ interface CustomerEditModalProps {
 export default function CustomerEditModal({ customer, onClose, onSaved }: CustomerEditModalProps) {
   const { adminUpdateUser, adminChangePassword } = useAuth();
   const { showToast } = useToast();
+  const focusTrapRef = useFocusTrap<HTMLDivElement>();
 
   // Profile form
   const [ad, setAd] = useState(customer.ad);
@@ -45,8 +47,8 @@ export default function CustomerEditModal({ customer, onClose, onSaved }: Custom
     onSaved();
   };
 
-  const handleChangePassword = () => {
-    const result = adminChangePassword(customer.email, newPassword);
+  const handleChangePassword = async () => {
+    const result = await adminChangePassword(customer.email, newPassword);
     if (result.error) {
       showToast(result.error, "error");
       return;
@@ -59,7 +61,7 @@ export default function CustomerEditModal({ customer, onClose, onSaved }: Custom
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative mx-auto w-full max-w-[95vw] rounded-xl bg-white dark:bg-dark-800 shadow-xl sm:max-w-lg">
+      <div ref={focusTrapRef} className="relative mx-auto w-full max-w-[95vw] rounded-xl bg-white dark:bg-dark-800 shadow-xl sm:max-w-lg">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-dark-100 px-6 py-4 dark:border-dark-700">
           <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">Müşteri Düzenle</h2>

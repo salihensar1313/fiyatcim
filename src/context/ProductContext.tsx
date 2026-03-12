@@ -18,7 +18,7 @@ interface ProductContextType {
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
-let nextId = 100;
+// Use timestamp-based IDs instead of module-level counter (React Strict Mode safe)
 
 export function ProductProvider({ children }: { children: ReactNode }) {
   const [products, setProducts] = useState<Product[]>([]);
@@ -36,7 +36,11 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    loadProducts();
+    let isMounted = true;
+    loadProducts().finally(() => {
+      if (!isMounted) return;
+    });
+    return () => { isMounted = false; };
   }, [loadProducts]);
 
   const refreshProducts = useCallback(async () => {
@@ -50,7 +54,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       // Demo mode: in-memory fallback
       const newProduct: Product = {
         ...productData,
-        id: `prod-${nextId++}`,
+        id: `prod-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
         created_at: new Date().toISOString(),
       };
       setProducts((prev) => [newProduct, ...prev]);

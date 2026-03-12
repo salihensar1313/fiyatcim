@@ -1,5 +1,3 @@
-"use client";
-
 import { BookOpen, ShieldCheck, Truck, Headphones, RefreshCcw, Award } from "lucide-react";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import Link from "next/link";

@@ -73,7 +73,7 @@ export default function OrdersPage() {
                     {order.items.map((item) => (
                       <div key={item.id} className="flex justify-between text-sm">
                         <span className="text-dark-600 dark:text-dark-300">
-                          {item.name_snapshot} <span className="text-dark-400">x{item.qty}</span>
+                          {item.name_snapshot} <span className="text-dark-500">x{item.qty}</span>
                         </span>
                         <span className="text-dark-900 dark:text-dark-50">
                           {formatPrice((item.sale_price_snapshot || item.price_snapshot) * item.qty)}

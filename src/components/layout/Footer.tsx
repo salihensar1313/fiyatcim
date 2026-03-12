@@ -23,6 +23,7 @@ export default function Footer() {
                 href={SOCIAL.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Instagram"
                 className="rounded-lg bg-dark-800 p-2 text-dark-400 transition-colors hover:bg-primary-600 hover:text-white"
               >
                 <Instagram size={18} />
@@ -42,6 +43,7 @@ export default function Footer() {
                 href={SOCIAL.youtube}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="YouTube"
                 className="rounded-lg bg-dark-800 p-2 text-dark-400 transition-colors hover:bg-primary-600 hover:text-white"
               >
                 <Youtube size={18} />
@@ -50,6 +52,7 @@ export default function Footer() {
                 href={SOCIAL.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="LinkedIn"
                 className="rounded-lg bg-dark-800 p-2 text-dark-400 transition-colors hover:bg-primary-600 hover:text-white"
               >
                 <Linkedin size={18} />

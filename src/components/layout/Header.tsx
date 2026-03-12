@@ -158,7 +158,7 @@ export default function Header() {
                 <Link
                   href="/karsilastir"
                   className="relative rounded-lg p-2 text-dark-300 hover:text-white"
-                  title="Karşılaştır"
+                  aria-label={`Karşılaştır (${compareCount} ürün)`}
                 >
                   <GitCompareArrows size={22} />
                   <span className="absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary-600 text-[10px] font-bold text-white">

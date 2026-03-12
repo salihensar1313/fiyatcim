@@ -27,7 +27,7 @@ export default function MobileBottomNav() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-dark-100 bg-white dark:bg-dark-800 lg:hidden dark:border-dark-700">
+    <nav aria-label="Mobil gezinme" className="fixed bottom-0 left-0 right-0 z-40 border-t border-dark-100 bg-white dark:bg-dark-800 lg:hidden dark:border-dark-700">
       <div className="flex items-center justify-around">
         {NAV_ITEMS.map((item) => {
           const active = isActive(item.href);
@@ -36,6 +36,8 @@ export default function MobileBottomNav() {
             <Link
               key={item.key}
               href={item.href}
+              aria-label={item.label}
+              aria-current={active ? "page" : undefined}
               className={`relative flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
                 active ? "text-primary-600" : "text-dark-400"
               }`}

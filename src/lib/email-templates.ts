@@ -1,5 +1,15 @@
 import { CONTACT } from "@/lib/constants";
 
+/** Escape HTML special characters to prevent XSS in email templates */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 interface OrderItem {
   name: string;
   quantity: number;
@@ -57,7 +67,7 @@ export function orderConfirmationEmail(data: OrderEmailData): string {
       (item) => `
       <tr>
         <td style="padding: 10px 0; border-bottom: 1px solid #eee;">
-          ${item.name}
+          ${escapeHtml(item.name)}
         </td>
         <td style="padding: 10px 0; border-bottom: 1px solid #eee; text-align: center;">
           ${item.quantity}
@@ -78,7 +88,7 @@ export function orderConfirmationEmail(data: OrderEmailData): string {
 
       <div style="${bodyStyle}">
         <p style="margin: 0 0 4px; font-size: 16px;">
-          Merhaba <strong>${data.customerName}</strong>,
+          Merhaba <strong>${escapeHtml(data.customerName)}</strong>,
         </p>
         <p style="margin: 0 0 24px; color: #555; font-size: 14px;">
           Siparişiniz başarıyla alındı! Aşağıda sipariş detaylarınızı bulabilirsiniz.
@@ -86,7 +96,7 @@ export function orderConfirmationEmail(data: OrderEmailData): string {
 
         <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
           <p style="margin: 0; font-weight: 600; color: #166534;">
-            Sipariş No: ${data.orderNo}
+            Sipariş No: ${escapeHtml(data.orderNo)}
           </p>
         </div>
 
@@ -114,7 +124,7 @@ export function orderConfirmationEmail(data: OrderEmailData): string {
 
         <div style="margin-top: 24px; padding: 16px; background: #f8fafc; border-radius: 8px;">
           <p style="margin: 0 0 4px; font-weight: 600; font-size: 14px; color: #333;">Teslimat Adresi</p>
-          <p style="margin: 0; font-size: 13px; color: #555;">${data.shippingAddress}</p>
+          <p style="margin: 0; font-size: 13px; color: #555;">${escapeHtml(data.shippingAddress)}</p>
         </div>
 
         <p style="margin: 24px 0 0; font-size: 13px; color: #888;">
@@ -140,17 +150,17 @@ export function orderShippedEmail(data: { orderNo: string; customerName: string;
 
       <div style="${bodyStyle}">
         <p style="margin: 0 0 16px; font-size: 16px;">
-          Merhaba <strong>${data.customerName}</strong>,
+          Merhaba <strong>${escapeHtml(data.customerName)}</strong>,
         </p>
         <p style="margin: 0 0 24px; color: #555; font-size: 14px;">
-          <strong>${data.orderNo}</strong> numaralı siparişiniz kargoya verilmiştir.
+          <strong>${escapeHtml(data.orderNo)}</strong> numaralı siparişiniz kargoya verilmiştir.
         </p>
 
         ${
           data.trackingCode
             ? `<div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
                 <p style="margin: 0; font-weight: 600; color: #1e40af;">
-                  Kargo Takip No: ${data.trackingCode}
+                  Kargo Takip No: ${escapeHtml(data.trackingCode)}
                 </p>
               </div>`
             : ""

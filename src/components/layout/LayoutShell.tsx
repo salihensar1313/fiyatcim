@@ -18,9 +18,15 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
 
   return (
     <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-primary-600 focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-white focus:shadow-lg"
+      >
+        İçeriğe geç
+      </a>
       <AnnouncementBar />
       <Header />
-      <main className="flex-1 pb-16 lg:pb-0">{children}</main>
+      <main id="main-content" className="flex-1 pb-16 lg:pb-0">{children}</main>
       <Footer />
       <ChatBot />
       <MobileBottomNav />

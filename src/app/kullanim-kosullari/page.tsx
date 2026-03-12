@@ -27,7 +27,7 @@ export default function TermsPage() {
             <p>Sipariş onayı, ödemenin başarıyla tamamlanması ile gerçekleşir. Stok yetersizliği durumunda sipariş iptal edilebilir ve ödeme iade edilir.</p>
             <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">Fikri Mülkiyet</h2>
             <p>Sitedeki tüm içerik, görseller ve tasarım Fiyatcim&apos;e aittir ve izinsiz kullanılamaz.</p>
-            <p className="mt-6 text-xs text-dark-400">Son güncelleme: Şubat 2026</p>
+            <p className="mt-6 text-xs text-dark-500">Son güncelleme: Şubat 2026</p>
           </div>
         </div>
       </div>

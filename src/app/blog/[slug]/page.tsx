@@ -53,7 +53,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               <span className="rounded-full bg-primary-50 dark:bg-primary-900/30 px-3 py-1 text-xs font-medium text-primary-700">
                 {post.category}
               </span>
-              <span className="flex items-center gap-1 text-sm text-dark-400">
+              <span className="flex items-center gap-1 text-sm text-dark-500">
                 <Calendar size={14} />
                 {formatDate(post.created_at)}
               </span>

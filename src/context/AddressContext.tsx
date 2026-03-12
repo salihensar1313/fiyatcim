@@ -29,8 +29,10 @@ export function AddressProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Non-demo: load from Supabase
+    let isMounted = true;
     const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!isMounted) return;
       if (!user) {
         setAddresses([]);
         setLoaded(true);
@@ -42,6 +44,7 @@ export function AddressProvider({ children }: { children: React.ReactNode }) {
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .then(({ data, error }) => {
+          if (!isMounted) return;
           if (error) {
             console.error("[AddressContext] load failed:", error.message);
             setAddresses([]);
@@ -65,6 +68,8 @@ export function AddressProvider({ children }: { children: React.ReactNode }) {
           setLoaded(true);
         });
     });
+
+    return () => { isMounted = false; };
   }, []);
 
   // Save to localStorage in demo mode

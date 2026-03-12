@@ -118,7 +118,7 @@ export default function KampanyalarPage() {
               {tab.label}
               <span
                 className={`rounded-full px-2 py-0.5 text-xs ${
-                  activeTab === tab.key ? "bg-dark-100 text-dark-700 dark:text-dark-200" : "bg-dark-50 text-dark-400"
+                  activeTab === tab.key ? "bg-dark-100 text-dark-700 dark:text-dark-200" : "bg-dark-50 text-dark-500"
                 }`}
               >
                 {count}

@@ -31,7 +31,7 @@ export default function ReturnPolicyPage() {
             <p>1. Hesabınızdan veya müşteri hizmetlerinden iade talebi oluşturun. 2. Kargo etiketi tarafımızca gönderilir. 3. Ürünü kargoya verin. 4. Ürün kontrolü sonrası 3 iş günü içinde iade işleminiz tamamlanır.</p>
             <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">İade Edilemeyecek Ürünler</h2>
             <p>Özel sipariş üzerine üretilen veya yapılandırılan ürünler, yazılım lisansları ve aktive edilmiş elektronik ürünler iade edilemez.</p>
-            <p className="mt-6 text-xs text-dark-400">Son güncelleme: Şubat 2026</p>
+            <p className="mt-6 text-xs text-dark-500">Son güncelleme: Şubat 2026</p>
           </div>
         </div>
       </div>

@@ -67,7 +67,7 @@ export default function ProductAlternatives({ product }: ProductAlternativesProp
 
                 {/* Info */}
                 <div className="flex flex-1 flex-col p-3 sm:p-4">
-                  <span className="text-xs font-medium uppercase tracking-wider text-dark-400">
+                  <span className="text-xs font-medium uppercase tracking-wider text-dark-500">
                     {alt.brand_id === "brand-1" ? "Hikvision" :
                      alt.brand_id === "brand-2" ? "Dahua" :
                      alt.brand_id === "brand-3" ? "Ajax" :

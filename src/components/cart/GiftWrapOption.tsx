@@ -44,11 +44,11 @@ export default function GiftWrapOption({ productId, isWrapped, message }: GiftWr
           onChange={handleToggle}
           className="h-4 w-4 rounded border-dark-300 text-primary-600 focus:ring-primary-500"
         />
-        <Gift size={16} className={isWrapped ? "text-primary-600" : "text-dark-400"} />
+        <Gift size={16} className={isWrapped ? "text-primary-600" : "text-dark-500"} />
         <span className="text-sm font-medium text-dark-700 dark:text-dark-200">
           Hediye Paketi
         </span>
-        <span className="text-xs text-dark-400">
+        <span className="text-xs text-dark-500">
           (+{formatPrice(GIFT_WRAP_COST)})
         </span>
       </label>
@@ -63,7 +63,7 @@ export default function GiftWrapOption({ productId, isWrapped, message }: GiftWr
             rows={2}
             className="input-field w-full resize-none text-sm"
           />
-          <p className="mt-1 text-right text-xs text-dark-400">
+          <p className="mt-1 text-right text-xs text-dark-500">
             {giftMessage.length}/200
           </p>
         </div>

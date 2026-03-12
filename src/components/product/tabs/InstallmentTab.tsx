@@ -33,7 +33,7 @@ export default function InstallmentTab({ product }: InstallmentTabProps) {
       </div>
 
       {/* Taksit Tablosu */}
-      <div className="overflow-hidden rounded-xl border border-dark-100">
+      <div className="overflow-x-auto rounded-xl border border-dark-100">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-dark-800 text-white">
@@ -89,7 +89,7 @@ export default function InstallmentTab({ product }: InstallmentTabProps) {
 
       {/* Disclaimer */}
       <div className="rounded-lg border border-dark-100 bg-dark-50 p-4 text-center">
-        <p className="text-xs text-dark-400">
+        <p className="text-xs text-dark-500">
           Taksit seçenekleri bankanıza ve kart tipinize göre farklılık gösterebilir.
           Gerçek taksit tutarları ödeme adımında hesaplanır. Tablodaki tutarlar faizsiz olarak gösterilmektedir.
         </p>

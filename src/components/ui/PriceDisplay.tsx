@@ -29,19 +29,21 @@ export default function PriceDisplay({
   const { usdToTry } = useCurrency();
 
   const hasUsd = priceUsd > 0;
-  const effectiveUsd = salePriceUsd && salePriceUsd < priceUsd ? salePriceUsd : priceUsd;
+  const safePrice = Math.max(0, priceUsd);
+  const safePriceTry = Math.max(0, priceTry || 0);
+  const effectiveUsd = salePriceUsd && salePriceUsd > 0 && salePriceUsd < safePrice ? salePriceUsd : safePrice;
   const hasDiscount = hasUsd
-    ? salePriceUsd != null && salePriceUsd < priceUsd
-    : salePriceTry != null && salePriceTry < (priceTry || Infinity);
+    ? salePriceUsd != null && salePriceUsd > 0 && salePriceUsd < safePrice
+    : salePriceTry != null && salePriceTry > 0 && safePriceTry > 0 && salePriceTry < safePriceTry;
 
   // TL fiyat: verildiyse onu kullan, yoksa kur ile hesapla
-  const effectiveTry = salePriceTry && salePriceTry < (priceTry || Infinity)
+  const effectiveTry = salePriceTry && salePriceTry > 0 && safePriceTry > 0 && salePriceTry < safePriceTry
     ? salePriceTry
     : hasDiscount && hasUsd
       ? usdToTry(effectiveUsd)
-      : priceTry || (hasUsd ? usdToTry(priceUsd) : 0);
+      : safePriceTry || (hasUsd ? usdToTry(safePrice) : 0);
 
-  const originalTry = priceTry || (hasUsd ? usdToTry(priceUsd) : 0);
+  const originalTry = safePriceTry || (hasUsd ? usdToTry(safePrice) : 0);
 
   // Format TL
   const formatTL = (val: number) =>
@@ -75,7 +77,7 @@ export default function PriceDisplay({
           {formatTL(effectiveTry)}
         </span>
         {hasDiscount && (
-          <span className={`${cls.old} text-dark-400 line-through`}>
+          <span className={`${cls.old} text-dark-500 line-through`}>
             {formatTL(originalTry)}
           </span>
         )}
@@ -90,7 +92,7 @@ export default function PriceDisplay({
           {formatUSD(effectiveUsd)}
         </span>
         {hasDiscount && (
-          <span className={`${cls.old} text-dark-400 line-through`}>
+          <span className={`${cls.old} text-dark-500 line-through`}>
             {formatUSD(priceUsd)}
           </span>
         )}

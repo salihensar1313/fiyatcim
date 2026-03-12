@@ -3,6 +3,7 @@
 import { X } from "lucide-react";
 import type { ReturnRequest } from "@/types";
 import { RETURN_REASON_LABELS, RETURN_STATUS_LABELS } from "@/types";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { ADMIN_BADGE_GREEN, ADMIN_BADGE_RED, ADMIN_BADGE_ORANGE, ADMIN_BADGE_BLUE, ADMIN_BADGE_GRAY } from "@/lib/admin-classes";
 
 const STATUS_BADGE: Record<string, string> = {
@@ -28,9 +29,11 @@ interface Props {
 }
 
 export default function ReturnDetailModal({ returnReq: r, onClose }: Props) {
+  const focusTrapRef = useFocusTrap<HTMLDivElement>();
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
       <div
+        ref={focusTrapRef}
         className="w-full max-w-lg rounded-xl bg-white shadow-xl dark:bg-dark-800 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >

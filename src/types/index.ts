@@ -10,6 +10,7 @@ export interface Category {
   sort_order: number;
   created_at: string;
   updated_at?: string;
+  product_count?: number;
 }
 
 export interface Brand {
@@ -98,6 +99,7 @@ export interface Order {
   billing_address: Address;
   shipping_company: string | null;
   tracking_no: string | null;
+  customer_email?: string;
   notes: string | null;
   coupon_id: string | null;
   created_at: string;

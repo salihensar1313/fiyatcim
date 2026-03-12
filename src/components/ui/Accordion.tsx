@@ -28,7 +28,7 @@ export default function Accordion({ items }: AccordionProps) {
             <ChevronDown
               size={18}
               className={cn(
-                "shrink-0 text-dark-400 transition-transform duration-200",
+                "shrink-0 text-dark-500 transition-transform duration-200",
                 openIndex === i && "rotate-180"
               )}
             />

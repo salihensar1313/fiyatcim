@@ -25,22 +25,36 @@ function getSystemTheme(): "light" | "dark" {
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
+/**
+ * Read the initial theme from localStorage and resolve it synchronously
+ * so the first client render matches what the inline <head> script already applied.
+ * This prevents the dark-mode hydration flash.
+ */
+function getInitialTheme(): Theme {
+  if (typeof window === "undefined") return "system";
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
+    if (stored && ["light", "dark", "system"].includes(stored)) return stored;
+  } catch {
+    // localStorage unavailable
+  }
+  return "system";
+}
+
+function getInitialResolved(): "light" | "dark" {
+  if (typeof window === "undefined") return "light";
+  // Read from the DOM class that the inline <head> script already set
+  return document.documentElement.classList.contains("dark") ? "dark" : "light";
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("system");
-  const [resolved, setResolved] = useState<"light" | "dark">("light");
+  const [theme, setThemeState] = useState<Theme>(getInitialTheme);
+  const [resolved, setResolved] = useState<"light" | "dark">(getInitialResolved);
   const [mounted, setMounted] = useState(false);
 
-  // Read from localStorage on mount
+  // Mark as mounted
   useEffect(() => {
     setMounted(true);
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
-      if (stored && ["light", "dark", "system"].includes(stored)) {
-        setThemeState(stored);
-      }
-    } catch {
-      // localStorage unavailable
-    }
   }, []);
 
   // Apply theme to <html> and resolve

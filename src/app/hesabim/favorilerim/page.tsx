@@ -16,7 +16,7 @@ export default function WishlistPage() {
       <h1 className="mb-6 text-2xl font-bold text-dark-900 dark:text-dark-50">
         Favorilerim
         {wishlistProducts.length > 0 && (
-          <span className="ml-2 text-lg font-normal text-dark-400">
+          <span className="ml-2 text-lg font-normal text-dark-500">
             ({wishlistProducts.length})
           </span>
         )}
