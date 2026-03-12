@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Calendar, ArrowRight } from "lucide-react";
 import { getBlogPosts } from "@/lib/queries";
+
+export const metadata: Metadata = {
+  title: "Blog — Güvenlik Sistemleri Rehberi",
+  description: "Alarm sistemleri, güvenlik kameraları ve akıllı ev teknolojileri hakkında uzman rehberler, ipuçları ve güncel haberler.",
+  alternates: { canonical: "/blog" },
+};
 import { formatDate } from "@/lib/utils";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { createServerSupabaseClient } from "@/lib/supabase/server";

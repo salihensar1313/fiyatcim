@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
 import JsonLd, { buildOrganizationSchema, buildWebSiteSchema } from "@/components/seo/JsonLd";
+
+export const metadata: Metadata = {
+  title: "Fiyatcim — Alarm ve Güvenlik Sistemleri | En Uygun Fiyatlar",
+  description: "Alarm sistemleri, güvenlik kameraları, akıllı ev çözümleri ve yangın algılama sistemleri en uygun fiyatlarla Fiyatcim.com'da. Ücretsiz kargo ve profesyonel kurulum.",
+  alternates: { canonical: "/" },
+};
 import HeroSlider from "@/components/home/HeroSlider";
 import PromoBanner from "@/components/home/PromoBanner";
 import CategoryCards from "@/components/home/CategoryCards";

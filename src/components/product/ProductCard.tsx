@@ -66,7 +66,8 @@ export default function ProductCard({ product }: ProductCardProps) {
             toggleItem(product.id);
             showToast(inWishlist ? "Favorilerden çıkarıldı" : "Favorilere eklendi", inWishlist ? "info" : "success");
           }}
-          className="rounded-full bg-white dark:bg-dark-800 p-2 shadow-md transition-all hover:scale-110 dark:bg-dark-700"
+          className="rounded-full bg-white p-2 shadow-md transition-all hover:scale-110 dark:bg-dark-700"
+          aria-label={inWishlist ? "Favorilerden çıkar" : "Favorilere ekle"}
         >
           <Heart
             size={18}
@@ -82,8 +83,9 @@ export default function ProductCard({ product }: ProductCardProps) {
             toggleCompare(product.id);
             showToast(inCompare ? "Karşılaştırmadan çıkarıldı" : "Karşılaştırmaya eklendi", inCompare ? "info" : "success");
           }}
-          className="rounded-full bg-white dark:bg-dark-800 p-2 shadow-md transition-all hover:scale-110 dark:bg-dark-700"
+          className="rounded-full bg-white p-2 shadow-md transition-all hover:scale-110 dark:bg-dark-700"
           title="Karşılaştır"
+          aria-label={inCompare ? "Karşılaştırmadan çıkar" : "Karşılaştırmaya ekle"}
         >
           <GitCompareArrows
             size={16}
@@ -93,10 +95,10 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
 
       {/* Product Image */}
-      <Link href={`/urunler/${product.slug}`} className="relative aspect-square overflow-hidden bg-white dark:bg-dark-800 p-4 dark:bg-dark-700">
+      <Link href={`/urunler/${product.slug}`} className="relative aspect-square overflow-hidden bg-white p-4 dark:bg-dark-700">
         <Image
           src={CATEGORY_IMAGES[product.category_id] || "/images/categories/alarm.png"}
-          alt={product.name}
+          alt={`${product.name} - ${product.brand?.name || "ürün"} | Fiyatcim.com`}
           width={300}
           height={300}
           className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
@@ -115,7 +117,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Name */}
         <Link
           href={`/urunler/${product.slug}`}
-          className="mt-1 line-clamp-2 text-sm font-medium text-dark-900 dark:text-dark-50 transition-colors hover:text-primary-600 dark:text-dark-50"
+          className="mt-1 line-clamp-2 text-sm font-medium text-dark-900 dark:text-dark-50 transition-colors hover:text-primary-600"
         >
           {product.name}
         </Link>

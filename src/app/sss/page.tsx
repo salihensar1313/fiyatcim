@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import Accordion from "@/components/ui/Accordion";
 import JsonLd, { buildFAQSchema } from "@/components/seo/JsonLd";
+
+export const metadata: Metadata = {
+  title: "Sıkça Sorulan Sorular",
+  description: "Fiyatcim.com hakkında sıkça sorulan sorular: sipariş, kargo, iade, ödeme ve güvenlik sistemleri kurulumu.",
+  alternates: { canonical: "/sss" },
+};
 import { getFaqs } from "@/lib/queries";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 

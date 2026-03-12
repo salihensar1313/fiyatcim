@@ -6,7 +6,6 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   ShoppingCart,
-  User,
   Menu,
   Heart,
   ChevronDown,
@@ -25,7 +24,7 @@ import { useCurrency } from "@/context/CurrencyContext";
 import MobileMenu from "./MobileMenu";
 import NotificationBell from "@/components/ui/NotificationBell";
 import SearchAutocomplete from "./SearchAutocomplete";
-import DarkModeToggle from "@/components/ui/DarkModeToggle";
+import AccountDropdown from "@/components/ui/AccountDropdown";
 import { useCompare } from "@/hooks/useCompare";
 
 export default function Header() {
@@ -114,6 +113,7 @@ export default function Header() {
             <button
               onClick={() => setIsMobileMenuOpen(true)}
               className="rounded-lg p-2 text-white hover:bg-dark-700 lg:hidden"
+              aria-label="Menüyü aç"
             >
               <Menu size={24} />
             </button>
@@ -143,6 +143,7 @@ export default function Header() {
               <Link
                 href="/hesabim/favorilerim"
                 className="relative rounded-lg p-2 text-dark-300 hover:text-white"
+                aria-label="Favorilerim"
               >
                 <Heart size={22} />
                 {wishlistCount > 0 && (
@@ -166,9 +167,6 @@ export default function Header() {
                 </Link>
               )}
 
-              {/* Dark Mode Toggle */}
-              <DarkModeToggle />
-
               {/* Notifications */}
               <NotificationBell />
 
@@ -176,6 +174,7 @@ export default function Header() {
               <Link
                 href="/sepet"
                 className="relative rounded-lg p-2 text-dark-300 hover:text-white"
+                aria-label="Sepetim"
               >
                 <ShoppingCart size={22} />
                 {cartCount > 0 && (
@@ -185,13 +184,8 @@ export default function Header() {
                 )}
               </Link>
 
-              {/* Account */}
-              <Link
-                href="/hesabim"
-                className="hidden rounded-lg p-2 text-dark-300 hover:text-white sm:block"
-              >
-                <User size={22} />
-              </Link>
+              {/* Account Dropdown */}
+              <AccountDropdown />
             </div>
           </div>
         </div>

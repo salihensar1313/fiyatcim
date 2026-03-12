@@ -28,17 +28,20 @@ export default function PriceDisplay({
 }: PriceDisplayProps) {
   const { usdToTry } = useCurrency();
 
+  const hasUsd = priceUsd > 0;
   const effectiveUsd = salePriceUsd && salePriceUsd < priceUsd ? salePriceUsd : priceUsd;
-  const hasDiscount = salePriceUsd != null && salePriceUsd < priceUsd;
+  const hasDiscount = hasUsd
+    ? salePriceUsd != null && salePriceUsd < priceUsd
+    : salePriceTry != null && salePriceTry < (priceTry || Infinity);
 
   // TL fiyat: verildiyse onu kullan, yoksa kur ile hesapla
   const effectiveTry = salePriceTry && salePriceTry < (priceTry || Infinity)
     ? salePriceTry
-    : hasDiscount
+    : hasDiscount && hasUsd
       ? usdToTry(effectiveUsd)
-      : priceTry || usdToTry(priceUsd);
+      : priceTry || (hasUsd ? usdToTry(priceUsd) : 0);
 
-  const originalTry = priceTry || usdToTry(priceUsd);
+  const originalTry = priceTry || (hasUsd ? usdToTry(priceUsd) : 0);
 
   // Format TL
   const formatTL = (val: number) =>
@@ -65,9 +68,23 @@ export default function PriceDisplay({
     );
   }
 
+  if (!hasUsd) {
+    return (
+      <div className="flex items-center gap-2">
+        <span className={`${cls.usd} text-dark-900 dark:text-dark-50`}>
+          {formatTL(effectiveTry)}
+        </span>
+        {hasDiscount && (
+          <span className={`${cls.old} text-dark-400 line-through`}>
+            {formatTL(originalTry)}
+          </span>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col">
-      {/* Ana sat\u0131r: USD fiyat + eski fiyat */}
       <div className="flex items-center gap-2">
         <span className={`${cls.usd} text-dark-900 dark:text-dark-50`}>
           {formatUSD(effectiveUsd)}
@@ -78,7 +95,6 @@ export default function PriceDisplay({
           </span>
         )}
       </div>
-      {/* Alt sat\u0131r: TL kar\u015f\u0131l\u0131\u011f\u0131 */}
       <div className="flex items-center gap-1">
         <span className={`${cls.tl} font-semibold text-primary-600`}>
           {formatTL(effectiveTry)}

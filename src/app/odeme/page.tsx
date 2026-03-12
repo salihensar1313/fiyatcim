@@ -455,8 +455,8 @@ export default function CheckoutPage() {
                   </button>
                   <button
                     disabled={!allMandatoryAgreed}
-                    onClick={() => {
-                      const order = createOrder({
+                    onClick={async () => {
+                      const order = await createOrder({
                         items,
                         shippingAddress: address,
                         billingAddress: address,
@@ -554,8 +554,8 @@ export default function CheckoutPage() {
             )}
             <button
               disabled={!allMandatoryAgreed}
-              onClick={() => {
-                const order = createOrder({
+              onClick={async () => {
+                const order = await createOrder({
                   items,
                   shippingAddress: address,
                   billingAddress: address,

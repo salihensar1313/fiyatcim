@@ -44,7 +44,7 @@ export default async function CategoryCards() {
                 )}
               </div>
               <div className="flex items-center justify-between px-4 py-3">
-                <h3 className="text-sm font-bold text-dark-900 dark:text-dark-50 sm:text-base dark:text-dark-50">{cat.name}</h3>
+                <h3 className="text-sm font-bold text-dark-900 dark:text-dark-50 sm:text-base">{cat.name}</h3>
                 <ChevronRight size={18} className="text-primary-600 transition-transform group-hover:translate-x-1" />
               </div>
             </Link>
