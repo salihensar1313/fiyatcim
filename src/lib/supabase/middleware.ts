@@ -30,14 +30,30 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Admin sayfaları koruma — giriş yapmamış kullanıcıları yönlendir
-  if (
-    !user &&
-    request.nextUrl.pathname.startsWith("/admin")
-  ) {
+  const isAdminRoute = request.nextUrl.pathname.startsWith("/admin");
+  const isProtectedRoute = isAdminRoute || request.nextUrl.pathname.startsWith("/hesabim") || request.nextUrl.pathname.startsWith("/odeme");
+
+  // Giriş yapmamış kullanıcıları login'e yönlendir
+  if (!user && isProtectedRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/giris";
+    url.searchParams.set("redirect", request.nextUrl.pathname);
     return NextResponse.redirect(url);
+  }
+
+  // Admin sayfaları — role kontrolü (normal kullanıcı admin'e erişemez)
+  if (isAdminRoute && user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("user_id", user.id)
+      .single();
+
+    if (profile?.role !== "admin") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/";
+      return NextResponse.redirect(url);
+    }
   }
 
   return supabaseResponse;

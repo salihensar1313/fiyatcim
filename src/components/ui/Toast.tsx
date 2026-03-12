@@ -21,15 +21,15 @@ const ToastContext = createContext<ToastContextType | undefined>(undefined);
 let toastId = 0;
 
 const icons = {
-  success: <CheckCircle size={18} className="text-green-500" />,
-  error: <AlertCircle size={18} className="text-red-500" />,
-  info: <Info size={18} className="text-blue-500" />,
+  success: <CheckCircle size={20} className="text-green-500 shrink-0" />,
+  error: <AlertCircle size={20} className="text-red-500 shrink-0" />,
+  info: <Info size={20} className="text-blue-500 shrink-0" />,
 };
 
 const bgColors = {
-  success: "bg-green-50 border-green-200",
-  error: "bg-red-50 border-red-200",
-  info: "bg-blue-50 border-blue-200",
+  success: "bg-white border-green-300 dark:bg-dark-800 dark:border-green-600",
+  error: "bg-white border-red-300 dark:bg-dark-800 dark:border-red-600",
+  info: "bg-white border-blue-300 dark:bg-dark-800 dark:border-blue-600",
 };
 
 export function ToastProvider({ children }: { children: ReactNode }) {
@@ -37,7 +37,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
   const showToast = useCallback((message: string, type: ToastType = "success") => {
     const id = ++toastId;
-    setToasts((prev) => [...prev, { id, message, type }]);
+    setToasts((prev) => {
+      const next = [...prev, { id, message, type }];
+      // Max 3 toasts — remove oldest if exceeded (FIFO)
+      if (next.length > 3) return next.slice(next.length - 3);
+      return next;
+    });
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 3000);
@@ -51,12 +56,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={{ showToast }}>
       {children}
       {/* Toast Container */}
-      <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
+      <div className="fixed bottom-4 right-4 z-[70] flex flex-col gap-2">
         {toasts.map((toast) => (
           <div
             key={toast.id}
             className={cn(
-              "flex items-center gap-3 rounded-lg border px-4 py-3 shadow-lg transition-all animate-in slide-in-from-right",
+              "flex items-center gap-3 rounded-lg border px-4 py-3 shadow-xl transition-all animate-in slide-in-from-right",
               bgColors[toast.type]
             )}
           >

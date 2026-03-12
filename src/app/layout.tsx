@@ -17,6 +17,8 @@ import GoogleAnalytics from "@/components/seo/GoogleAnalytics";
 import WebVitals from "@/components/analytics/WebVitals";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { ActivityLogProvider } from "@/context/ActivityLogContext";
+import { ReturnProvider } from "@/context/ReturnContext";
+import ErrorBoundary from "@/components/ui/ErrorBoundary";
 import JsonLd, { buildOrganizationSchema, buildWebSiteSchema, buildLocalBusinessSchema } from "@/components/seo/JsonLd";
 
 const inter = Inter({
@@ -39,6 +41,9 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "Fiyatcim",
   },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
   robots: {
     index: true,
     follow: true,
@@ -60,11 +65,13 @@ export const metadata: Metadata = {
     siteName: "Fiyatcim",
     locale: "tr_TR",
     type: "website",
+    images: [{ url: `${SITE_URL}/images/og-image.png`, width: 1200, height: 630, alt: "Fiyatcim.com" }],
   },
   twitter: {
     card: "summary_large_image",
     title: SITE_FULL_NAME,
     description: SITE_DESCRIPTION,
+    images: [`${SITE_URL}/images/og-image.png`],
   },
 };
 
@@ -105,10 +112,14 @@ export default function RootLayout({
                 <WishlistProvider>
                 <AddressProvider>
                 <ActivityLogProvider>
+                <ReturnProvider>
                   <ToastProvider>
-                    <LayoutShell>{children}</LayoutShell>
+                    <ErrorBoundary>
+                      <LayoutShell>{children}</LayoutShell>
+                    </ErrorBoundary>
                     <CookieConsent />
                   </ToastProvider>
+                </ReturnProvider>
                 </ActivityLogProvider>
                 </AddressProvider>
                 </WishlistProvider>

@@ -26,6 +26,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAdmin: boolean;
   signIn: (email: string, password: string) => Promise<{ error?: string }>;
+  signInWithGoogle: () => Promise<{ error?: string }>;
   signUp: (email: string, password: string, ad: string, soyad: string, telefon?: string) => Promise<{ error?: string }>;
   signOut: () => void;
   updateProfile: (data: Partial<Profile>) => void;
@@ -38,6 +39,23 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const AUTH_STORAGE_KEY = "fiyatcim_auth";
 const IS_DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
+function translateAuthError(msg: string): string {
+  const map: Record<string, string> = {
+    "Invalid login credentials": "Geçersiz e-posta veya şifre.",
+    "Email not confirmed": "E-posta adresiniz henüz doğrulanmamış.",
+    "User not found": "Bu e-posta ile kayıtlı kullanıcı bulunamadı.",
+    "Email rate limit exceeded": "Çok fazla deneme yaptınız. Lütfen biraz bekleyin.",
+    "For security purposes, you can only request this after": "Güvenlik nedeniyle lütfen biraz bekleyip tekrar deneyin.",
+    "User already registered": "Bu e-posta adresi zaten kayıtlı.",
+    "Password should be at least 6 characters": "Şifre en az 6 karakter olmalıdır.",
+    "Signup requires a valid password": "Geçerli bir şifre giriniz.",
+  };
+  for (const [en, tr] of Object.entries(map)) {
+    if (msg.includes(en)) return tr;
+  }
+  return msg;
+}
+
 function mapProfile(data: Record<string, unknown>): Profile {
   return {
     user_id: data.user_id as string,
@@ -45,6 +63,7 @@ function mapProfile(data: Record<string, unknown>): Profile {
     soyad: (data.soyad as string) ?? "",
     telefon: (data.telefon as string) ?? "",
     role: (data.role as "admin" | "user") ?? "user",
+    avatar: (data.avatar as string) ?? undefined,
   };
 }
 
@@ -80,28 +99,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Non-demo: Supabase Auth
     const supabase = createClient();
+    let settled = false;
 
-    supabase.auth.getUser().then(({ data: { user: sbUser } }) => {
-      if (sbUser) {
-        setUser({ id: sbUser.id, email: sbUser.email! });
-        supabase.from("profiles").select("*").eq("user_id", sbUser.id).single()
-          .then(({ data }) => { if (data) setProfile(mapProfile(data as Record<string, unknown>)); });
+    const settle = () => { if (!settled) { settled = true; setIsLoading(false); } };
+
+    // Timeout: 5s max bekle, sonra loading'i kapat
+    const timer = setTimeout(settle, 5000);
+
+    const loadUser = async (userId: string, email: string) => {
+      setUser({ id: userId, email });
+      const { data } = await supabase.from("profiles").select("*").eq("user_id", userId).single();
+      if (data) setProfile(mapProfile(data as Record<string, unknown>));
+    };
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        loadUser(session.user.id, session.user.email!).finally(settle);
+      } else {
+        settle();
       }
-      setIsLoading(false);
-    });
+    }).catch(settle);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user) {
-        setUser({ id: session.user.id, email: session.user.email! });
-        const { data } = await supabase.from("profiles").select("*").eq("user_id", session.user.id).single();
-        if (data) setProfile(mapProfile(data as Record<string, unknown>));
+        await loadUser(session.user.id, session.user.email!);
+        settle();
       } else {
         setUser(null);
         setProfile(null);
+        settle();
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => { clearTimeout(timer); subscription.unsubscribe(); };
   }, []);
 
   // ========================================
@@ -159,7 +189,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Non-demo: Supabase Auth
     const supabase = createClient();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) return { error: error.message };
+    if (error) return { error: translateAuthError(error.message) };
+    return {};
+  }, [persistDemo]);
+
+  // ========================================
+  // SIGN IN WITH GOOGLE
+  // ========================================
+  const signInWithGoogle = useCallback(async (): Promise<{ error?: string }> => {
+    if (IS_DEMO_MODE) {
+      // Demo mode: simulate Google login
+      const u: User = { id: "user-google-" + Date.now(), email: "demo@gmail.com" };
+      const p: Profile = { user_id: u.id, ad: "Google", soyad: "Kullanıcı", telefon: "", role: "user" };
+      setUser(u);
+      setProfile(p);
+      persistDemo(u, p);
+      return {};
+    }
+
+    // Non-demo: Supabase Google OAuth
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    if (error) return { error: translateAuthError(error.message) };
     return {};
   }, [persistDemo]);
 
@@ -199,7 +255,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Non-demo: Supabase Auth
     const supabase = createClient();
     const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) return { error: error.message };
+    if (error) return { error: translateAuthError(error.message) };
 
     // Create profile
     if (data.user) {
@@ -219,17 +275,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // SIGN OUT
   // ========================================
   const signOut = useCallback(async () => {
+    // Clear state FIRST so UI updates immediately
+    setUser(null);
+    setProfile(null);
+
     if (IS_DEMO_MODE) {
-      setUser(null);
-      setProfile(null);
       persistDemo(null, null);
       return;
     }
 
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    setUser(null);
-    setProfile(null);
+    try {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.error("Sign out error:", err);
+    }
   }, [persistDemo]);
 
   // ========================================
@@ -254,7 +314,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       } else if (user) {
         const supabase = createClient();
-        supabase.from("profiles").update(data).eq("user_id", user.id);
+        supabase.from("profiles").update(data).eq("user_id", user.id).then(({ error }) => {
+          if (error) console.error("Profile update error:", error.message);
+        });
       }
 
       return updated;
@@ -265,13 +327,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ADMIN: Update any user profile
   // ========================================
   const adminUpdateUser = useCallback((userId: string, data: { ad: string; soyad: string; telefon: string }) => {
-    if (!IS_DEMO_MODE) return;
-    const users = safeGetJSON<RegisteredUser[]>("fiyatcim_registered_users", []);
-    const arr = Array.isArray(users) ? users : [];
-    const idx = arr.findIndex((u) => u.user_id === userId);
-    if (idx >= 0) {
-      arr[idx] = { ...arr[idx], ...data };
-      safeSetJSON("fiyatcim_registered_users", arr);
+    if (IS_DEMO_MODE) {
+      const users = safeGetJSON<RegisteredUser[]>("fiyatcim_registered_users", []);
+      const arr = Array.isArray(users) ? users : [];
+      const idx = arr.findIndex((u) => u.user_id === userId);
+      if (idx >= 0) {
+        arr[idx] = { ...arr[idx], ...data };
+        safeSetJSON("fiyatcim_registered_users", arr);
+      }
+    } else {
+      const supabase = createClient();
+      supabase.from("profiles").update(data).eq("user_id", userId).then(({ error }) => {
+        if (error) console.error("Admin profile update error:", error.message);
+      });
     }
   }, []);
 
@@ -296,7 +364,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, profile, isLoading, isAdmin, signIn, signUp, signOut, updateProfile, adminUpdateUser, adminChangePassword }}
+      value={{ user, profile, isLoading, isAdmin, signIn, signInWithGoogle, signUp, signOut, updateProfile, adminUpdateUser, adminChangePassword }}
     >
       {children}
     </AuthContext.Provider>

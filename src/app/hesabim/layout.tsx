@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 
 import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -56,9 +57,17 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
             <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-4">
               {/* User Info */}
               <div className="mb-4 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-sm font-bold text-primary-600">
-                  {initial}
-                </div>
+                {profile?.avatar ? (
+                  <img
+                    src={profile.avatar}
+                    alt={`${profile.ad} ${profile.soyad}`}
+                    className="h-10 w-10 rounded-full object-cover border border-dark-100 dark:border-dark-600"
+                  />
+                ) : (
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-sm font-bold text-primary-600">
+                    {initial}
+                  </div>
+                )}
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold text-dark-900 dark:text-dark-50">
                     {profile?.ad} {profile?.soyad}
@@ -112,8 +121,8 @@ export default function HesabimLayout({ children }: { children: React.ReactNode 
                 {/* Divider + Sign Out */}
                 <div className="border-t border-dark-100 pt-2">
                   <button
-                    onClick={() => {
-                      signOut();
+                    onClick={async () => {
+                      await signOut();
                       router.push("/");
                     }}
                     className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-red-600 transition-colors hover:bg-red-50"

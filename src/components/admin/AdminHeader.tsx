@@ -1,9 +1,11 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 
 import { useState, useEffect, useRef } from "react";
-import { Bell, User, LogOut, ShoppingBag, UserPlus, Package, Menu } from "lucide-react";
+import { Bell, User, LogOut, ShoppingBag, UserPlus, Package, Menu, ChevronRight, Home } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 import { safeGetJSON, safeSetJSON } from "@/lib/safe-storage";
 
 interface Notification {
@@ -67,6 +69,25 @@ const COLOR_MAP = {
   stock: "bg-orange-100 text-orange-600",
 };
 
+const BREADCRUMB_LABELS: Record<string, string> = {
+  admin: "Dashboard",
+  urunler: "Ürünler",
+  siparisler: "Siparişler",
+  stok: "Stok",
+  kuponlar: "Kuponlar",
+  iadeler: "İadeler",
+  musteriler: "Müşteriler",
+  icerik: "İçerik Yönetimi",
+  raporlar: "Raporlar",
+  aktivite: "Aktivite",
+  seo: "SEO",
+  ayarlar: "Ayarlar",
+  "urun-yorumlari": "Ürün Yorumları",
+  sorular: "Sorular",
+  "yeni-urun": "Yeni Ürün",
+  duzenle: "Düzenle",
+};
+
 interface AdminHeaderProps {
   onMenuToggle?: () => void;
 }
@@ -74,6 +95,7 @@ interface AdminHeaderProps {
 export default function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
   const { user, profile, signOut } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -130,7 +152,29 @@ export default function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
             <Menu size={20} />
           </button>
         )}
-        <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">Admin Panel</h2>
+        <nav className="flex items-center gap-1 text-sm">
+          <Link href="/admin" className="text-dark-400 hover:text-dark-600 dark:text-dark-500 dark:hover:text-dark-300">
+            <Home size={16} />
+          </Link>
+          {pathname && pathname !== "/admin" && (() => {
+            const segments = pathname.replace("/admin", "").split("/").filter(Boolean);
+            return segments.map((seg, i) => {
+              const href = "/admin/" + segments.slice(0, i + 1).join("/");
+              const isLast = i === segments.length - 1;
+              const label = BREADCRUMB_LABELS[seg] || seg;
+              return (
+                <span key={href} className="flex items-center gap-1">
+                  <ChevronRight size={14} className="text-dark-300 dark:text-dark-600" />
+                  {isLast ? (
+                    <span className="font-semibold text-dark-900 dark:text-dark-50">{label}</span>
+                  ) : (
+                    <Link href={href} className="text-dark-400 hover:text-dark-600 dark:text-dark-500 dark:hover:text-dark-300">{label}</Link>
+                  )}
+                </span>
+              );
+            });
+          })()}
+        </nav>
       </div>
 
       <div className="flex items-center gap-4">
@@ -217,16 +261,24 @@ export default function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
 
         {/* User */}
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-primary-600">
-            <User size={16} />
-          </div>
+          {profile?.avatar ? (
+            <img
+              src={profile.avatar}
+              alt={`${profile?.ad} ${profile?.soyad}`}
+              className="h-8 w-8 rounded-full object-cover border border-dark-100 dark:border-dark-600"
+            />
+          ) : (
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-primary-600">
+              <User size={16} />
+            </div>
+          )}
           <div className="hidden sm:block">
             <p className="text-xs font-semibold text-dark-900 dark:text-dark-50">{profile?.ad} {profile?.soyad}</p>
             <p className="text-xs text-dark-400">{user?.email}</p>
           </div>
           <button
-            onClick={() => {
-              signOut();
+            onClick={async () => {
+              await signOut();
               router.push("/");
             }}
             className="rounded-lg p-2 text-dark-400 hover:bg-red-50 hover:text-red-600"

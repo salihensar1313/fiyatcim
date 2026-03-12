@@ -1,11 +1,46 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 
-import { useState, useEffect } from "react";
-import { Mail, Phone } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Mail, Phone, Camera, Trash2 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import SmsOtpVerify from "@/components/ui/SmsOtpVerify";
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+const MAX_AVATAR_SIZE = 200; // px — resize to this max dimension
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+function resizeImage(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let w = img.width;
+        let h = img.height;
+        if (w > MAX_AVATAR_SIZE || h > MAX_AVATAR_SIZE) {
+          if (w > h) {
+            h = Math.round((h * MAX_AVATAR_SIZE) / w);
+            w = MAX_AVATAR_SIZE;
+          } else {
+            w = Math.round((w * MAX_AVATAR_SIZE) / h);
+            h = MAX_AVATAR_SIZE;
+          }
+        }
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d")!;
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL("image/webp", 0.8));
+      };
+      img.onerror = reject;
+      img.src = reader.result as string;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
 
 type Tab = "profile" | "contact";
 
@@ -28,6 +63,8 @@ export default function AccountPage() {
   const [soyad, setSoyad] = useState("");
   const [telefon, setTelefon] = useState("");
   const [saved, setSaved] = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // SMS doğrulama state
   const [pendingTelefon, setPendingTelefon] = useState<string | null>(null);
@@ -39,6 +76,30 @@ export default function AccountPage() {
       setTelefon(profile.telefon || "");
     }
   }, [profile]);
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) return;
+    if (file.size > MAX_FILE_SIZE) {
+      alert("Dosya boyutu 5MB'dan küçük olmalıdır.");
+      return;
+    }
+    setAvatarUploading(true);
+    try {
+      const base64 = await resizeImage(file);
+      updateProfile({ avatar: base64 });
+    } catch {
+      alert("Fotoğraf yüklenirken hata oluştu.");
+    } finally {
+      setAvatarUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleRemoveAvatar = () => {
+    updateProfile({ avatar: "" });
+  };
 
   if (!user) return null;
 
@@ -99,7 +160,68 @@ export default function AccountPage() {
 
       {/* Tab: Üyelik Bilgilerim */}
       {tab === "profile" && (
-        <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
+        <div className="space-y-6">
+          {/* Avatar Section */}
+          <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
+            <h2 className="mb-1 text-lg font-bold text-dark-900 dark:text-dark-50">Profil Fotoğrafı</h2>
+            <p className="mb-5 text-sm text-dark-500 dark:text-dark-400">
+              Profil fotoğrafınızı ekleyin veya değiştirin.
+            </p>
+            <div className="flex items-center gap-5">
+              {/* Avatar Preview */}
+              <div className="relative">
+                {profile?.avatar ? (
+                  <img
+                    src={profile.avatar}
+                    alt="Profil fotoğrafı"
+                    className="h-20 w-20 rounded-full object-cover border-2 border-dark-100 dark:border-dark-600"
+                  />
+                ) : (
+                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900/40 text-2xl font-bold text-primary-600">
+                    {(profile?.ad?.[0] || user?.email[0] || "U").toUpperCase()}
+                  </div>
+                )}
+                {avatarUploading && (
+                  <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40">
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  </div>
+                )}
+              </div>
+              {/* Buttons */}
+              <div className="flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={avatarUploading}
+                  className="flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700 disabled:opacity-50"
+                >
+                  <Camera size={16} />
+                  {profile?.avatar ? "Fotoğrafı Değiştir" : "Fotoğraf Ekle"}
+                </button>
+                {profile?.avatar && (
+                  <button
+                    type="button"
+                    onClick={handleRemoveAvatar}
+                    className="flex items-center gap-2 rounded-lg border border-dark-200 dark:border-dark-600 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
+                  >
+                    <Trash2 size={16} />
+                    Kaldır
+                  </button>
+                )}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                  className="hidden"
+                />
+                <p className="text-xs text-dark-400">JPG, PNG veya WebP. Maks. 5MB.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Profile Info */}
+          <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
           <h2 className="mb-1 text-lg font-bold text-dark-900 dark:text-dark-50">Profil Bilgileri</h2>
           <p className="mb-5 text-sm text-dark-500 dark:text-dark-400">
             Kişisel bilgilerinizi buradan güncelleyebilirsiniz.
@@ -164,6 +286,7 @@ export default function AccountPage() {
               </div>
             </form>
           )}
+          </div>
         </div>
       )}
 
