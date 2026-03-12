@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminHeader from "@/components/admin/AdminHeader";
+import AdminSearchCommand from "@/components/admin/AdminSearchCommand";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -28,16 +29,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <>
-      {/* GATE 2: Admin sayfaları indexlenmemeli — "use client" layout'ta metadata export çalışmaz */}
-      <meta name="robots" content="noindex,nofollow" />
-      <div className="flex min-h-screen bg-dark-50 dark:bg-dark-800">
+    <div className="flex min-h-screen bg-dark-50 dark:bg-dark-800">
         <AdminSidebar mobileOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <div className="flex-1 lg:ml-64">
           <AdminHeader onMenuToggle={() => setSidebarOpen(true)} />
           <main className="p-4 lg:p-6">{children}</main>
+          <AdminSearchCommand />
         </div>
       </div>
-    </>
   );
 }

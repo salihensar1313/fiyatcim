@@ -12,6 +12,7 @@ import {
 import { useToast } from "@/components/ui/Toast";
 import dynamic from "next/dynamic";
 import ImageUploader from "@/components/admin/ImageUploader";
+import { ADMIN_INPUT } from "@/lib/admin-classes";
 import type { Category } from "@/types";
 
 const ConfirmModal = dynamic(() => import("@/components/ui/ConfirmModal"), { ssr: false });
@@ -158,7 +159,7 @@ export default function AdminKategorilerPage() {
               <input
                 value={name}
                 onChange={(e) => { setName(e.target.value); if (!editing) setSlug(slugify(e.target.value)); }}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={ADMIN_INPUT}
               />
             </div>
             <div>
@@ -166,7 +167,7 @@ export default function AdminKategorilerPage() {
               <input
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={ADMIN_INPUT}
               />
             </div>
             <div>
@@ -175,7 +176,7 @@ export default function AdminKategorilerPage() {
                 type="number"
                 value={sortOrder}
                 onChange={(e) => setSortOrder(Number(e.target.value))}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={ADMIN_INPUT}
               />
             </div>
             <div className="sm:col-span-2">

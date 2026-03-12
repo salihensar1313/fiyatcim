@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { ArrowLeft, Save, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/components/ui/Toast";
+import { ADMIN_INPUT } from "@/lib/admin-classes";
 import { safeGetJSON, safeSetJSON } from "@/lib/safe-storage";
 
 interface PromoBannerData {
@@ -89,7 +90,7 @@ export default function AdminKampanyaPage() {
             <input
               value={banner.title}
               onChange={(e) => setBanner((prev) => ({ ...prev, title: e.target.value }))}
-              className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+              className={ADMIN_INPUT}
               placeholder="Kampanya başlığı"
             />
           </div>
@@ -99,7 +100,7 @@ export default function AdminKampanyaPage() {
             <input
               value={banner.description}
               onChange={(e) => setBanner((prev) => ({ ...prev, description: e.target.value }))}
-              className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+              className={ADMIN_INPUT}
               placeholder="Kampanya açıklaması"
             />
           </div>
@@ -109,7 +110,7 @@ export default function AdminKampanyaPage() {
             <input
               value={banner.link}
               onChange={(e) => setBanner((prev) => ({ ...prev, link: e.target.value }))}
-              className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+              className={ADMIN_INPUT}
               placeholder="/urunler?sale=true"
             />
           </div>

@@ -12,6 +12,7 @@ import {
   XCircle,
   BarChart3,
   Warehouse,
+  RotateCcw,
 } from "lucide-react";
 import { useActivityLog } from "@/context/ActivityLogContext";
 import { timeAgo } from "@/lib/utils";
@@ -30,6 +31,7 @@ const LOG_ICONS: Record<ActivityLogType, typeof Activity> = {
   bulk_order_update: BarChart3,
   tracking_added: Truck,
   stock_update: Warehouse,
+  return_request: RotateCcw,
 };
 
 const LOG_COLORS: Record<ActivityLogType, string> = {
@@ -42,6 +44,7 @@ const LOG_COLORS: Record<ActivityLogType, string> = {
   bulk_order_update: "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
   tracking_added: "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400",
   stock_update: "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400",
+  return_request: "bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400",
 };
 
 const LOG_LABELS: Record<ActivityLogType, string> = {
@@ -54,6 +57,7 @@ const LOG_LABELS: Record<ActivityLogType, string> = {
   bulk_order_update: "Toplu Güncelleme",
   tracking_added: "Kargo Takip",
   stock_update: "Stok Güncelleme",
+  return_request: "İade Talebi",
 };
 
 const FILTER_OPTIONS: { key: FilterType; label: string }[] = [
@@ -64,6 +68,7 @@ const FILTER_OPTIONS: { key: FilterType; label: string }[] = [
   { key: "review_approve", label: "Yorumlar" },
   { key: "stock_update", label: "Stok" },
   { key: "tracking_added", label: "Kargo" },
+  { key: "return_request", label: "İadeler" },
 ];
 
 export default function AdminActivityPage() {

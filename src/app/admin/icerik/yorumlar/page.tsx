@@ -11,6 +11,7 @@ import {
 } from "@/lib/admin-actions";
 import { useToast } from "@/components/ui/Toast";
 import dynamic from "next/dynamic";
+import { ADMIN_INPUT, ADMIN_TEXTAREA } from "@/lib/admin-classes";
 import type { Testimonial } from "@/types";
 
 const ConfirmModal = dynamic(() => import("@/components/ui/ConfirmModal"), { ssr: false });
@@ -149,7 +150,7 @@ export default function AdminYorumlarPage() {
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={ADMIN_INPUT}
                 placeholder="Müşteri adı"
               />
             </div>
@@ -158,7 +159,7 @@ export default function AdminYorumlarPage() {
               <input
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={ADMIN_INPUT}
                 placeholder="Şirket adı (opsiyonel)"
               />
             </div>
@@ -168,7 +169,7 @@ export default function AdminYorumlarPage() {
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 rows={3}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={ADMIN_TEXTAREA}
                 placeholder="Müşteri yorumu"
               />
             </div>

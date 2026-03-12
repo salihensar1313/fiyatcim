@@ -11,6 +11,7 @@ import {
 } from "@/lib/admin-actions";
 import { useToast } from "@/components/ui/Toast";
 import dynamic from "next/dynamic";
+import { ADMIN_INPUT, ADMIN_SELECT, ADMIN_TEXTAREA } from "@/lib/admin-classes";
 import type { FAQ } from "@/types";
 
 const ConfirmModal = dynamic(() => import("@/components/ui/ConfirmModal"), { ssr: false });
@@ -155,7 +156,7 @@ export default function AdminFAQPage() {
               <input
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={ADMIN_INPUT}
                 placeholder="Soru metnini yazın..."
               />
             </div>
@@ -165,7 +166,7 @@ export default function AdminFAQPage() {
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
                 rows={4}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={ADMIN_TEXTAREA}
                 placeholder="Cevap metnini yazın..."
               />
             </div>
@@ -174,7 +175,7 @@ export default function AdminFAQPage() {
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={ADMIN_SELECT}
               >
                 {FAQ_CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>{cat}</option>

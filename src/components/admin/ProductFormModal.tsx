@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import type { Product, Category, Brand } from "@/types";
 import { getCategories, getBrands } from "@/lib/queries";
 import { ADMIN_INPUT, ADMIN_SELECT, ADMIN_TEXTAREA } from "@/lib/admin-classes";
+import { useCurrency } from "@/context/CurrencyContext";
 
 interface ProductFormModalProps {
   isOpen: boolean;
@@ -63,6 +64,8 @@ export default function ProductFormModal({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [categories, setCategories] = useState<Category[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
+  const { usdToTry } = useCurrency();
+  const [tlAutoCalc, setTlAutoCalc] = useState(true);
 
   useEffect(() => {
     getCategories().then(setCategories).catch(console.error);
@@ -242,7 +245,14 @@ export default function ProductFormModal({
               <input
                 type="number"
                 value={form.price_usd || ""}
-                onChange={(e) => setForm((prev) => ({ ...prev, price_usd: Number(e.target.value) }))}
+                onChange={(e) => {
+                  const usd = Number(e.target.value);
+                  setForm((prev) => ({
+                    ...prev,
+                    price_usd: usd,
+                    ...(tlAutoCalc && usd > 0 ? { price: Math.round(usdToTry(usd)) } : {}),
+                  }));
+                }}
                 className={inputClass("price_usd")}
                 min={0}
                 step={1}
@@ -254,12 +264,15 @@ export default function ProductFormModal({
               <input
                 type="number"
                 value={form.sale_price_usd ?? ""}
-                onChange={(e) =>
+                onChange={(e) => {
+                  const usd = e.target.value ? Number(e.target.value) : null;
                   setForm((prev) => ({
                     ...prev,
-                    sale_price_usd: e.target.value ? Number(e.target.value) : null,
-                  }))
-                }
+                    sale_price_usd: usd,
+                    ...(tlAutoCalc && usd != null && usd > 0 ? { sale_price: Math.round(usdToTry(usd)) } : {}),
+                    ...(tlAutoCalc && usd == null ? { sale_price: null } : {}),
+                  }));
+                }}
                 className={ADMIN_INPUT}
                 min={0}
                 step={1}
@@ -269,13 +282,29 @@ export default function ProductFormModal({
           </div>
 
           {/* TL Price & Sale Price & Stock */}
+          <div className="mb-1 flex items-center gap-2">
+            <label className="flex cursor-pointer items-center gap-1.5">
+              <input
+                type="checkbox"
+                checked={tlAutoCalc}
+                onChange={(e) => setTlAutoCalc(e.target.checked)}
+                className="h-3.5 w-3.5 rounded accent-primary-600"
+              />
+              <span className="text-xs text-dark-500 dark:text-dark-400">TL fiyatları USD&apos;den otomatik hesapla</span>
+            </label>
+          </div>
           <div className="grid gap-3 sm:grid-cols-3 sm:gap-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Fiyat (₺) *</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">
+                Fiyat (₺) *{tlAutoCalc && <span className="ml-1 text-xs font-normal text-dark-400">(otomatik)</span>}
+              </label>
               <input
                 type="number"
                 value={form.price || ""}
-                onChange={(e) => setForm((prev) => ({ ...prev, price: Number(e.target.value) }))}
+                onChange={(e) => {
+                  setTlAutoCalc(false);
+                  setForm((prev) => ({ ...prev, price: Number(e.target.value) }));
+                }}
                 className={inputClass("price")}
                 min={0}
                 step={0.01}
@@ -283,16 +312,19 @@ export default function ProductFormModal({
               {errors.price && <p className="mt-1 text-xs text-red-500">{errors.price}</p>}
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">İndirimli Fiyat (₺)</label>
+              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">
+                İndirimli Fiyat (₺){tlAutoCalc && <span className="ml-1 text-xs font-normal text-dark-400">(otomatik)</span>}
+              </label>
               <input
                 type="number"
                 value={form.sale_price ?? ""}
-                onChange={(e) =>
+                onChange={(e) => {
+                  setTlAutoCalc(false);
                   setForm((prev) => ({
                     ...prev,
                     sale_price: e.target.value ? Number(e.target.value) : null,
-                  }))
-                }
+                  }));
+                }}
                 className={ADMIN_INPUT}
                 min={0}
                 step={0.01}

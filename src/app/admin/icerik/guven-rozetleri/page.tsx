@@ -5,6 +5,7 @@ import { Plus, Edit, Trash2, ArrowLeft } from "lucide-react";
 import { Truck, ShieldCheck, Headphones, Award, Star, Heart, Zap, Clock } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/components/ui/Toast";
+import { ADMIN_INPUT } from "@/lib/admin-classes";
 import { safeGetJSON, safeSetJSON } from "@/lib/safe-storage";
 import dynamic from "next/dynamic";
 
@@ -147,7 +148,7 @@ export default function AdminGuvenRozetleriPage() {
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={ADMIN_INPUT}
               />
             </div>
             <div>
@@ -175,7 +176,7 @@ export default function AdminGuvenRozetleriPage() {
               <input
                 value={desc}
                 onChange={(e) => setDesc(e.target.value)}
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={ADMIN_INPUT}
               />
             </div>
           </div>

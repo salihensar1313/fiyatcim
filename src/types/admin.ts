@@ -13,7 +13,8 @@ export type ActivityLogType =
   | "review_reject"
   | "bulk_order_update"
   | "tracking_added"
-  | "stock_update";
+  | "stock_update"
+  | "return_request";
 
 export interface ActivityLogEntry {
   id: string;

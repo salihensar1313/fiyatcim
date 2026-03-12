@@ -1,13 +1,16 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { DollarSign, ShoppingBag, Package, Users, ArrowRight, Plus, BarChart3, Tag } from "lucide-react";
+import dynamic from "next/dynamic";
+import { DollarSign, ShoppingBag, Package, Users, ArrowRight, Plus, BarChart3, Tag, Percent, Receipt } from "lucide-react";
 import Link from "next/link";
 import StatsCard from "@/components/admin/StatsCard";
-import RevenueChart from "@/components/admin/charts/RevenueChart";
-import OrdersStatusChart from "@/components/admin/charts/OrdersStatusChart";
-import CategoryPieChart from "@/components/admin/charts/CategoryPieChart";
 import DateRangeSelector from "@/components/admin/charts/DateRangeSelector";
+
+const RevenueChart = dynamic(() => import("@/components/admin/charts/RevenueChart"), { ssr: false });
+const OrdersStatusChart = dynamic(() => import("@/components/admin/charts/OrdersStatusChart"), { ssr: false });
+const CategoryPieChart = dynamic(() => import("@/components/admin/charts/CategoryPieChart"), { ssr: false });
+const CustomerGrowthChart = dynamic(() => import("@/components/admin/charts/CustomerGrowthChart"), { ssr: false });
 import { useProducts } from "@/context/ProductContext";
 import { formatPrice, timeAgo } from "@/lib/utils";
 import { safeGetJSON } from "@/lib/safe-storage";
@@ -163,6 +166,46 @@ export default function AdminDashboardClient() {
     });
   }, [orders]);
 
+  // New KPIs: Conversion Rate & Avg Order Value
+  const conversionRate = useMemo(() => {
+    if (orders.length === 0) return 0;
+    return (deliveredOrders.length / orders.length) * 100;
+  }, [orders.length, deliveredOrders.length]);
+
+  const avgOrderValue = useMemo(() => {
+    if (orders.length === 0) return 0;
+    return totalRevenue / orders.length;
+  }, [totalRevenue, orders.length]);
+
+  const conversionSparkline = useMemo(() => {
+    const now = Date.now();
+    return Array.from({ length: 7 }, (_, i) => {
+      const dayStart = now - (7 - i) * 86400000;
+      const dayEnd = now - (6 - i) * 86400000;
+      const dayOrders = orders.filter((o) => { const t = new Date(o.created_at).getTime(); return t >= dayStart && t < dayEnd; });
+      const dayDelivered = dayOrders.filter((o) => o.status === "delivered").length;
+      return dayOrders.length > 0 ? (dayDelivered / dayOrders.length) * 100 : 0;
+    });
+  }, [orders]);
+
+  const aovSparkline = useMemo(() => {
+    const now = Date.now();
+    return Array.from({ length: 7 }, (_, i) => {
+      const dayStart = now - (7 - i) * 86400000;
+      const dayEnd = now - (6 - i) * 86400000;
+      const dayOrders = orders.filter((o) => { const t = new Date(o.created_at).getTime(); return t >= dayStart && t < dayEnd; });
+      if (dayOrders.length === 0) return 0;
+      return dayOrders.reduce((s, o) => s + o.total, 0) / dayOrders.length;
+    });
+  }, [orders]);
+
+  // Critical stock products for widget (top 5)
+  const criticalStockProducts = useMemo(() => {
+    return [...outOfStockProducts, ...lowStockProducts]
+      .sort((a, b) => a.stock - b.stock)
+      .slice(0, 5);
+  }, [outOfStockProducts, lowStockProducts]);
+
   const recentOrders = useMemo(
     () => [...orders].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5),
     [orders]
@@ -186,7 +229,7 @@ export default function AdminDashboardClient() {
       </div>
 
       {/* Stats Cards */}
-      <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatsCard
           label="Toplam Ciro"
           value={formatPrice(totalRevenue)}
@@ -220,6 +263,24 @@ export default function AdminDashboardClient() {
           changeType="positive"
           icon={Users}
           href="/admin/musteriler"
+        />
+        <StatsCard
+          label="Dönüşüm Oranı"
+          value={`%${conversionRate.toFixed(1)}`}
+          change={orders.length > 0 ? `${orders.length} sipariş üzerinden` : undefined}
+          changeType={conversionRate >= 50 ? "positive" : conversionRate > 0 ? "neutral" : "neutral"}
+          icon={Percent}
+          sparklineData={conversionSparkline}
+          href="/admin/raporlar"
+        />
+        <StatsCard
+          label="Ort. Sipariş Değeri"
+          value={formatPrice(avgOrderValue)}
+          change={orders.length > 0 ? "Sepet ortalaması" : undefined}
+          changeType="neutral"
+          icon={Receipt}
+          sparklineData={aovSparkline}
+          href="/admin/raporlar"
         />
       </div>
 
@@ -324,6 +385,39 @@ export default function AdminDashboardClient() {
                 </Link>
               ))}
             </div>
+          </div>
+
+          {/* Low Stock Alert Widget */}
+          <div className={`${ADMIN_CARD} p-5`}>
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-dark-900 dark:text-dark-50">Stok Uyarıları</h3>
+              <Link href="/admin/stok" className="text-xs text-primary-600 hover:underline">Tümü</Link>
+            </div>
+            {criticalStockProducts.length > 0 ? (
+              <div className="space-y-2">
+                {criticalStockProducts.map((p) => (
+                  <div key={p.id} className="flex items-center justify-between rounded-lg bg-dark-50 px-3 py-2 dark:bg-dark-700/50">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className={`h-2 w-2 shrink-0 rounded-full ${p.stock === 0 ? "bg-red-500" : "bg-orange-500"}`} />
+                      <span className="truncate text-xs text-dark-700 dark:text-dark-300">{p.name}</span>
+                    </div>
+                    <span className={`ml-2 shrink-0 text-xs font-bold ${p.stock === 0 ? "text-red-600" : "text-orange-600"}`}>
+                      {p.stock}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 py-3">
+                <span className="h-2 w-2 rounded-full bg-green-500" />
+                <span className="text-xs text-green-600 dark:text-green-400">Tüm stoklar yeterli seviyede</span>
+              </div>
+            )}
+          </div>
+
+          {/* Customer Growth Chart */}
+          <div className={`${ADMIN_CARD} p-5`}>
+            <CustomerGrowthChart customers={customers} />
           </div>
 
           {/* Category Pie */}

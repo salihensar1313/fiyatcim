@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { ArrowLeft, Save, Shield, Wrench, Award, Star, Heart, Zap, Truck, Clock } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/components/ui/Toast";
+import { ADMIN_INPUT, ADMIN_TEXTAREA } from "@/lib/admin-classes";
 import { safeGetJSON, safeSetJSON } from "@/lib/safe-storage";
 
 interface FeatureItem {
@@ -146,7 +147,7 @@ export default function AdminSayfalarPage() {
                   <input
                     value={feature.title}
                     onChange={(e) => updateFeature(feature.id, "title", e.target.value)}
-                    className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                    className={ADMIN_INPUT}
                   />
                 </div>
                 <div>
@@ -175,7 +176,7 @@ export default function AdminSayfalarPage() {
                     value={feature.desc}
                     onChange={(e) => updateFeature(feature.id, "desc", e.target.value)}
                     rows={2}
-                    className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                    className={ADMIN_TEXTAREA}
                   />
                 </div>
               </div>
@@ -198,7 +199,7 @@ export default function AdminSayfalarPage() {
                     newsletter: { ...prev.newsletter, title: e.target.value },
                   }))
                 }
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={ADMIN_INPUT}
               />
             </div>
             <div>
@@ -211,7 +212,7 @@ export default function AdminSayfalarPage() {
                     newsletter: { ...prev.newsletter, subtitle: e.target.value },
                   }))
                 }
-                className="w-full rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+                className={ADMIN_INPUT}
               />
             </div>
 

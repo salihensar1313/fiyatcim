@@ -28,7 +28,15 @@ const DEMO_ERROR = "Demo modda DB yazma devre dışı";
 async function getAuthenticatedClient() {
   const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
-  return { supabase, user };
+  if (!user) return { supabase, user: null, isAdmin: false };
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("user_id", user.id)
+    .single();
+
+  return { supabase, user, isAdmin: profile?.role === "admin" };
 }
 
 // ==========================================
@@ -45,8 +53,8 @@ export async function createBlogPostAction(input: {
 }): Promise<ActionResult<Record<string, unknown> | null>> {
   if (IS_DEMO) return { data: null, error: DEMO_ERROR };
 
-  const { supabase, user } = await getAuthenticatedClient();
-  if (!user) return { data: null, error: "Yetkiniz yok" };
+  const { supabase, user, isAdmin } = await getAuthenticatedClient();
+  if (!user || !isAdmin) return { data: null, error: "Yetkiniz yok" };
 
   const { data, error } = await supabase
     .from("blog_posts")
@@ -79,8 +87,8 @@ export async function updateBlogPostAction(
 ): Promise<ActionResult> {
   if (IS_DEMO) return { data: null, error: DEMO_ERROR };
 
-  const { supabase, user } = await getAuthenticatedClient();
-  if (!user) return { data: null, error: "Yetkiniz yok" };
+  const { supabase, user, isAdmin } = await getAuthenticatedClient();
+  if (!user || !isAdmin) return { data: null, error: "Yetkiniz yok" };
 
   const { error } = await supabase
     .from("blog_posts")
@@ -102,8 +110,8 @@ export async function updateBlogPostAction(
 export async function deleteBlogPostAction(id: string): Promise<ActionResult> {
   if (IS_DEMO) return { data: null, error: DEMO_ERROR };
 
-  const { supabase, user } = await getAuthenticatedClient();
-  if (!user) return { data: null, error: "Yetkiniz yok" };
+  const { supabase, user, isAdmin } = await getAuthenticatedClient();
+  if (!user || !isAdmin) return { data: null, error: "Yetkiniz yok" };
 
   const { error } = await supabase.from("blog_posts").delete().eq("id", id);
 
@@ -131,8 +139,8 @@ export async function createTestimonialAction(input: {
 }): Promise<ActionResult<Record<string, unknown> | null>> {
   if (IS_DEMO) return { data: null, error: DEMO_ERROR };
 
-  const { supabase, user } = await getAuthenticatedClient();
-  if (!user) return { data: null, error: "Yetkiniz yok" };
+  const { supabase, user, isAdmin } = await getAuthenticatedClient();
+  if (!user || !isAdmin) return { data: null, error: "Yetkiniz yok" };
 
   const { data, error } = await supabase
     .from("testimonials")
@@ -161,8 +169,8 @@ export async function updateTestimonialAction(
 ): Promise<ActionResult> {
   if (IS_DEMO) return { data: null, error: DEMO_ERROR };
 
-  const { supabase, user } = await getAuthenticatedClient();
-  if (!user) return { data: null, error: "Yetkiniz yok" };
+  const { supabase, user, isAdmin } = await getAuthenticatedClient();
+  if (!user || !isAdmin) return { data: null, error: "Yetkiniz yok" };
 
   const { error } = await supabase.from("testimonials").update(updates).eq("id", id);
 
@@ -179,8 +187,8 @@ export async function updateTestimonialAction(
 export async function deleteTestimonialAction(id: string): Promise<ActionResult> {
   if (IS_DEMO) return { data: null, error: DEMO_ERROR };
 
-  const { supabase, user } = await getAuthenticatedClient();
-  if (!user) return { data: null, error: "Yetkiniz yok" };
+  const { supabase, user, isAdmin } = await getAuthenticatedClient();
+  if (!user || !isAdmin) return { data: null, error: "Yetkiniz yok" };
 
   const { error } = await supabase.from("testimonials").delete().eq("id", id);
 
@@ -206,8 +214,8 @@ export async function createCategoryAction(input: {
 }): Promise<ActionResult<Record<string, unknown> | null>> {
   if (IS_DEMO) return { data: null, error: DEMO_ERROR };
 
-  const { supabase, user } = await getAuthenticatedClient();
-  if (!user) return { data: null, error: "Yetkiniz yok" };
+  const { supabase, user, isAdmin } = await getAuthenticatedClient();
+  if (!user || !isAdmin) return { data: null, error: "Yetkiniz yok" };
 
   const { data, error } = await supabase
     .from("categories")
@@ -238,8 +246,8 @@ export async function updateCategoryAction(
 ): Promise<ActionResult> {
   if (IS_DEMO) return { data: null, error: DEMO_ERROR };
 
-  const { supabase, user } = await getAuthenticatedClient();
-  if (!user) return { data: null, error: "Yetkiniz yok" };
+  const { supabase, user, isAdmin } = await getAuthenticatedClient();
+  if (!user || !isAdmin) return { data: null, error: "Yetkiniz yok" };
 
   const { error } = await supabase
     .from("categories")
@@ -261,8 +269,8 @@ export async function updateCategoryAction(
 export async function deleteCategoryAction(id: string): Promise<ActionResult> {
   if (IS_DEMO) return { data: null, error: DEMO_ERROR };
 
-  const { supabase, user } = await getAuthenticatedClient();
-  if (!user) return { data: null, error: "Yetkiniz yok" };
+  const { supabase, user, isAdmin } = await getAuthenticatedClient();
+  if (!user || !isAdmin) return { data: null, error: "Yetkiniz yok" };
 
   const { error } = await supabase.from("categories").delete().eq("id", id);
 
@@ -289,8 +297,8 @@ export async function createFaqAction(input: {
 }): Promise<ActionResult<Record<string, unknown> | null>> {
   if (IS_DEMO) return { data: null, error: DEMO_ERROR };
 
-  const { supabase, user } = await getAuthenticatedClient();
-  if (!user) return { data: null, error: "Yetkiniz yok" };
+  const { supabase, user, isAdmin } = await getAuthenticatedClient();
+  if (!user || !isAdmin) return { data: null, error: "Yetkiniz yok" };
 
   const { data, error } = await supabase
     .from("faqs")
@@ -318,8 +326,8 @@ export async function updateFaqAction(
 ): Promise<ActionResult> {
   if (IS_DEMO) return { data: null, error: DEMO_ERROR };
 
-  const { supabase, user } = await getAuthenticatedClient();
-  if (!user) return { data: null, error: "Yetkiniz yok" };
+  const { supabase, user, isAdmin } = await getAuthenticatedClient();
+  if (!user || !isAdmin) return { data: null, error: "Yetkiniz yok" };
 
   const { error } = await supabase.from("faqs").update(updates).eq("id", id);
 
@@ -336,8 +344,8 @@ export async function updateFaqAction(
 export async function deleteFaqAction(id: string): Promise<ActionResult> {
   if (IS_DEMO) return { data: null, error: DEMO_ERROR };
 
-  const { supabase, user } = await getAuthenticatedClient();
-  if (!user) return { data: null, error: "Yetkiniz yok" };
+  const { supabase, user, isAdmin } = await getAuthenticatedClient();
+  if (!user || !isAdmin) return { data: null, error: "Yetkiniz yok" };
 
   const { error } = await supabase.from("faqs").delete().eq("id", id);
 
@@ -364,8 +372,8 @@ export async function createHeroSlideAction(input: {
 }): Promise<ActionResult<Record<string, unknown> | null>> {
   if (IS_DEMO) return { data: null, error: DEMO_ERROR };
 
-  const { supabase, user } = await getAuthenticatedClient();
-  if (!user) return { data: null, error: "Yetkiniz yok" };
+  const { supabase, user, isAdmin } = await getAuthenticatedClient();
+  if (!user || !isAdmin) return { data: null, error: "Yetkiniz yok" };
 
   const { data, error } = await supabase
     .from("hero_slides")
@@ -395,8 +403,8 @@ export async function updateHeroSlideAction(
 ): Promise<ActionResult> {
   if (IS_DEMO) return { data: null, error: DEMO_ERROR };
 
-  const { supabase, user } = await getAuthenticatedClient();
-  if (!user) return { data: null, error: "Yetkiniz yok" };
+  const { supabase, user, isAdmin } = await getAuthenticatedClient();
+  if (!user || !isAdmin) return { data: null, error: "Yetkiniz yok" };
 
   const { error } = await supabase.from("hero_slides").update(updates).eq("id", id);
 
@@ -413,8 +421,8 @@ export async function updateHeroSlideAction(
 export async function deleteHeroSlideAction(id: string): Promise<ActionResult> {
   if (IS_DEMO) return { data: null, error: DEMO_ERROR };
 
-  const { supabase, user } = await getAuthenticatedClient();
-  if (!user) return { data: null, error: "Yetkiniz yok" };
+  const { supabase, user, isAdmin } = await getAuthenticatedClient();
+  if (!user || !isAdmin) return { data: null, error: "Yetkiniz yok" };
 
   const { error } = await supabase.from("hero_slides").delete().eq("id", id);
 
