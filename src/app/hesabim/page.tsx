@@ -1,9 +1,11 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 
-import { useState, useEffect, useRef } from "react";
-import { Mail, Phone, Camera, Trash2 } from "lucide-react";
+import { useState, useEffect, useRef, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Mail, Phone, Camera, Trash2, Lock, AlertTriangle, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/components/ui/Toast";
 import SmsOtpVerify from "@/components/ui/SmsOtpVerify";
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
@@ -42,7 +44,7 @@ function resizeImage(file: File): Promise<string> {
   });
 }
 
-type Tab = "profile" | "contact";
+type Tab = "profile" | "contact" | "security";
 
 function maskEmail(email: string): string {
   const [local, domain] = email.split("@");
@@ -56,8 +58,19 @@ function maskPhone(phone: string): string {
   return `${phone.slice(0, 4)}***${phone.slice(-2)}`;
 }
 
-export default function AccountPage() {
-  const { user, profile, updateProfile } = useAuth();
+export default function AccountPageWrapper() {
+  return (
+    <Suspense fallback={null}>
+      <AccountPage />
+    </Suspense>
+  );
+}
+
+function AccountPage() {
+  const { user, profile, updateProfile, changePassword, deleteAccount } = useAuth();
+  const { showToast } = useToast();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [tab, setTab] = useState<Tab>("profile");
   const [ad, setAd] = useState("");
   const [soyad, setSoyad] = useState("");
@@ -68,6 +81,29 @@ export default function AccountPage() {
 
   // SMS doğrulama state
   const [pendingTelefon, setPendingTelefon] = useState<string | null>(null);
+
+  // Password change state
+  const [currentPw, setCurrentPw] = useState("");
+  const [newPw, setNewPw] = useState("");
+  const [confirmPw, setConfirmPw] = useState("");
+  const [pwLoading, setPwLoading] = useState(false);
+  const [showCurrentPw, setShowCurrentPw] = useState(false);
+  const [showNewPw, setShowNewPw] = useState(false);
+
+  // Delete account state
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteText, setDeleteText] = useState("");
+
+  // Login success toast
+  useEffect(() => {
+    const loginParam = searchParams.get("login");
+    if (loginParam === "google" || loginParam === "success") {
+      showToast("Giriş başarılı! Hoş geldiniz.", "success");
+      // URL'den parametreyi temizle
+      window.history.replaceState({}, "", "/hesabim");
+    }
+  }, [searchParams, showToast]);
 
   useEffect(() => {
     if (profile) {
@@ -129,9 +165,41 @@ export default function AccountPage() {
     }
   };
 
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPw !== confirmPw) {
+      showToast("Yeni şifreler eşleşmiyor.", "error");
+      return;
+    }
+    setPwLoading(true);
+    const result = await changePassword(currentPw, newPw);
+    setPwLoading(false);
+    if (result.error) {
+      showToast(result.error, "error");
+    } else {
+      showToast("Şifreniz başarıyla değiştirildi.", "success");
+      setCurrentPw("");
+      setNewPw("");
+      setConfirmPw("");
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleteLoading(true);
+    const result = await deleteAccount();
+    setDeleteLoading(false);
+    if (result.error) {
+      showToast(result.error, "error");
+    } else {
+      showToast("Hesabınız silindi.", "success");
+      router.push("/");
+    }
+  };
+
   const tabs: { key: Tab; label: string }[] = [
     { key: "profile", label: "Üyelik Bilgilerim" },
     { key: "contact", label: "İletişim Bilgileri" },
+    { key: "security", label: "Güvenlik" },
   ];
 
   return (
@@ -340,6 +408,127 @@ export default function AccountPage() {
                 Değiştir
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab: Güvenlik */}
+      {tab === "security" && (
+        <div className="space-y-6">
+          {/* Şifre Değiştir */}
+          <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
+            <div className="flex items-center gap-2 mb-1">
+              <Lock size={18} className="text-dark-700 dark:text-dark-200" />
+              <h2 className="text-lg font-bold text-dark-900 dark:text-dark-50">Şifre Değiştir</h2>
+            </div>
+            <p className="mb-5 text-sm text-dark-500 dark:text-dark-400">
+              Hesabınızın güvenliği için şifrenizi düzenli olarak değiştirin.
+            </p>
+
+            <form onSubmit={handleChangePassword} className="space-y-4 max-w-md">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Mevcut Şifre</label>
+                <div className="relative">
+                  <input
+                    type={showCurrentPw ? "text" : "password"}
+                    value={currentPw}
+                    onChange={(e) => setCurrentPw(e.target.value)}
+                    required
+                    className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 pr-10 text-sm focus:border-primary-600 focus:outline-none"
+                  />
+                  <button type="button" onClick={() => setShowCurrentPw(!showCurrentPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-400 hover:text-dark-600">
+                    {showCurrentPw ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Yeni Şifre</label>
+                <div className="relative">
+                  <input
+                    type={showNewPw ? "text" : "password"}
+                    value={newPw}
+                    onChange={(e) => setNewPw(e.target.value)}
+                    required
+                    minLength={6}
+                    className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 pr-10 text-sm focus:border-primary-600 focus:outline-none"
+                  />
+                  <button type="button" onClick={() => setShowNewPw(!showNewPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-400 hover:text-dark-600">
+                    {showNewPw ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Yeni Şifre (Tekrar)</label>
+                <input
+                  type="password"
+                  value={confirmPw}
+                  onChange={(e) => setConfirmPw(e.target.value)}
+                  required
+                  minLength={6}
+                  className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none"
+                />
+                {confirmPw && newPw !== confirmPw && (
+                  <p className="mt-1 text-xs text-red-600">Şifreler eşleşmiyor.</p>
+                )}
+              </div>
+              <button
+                type="submit"
+                disabled={pwLoading || !currentPw || !newPw || newPw !== confirmPw}
+                className="rounded-lg bg-primary-600 px-6 py-2.5 text-sm font-bold text-white hover:bg-primary-700 disabled:opacity-50"
+              >
+                {pwLoading ? "Değiştiriliyor..." : "Şifreyi Değiştir"}
+              </button>
+            </form>
+          </div>
+
+          {/* Hesap Silme */}
+          <div className="rounded-xl border border-red-200 bg-white dark:border-red-900/50 dark:bg-dark-800 p-6">
+            <div className="flex items-center gap-2 mb-1">
+              <AlertTriangle size={18} className="text-red-600" />
+              <h2 className="text-lg font-bold text-red-600">Hesabı Sil</h2>
+            </div>
+            <p className="mb-5 text-sm text-dark-500 dark:text-dark-400">
+              Hesabınızı sildiğinizde tüm verileriniz kalıcı olarak silinir. Bu işlem geri alınamaz.
+            </p>
+
+            {!deleteConfirm ? (
+              <button
+                onClick={() => setDeleteConfirm(true)}
+                className="rounded-lg border border-red-300 dark:border-red-800 px-6 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
+              >
+                Hesabımı Sil
+              </button>
+            ) : (
+              <div className="space-y-4 max-w-md">
+                <div className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 p-4">
+                  <p className="text-sm text-red-700 dark:text-red-400 font-medium mb-2">
+                    Bu işlem geri alınamaz! Onaylamak için aşağıya &quot;HESABIMI SIL&quot; yazın.
+                  </p>
+                  <input
+                    type="text"
+                    value={deleteText}
+                    onChange={(e) => setDeleteText(e.target.value)}
+                    placeholder="HESABIMI SIL"
+                    className="w-full rounded-lg border border-red-300 dark:border-red-800 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-red-500 focus:outline-none"
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleDeleteAccount}
+                    disabled={deleteLoading || deleteText !== "HESABIMI SIL"}
+                    className="rounded-lg bg-red-600 px-6 py-2.5 text-sm font-bold text-white hover:bg-red-700 disabled:opacity-50"
+                  >
+                    {deleteLoading ? "Siliniyor..." : "Evet, Hesabımı Sil"}
+                  </button>
+                  <button
+                    onClick={() => { setDeleteConfirm(false); setDeleteText(""); }}
+                    className="rounded-lg border border-dark-200 dark:border-dark-600 px-6 py-2.5 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:hover:bg-dark-700"
+                  >
+                    Vazgeç
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

@@ -17,6 +17,15 @@ if (isProductionDeploy && process.env.NEXT_PUBLIC_DEMO_MODE === "true") {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async redirects() {
+    return [
+      {
+        source: "/favoriler",
+        destination: "/hesabim/favorilerim",
+        permanent: true,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

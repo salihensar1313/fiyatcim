@@ -39,6 +39,35 @@ const BULK_TARGET_STATUSES: OrderStatus[] = ["paid", "preparing", "shipped", "de
 // Kargo firmaları
 const SHIPPING_PROVIDERS = ["Yurtiçi Kargo", "Aras Kargo", "MNG Kargo", "PTT Kargo", "Sürat Kargo", "Diğer"];
 
+const EMAIL_STATUS_MAP: Partial<Record<OrderStatus, string>> = {
+  shipped: "order_shipped",
+  delivered: "order_delivered",
+  cancelled: "order_cancelled",
+  refunded: "order_refunded",
+};
+
+function sendOrderStatusEmail(order: Order, newStatus: OrderStatus) {
+  const emailType = EMAIL_STATUS_MAP[newStatus];
+  if (!emailType || !order.customer_email) return;
+
+  const addr = order.shipping_address;
+  const customerName = `${addr.ad} ${addr.soyad}`.trim() || "Müşteri";
+
+  fetch("/api/email/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      type: emailType,
+      to: order.customer_email,
+      data: {
+        orderNo: order.order_no,
+        customerName,
+        trackingCode: order.tracking_no || undefined,
+      },
+    }),
+  }).catch((err) => console.warn("[Email] Gönderilemedi:", err));
+}
+
 export default function AdminOrdersPage() {
   const { getAllOrders, updateOrderStatus } = useOrders();
   const { addLog } = useActivityLog();
@@ -106,6 +135,7 @@ export default function AdminOrdersPage() {
       }
 
       updateOrderStatus(id, target);
+      sendOrderStatusEmail(order, target);
       updated++;
     });
 
@@ -123,11 +153,14 @@ export default function AdminOrdersPage() {
     setBulkStatus("");
   };
 
-  // Single status change with log
+  // Single status change with log + email
   const handleStatusChange = (orderId: string, newStatus: OrderStatus) => {
     const order = orders.find((o) => o.id === orderId);
     updateOrderStatus(orderId, newStatus);
     addLog("order_status", `Sipariş #${order?.order_no || orderId.slice(0, 8)} durumu "${ORDER_STATUS_LABELS[newStatus]}" olarak güncellendi`, "order", orderId);
+    if (order) {
+      sendOrderStatusEmail(order, newStatus);
+    }
   };
 
   // Export selected

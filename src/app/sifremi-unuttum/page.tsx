@@ -4,20 +4,43 @@ import { useState } from "react";
 import Link from "next/link";
 import { Mail, ArrowLeft, CheckCircle } from "lucide-react";
 import Breadcrumb from "@/components/ui/Breadcrumb";
+import { createClient } from "@/lib/supabase/client";
+
+const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Demo: gerçek e-posta göndermiyoruz
-    setTimeout(() => {
-      setLoading(false);
+    setError("");
+
+    if (IS_DEMO) {
+      // Demo mode: simulate
+      setTimeout(() => {
+        setLoading(false);
+        setSent(true);
+      }, 1000);
+      return;
+    }
+
+    // Real Supabase password reset
+    const supabase = createClient();
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    });
+
+    setLoading(false);
+    if (resetError) {
+      // Don't reveal if email exists or not
       setSent(true);
-    }, 1000);
+    } else {
+      setSent(true);
+    }
   };
 
   return (
@@ -39,7 +62,7 @@ export default function ForgotPasswordPage() {
                 şifre sıfırlama bağlantısı gönderildi.
               </p>
               <p className="mt-1 text-xs text-dark-500">
-                (Demo mod: Gerçek bir e-posta gönderilmemiştir.)
+                E-postanızı kontrol edin. Spam klasörüne de bakın.
               </p>
               <Link
                 href="/giris"
@@ -60,6 +83,12 @@ export default function ForgotPasswordPage() {
                   Kayıtlı e-posta adresinizi girin, şifre sıfırlama bağlantısı gönderelim.
                 </p>
               </div>
+
+              {error && (
+                <div className="mb-4 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 p-3 text-sm text-red-700 dark:text-red-400">
+                  {error}
+                </div>
+              )}
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>

@@ -31,6 +31,8 @@ interface AuthContextType {
   signUp: (email: string, password: string, ad: string, soyad: string, telefon?: string) => Promise<{ error?: string }>;
   signOut: () => void;
   updateProfile: (data: Partial<Profile>) => void;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<{ error?: string }>;
+  deleteAccount: () => Promise<{ error?: string }>;
   adminUpdateUser: (userId: string, data: { ad: string; soyad: string; telefon: string }) => void;
   adminChangePassword: (email: string, newPassword: string) => Promise<{ error?: string }>;
 }
@@ -128,80 +130,123 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Timeout: 5s max bekle, sonra loading'i kapat
     const timer = setTimeout(settle, 5000);
 
+    // Helper: get access token from Supabase auth cookie
+    const getAccessToken = (): string | null => {
+      try {
+        const cookies = document.cookie.split(";").map(c => c.trim());
+        const part0 = cookies.find(c => c.startsWith("sb-qnsvqshljktoiktwprkr-auth-token.0="));
+        const part1 = cookies.find(c => c.startsWith("sb-qnsvqshljktoiktwprkr-auth-token.1="));
+        if (!part0) return null;
+        const val0 = decodeURIComponent(part0.split("=").slice(1).join("="));
+        const val1 = part1 ? decodeURIComponent(part1.split("=").slice(1).join("=")) : "";
+        const b64 = (val0 + val1).replace("base64-", "");
+        const session = JSON.parse(atob(b64));
+        return session.access_token || null;
+      } catch {
+        return null;
+      }
+    };
+
+    // Helper: direct Supabase REST call (bypasses hanging client)
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+    const directQuery = async (table: string, query: string, token: string) => {
+      const res = await fetch(`${supabaseUrl}/rest/v1/${table}?${query}`, {
+        headers: { apikey: supabaseKey, Authorization: `Bearer ${token}`, Accept: "application/json" },
+      });
+      if (!res.ok) return { data: null, error: `HTTP ${res.status}` };
+      const data = await res.json();
+      return { data, error: null };
+    };
+
+    const directUpdate = async (table: string, query: string, body: Record<string, string>, token: string) => {
+      const res = await fetch(`${supabaseUrl}/rest/v1/${table}?${query}`, {
+        method: "PATCH",
+        headers: { apikey: supabaseKey, Authorization: `Bearer ${token}`, "Content-Type": "application/json", Prefer: "return=minimal" },
+        body: JSON.stringify(body),
+      });
+      return { error: res.ok ? null : `HTTP ${res.status}` };
+    };
+
     const loadUser = async (userId: string, email: string) => {
       setUser({ id: userId, email });
 
-      try {
-        // Force token refresh via getUser() — prevents 401 on stale session tokens
-        await supabase.auth.getUser();
-      } catch {
-        // Token refresh failed — continue anyway, query might still work
-      }
+      const token = getAccessToken();
+      if (!token) return;
 
-      // Fetch profile — retry once on failure (handles token refresh race)
-      const firstTry = await supabase.from("profiles").select("*").eq("user_id", userId).single();
-      let data = firstTry.data;
-      if (firstTry.error && !data) {
-        await new Promise(r => setTimeout(r, 500));
-        const retry = await supabase.from("profiles").select("*").eq("user_id", userId).single();
-        data = retry.data;
-      }
+      // Fetch profile via direct REST call
+      const { data: rows } = await directQuery("profiles", `select=*&user_id=eq.${userId}`, token);
+      const data = Array.isArray(rows) && rows.length > 0 ? rows[0] : null;
 
       if (data) {
         const mapped = mapProfile(data as Record<string, unknown>);
         setProfile(mapped);
 
-        // If profile ad/soyad is empty, fill from auth user_metadata (Google OAuth etc.)
+        // If profile ad/soyad is empty, try to fill from auth user_metadata (Google OAuth etc.)
         if (!mapped.ad || !mapped.soyad || !mapped.avatar) {
           try {
-            const userResp = await supabase.auth.getUser();
-            const meta = userResp.data?.user?.user_metadata || {};
-            const fullName = ((meta.full_name || meta.name || "") as string).trim();
+            const authRes = await fetch(`${supabaseUrl}/auth/v1/user`, {
+              headers: { apikey: supabaseKey, Authorization: `Bearer ${token}` },
+            });
+            if (authRes.ok) {
+              const authUser = await authRes.json();
+              const meta = authUser.user_metadata || {};
+              const fullName = ((meta.full_name || meta.name || "") as string).trim();
 
-            if (fullName) {
-              const nameParts = fullName.split(" ");
-              const metaAd = nameParts[0] || "";
-              const metaSoyad = nameParts.slice(1).join(" ") || "";
-              const metaAvatar = ((meta.avatar_url || meta.picture || "") as string);
+              if (fullName) {
+                const nameParts = fullName.split(" ");
+                const metaAd = nameParts[0] || "";
+                const metaSoyad = nameParts.slice(1).join(" ") || "";
+                const metaAvatar = ((meta.avatar_url || meta.picture || "") as string);
 
-              const updates: Record<string, string> = {};
-              if (!mapped.ad && metaAd) updates.ad = metaAd;
-              if (!mapped.soyad && metaSoyad) updates.soyad = metaSoyad;
-              if (!mapped.avatar && metaAvatar) updates.avatar = metaAvatar;
+                const updates: Record<string, string> = {};
+                if (!mapped.ad && metaAd) updates.ad = metaAd;
+                if (!mapped.soyad && metaSoyad) updates.soyad = metaSoyad;
+                if (!mapped.avatar && metaAvatar) updates.avatar = metaAvatar;
 
-              if (Object.keys(updates).length > 0) {
-                const { error: updateError } = await supabase.from("profiles").update(updates).eq("user_id", userId);
-                if (!updateError) {
-                  setProfile((prev) => prev ? { ...prev, ...updates } : prev);
+                if (Object.keys(updates).length > 0) {
+                  const { error } = await directUpdate("profiles", `user_id=eq.${userId}`, updates, token);
+                  if (!error) {
+                    setProfile((prev) => prev ? { ...prev, ...updates } : prev);
+                  }
                 }
               }
             }
           } catch {
-            // Metadata sync is best-effort, don't block
+            // Metadata sync is best-effort
           }
         }
       } else {
-        // No profile exists — create one (Google OAuth user without profile)
+        // No profile — create via auth callback (should already exist)
+        // Fallback: create minimal profile
         try {
-          const userResp = await supabase.auth.getUser();
-          const meta = userResp.data?.user?.user_metadata || {};
-          const fullName = ((meta.full_name || meta.name || "") as string).trim();
-          const nameParts = fullName.split(" ");
-          const googleAd = nameParts[0] || "";
-          const googleSoyad = nameParts.slice(1).join(" ") || "";
-          const googleAvatar = (meta.avatar_url || meta.picture || "") as string;
+          const authRes = await fetch(`${supabaseUrl}/auth/v1/user`, {
+            headers: { apikey: supabaseKey, Authorization: `Bearer ${token}` },
+          });
+          if (authRes.ok) {
+            const authUser = await authRes.json();
+            const meta = authUser.user_metadata || {};
+            const fullName = ((meta.full_name || meta.name || "") as string).trim();
+            const nameParts = fullName.split(" ");
 
-          const newProfile = {
-            user_id: userId,
-            ad: googleAd,
-            soyad: googleSoyad,
-            telefon: "",
-            role: "user" as const,
-            avatar: googleAvatar || null,
-          };
-          const { error: insertError } = await supabase.from("profiles").insert(newProfile);
-          if (!insertError) {
-            setProfile(mapProfile(newProfile as unknown as Record<string, unknown>));
+            const newProfile = {
+              user_id: userId,
+              ad: nameParts[0] || "",
+              soyad: nameParts.slice(1).join(" ") || "",
+              telefon: "",
+              role: "user",
+              avatar: (meta.avatar_url || meta.picture || "") as string || null,
+            };
+
+            const insertRes = await fetch(`${supabaseUrl}/rest/v1/profiles`, {
+              method: "POST",
+              headers: { apikey: supabaseKey, Authorization: `Bearer ${token}`, "Content-Type": "application/json", Prefer: "return=minimal" },
+              body: JSON.stringify(newProfile),
+            });
+            if (insertRes.ok) {
+              setProfile(mapProfile(newProfile as unknown as Record<string, unknown>));
+            }
           }
         } catch {
           // Profile creation failed — user can still use the app
@@ -295,15 +340,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return {};
     }
 
-    // Non-demo: Supabase Google OAuth
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    if (error) return { error: translateAuthError(error.message) };
+    // Non-demo: Custom Google OAuth (redirect through fiyatcim.com)
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+    if (!clientId) return { error: "Google OAuth yapılandırılmamış." };
+
+    const redirectUri = `${window.location.origin}/auth/google/callback`;
+    const scope = "openid email profile";
+
+    const url = new URL("https://accounts.google.com/o/oauth2/v2/auth");
+    url.searchParams.set("client_id", clientId);
+    url.searchParams.set("redirect_uri", redirectUri);
+    url.searchParams.set("response_type", "code");
+    url.searchParams.set("scope", scope);
+    url.searchParams.set("access_type", "offline");
+    url.searchParams.set("prompt", "select_account");
+
+    window.location.href = url.toString();
     return {};
   }, [persistDemo]);
 
@@ -413,6 +465,73 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user, persistDemo]);
 
   // ========================================
+  // CHANGE PASSWORD (user self-service)
+  // ========================================
+  const changePassword = useCallback(async (currentPassword: string, newPassword: string): Promise<{ error?: string }> => {
+    if (!user) return { error: "Giriş yapmanız gerekiyor." };
+    const pwCheck = validatePassword(newPassword);
+    if (!pwCheck.valid) return { error: pwCheck.error! };
+
+    if (IS_DEMO_MODE) {
+      // Verify current password
+      const hashes = safeGetJSON<Record<string, string>>("fiyatcim_demo_pw_hashes", {});
+      const hashMap = typeof hashes === "object" && hashes ? hashes : {};
+      const currentHash = await simpleHash(currentPassword);
+      if (hashMap[user.email] && hashMap[user.email] !== currentHash) {
+        return { error: "Mevcut şifreniz yanlış." };
+      }
+      hashMap[user.email] = await simpleHash(newPassword);
+      safeSetJSON("fiyatcim_demo_pw_hashes", hashMap);
+      return {};
+    }
+
+    // Non-demo: Supabase — first verify current password by re-signing in
+    const supabase = createClient();
+    const { error: signInErr } = await supabase.auth.signInWithPassword({ email: user.email, password: currentPassword });
+    if (signInErr) return { error: "Mevcut şifreniz yanlış." };
+
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) return { error: translateAuthError(error.message) };
+    return {};
+  }, [user]);
+
+  // ========================================
+  // DELETE ACCOUNT (user self-service)
+  // ========================================
+  const deleteAccount = useCallback(async (): Promise<{ error?: string }> => {
+    if (!user) return { error: "Giriş yapmanız gerekiyor." };
+
+    if (IS_DEMO_MODE) {
+      // Remove from registered users
+      const users = safeGetJSON<RegisteredUser[]>("fiyatcim_registered_users", []);
+      const arr = Array.isArray(users) ? users : [];
+      safeSetJSON("fiyatcim_registered_users", arr.filter((u) => u.user_id !== user.id));
+      // Remove password hash
+      const hashes = safeGetJSON<Record<string, string>>("fiyatcim_demo_pw_hashes", {});
+      const hashMap = typeof hashes === "object" && hashes ? hashes : {};
+      delete hashMap[user.email];
+      safeSetJSON("fiyatcim_demo_pw_hashes", hashMap);
+      // Sign out
+      setUser(null);
+      setProfile(null);
+      persistDemo(null, null);
+      return {};
+    }
+
+    // Non-demo: call API route to delete user (needs service_role key on server)
+    try {
+      const res = await fetch("/api/auth/delete-account", { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) return { error: data.error || "Hesap silinemedi." };
+      setUser(null);
+      setProfile(null);
+      return {};
+    } catch {
+      return { error: "Hesap silinemedi. Lütfen tekrar deneyin." };
+    }
+  }, [user, persistDemo]);
+
+  // ========================================
   // ADMIN: Update any user profile
   // ========================================
   const adminUpdateUser = useCallback((userId: string, data: { ad: string; soyad: string; telefon: string }) => {
@@ -454,7 +573,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, profile, isLoading, isAdmin, signIn, signInWithGoogle, signUp, signOut, updateProfile, adminUpdateUser, adminChangePassword }}
+      value={{ user, profile, isLoading, isAdmin, signIn, signInWithGoogle, signUp, signOut, updateProfile, changePassword, deleteAccount, adminUpdateUser, adminChangePassword }}
     >
       {children}
     </AuthContext.Provider>

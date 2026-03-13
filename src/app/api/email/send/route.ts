@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { sendEmail } from "@/lib/email";
-import { orderConfirmationEmail, orderShippedEmail } from "@/lib/email-templates";
+import { orderConfirmationEmail, orderShippedEmail, orderDeliveredEmail, orderCancelledEmail, orderRefundedEmail } from "@/lib/email-templates";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 /* ─── In-memory rate limiter (per IP + per recipient) ─── */
@@ -35,7 +35,7 @@ function isRateLimited(key: string, max: number): boolean {
 }
 
 const emailRequestSchema = z.object({
-  type: z.enum(["order_confirmation", "order_shipped"]),
+  type: z.enum(["order_confirmation", "order_shipped", "order_delivered", "order_cancelled", "order_refunded"]),
   to: z.string().email("Geçerli bir e-posta adresi gerekli"),
   data: z.record(z.string(), z.unknown()).refine((d) => typeof d.orderNo === "string", {
     message: "data.orderNo gerekli",
@@ -106,6 +106,18 @@ export async function POST(request: NextRequest) {
       case "order_shipped":
         subject = `Siparişiniz Kargoya Verildi - ${safeOrderNo} | Fiyatcim`;
         html = orderShippedEmail(emailData);
+        break;
+      case "order_delivered":
+        subject = `Siparişiniz Teslim Edildi - ${safeOrderNo} | Fiyatcim`;
+        html = orderDeliveredEmail(emailData);
+        break;
+      case "order_cancelled":
+        subject = `Siparişiniz İptal Edildi - ${safeOrderNo} | Fiyatcim`;
+        html = orderCancelledEmail(emailData);
+        break;
+      case "order_refunded":
+        subject = `İade İşleminiz Tamamlandı - ${safeOrderNo} | Fiyatcim`;
+        html = orderRefundedEmail(emailData);
         break;
     }
 

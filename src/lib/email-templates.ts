@@ -177,3 +177,105 @@ export function orderShippedEmail(data: { orderNo: string; customerName: string;
     </div>
   `;
 }
+
+export function orderDeliveredEmail(data: { orderNo: string; customerName: string }): string {
+  return `
+    <div style="${baseStyle}">
+      <div style="${headerStyle} background: #16a34a;">
+        <h1 style="margin: 0; font-size: 22px;">Siparişiniz Teslim Edildi</h1>
+        <p style="margin: 8px 0 0; opacity: 0.9; font-size: 14px;">Fiyatcim.com</p>
+      </div>
+
+      <div style="${bodyStyle}">
+        <p style="margin: 0 0 16px; font-size: 16px;">
+          Merhaba <strong>${escapeHtml(data.customerName)}</strong>,
+        </p>
+        <p style="margin: 0 0 24px; color: #555; font-size: 14px;">
+          <strong>${escapeHtml(data.orderNo)}</strong> numaralı siparişiniz başarıyla teslim edilmiştir.
+        </p>
+
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+          <p style="margin: 0; font-weight: 600; color: #166534;">
+            Bizi tercih ettiğiniz için teşekkür ederiz!
+          </p>
+        </div>
+
+        <p style="margin: 0; font-size: 13px; color: #888;">
+          Siparişinizi <a href="https://fiyatcim.com/siparis-takip" style="color: #DC2626;">sipariş takip</a> sayfasından görüntüleyebilirsiniz.
+        </p>
+      </div>
+
+      <div style="${footerStyle}">
+        <p style="margin: 0;">Fiyatcim.com &copy; ${new Date().getFullYear()}</p>
+      </div>
+    </div>
+  `;
+}
+
+export function orderCancelledEmail(data: { orderNo: string; customerName: string }): string {
+  return `
+    <div style="${baseStyle}">
+      <div style="${headerStyle}">
+        <h1 style="margin: 0; font-size: 22px;">Siparişiniz İptal Edildi</h1>
+        <p style="margin: 8px 0 0; opacity: 0.9; font-size: 14px;">Fiyatcim.com</p>
+      </div>
+
+      <div style="${bodyStyle}">
+        <p style="margin: 0 0 16px; font-size: 16px;">
+          Merhaba <strong>${escapeHtml(data.customerName)}</strong>,
+        </p>
+        <p style="margin: 0 0 24px; color: #555; font-size: 14px;">
+          <strong>${escapeHtml(data.orderNo)}</strong> numaralı siparişiniz iptal edilmiştir.
+        </p>
+
+        <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+          <p style="margin: 0; font-weight: 600; color: #991b1b;">
+            Herhangi bir sorunuz varsa bizimle iletişime geçebilirsiniz.
+          </p>
+        </div>
+
+        <p style="margin: 0; font-size: 13px; color: #888;">
+          Detaylar için <a href="https://fiyatcim.com/siparis-takip" style="color: #DC2626;">sipariş takip</a> sayfasını ziyaret edebilirsiniz.
+        </p>
+      </div>
+
+      <div style="${footerStyle}">
+        <p style="margin: 0;">Fiyatcim.com &copy; ${new Date().getFullYear()}</p>
+      </div>
+    </div>
+  `;
+}
+
+export function orderRefundedEmail(data: { orderNo: string; customerName: string }): string {
+  return `
+    <div style="${baseStyle}">
+      <div style="${headerStyle}">
+        <h1 style="margin: 0; font-size: 22px;">İade İşleminiz Tamamlandı</h1>
+        <p style="margin: 8px 0 0; opacity: 0.9; font-size: 14px;">Fiyatcim.com</p>
+      </div>
+
+      <div style="${bodyStyle}">
+        <p style="margin: 0 0 16px; font-size: 16px;">
+          Merhaba <strong>${escapeHtml(data.customerName)}</strong>,
+        </p>
+        <p style="margin: 0 0 24px; color: #555; font-size: 14px;">
+          <strong>${escapeHtml(data.orderNo)}</strong> numaralı siparişinizin iade işlemi tamamlanmıştır.
+        </p>
+
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+          <p style="margin: 0; font-weight: 600; color: #1e40af;">
+            İade tutarı ödeme yönteminize göre birkaç iş günü içinde hesabınıza yansıyacaktır.
+          </p>
+        </div>
+
+        <p style="margin: 0; font-size: 13px; color: #888;">
+          Detaylar için <a href="https://fiyatcim.com/siparis-takip" style="color: #DC2626;">sipariş takip</a> sayfasını ziyaret edebilirsiniz.
+        </p>
+      </div>
+
+      <div style="${footerStyle}">
+        <p style="margin: 0;">Fiyatcim.com &copy; ${new Date().getFullYear()}</p>
+      </div>
+    </div>
+  `;
+}

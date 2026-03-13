@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff, LogIn } from "lucide-react";
@@ -8,6 +8,9 @@ import { useAuth } from "@/context/AuthContext";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+
+const LOCKOUT_DURATION = 60_000; // 1 dakika
+const MAX_ATTEMPTS = 4;
 
 function LoginForm() {
   const router = useRouter();
@@ -22,18 +25,58 @@ function LoginForm() {
   const [error, setError] = useState(authError === "auth" ? "Google ile giriş yapılamadı. Lütfen tekrar deneyin." : "");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [lockedUntil, setLockedUntil] = useState<number | null>(null);
+  const [countdown, setCountdown] = useState(0);
+
+  // Countdown timer for lockout
+  useEffect(() => {
+    if (!lockedUntil) return;
+    const tick = () => {
+      const remaining = Math.ceil((lockedUntil - Date.now()) / 1000);
+      if (remaining <= 0) {
+        setLockedUntil(null);
+        setFailedAttempts(0);
+        setCountdown(0);
+        setError("");
+      } else {
+        setCountdown(remaining);
+      }
+    };
+    tick();
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, [lockedUntil]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Check lockout
+    if (lockedUntil && Date.now() < lockedUntil) {
+      return;
+    }
+
     setError("");
     setLoading(true);
 
     const result = await signIn(email, password);
     if (result.error) {
-      setError(result.error);
+      const newAttempts = failedAttempts + 1;
+      setFailedAttempts(newAttempts);
+
+      if (newAttempts >= MAX_ATTEMPTS) {
+        const until = Date.now() + LOCKOUT_DURATION;
+        setLockedUntil(until);
+        setError(`Çok fazla hatalı deneme. Lütfen ${Math.ceil(LOCKOUT_DURATION / 1000)} saniye bekleyin.`);
+      } else {
+        setError(`${result.error} (${MAX_ATTEMPTS - newAttempts} deneme hakkınız kaldı)`);
+      }
       setLoading(false);
     } else {
-      router.push(redirectTo);
+      setFailedAttempts(0);
+      setLockedUntil(null);
+      const sep = redirectTo.includes("?") ? "&" : "?";
+      router.push(`${redirectTo}${sep}login=success`);
     }
   };
 
@@ -90,16 +133,21 @@ function LoginForm() {
             </div>
 
             {error && (
-              <div className="rounded-lg bg-red-50 dark:bg-red-900/30 px-4 py-2 text-sm text-red-600">{error}</div>
+              <div className="rounded-lg bg-red-50 dark:bg-red-900/30 px-4 py-2 text-sm text-red-600">
+                {error}
+                {countdown > 0 && (
+                  <span className="ml-1 font-bold">({countdown}s)</span>
+                )}
+              </div>
             )}
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || (lockedUntil !== null && Date.now() < lockedUntil)}
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary-600 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-700 disabled:opacity-50"
             >
               <LogIn size={18} />
-              {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
+              {lockedUntil && countdown > 0 ? `Bekleyin (${countdown}s)` : loading ? "Giriş yapılıyor..." : "Giriş Yap"}
             </button>
           </form>
 
