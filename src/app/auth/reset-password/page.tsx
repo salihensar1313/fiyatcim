@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Lock, CheckCircle, Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { Lock, CheckCircle, Eye, EyeOff, ArrowLeft, Mail } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { validatePassword } from "@/lib/password";
 import Breadcrumb from "@/components/ui/Breadcrumb";
@@ -17,23 +17,31 @@ export default function ResetPasswordPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [sessionReady, setSessionReady] = useState(false);
+  const [denied, setDenied] = useState(false);
 
-  // Supabase processes the hash fragment and establishes a session
+  // ONLY allow access via the email recovery link (PASSWORD_RECOVERY event)
   useEffect(() => {
     const supabase = createClient();
-    // Listen for PASSWORD_RECOVERY event
+    let recovered = false;
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY") {
+        recovered = true;
         setSessionReady(true);
       }
     });
 
-    // Also check if session already exists (user might have refreshed)
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) setSessionReady(true);
-    });
+    // If PASSWORD_RECOVERY doesn't fire within 5 seconds, deny access
+    const timeout = setTimeout(() => {
+      if (!recovered) {
+        setDenied(true);
+      }
+    }, 5000);
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -72,7 +80,25 @@ export default function ResetPasswordPage() {
 
       <div className="container mx-auto flex justify-center px-4">
         <div className="w-full max-w-md rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-8">
-          {success ? (
+          {denied ? (
+            <div className="text-center">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50 dark:bg-red-900/30">
+                <Lock size={32} className="text-red-600" />
+              </div>
+              <h1 className="text-xl font-bold text-dark-900 dark:text-dark-50">Geçersiz Bağlantı</h1>
+              <p className="mt-2 text-sm text-dark-500 dark:text-dark-400">
+                Bu sayfaya yalnızca e-posta ile gönderilen şifre sıfırlama bağlantısı üzerinden erişebilirsiniz.
+                Bağlantınızın süresi dolmuş veya geçersiz olabilir.
+              </p>
+              <Link
+                href="/sifremi-unuttum"
+                className="mt-6 inline-flex items-center gap-2 rounded-lg bg-primary-600 px-6 py-3 text-sm font-bold text-white hover:bg-primary-700"
+              >
+                <Mail size={16} />
+                Yeni Sıfırlama Bağlantısı Al
+              </Link>
+            </div>
+          ) : success ? (
             <div className="text-center">
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-50 dark:bg-green-900/30">
                 <CheckCircle size={32} className="text-green-600" />
