@@ -395,18 +395,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Non-demo: Supabase Auth
     const supabase = createClient();
+
+    // Telefon numarası kontrolü — aynı numara ile birden fazla hesap açılamaz
+    if (telefon && telefon !== "" && telefon !== "905") {
+      const { data: existing } = await supabase
+        .from("profiles")
+        .select("user_id")
+        .eq("telefon", telefon)
+        .limit(1);
+      if (existing && existing.length > 0) {
+        return { error: "Bu telefon numarası zaten kayıtlı. Lütfen farklı bir numara kullanın veya giriş yapın." };
+      }
+    }
+
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) return { error: translateAuthError(error.message) };
 
     // Create profile
     if (data.user) {
-      await supabase.from("profiles").upsert({
+      const { error: profileError } = await supabase.from("profiles").upsert({
         user_id: data.user.id,
         ad,
         soyad,
         telefon: telefon || "",
         role: "user",
       });
+      if (profileError?.message?.includes("profiles_telefon_unique")) {
+        return { error: "Bu telefon numarası zaten kayıtlı. Lütfen farklı bir numara kullanın." };
+      }
     }
 
     return {};
