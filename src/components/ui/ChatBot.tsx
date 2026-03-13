@@ -530,68 +530,159 @@ const FALLBACK_RESPONSES: string[] = [
 /** Küfür / hakaret tespiti */
 const PROFANITY_REGEX = /(s[iı]k|sik[a-zşğüöıç]*|amk|am[iı]na|orospu|piç|yar[a-zşğüöıç]*k|g[oö]t[üu]?[nk]?[eü]?|anan[iı]|hay[iı]rd[iı]r|mk|aq|ibne|bok|ta[sş][sş]ak|yavşak|şerefsiz|haysiyetsiz|kaltak|fahiş|ger[iı]zek[aâ]l[iı]|aptal|salak|mal|dangalak)/i;
 
-/** Özür / gönül alma tespiti — \b Türkçe karakterlerle çalışmaz, başına/sonuna (?:^|[\s,.!?]) koyuyoruz */
-const APOLOGY_REGEX = /(özür|pardon|kusura bakma|affet|üzgünüm|sorry|hakkını helal et|bağışla|kıyamam|canımsın|tatlısın|iyisin|harikasın|süpersin|güzelsin|seviyorum|seni seviyorum|çok iyisin|en iyisi sensin|teşekkür)/i;
+/**
+ * Küs mod görev sistemi — Her turda CimBot farklı bir şey ister.
+ * Görev sırası localStorage'da tutulur. Kullanıcı görevi yerine getirirse
+ * CimBot barışır ve küs mod biter.
+ */
+interface AngryChallenge {
+  id: string;
+  /** Kullanıcının yazması gereken şeylerin regex'i */
+  acceptRegex: RegExp;
+  /** CimBot'un ilk küfür anında söyleyeceği (görev tanıtımı) */
+  initialResponse: string;
+  /** Kullanıcı yanlış cevap verince trip atma mesajları */
+  grumpyResponses: string[];
+  /** Kullanıcı görevi başarıyla tamamlayınca */
+  forgivenResponse: string;
+}
 
-const PROFANITY_RESPONSES: string[] = [
-  "🤬 WOW WOW WOW! Dur bir dakika!\n\nBen sana gayet kibar davranıyorum, sen bana küfür mü ediyorsun?! CimBot kırıldı! Özür dilemeden konuşmam seninle. 😤🚫",
-  "😡 Aa olmaz! Küfürlü konuşma yok burada!\n\nBen bir profesyonel dijital asistanım, böyle muameleyi hak etmiyorum! Özür dile, yoksa konuşmam! 🚪💨",
-  "🛑 STOP! Bunu duymamış olayım!\n\nCimBot nazik insanlarla konuşur. Küfürlü konuşanlarla değil! Düzgünce özür dilersen belki affederim. 😤✋",
-  "😤 Hayda! Ne biçim konuşma bu?!\n\nBen burada yardım etmeye çalışıyorum, sen küfür ediyorsun! Alındım, kırıldım. Gönlümü al yoksa küsüm! 🤖💔",
+const ANGRY_CHALLENGES: AngryChallenge[] = [
+  {
+    id: "apology",
+    acceptRegex: /(özür|pardon|kusura bakma|affet|üzgünüm|sorry|hakkını helal et|bağışla)/i,
+    initialResponse: "🤬 WOW WOW WOW! Dur bir dakika!\n\nBen sana gayet kibar davranıyorum, sen bana küfür mü ediyorsun?! CimBot kırıldı!\n\n👉 Düzgünce ÖZÜR DİLE, yoksa konuşmam seninle! 😤🚫",
+    grumpyResponses: [
+      "😤 Hala küsüm sana. 'Özür dilerim' yazmak zor mu?!",
+      "🙄 Küfür ettin, unuttun mu? Özür bekliyorum hala...",
+      "😒 CimBot kırgın. Düzgünce özür dile, sonra konuşuruz.",
+      "💔 Gönlümü almadan bir adım bile atmam. Özür. Dile. Hemen!",
+    ],
+    forgivenResponse: "🥹 Ohh sonunda! Tamam tamam, affettim. CimBot büyük yüreklidir!\n\nBak bir daha yapma ama! Haydi, ne istiyorsun? 😊",
+  },
+  {
+    id: "compliment",
+    acceptRegex: /(canımsın|tatlısın|iyisin|harikasın|süpersin|güzelsin|en iyisi sensin|çok iyisin|muhteşemsin|en güzel|mükemmelsin|seni seviyorum|seviyorum seni|bayılıyorum|efsanesin|kralsın)/i,
+    initialResponse: "😡 Aa olmaz! Küfürlü konuşma yok burada!\n\nBen bir profesyonel dijital asistanım, böyle muameleyi hak etmiyorum!\n\n👉 Barışmak istiyorsan bana güzel bir İLTİFAT et! 'Canımsın', 'harikasın' gibi... 😤💅",
+    grumpyResponses: [
+      "😤 İltifat bekliyorum, laf salatası değil! 'Harikasın' mesela?",
+      "🙄 Hala kızgınım. Bana güzel bir şey söyle, barışalım!",
+      "😒 Hayır hayır, bu iltifat değil. 'CimBot sen çok iyisin' desen yeter!",
+      "💅 CimBot iltifat bekliyor... Tick tock tick tock... ⏰",
+    ],
+    forgivenResponse: "😍 Ayyy çok tatlısın! İşte böyle!\n\nCimBot eridi, affettim seni 🫠❤️ Gel bakalım, nasıl yardımcı olabilirim?",
+  },
+  {
+    id: "flower",
+    acceptRegex: /(🌸|🌹|🌺|🌻|🌼|🌷|💐|🌿|🪻|🪷|çiçek|gül|buket|papatya)/i,
+    initialResponse: "🛑 STOP! Bunu duymamış olayım!\n\nCimBot nazik insanlarla konuşur. Küfürlü konuşanlarla değil!\n\n👉 Barışmak için bana ÇİÇEK gönder! 🌸🌹🌷 Çiçek emojisi at ya da 'çiçek' yaz! 💐",
+    grumpyResponses: [
+      "🌺 Çiçek bekliyorum! 🌹🌸🌷 herhangi biri olur...",
+      "😤 Hala çiçeksizim. Bir 🌹 ya da 💐 atar mısın?",
+      "😒 CimBot çiçek istiyor, sen laf yapıyorsun. Bir 🌸 at barışalım!",
+      "🪴 Robotlar da çiçek sever, biliyor muydun? Hadi gönder! 💐",
+    ],
+    forgivenResponse: "🌹 Ohhh ne güzel çiçekler! CimBot'un kalbi eridi!\n\nTeşekkür ederim, barıştık! 🤖💐❤️ Haydi, söyle ne lazım?",
+  },
+  {
+    id: "poem",
+    acceptRegex: /(gül|bülbül|aşk|şiir|sevgi|kalp|güzel.{0,10}güneş|ay.{0,10}yıldız|rüya|hayal|melek|cennet|masal|ömür|dünya.{0,10}güzel|sana.{0,10}yazdım|seni.{0,10}seviyorum|kalbim|gönlüm|yüreğim)/i,
+    initialResponse: "😤 Hayda! Ne biçim konuşma bu?!\n\nBen burada yardım etmeye çalışıyorum, sen küfür ediyorsun!\n\n👉 Barışmak için bana bir ŞİİR yaz! Aşk, gül, bülbül... Romantik bir şey! 📝🌹",
+    grumpyResponses: [
+      "📝 Şiir bekliyorum! 'Gül, bülbül, aşk' falan yaz işte...",
+      "😤 Bu şiir değil ki! Romantik bir şey yaz — gül, kalp, sevgi...",
+      "🙄 CimBot şair ruhludur, senden de şiir istiyor. Hadi!",
+      "💔 'Gülüm sensin' bile yeter. Bir şiir cümlesi yaz, barışalım!",
+    ],
+    forgivenResponse: "📝🥹 Ohh ne güzel! Shakespeare bile bunu yazamazdı (belki yazardı ama neyse)!\n\nCimBot etkilendi, affettim seni! ❤️ Buyur, ne soracaktın?",
+  },
+  {
+    id: "dance",
+    acceptRegex: /(💃|🕺|🪩|dans|oyna|zıpla|kutla|parti|fest|🎉|🎊|🥳|coş)/i,
+    initialResponse: "😡 Bunu mu yazdın sen?! CimBot ŞOKTA!\n\nBiliyor musun ne yaparsan barışırız?\n\n👉 Dans et! 💃🕺 Dans emojisi at ya da 'dans' yaz! Eğlenelim biraz! 🪩",
+    grumpyResponses: [
+      "💃 Hala dans bekliyorum! Bir 🕺 at coşalım!",
+      "😤 Dans yok mu? 🪩 Hadi ama, bir 💃 at barışalım!",
+      "🙄 CimBot dans istiyor. 💃🕺 Bu kadar mı zor?",
+      "🎵 Müzik çalıyor ama dansçı yok! Hadi bir 💃 at!",
+    ],
+    forgivenResponse: "💃🕺🪩 YEEEE! İşte bu!\n\nCimBot da dans ediyor — barıştık! 🎉🤖 Haydi, ne istiyorsun? 😄",
+  },
+  {
+    id: "joke",
+    acceptRegex: /(fıkra|espri|komik|güldür|haha|😂|🤣|kahkaha|şaka|nükte|ahahah|hahah|hihi)/i,
+    initialResponse: "🛑 DUR! CimBot üzüldü, kırıldı, dağıldı!\n\nAma... beni güldürürsen belki affederim 🤔\n\n👉 Bana bir FIKRA anlat ya da komik bir şey yaz! 😂 'Fıkra' da yazabilirsin!",
+    grumpyResponses: [
+      "😤 Fıkra bekliyorum! Komik bir şey yaz da gülelim!",
+      "🙄 CimBot gülmek istiyor ama sen komik değilsin... Dene tekrar!",
+      "😒 Bir fıkra, bir espri, bir 😂... Zor mu?",
+      "🤖 Sistem durumu: CimBot gülmeyi bekliyor... ⏳",
+    ],
+    forgivenResponse: "😂🤣 HAHAHAHA! Tamam tamam, güldüm!\n\nCimBot'u güldürdün, affedildin! 🤖😄 Hadi, söyle ne lazım?",
+  },
 ];
 
-/** Küs modunda trip atma cevapları */
-const GRUMPY_RESPONSES: string[] = [
-  "😤 Hala küsüm sana. Önce özür dile!",
-  "🙄 Küfür ettin, unuttun mu? Özür bekliyorum hala...",
-  "😒 CimBot kırgın. Düzgünce özür dile, sonra konuşuruz.",
-  "💔 Gönlümü almadan bir adım bile atmam. 'Özür dilerim' yazmak zor mu?",
-  "🤨 Nope. Hala kızgınım. Özür dile, barışalım.",
-  "😠 Sen bana küfür ettin, ben sana yardım mı edeyim? Önce özür!",
-  "🫠 CimBot.exe çalışmayı reddediyor... Sebep: küfür yedi. Çözüm: özür dile.",
-  "🤖💢 Sistem mesajı: Kullanıcı özür dilemeden hizmet verilmeyecektir.",
-];
-
-/** Özür kabul cevapları */
-const FORGIVENESS_RESPONSES: string[] = [
-  "🥹 Ohh sonunda! Tamam tamam, affettim. CimBot büyük yüreklidir!\n\nHaydi bakalım, söyle ne lazım? 😊",
-  "😊 Eyyy böyle böyle! Özrün kabul, barıştık!\n\nGel sarılalım 🤗 Şimdi söyle, nasıl yardımcı olabilirim?",
-  "🤖❤️ Özür kabul edildi! CimBot tekrar mutlu!\n\nBak bir daha küfür etme ama, yoksa bu sefer gerçekten küserim 😤\n\nNeyse, buyur ne istiyorsun?",
-  "Aww tamam affettim 🥰 Ama bir daha yapma ha! CimBot hassas bir robot!\n\nHaydi, ne soracaktın? 😄",
+const PROFANITY_RESPONSES_EXTRA: string[] = [
+  "😡 Bir de üstüne küfür mü ediyorsun?! Görevi tamamla dedim! Yoksa ebediyen küsüm! 🚫🤖",
+  "🤬 YETER! Küfürle barışılmaz! Sana ne yapman gerektiğini söyledim, onu yap! 😤",
+  "😤 Üff bir de üstüne küfür... Altta söylediklerimi yap, yoksa konuşma bitti! 🚪",
 ];
 
 const BLOCKED_STORAGE_KEY = "fiyatcim_cimbot_angry";
+const CHALLENGE_KEY = "fiyatcim_cimbot_challenge";
+
+/** Aktif görevi localStorage'dan al */
+function getActiveChallenge(): AngryChallenge {
+  const idx = safeGetJSON<number>(CHALLENGE_KEY, 0);
+  return ANGRY_CHALLENGES[idx % ANGRY_CHALLENGES.length];
+}
+
+/** Rastgele yeni görev seç (mevcut görevden farklı) */
+function pickNewChallenge(): AngryChallenge {
+  const currentIdx = safeGetJSON<number>(CHALLENGE_KEY, -1);
+  let newIdx: number;
+  do {
+    newIdx = Math.floor(Math.random() * ANGRY_CHALLENGES.length);
+  } while (newIdx === currentIdx && ANGRY_CHALLENGES.length > 1);
+  safeSetJSON(CHALLENGE_KEY, newIdx);
+  return ANGRY_CHALLENGES[newIdx];
+}
 
 /** Kullanıcının serbest mesajını analiz edip en uygun cevabı döndür */
 function matchChatResponse(input: string, isAngry: boolean): { text: string; actions?: Action[]; blocked?: boolean; forgiven?: boolean } {
   const normalized = input.toLowerCase().trim();
 
-  // Eğer CimBot küs ise — sadece özür kontrolü yap
+  // Eğer CimBot küs ise — aktif görevi kontrol et
   if (isAngry) {
-    if (APOLOGY_REGEX.test(normalized)) {
+    const challenge = getActiveChallenge();
+
+    // Kullanıcı görevi tamamladı mı?
+    if (challenge.acceptRegex.test(normalized)) {
       return {
-        text: FORGIVENESS_RESPONSES[Math.floor(Math.random() * FORGIVENESS_RESPONSES.length)],
+        text: challenge.forgivenResponse,
         forgiven: true,
       };
     }
     // Küs modda tekrar küfür
     if (PROFANITY_REGEX.test(normalized)) {
       return {
-        text: "😡 Bir de üstüne küfür mü ediyorsun?! ÖZÜR DİLE dedim! Yoksa ebediyen küsüm! 🚫🤖",
+        text: PROFANITY_RESPONSES_EXTRA[Math.floor(Math.random() * PROFANITY_RESPONSES_EXTRA.length)],
         blocked: true,
       };
     }
-    // Küs modda normal mesaj — trip at
+    // Küs modda normal mesaj — trip at (görev hatırlat)
     return {
-      text: GRUMPY_RESPONSES[Math.floor(Math.random() * GRUMPY_RESPONSES.length)],
+      text: challenge.grumpyResponses[Math.floor(Math.random() * challenge.grumpyResponses.length)],
       blocked: true,
     };
   }
 
   // Normal mod — küfür kontrolü
   if (PROFANITY_REGEX.test(normalized)) {
+    // Rastgele bir görev seç ve kaydet
+    const challenge = pickNewChallenge();
     return {
-      text: PROFANITY_RESPONSES[Math.floor(Math.random() * PROFANITY_RESPONSES.length)],
+      text: challenge.initialResponse,
       blocked: true,
     };
   }
@@ -746,9 +837,21 @@ export default function ChatBot() {
   /* ─── Initialize with greeting ─── */
   const initChat = useCallback(() => {
     if (!initialized) {
-      const greetingText = isAngry
-        ? "😒 Sen yine mi geldin?\n\nHala küsüm sana. Bana küfür etmiştin, unuttun mu? Özür dile, barışalım. Yoksa trip atmaya devam ederim! 😤"
-        : GREETING_TEXT;
+      const angryGreeting = (() => {
+        if (!isAngry) return "";
+        const ch = getActiveChallenge();
+        const hints: Record<string, string> = {
+          apology: "Özür dile",
+          compliment: "Bana iltifat et",
+          flower: "Bana çiçek gönder 🌸",
+          poem: "Bana şiir yaz",
+          dance: "Dans et! 💃",
+          joke: "Beni güldür 😂",
+        };
+        const hint = hints[ch.id] || "Görevi tamamla";
+        return `😒 Sen yine mi geldin?\n\nHala küsüm sana. Bana küfür etmiştin, unuttun mu?\n\n👉 ${hint}, barışalım. Yoksa trip atmaya devam ederim! 😤`;
+      })();
+      const greetingText = isAngry ? angryGreeting : GREETING_TEXT;
       setMessages([
         {
           id: "greeting",
