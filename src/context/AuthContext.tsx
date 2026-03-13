@@ -131,11 +131,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const loadUser = async (userId: string, email: string) => {
       setUser({ id: userId, email });
 
-      // Force token refresh via getUser() before querying — prevents 401 on stale session tokens
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      const meta = authUser?.user_metadata || {};
+      try {
+        // Force token refresh via getUser() — prevents 401 on stale session tokens
+        await supabase.auth.getUser();
+      } catch {
+        // Token refresh failed — continue anyway, query might still work
+      }
 
-      const { data } = await supabase.from("profiles").select("*").eq("user_id", userId).single();
+      // Fetch profile — retry once on failure (handles token refresh race)
+      let { data, error: profileError } = await supabase.from("profiles").select("*").eq("user_id", userId).single();
+      if (profileError && !data) {
+        // Retry once after a brief delay (token may have refreshed)
+        await new Promise(r => setTimeout(r, 500));
+        ({ data } = await supabase.from("profiles").select("*").eq("user_id", userId).single());
+      }
 
       if (data) {
         const mapped = mapProfile(data as Record<string, unknown>);
@@ -143,45 +152,58 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         // If profile ad/soyad is empty, fill from auth user_metadata (Google OAuth etc.)
         if (!mapped.ad || !mapped.soyad || !mapped.avatar) {
-          const fullName = ((meta.full_name || meta.name || "") as string).trim();
-          if (fullName) {
-            const nameParts = fullName.split(" ");
-            const metaAd = nameParts[0] || "";
-            const metaSoyad = nameParts.slice(1).join(" ") || "";
-            const metaAvatar = ((meta.avatar_url || meta.picture || "") as string);
+          try {
+            const userResp = await supabase.auth.getUser();
+            const meta = userResp.data?.user?.user_metadata || {};
+            const fullName = ((meta.full_name || meta.name || "") as string).trim();
 
-            const updates: Record<string, string> = {};
-            if (!mapped.ad && metaAd) updates.ad = metaAd;
-            if (!mapped.soyad && metaSoyad) updates.soyad = metaSoyad;
-            if (!mapped.avatar && metaAvatar) updates.avatar = metaAvatar;
+            if (fullName) {
+              const nameParts = fullName.split(" ");
+              const metaAd = nameParts[0] || "";
+              const metaSoyad = nameParts.slice(1).join(" ") || "";
+              const metaAvatar = ((meta.avatar_url || meta.picture || "") as string);
 
-            if (Object.keys(updates).length > 0) {
-              const { error: updateError } = await supabase.from("profiles").update(updates).eq("user_id", userId);
-              if (!updateError) {
-                setProfile((prev) => prev ? { ...prev, ...updates } : prev);
+              const updates: Record<string, string> = {};
+              if (!mapped.ad && metaAd) updates.ad = metaAd;
+              if (!mapped.soyad && metaSoyad) updates.soyad = metaSoyad;
+              if (!mapped.avatar && metaAvatar) updates.avatar = metaAvatar;
+
+              if (Object.keys(updates).length > 0) {
+                const { error: updateError } = await supabase.from("profiles").update(updates).eq("user_id", userId);
+                if (!updateError) {
+                  setProfile((prev) => prev ? { ...prev, ...updates } : prev);
+                }
               }
             }
+          } catch {
+            // Metadata sync is best-effort, don't block
           }
         }
       } else {
         // No profile exists — create one (Google OAuth user without profile)
-        const fullName = ((meta.full_name || meta.name || "") as string).trim();
-        const nameParts = fullName.split(" ");
-        const googleAd = nameParts[0] || "";
-        const googleSoyad = nameParts.slice(1).join(" ") || "";
-        const googleAvatar = (meta.avatar_url || meta.picture || "") as string;
+        try {
+          const userResp = await supabase.auth.getUser();
+          const meta = userResp.data?.user?.user_metadata || {};
+          const fullName = ((meta.full_name || meta.name || "") as string).trim();
+          const nameParts = fullName.split(" ");
+          const googleAd = nameParts[0] || "";
+          const googleSoyad = nameParts.slice(1).join(" ") || "";
+          const googleAvatar = (meta.avatar_url || meta.picture || "") as string;
 
-        const newProfile = {
-          user_id: userId,
-          ad: googleAd,
-          soyad: googleSoyad,
-          telefon: "",
-          role: "user" as const,
-          avatar: googleAvatar || null,
-        };
-        const { error: insertError } = await supabase.from("profiles").insert(newProfile);
-        if (!insertError) {
-          setProfile(mapProfile(newProfile as unknown as Record<string, unknown>));
+          const newProfile = {
+            user_id: userId,
+            ad: googleAd,
+            soyad: googleSoyad,
+            telefon: "",
+            role: "user" as const,
+            avatar: googleAvatar || null,
+          };
+          const { error: insertError } = await supabase.from("profiles").insert(newProfile);
+          if (!insertError) {
+            setProfile(mapProfile(newProfile as unknown as Record<string, unknown>));
+          }
+        } catch {
+          // Profile creation failed — user can still use the app
         }
       }
     };
