@@ -139,11 +139,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       // Fetch profile — retry once on failure (handles token refresh race)
-      let { data, error: profileError } = await supabase.from("profiles").select("*").eq("user_id", userId).single();
-      if (profileError && !data) {
-        // Retry once after a brief delay (token may have refreshed)
+      const firstTry = await supabase.from("profiles").select("*").eq("user_id", userId).single();
+      let data = firstTry.data;
+      if (firstTry.error && !data) {
         await new Promise(r => setTimeout(r, 500));
-        ({ data } = await supabase.from("profiles").select("*").eq("user_id", userId).single());
+        const retry = await supabase.from("profiles").select("*").eq("user_id", userId).single();
+        data = retry.data;
       }
 
       if (data) {
