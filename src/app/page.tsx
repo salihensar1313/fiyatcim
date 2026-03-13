@@ -21,8 +21,6 @@ const CampaignRadar = dynamic(() => import("@/components/home/CampaignRadar"));
 const TrustBadges = dynamic(() => import("@/components/home/TrustBadges"));
 const WhyChooseUs = dynamic(() => import("@/components/home/WhyChooseUs"));
 const Newsletter = dynamic(() => import("@/components/home/Newsletter"));
-const BlogPreview = dynamic(() => import("@/components/home/BlogPreview"));
-const Testimonials = dynamic(() => import("@/components/home/Testimonials"));
 
 /**
  * Ana sayfa bölüm sırası (Sprint 2C — G9-G14):
