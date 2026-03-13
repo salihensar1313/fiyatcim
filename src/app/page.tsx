@@ -64,12 +64,7 @@ export default function HomePage() {
       <CampaignRadar />
       <WhyChooseUs />
       <Newsletter />
-      <Suspense fallback={<div className="py-12 sm:py-16"><div className="container-custom"><div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{Array.from({ length: 3 }).map((_, i) => (<div key={i} className="h-72 animate-pulse rounded-xl bg-dark-100" />))}</div></div></div>}>
-        <BlogPreview />
-      </Suspense>
-      <Suspense fallback={<div className="bg-dark-900 py-12 sm:py-16"><div className="container-custom"><div className="mx-auto h-48 max-w-2xl animate-pulse rounded-xl bg-dark-800" /></div></div>}>
-        <Testimonials />
-      </Suspense>
+      {/* BlogPreview ve Testimonials kaldırıldı — ana sayfa sadece ürün odaklı */}
     </>
   );
 }

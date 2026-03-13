@@ -157,6 +157,9 @@ export default function Footer() {
           <p className="text-xs text-dark-500 dark:text-dark-400">
             &copy; {new Date().getFullYear()} Fiyatcim.com. Tüm hakları saklıdır.
           </p>
+          <p className="text-xs text-dark-500 dark:text-dark-400">
+            Bu bir Temiz İş kuruluşudur.
+          </p>
           <div className="flex flex-wrap items-center gap-2 text-xs">
             <span className="flex items-center gap-1 rounded-full bg-green-900/40 px-2.5 py-1 font-medium text-green-400">
               <ShieldCheck size={12} />
