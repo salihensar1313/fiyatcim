@@ -43,6 +43,8 @@ const headerStyle = `
   text-align: center;
 `;
 
+const logoHtml = `<img src="https://fiyatcim.com/images/logo-white.png" alt="Fiyatcim.com" style="height: 48px; max-width: 200px;" />`;
+
 const bodyStyle = `padding: 32px;`;
 
 const footerStyle = `
@@ -82,8 +84,8 @@ export function orderConfirmationEmail(data: OrderEmailData): string {
   return `
     <div style="${baseStyle}">
       <div style="${headerStyle}">
-        <h1 style="margin: 0; font-size: 22px;">Sipariş Onayı</h1>
-        <p style="margin: 8px 0 0; opacity: 0.9; font-size: 14px;">Fiyatcim.com</p>
+        ${logoHtml}
+        <h1 style="margin: 8px 0 0; font-size: 20px;">Sipariş Onayı</h1>
       </div>
 
       <div style="${bodyStyle}">
@@ -144,8 +146,8 @@ export function orderShippedEmail(data: { orderNo: string; customerName: string;
   return `
     <div style="${baseStyle}">
       <div style="${headerStyle}">
-        <h1 style="margin: 0; font-size: 22px;">Siparişiniz Kargoya Verildi</h1>
-        <p style="margin: 8px 0 0; opacity: 0.9; font-size: 14px;">Fiyatcim.com</p>
+        ${logoHtml}
+        <h1 style="margin: 8px 0 0; font-size: 20px;">Siparişiniz Kargoya Verildi</h1>
       </div>
 
       <div style="${bodyStyle}">
@@ -182,8 +184,8 @@ export function orderDeliveredEmail(data: { orderNo: string; customerName: strin
   return `
     <div style="${baseStyle}">
       <div style="${headerStyle} background: #16a34a;">
-        <h1 style="margin: 0; font-size: 22px;">Siparişiniz Teslim Edildi</h1>
-        <p style="margin: 8px 0 0; opacity: 0.9; font-size: 14px;">Fiyatcim.com</p>
+        ${logoHtml}
+        <h1 style="margin: 8px 0 0; font-size: 20px;">Siparişiniz Teslim Edildi</h1>
       </div>
 
       <div style="${bodyStyle}">
@@ -216,8 +218,8 @@ export function orderCancelledEmail(data: { orderNo: string; customerName: strin
   return `
     <div style="${baseStyle}">
       <div style="${headerStyle}">
-        <h1 style="margin: 0; font-size: 22px;">Siparişiniz İptal Edildi</h1>
-        <p style="margin: 8px 0 0; opacity: 0.9; font-size: 14px;">Fiyatcim.com</p>
+        ${logoHtml}
+        <h1 style="margin: 8px 0 0; font-size: 20px;">Siparişiniz İptal Edildi</h1>
       </div>
 
       <div style="${bodyStyle}">
@@ -250,8 +252,8 @@ export function orderRefundedEmail(data: { orderNo: string; customerName: string
   return `
     <div style="${baseStyle}">
       <div style="${headerStyle}">
-        <h1 style="margin: 0; font-size: 22px;">İade İşleminiz Tamamlandı</h1>
-        <p style="margin: 8px 0 0; opacity: 0.9; font-size: 14px;">Fiyatcim.com</p>
+        ${logoHtml}
+        <h1 style="margin: 8px 0 0; font-size: 20px;">İade İşleminiz Tamamlandı</h1>
       </div>
 
       <div style="${bodyStyle}">
