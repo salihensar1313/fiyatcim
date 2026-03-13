@@ -37,13 +37,13 @@ const baseStyle = `
 `;
 
 const headerStyle = `
-  background: #DC2626;
+  background: #1a1a2e;
   color: white;
-  padding: 24px 32px;
+  padding: 28px 32px;
   text-align: center;
 `;
 
-const logoHtml = `<img src="https://fiyatcim.com/images/logo-white.png" alt="Fiyatcim.com" style="height: 48px; max-width: 200px;" />`;
+const logoHtml = `<img src="https://fiyatcim.com/images/logo-white.png" alt="Fiyatcim.com" style="height: 120px; max-width: 480px;" />`;
 
 const bodyStyle = `padding: 32px;`;
 
