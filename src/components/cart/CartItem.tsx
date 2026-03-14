@@ -68,7 +68,8 @@ export default function CartItem({ item }: CartItemProps) {
           </div>
           <button
             onClick={() => removeItem(product.id)}
-            className="shrink-0 rounded-lg p-1.5 text-dark-500 transition-colors hover:bg-red-50 hover:text-red-600"
+            className="shrink-0 rounded-lg p-2 text-dark-500 transition-colors hover:bg-red-50 hover:text-red-600 active:scale-95"
+            aria-label="Ürünü kaldır"
           >
             <Trash2 size={16} />
           </button>
@@ -91,19 +92,21 @@ export default function CartItem({ item }: CartItemProps) {
             )}
           </div>
 
-          {/* Quantity */}
+          {/* Quantity — 44px min touch targets */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center rounded-lg border border-dark-200">
+            <div className="flex items-center rounded-lg border border-dark-200 dark:border-dark-600">
               <button
                 onClick={() => updateQuantity(product.id, item.qty - 1)}
-                className="px-2 py-1.5 text-dark-600 dark:text-dark-300 hover:text-dark-900 dark:text-dark-50"
+                className="flex h-10 w-10 items-center justify-center text-dark-600 transition-colors hover:text-dark-900 active:scale-95 dark:text-dark-300 dark:hover:text-dark-50"
+                aria-label="Adet azalt"
               >
                 <Minus size={14} />
               </button>
-              <span className="min-w-[32px] text-center text-sm font-semibold">{item.qty}</span>
+              <span className="min-w-[32px] text-center text-sm font-semibold text-dark-900 dark:text-dark-50">{item.qty}</span>
               <button
                 onClick={() => updateQuantity(product.id, Math.min(item.qty + 1, product.stock))}
-                className="px-2 py-1.5 text-dark-600 dark:text-dark-300 hover:text-dark-900 dark:text-dark-50"
+                className="flex h-10 w-10 items-center justify-center text-dark-600 transition-colors hover:text-dark-900 active:scale-95 dark:text-dark-300 dark:hover:text-dark-50"
+                aria-label="Adet artır"
               >
                 <Plus size={14} />
               </button>

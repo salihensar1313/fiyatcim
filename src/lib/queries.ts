@@ -71,6 +71,7 @@ function mapCategory(row: Record<string, unknown>): Category {
     name: row.name as string,
     slug: row.slug as string,
     image_url: (row.image_url as string) ?? "",
+    icon: (row.icon as string) ?? undefined,
     sort_order: (row.sort_order as number) ?? 0,
     created_at: (row.created_at as string) ?? (row.updated_at as string) ?? new Date().toISOString(),
     updated_at: row.updated_at as string | undefined,
@@ -115,6 +116,8 @@ function mapProduct(row: Record<string, unknown>): Product {
     specs: (typeof specs === "object" && specs !== null ? specs : {}) as Record<string, string>,
     images: Array.isArray(images) ? (images as string[]) : [],
     seo_title: (row.seo_title as string) ?? "",
+    is_featured: (row.is_featured as boolean) ?? false,
+    is_trending: (row.is_trending as boolean) ?? false,
     seo_desc: (row.seo_desc as string) ?? "",
     created_at: (row.created_at as string) ?? new Date().toISOString(),
     updated_at: row.updated_at as string | undefined,
@@ -208,7 +211,7 @@ function enrichSeedProduct(p: Product): Product {
 
 function activeSeedProducts(): Product[] {
   return seedProducts
-    .filter((p) => p.is_active && !p.deleted_at)
+    .filter((p) => p.is_active && !p.deleted_at && p.stock > 0)
     .map(enrichSeedProduct);
 }
 
@@ -336,7 +339,8 @@ export async function getProducts(opts: ProductQueryOpts = {}): Promise<{ data: 
     .from("products")
     .select("*, category:categories(*), brand:brands(*)", { count: "exact" })
     .eq("is_active", true)
-    .is("deleted_at", null);
+    .is("deleted_at", null)
+    .gt("stock", 0);
 
   if (categorySlug) {
     // Subquery: category slug → filter by category_id
@@ -425,11 +429,72 @@ export async function getFeaturedProducts(limit = 8, client?: SupabaseClient): P
   const start = performance.now();
 
   if (IS_DEMO) {
-    const result = seedProducts
-      .filter((p) => p.is_active && !p.deleted_at && p.sale_price)
+    // Once is_featured urunler, yoksa sale_price fallback
+    let result = seedProducts
+      .filter((p) => p.is_active && !p.deleted_at && p.stock > 0 && p.is_featured)
       .slice(0, limit)
       .map(enrichSeedProduct);
+    if (result.length === 0) {
+      result = seedProducts
+        .filter((p) => p.is_active && !p.deleted_at && p.stock > 0 && p.sale_price)
+        .slice(0, limit)
+        .map(enrichSeedProduct);
+    }
     logger.info("query_ok", { fn: "getFeaturedProducts", demo: true, rows: result.length, ms: performance.now() - start });
+    return result;
+  }
+
+  const supabase = getSupabase(client);
+
+  // Once is_featured=true urunleri dene
+  const { data: featuredData, error: featuredError } = await supabase
+    .from("products")
+    .select("*, category:categories(*), brand:brands(*)")
+    .eq("is_active", true)
+    .is("deleted_at", null)
+    .gt("stock", 0)
+    .eq("is_featured", true)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (!featuredError && featuredData && featuredData.length > 0) {
+    const result = featuredData.map((row) => mapProduct(row as Record<string, unknown>));
+    logger.info("query_ok", { fn: "getFeaturedProducts", rows: result.length, featured: true, ms: performance.now() - start });
+    return result;
+  }
+
+  // Fallback: sale_price olan urunler
+  const { data, error } = await supabase
+    .from("products")
+    .select("*, category:categories(*), brand:brands(*)")
+    .eq("is_active", true)
+    .is("deleted_at", null)
+    .gt("stock", 0)
+    .not("sale_price", "is", null)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    logger.error("query_failed", { fn: "getFeaturedProducts", error: error.message, ms: performance.now() - start });
+    if (IS_PROD) throw new Error(`getFeaturedProducts failed: ${error.message}`);
+    logger.warn("seed_fallback", { fn: "getFeaturedProducts" });
+    return seedProducts.filter((p) => p.is_active && !p.deleted_at && p.stock > 0 && p.sale_price).slice(0, limit).map(enrichSeedProduct);
+  }
+
+  const result = (data ?? []).map((row) => mapProduct(row as Record<string, unknown>));
+  logger.info("query_ok", { fn: "getFeaturedProducts", rows: result.length, ms: performance.now() - start });
+  return result;
+}
+
+export async function getTrendingProducts(limit = 8, client?: SupabaseClient): Promise<Product[]> {
+  const start = performance.now();
+
+  if (IS_DEMO) {
+    const result = seedProducts
+      .filter((p) => p.is_active && !p.deleted_at && p.stock > 0 && p.is_trending)
+      .slice(0, limit)
+      .map(enrichSeedProduct);
+    logger.info("query_ok", { fn: "getTrendingProducts", demo: true, rows: result.length, ms: performance.now() - start });
     return result;
   }
 
@@ -439,19 +504,18 @@ export async function getFeaturedProducts(limit = 8, client?: SupabaseClient): P
     .select("*, category:categories(*), brand:brands(*)")
     .eq("is_active", true)
     .is("deleted_at", null)
-    .not("sale_price", "is", null)
+    .gt("stock", 0)
+    .eq("is_trending", true)
     .order("created_at", { ascending: false })
     .limit(limit);
 
   if (error) {
-    logger.error("query_failed", { fn: "getFeaturedProducts", error: error.message, ms: performance.now() - start });
-    if (IS_PROD) throw new Error(`getFeaturedProducts failed: ${error.message}`);
-    logger.warn("seed_fallback", { fn: "getFeaturedProducts" });
-    return seedProducts.filter((p) => p.is_active && !p.deleted_at && p.sale_price).slice(0, limit).map(enrichSeedProduct);
+    logger.error("query_failed", { fn: "getTrendingProducts", error: error.message, ms: performance.now() - start });
+    return [];
   }
 
   const result = (data ?? []).map((row) => mapProduct(row as Record<string, unknown>));
-  logger.info("query_ok", { fn: "getFeaturedProducts", rows: result.length, ms: performance.now() - start });
+  logger.info("query_ok", { fn: "getTrendingProducts", rows: result.length, ms: performance.now() - start });
   return result;
 }
 

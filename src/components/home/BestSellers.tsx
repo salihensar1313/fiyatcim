@@ -10,7 +10,7 @@ export default function BestSellers() {
 
   // İndirimli ürünler (sale_price olanlar), en yüksek indirim oranına göre sırala
   const discounted = products
-    .filter((p) => p.sale_price && p.sale_price < p.price)
+    .filter((p) => p.stock > 0 && p.sale_price && p.sale_price < p.price)
     .sort((a, b) => {
       const discountA = (a.price - (a.sale_price || a.price)) / a.price;
       const discountB = (b.price - (b.sale_price || b.price)) / b.price;

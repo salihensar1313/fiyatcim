@@ -91,7 +91,7 @@ export default function ProductDetailClient({ initialProduct }: Props) {
           </div>
         </div>
 
-        <div id="product-tabs" className="mt-12 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
+        <div id="product-tabs" className="mt-8 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-4 sm:mt-12 sm:p-6">
           <ProductTabs product={product} />
         </div>
 
@@ -130,7 +130,7 @@ export default function ProductDetailClient({ initialProduct }: Props) {
                   addItem(product);
                   showToast("Ürün sepete eklendi", "success");
                 }}
-                className="flex items-center gap-2 rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-primary-700"
+                className="flex items-center gap-2 rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-bold text-white transition-all hover:bg-primary-700 active:scale-95"
               >
                 <ShoppingCart size={16} />
                 Sepete Ekle

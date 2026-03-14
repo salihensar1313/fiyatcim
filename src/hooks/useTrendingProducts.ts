@@ -53,23 +53,30 @@ function getViewCounts(): Map<string, number> {
   return counts;
 }
 
-/** Hook: get trending products sorted by view count */
+/** Hook: get trending products — DB is_trending flag first, then localStorage fallback */
 export function useTrendingProducts(limit = 8): Product[] {
   const { products } = useProducts();
 
   const getTrending = useCallback(() => {
+    const active = products.filter((p) => p.is_active && !p.deleted_at && p.stock > 0);
+
+    // Once DB is_trending flag'i olan urunler
+    const dbTrending = active.filter((p) => p.is_trending);
+    if (dbTrending.length > 0) {
+      return dbTrending.slice(0, limit);
+    }
+
+    // Fallback: localStorage view count
     const counts = getViewCounts();
     if (counts.size === 0) {
       // No view data yet — fallback to newest active products
-      return products
-        .filter((p) => p.is_active && !p.deleted_at)
+      return active
         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
         .slice(0, limit);
     }
 
     // Sort products by view count descending
-    return products
-      .filter((p) => p.is_active && !p.deleted_at)
+    return active
       .sort((a, b) => (counts.get(b.id) || 0) - (counts.get(a.id) || 0))
       .slice(0, limit);
   }, [products, limit]);

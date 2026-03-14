@@ -61,14 +61,14 @@ export default function ProductCard({ product }: ProductCardProps) {
         )}
       </div>
 
-      {/* Action Buttons */}
-      <div className="absolute right-3 top-3 z-10 flex flex-col gap-1.5">
+      {/* Action Buttons — min 44px touch target */}
+      <div className="absolute right-2 top-2 z-10 flex flex-col gap-1 sm:right-3 sm:top-3 sm:gap-1.5">
         <button
           onClick={() => {
             toggleItem(product.id);
             showToast(inWishlist ? "Favorilerden çıkarıldı" : "Favorilere eklendi", inWishlist ? "info" : "success");
           }}
-          className="rounded-full bg-white p-2 shadow-md transition-all hover:scale-110 dark:bg-dark-700"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md transition-all active:scale-95 sm:h-auto sm:w-auto sm:p-2 sm:hover:scale-110 dark:bg-dark-700"
           aria-label={inWishlist ? "Favorilerden çıkar" : "Favorilere ekle"}
         >
           <Heart
@@ -85,7 +85,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             toggleCompare(product.id);
             showToast(inCompare ? "Karşılaştırmadan çıkarıldı" : "Karşılaştırmaya eklendi", inCompare ? "info" : "success");
           }}
-          className="rounded-full bg-white p-2 shadow-md transition-all hover:scale-110 dark:bg-dark-700"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md transition-all active:scale-95 sm:h-auto sm:w-auto sm:p-2 sm:hover:scale-110 dark:bg-dark-700"
           title="Karşılaştır"
           aria-label={inCompare ? "Karşılaştırmadan çıkar" : "Karşılaştırmaya ekle"}
         >

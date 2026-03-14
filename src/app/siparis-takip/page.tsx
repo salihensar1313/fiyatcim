@@ -1,19 +1,38 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
-import { Search, Package, Truck, CheckCircle, XCircle, Clock } from "lucide-react";
-import { useOrders } from "@/context/OrderContext";
+import { useState, useEffect, Suspense, useCallback } from "react";
+import { Search, Package, Truck, CheckCircle, XCircle, Clock, Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import type { Order, OrderStatus } from "@/types";
+import type { OrderStatus } from "@/types";
 import { ORDER_STATUS_LABELS } from "@/types";
 
 /**
  * Misafir Sipariş Takip — G36
  *
  * Privacy kuralı: order_no + email eşleşmeden sipariş detayı gösterilmez.
- * Misafir kullanıcılar bu sayfadan siparişlerini takip eder.
- * URL: /siparis-takip?order_no=FC-2026-123456&email=test@example.com
+ * Artık doğrudan API endpoint'i kullanılıyor — login gerekmez.
  */
+
+interface TrackingOrder {
+  order_no: string;
+  status: OrderStatus;
+  payment_status: string;
+  subtotal: number;
+  shipping: number;
+  discount: number;
+  total: number;
+  shipping_address: { ad: string; soyad: string; adres: string; ilce: string; il: string; telefon: string; posta_kodu: string };
+  shipping_company: string | null;
+  tracking_no: string | null;
+  created_at: string;
+  items: Array<{
+    id: string;
+    name_snapshot: string;
+    qty: number;
+    price_snapshot: number;
+    sale_price_snapshot: number | null;
+  }>;
+}
 
 const STATUS_STEPS: OrderStatus[] = ["paid", "preparing", "shipped", "delivered"];
 
@@ -37,29 +56,19 @@ export default function OrderTrackingPage() {
 
 function OrderTrackingContent() {
   const searchParams = useSearchParams();
-  const { orders } = useOrders();
 
   const [orderNo, setOrderNo] = useState(searchParams.get("order_no") || "");
   const [email, setEmail] = useState(searchParams.get("email") || "");
-  const [foundOrder, setFoundOrder] = useState<Order | null>(null);
+  const [foundOrder, setFoundOrder] = useState<TrackingOrder | null>(null);
   const [searched, setSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   // Rate limiting: max 5 attempts per 60 seconds
   const [attempts, setAttempts] = useState(0);
   const [lockUntil, setLockUntil] = useState(0);
 
-  // URL'den gelen parametreleri otomatik ara
-  useEffect(() => {
-    const urlOrderNo = searchParams.get("order_no");
-    const urlEmail = searchParams.get("email");
-    if (urlOrderNo && urlEmail) {
-      handleSearch(urlOrderNo, urlEmail);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [orders]);
-
-  const handleSearch = (searchOrderNo?: string, searchEmail?: string) => {
+  const handleSearch = useCallback(async (searchOrderNo?: string, searchEmail?: string) => {
     const oNo = (searchOrderNo || orderNo).trim();
     const em = (searchEmail || email).trim().toLowerCase();
 
@@ -80,7 +89,7 @@ function OrderTrackingContent() {
     const newAttempts = attempts + 1;
     setAttempts(newAttempts);
     if (newAttempts >= 5) {
-      setLockUntil(now + 60_000); // Lock for 60 seconds
+      setLockUntil(now + 60_000);
       setAttempts(0);
       setError("Çok fazla deneme yaptınız. 60 saniye sonra tekrar deneyin.");
       return;
@@ -88,24 +97,41 @@ function OrderTrackingContent() {
 
     setSearched(true);
     setError("");
+    setLoading(true);
 
-    // Privacy: order_no + customer_email eşleşmesi ZORUNLU (IDOR koruması)
-    const order = orders.find(
-      (o) =>
-        o.order_no === oNo &&
-        o.shipping_address &&
-        o.customer_email?.toLowerCase() === em
-    );
+    try {
+      const res = await fetch("/api/orders/track", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderNo: oNo, email: em }),
+      });
 
-    if (order) {
-      setFoundOrder(order);
-      setAttempts(0); // Reset on success
-    } else {
+      const data = await res.json();
+
+      if (!res.ok) {
+        setFoundOrder(null);
+        setError(data.error || "Sipariş bulunamadı.");
+      } else {
+        setFoundOrder(data.order);
+        setAttempts(0);
+      }
+    } catch {
+      setError("Bağlantı hatası. Lütfen tekrar deneyin.");
       setFoundOrder(null);
-      // Generic error — don't reveal whether order_no exists
-      setError("Sipariş bulunamadı. Lütfen sipariş numaranızı ve e-posta adresinizi kontrol ediniz.");
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [orderNo, email, lockUntil, attempts]);
+
+  // URL'den gelen parametreleri otomatik ara
+  useEffect(() => {
+    const urlOrderNo = searchParams.get("order_no");
+    const urlEmail = searchParams.get("email");
+    if (urlOrderNo && urlEmail) {
+      handleSearch(urlOrderNo, urlEmail);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const getStepStatus = (step: OrderStatus, currentStatus: OrderStatus) => {
     const stepIndex = STATUS_STEPS.indexOf(step);
@@ -152,17 +178,18 @@ function OrderTrackingContent() {
           </div>
           <button
             onClick={() => handleSearch()}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-primary-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-700"
+            disabled={loading}
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-primary-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-700 disabled:opacity-60"
           >
-            <Search size={16} />
-            Sipariş Sorgula
+            {loading ? <Loader2 size={16} className="animate-spin" /> : <Search size={16} />}
+            {loading ? "Sorgulanıyor..." : "Sipariş Sorgula"}
           </button>
         </div>
 
         {/* Error */}
         {error && (
-          <div className="mt-4 rounded-lg border border-red-200 bg-red-50 dark:bg-red-900/30 p-4">
-            <p className="text-sm text-red-700">{error}</p>
+          <div className="mt-4 rounded-lg border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/30 p-4">
+            <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
           </div>
         )}
 
@@ -191,9 +218,9 @@ function OrderTrackingContent() {
               {/* Status Badge */}
               <div className="mt-4">
                 <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium ${
-                  foundOrder.status === "delivered" ? "bg-green-50 dark:bg-green-900/30 text-green-700" :
-                  foundOrder.status === "cancelled" || foundOrder.status === "refunded" ? "bg-red-50 dark:bg-red-900/30 text-red-700" :
-                  "bg-blue-50 dark:bg-blue-900/30 text-blue-700"
+                  foundOrder.status === "delivered" ? "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300" :
+                  foundOrder.status === "cancelled" || foundOrder.status === "refunded" ? "bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300" :
+                  "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
                 }`}>
                   {(() => {
                     const Icon = STATUS_ICONS[foundOrder.status] || Clock;
@@ -204,7 +231,7 @@ function OrderTrackingContent() {
               </div>
             </div>
 
-            {/* Progress Steps — G37: Kargo Bar */}
+            {/* Progress Steps */}
             {foundOrder.status !== "cancelled" && foundOrder.status !== "refunded" && (
               <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
                 <h3 className="mb-4 text-sm font-bold text-dark-900 dark:text-dark-50">Sipariş Durumu</h3>
@@ -264,7 +291,7 @@ function OrderTrackingContent() {
               <h3 className="mb-4 text-sm font-bold text-dark-900 dark:text-dark-50">Sipariş Detayı</h3>
               <div className="space-y-3">
                 {foundOrder.items?.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between border-b border-dark-50 pb-3 last:border-0 last:pb-0">
+                  <div key={item.id} className="flex items-center justify-between border-b border-dark-50 dark:border-dark-700 pb-3 last:border-0 last:pb-0">
                     <div>
                       <p className="text-sm font-medium text-dark-900 dark:text-dark-50">{item.name_snapshot}</p>
                       <p className="text-xs text-dark-500">{item.qty} adet</p>
@@ -277,7 +304,7 @@ function OrderTrackingContent() {
               </div>
 
               {/* Totals */}
-              <div className="mt-4 space-y-2 border-t border-dark-100 pt-4">
+              <div className="mt-4 space-y-2 border-t border-dark-100 dark:border-dark-700 pt-4">
                 <div className="flex justify-between text-sm">
                   <span className="text-dark-500 dark:text-dark-400">Ara Toplam</span>
                   <span className="text-dark-700 dark:text-dark-200">{foundOrder.subtotal.toLocaleString("tr-TR")}₺</span>
@@ -294,7 +321,7 @@ function OrderTrackingContent() {
                     <span className="text-green-600">-{foundOrder.discount.toLocaleString("tr-TR")}₺</span>
                   </div>
                 )}
-                <div className="flex justify-between border-t border-dark-100 pt-2 text-base font-bold">
+                <div className="flex justify-between border-t border-dark-100 dark:border-dark-700 pt-2 text-base font-bold">
                   <span className="text-dark-900 dark:text-dark-50">Toplam</span>
                   <span className="text-dark-900 dark:text-dark-50">{foundOrder.total.toLocaleString("tr-TR")}₺</span>
                 </div>
@@ -302,23 +329,25 @@ function OrderTrackingContent() {
             </div>
 
             {/* Delivery Address */}
-            <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
-              <h3 className="mb-2 text-sm font-bold text-dark-900 dark:text-dark-50">Teslimat Adresi</h3>
-              <p className="text-sm text-dark-600 dark:text-dark-300">
-                {foundOrder.shipping_address.ad} {foundOrder.shipping_address.soyad}
-              </p>
-              <p className="text-sm text-dark-500 dark:text-dark-400">
-                {foundOrder.shipping_address.adres}
-              </p>
-              <p className="text-sm text-dark-500 dark:text-dark-400">
-                {foundOrder.shipping_address.ilce} / {foundOrder.shipping_address.il}
-              </p>
-            </div>
+            {foundOrder.shipping_address && (
+              <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
+                <h3 className="mb-2 text-sm font-bold text-dark-900 dark:text-dark-50">Teslimat Adresi</h3>
+                <p className="text-sm text-dark-600 dark:text-dark-300">
+                  {foundOrder.shipping_address.ad} {foundOrder.shipping_address.soyad}
+                </p>
+                <p className="text-sm text-dark-500 dark:text-dark-400">
+                  {foundOrder.shipping_address.adres}
+                </p>
+                <p className="text-sm text-dark-500 dark:text-dark-400">
+                  {foundOrder.shipping_address.ilce} / {foundOrder.shipping_address.il}
+                </p>
+              </div>
+            )}
           </div>
         )}
 
         {/* Empty state after search */}
-        {searched && !foundOrder && !error && (
+        {searched && !foundOrder && !error && !loading && (
           <div className="mt-8 text-center">
             <Search size={48} className="mx-auto text-dark-200" />
             <p className="mt-4 text-dark-500 dark:text-dark-400">Sipariş bulunamadı.</p>

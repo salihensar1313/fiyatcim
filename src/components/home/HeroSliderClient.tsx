@@ -67,7 +67,7 @@ export default function HeroSliderClient({ slides }: Props) {
               i === current ? "relative opacity-100" : "absolute inset-0 opacity-0"
             }`}
           >
-            <div className="relative min-h-[380px] sm:min-h-[450px] lg:min-h-[540px]">
+            <div className="relative min-h-[300px] sm:min-h-[400px] lg:min-h-[540px]">
               <Image
                 src={slide.image || "/images/hero/hero-main.png"}
                 alt={slide.title}
@@ -77,19 +77,20 @@ export default function HeroSliderClient({ slides }: Props) {
                 className="scale-[1.01] object-cover object-center"
               />
 
-              <div className="absolute inset-y-0 left-0 w-3/5 bg-gradient-to-r from-dark-900 via-dark-900/85 to-transparent" />
+              {/* Full overlay on mobile for readability, gradient on desktop */}
+              <div className="absolute inset-0 bg-dark-900/70 sm:inset-y-0 sm:left-0 sm:right-auto sm:w-3/5 sm:bg-gradient-to-r sm:from-dark-900 sm:via-dark-900/85 sm:to-transparent" />
 
-              <div className="container-custom relative z-10 flex min-h-[380px] items-center sm:min-h-[450px] lg:min-h-[540px]">
-                <div className="max-w-lg py-12 text-center lg:py-16 lg:text-left">
-                  <h1 className="text-3xl font-extrabold uppercase leading-tight text-white sm:text-4xl lg:text-5xl">
+              <div className="container-custom relative z-10 flex min-h-[300px] items-center sm:min-h-[400px] lg:min-h-[540px]">
+                <div className="w-full max-w-lg py-8 text-center sm:py-12 sm:text-left lg:py-16">
+                  <h1 className="text-2xl font-extrabold uppercase leading-tight text-white sm:text-3xl lg:text-5xl">
                     {slide.title}
                   </h1>
-                  <p className="mx-auto mt-4 max-w-md text-base text-dark-200 sm:text-lg lg:mx-0">
+                  <p className="mx-auto mt-3 max-w-md text-sm text-dark-200 sm:mx-0 sm:mt-4 sm:text-base lg:text-lg">
                     {slide.subtitle}
                   </p>
                   <Link
                     href={slide.cta_link}
-                    className="mt-6 inline-flex items-center rounded-lg bg-primary-600 px-8 py-3.5 text-sm font-bold text-white transition-colors hover:bg-primary-700"
+                    className="mt-5 inline-flex items-center rounded-lg bg-primary-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-700 active:scale-95 sm:mt-6 sm:px-8 sm:py-3.5"
                   >
                     {slide.cta_text}
                   </Link>

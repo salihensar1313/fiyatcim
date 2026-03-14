@@ -153,14 +153,16 @@ export default function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-t border-dark-800">
-        <div className="container-custom flex flex-col items-center justify-between gap-4 py-4 sm:flex-row">
-          <p className="text-xs text-dark-500 dark:text-dark-400">
-            &copy; {new Date().getFullYear()} Fiyatcim.com. Tüm hakları saklıdır.
-          </p>
-          <p className="text-xs text-dark-500 dark:text-dark-400">
-            Bu bir Temiz İş kuruluşudur.
-          </p>
-          <div className="flex flex-wrap items-center gap-2 text-xs">
+        <div className="container-custom flex flex-col items-center gap-4 py-4 text-center sm:flex-row sm:justify-between sm:text-left">
+          <div className="flex flex-col items-center gap-1 sm:items-start">
+            <p className="text-xs text-dark-500 dark:text-dark-400">
+              &copy; {new Date().getFullYear()} Fiyatcim.com. Tüm hakları saklıdır.
+            </p>
+            <p className="text-xs text-dark-500 dark:text-dark-400">
+              Bu bir Temiz İş kuruluşudur.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-1.5 text-xs sm:justify-end">
             <span className="flex items-center gap-1 rounded-full bg-green-900/40 px-2.5 py-1 font-medium text-green-400">
               <ShieldCheck size={12} />
               SSL

@@ -10,7 +10,7 @@ export default function CampaignRadar() {
 
   // Campaigns = products with active discounts, sorted by discount %
   const campaigns = products
-    .filter((p) => p.is_active && !p.deleted_at && p.sale_price && p.sale_price < p.price)
+    .filter((p) => p.is_active && !p.deleted_at && p.stock > 0 && p.sale_price && p.sale_price < p.price)
     .sort((a, b) => {
       const discA = a.sale_price ? (a.price - a.sale_price) / a.price : 0;
       const discB = b.sale_price ? (b.price - b.sale_price) / b.price : 0;

@@ -38,8 +38,8 @@ export default function MobileBottomNav() {
               href={item.href}
               aria-label={item.label}
               aria-current={active ? "page" : undefined}
-              className={`relative flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
-                active ? "text-primary-600" : "text-dark-400"
+              className={`relative flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors active:scale-90 ${
+                active ? "text-primary-600" : "text-dark-400 active:text-dark-600"
               }`}
             >
               <div className="relative">

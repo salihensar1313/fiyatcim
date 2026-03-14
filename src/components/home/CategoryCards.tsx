@@ -50,7 +50,7 @@ export default async function CategoryCards() {
                     <p className="text-[11px] text-dark-500">{cat.product_count} ürün</p>
                   )}
                 </div>
-                <span className="flex items-center gap-1 text-xs font-medium text-primary-600 opacity-0 transition-all group-hover:opacity-100">
+                <span className="flex items-center gap-1 text-xs font-medium text-primary-600 opacity-100 transition-all sm:opacity-0 sm:group-hover:opacity-100">
                   İncele
                   <ChevronRight size={14} className="transition-transform group-hover:translate-x-0.5" />
                 </span>

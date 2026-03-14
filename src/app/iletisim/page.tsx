@@ -134,13 +134,13 @@ export default function ContactPage() {
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d48499.97431894015!2d30.3828!3d40.6934!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x409bba60daa9907b%3A0x38042db462f76f1c!2sAdapazar%C4%B1%2C%20Sakarya!5e0!3m2!1str!2str!4v1"
             width="100%"
-            height="350"
+            height="250"
             style={{ border: 0 }}
             allowFullScreen
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
             title="Fiyatcim.com Konum"
-            className="w-full"
+            className="w-full h-[250px] sm:h-[350px]"
           />
         </div>
       </div>

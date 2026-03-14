@@ -117,17 +117,17 @@ export default function CategoryClient({ slug }: Props) {
       </div>
 
       <div className="container mx-auto px-4">
-        <div className="mb-8 rounded-xl bg-dark-900 p-8 text-white">
-          <h1 className="text-2xl font-bold md:text-3xl">{category.name}</h1>
-          <p className="mt-2 text-dark-300">{filtered.length} ürün listeleniyor</p>
+        <div className="mb-6 rounded-xl bg-dark-900 p-5 text-white sm:mb-8 sm:p-8">
+          <h1 className="text-xl font-bold sm:text-2xl md:text-3xl">{category.name}</h1>
+          <p className="mt-1 text-sm text-dark-300 sm:mt-2 sm:text-base">{filtered.length} ürün listeleniyor</p>
         </div>
 
-        <div className="mb-6 flex flex-wrap gap-2">
+        <div className="mb-6 flex flex-wrap gap-1.5 sm:gap-2">
           {cats.filter((c) => c.id !== category.id).map((c) => (
             <Link
               key={c.id}
               href={`/kategori/${c.slug}`}
-              className="rounded-full border border-dark-200 bg-white dark:border-dark-600 dark:bg-dark-800 px-4 py-2 text-sm font-medium text-dark-700 dark:text-dark-200 transition-colors hover:border-primary-300 hover:text-primary-600"
+              className="rounded-full border border-dark-200 bg-white dark:border-dark-600 dark:bg-dark-800 px-3 py-1.5 text-xs font-medium text-dark-700 dark:text-dark-200 transition-colors hover:border-primary-300 hover:text-primary-600 sm:px-4 sm:py-2 sm:text-sm"
             >
               {c.name}
             </Link>
@@ -155,7 +155,7 @@ export default function CategoryClient({ slug }: Props) {
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
-              className="rounded-lg border border-dark-200 px-3 py-2 text-sm focus:border-primary-600 focus:outline-none"
+              className="rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-2 py-2 text-xs focus:border-primary-600 focus:outline-none sm:px-3 sm:text-sm"
             >
               <option value="newest">En Yeni</option>
               <option value="price_asc">Fiyat ↑</option>

@@ -7,6 +7,7 @@ export interface Category {
   name: string;
   slug: string;
   image_url: string;
+  icon?: string;
   sort_order: number;
   created_at: string;
   updated_at?: string;
@@ -46,6 +47,8 @@ export interface Product {
   images: string[];
   seo_title: string;
   sale_ends_at?: string; // ISO date — flash sale bitis zamani
+  is_featured: boolean;
+  is_trending: boolean;
   seo_desc: string;
   created_at: string;
   updated_at?: string;
@@ -75,6 +78,18 @@ export interface Address {
   posta_kodu: string;
 }
 
+export type InvoiceType = "bireysel" | "kurumsal";
+
+export interface InvoiceInfo {
+  wantsInvoice: boolean;
+  invoiceType: InvoiceType;
+  companyName?: string;    // kurumsal — şirket ünvanı
+  taxOffice?: string;      // kurumsal — vergi dairesi
+  taxNumber?: string;      // kurumsal — vergi no (10 hane)
+  tcKimlik?: string;       // bireysel — TC kimlik no (11 hane)
+  fullName?: string;       // bireysel — ad soyad
+}
+
 export interface SavedAddress extends Address {
   id: string;
   baslik: string;
@@ -102,6 +117,7 @@ export interface Order {
   customer_email?: string;
   notes: string | null;
   coupon_id: string | null;
+  invoice_info?: InvoiceInfo;
   created_at: string;
   updated_at?: string;
   // Joined

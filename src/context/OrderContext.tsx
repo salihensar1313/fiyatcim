@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from "react";
-import type { Order, OrderStatus, OrderItem, OrderStatusLog, CartItem, Address, PaymentStatus } from "@/types";
+import type { Order, OrderStatus, OrderItem, OrderStatusLog, CartItem, Address, PaymentStatus, InvoiceInfo } from "@/types";
 import { safeGetJSON, safeSetJSON } from "@/lib/safe-storage";
 import { createClient } from "@/lib/supabase/client";
 
@@ -20,6 +20,7 @@ interface CreateOrderParams {
   discount: number;
   total: number;
   couponCode: string | null;
+  invoiceInfo?: InvoiceInfo;
 }
 
 interface OrderContextType {
@@ -252,6 +253,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
         customer_email: params.user?.email || "",
         notes: null,
         coupon_id: params.couponCode,
+        invoice_info: params.invoiceInfo,
         created_at: now,
         items: orderItems,
         status_logs: [initialLog],

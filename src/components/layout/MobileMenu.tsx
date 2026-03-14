@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { X, User, ShoppingCart, Heart, ChevronDown, LogIn, UserPlus, Package } from "lucide-react";
+import { X, User, ShoppingCart, Heart, LogIn, UserPlus, Package } from "lucide-react";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import Link from "next/link";
 import { CONTACT } from "@/lib/constants";
-import { MEGA_MENU_DATA } from "@/lib/nav";
+import { getCategoryIcon } from "@/lib/nav";
+import { getCategories } from "@/lib/queries";
+import type { Category } from "@/types";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useAuth } from "@/context/AuthContext";
@@ -21,7 +23,11 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const { user, profile } = useAuth();
   const cartCount = getItemCount();
   const wishlistCount = getWishlistCount();
-  const [openCategory, setOpenCategory] = useState<string | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    getCategories().then(setCategories).catch(() => {});
+  }, []);
 
   useScrollLock(isOpen);
 
@@ -152,44 +158,19 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-dark-400">
             Kategoriler
           </p>
-          {MEGA_MENU_DATA.map((cat) => {
-            const Icon = cat.icon;
-            const isCatOpen = openCategory === cat.key;
+          {categories.map((cat) => {
+            const Icon = getCategoryIcon(cat.icon);
+            const href = `/kategori/${cat.slug}`;
             return (
-              <div key={cat.key}>
-                <button
-                  onClick={() => setOpenCategory(isCatOpen ? null : cat.key)}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-3 font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:hover:bg-dark-700"
-                >
-                  <Icon size={18} className="text-primary-600" />
-                  <span className="flex-1 text-left">{cat.label}</span>
-                  <ChevronDown
-                    size={16}
-                    className={`text-dark-400 transition-transform duration-200 ${isCatOpen ? "rotate-180" : ""}`}
-                  />
-                </button>
-                {isCatOpen && (
-                  <div className="ml-9 space-y-0.5 pb-2">
-                    <Link
-                      href={cat.href}
-                      onClick={onClose}
-                      className="block rounded-lg px-3 py-2 text-sm font-semibold text-primary-600 hover:bg-dark-50 dark:hover:bg-dark-700"
-                    >
-                      Tümünü Gör
-                    </Link>
-                    {cat.items.map((item) => (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        onClick={onClose}
-                        className="block rounded-lg px-3 py-2 text-sm text-dark-600 dark:text-dark-300 hover:bg-dark-50 dark:hover:bg-dark-700"
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <Link
+                key={cat.id}
+                href={href}
+                onClick={onClose}
+                className="flex items-center gap-3 rounded-lg px-3 py-3 font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:hover:bg-dark-700"
+              >
+                <Icon size={18} className="text-primary-600" />
+                <span className="flex-1 text-left">{cat.name}</span>
+              </Link>
             );
           })}
 

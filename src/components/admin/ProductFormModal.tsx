@@ -49,6 +49,8 @@ const defaultFormData = {
   description: "",
   specs: {} as Record<string, string>,
   images: [] as string[],
+  is_featured: false,
+  is_trending: false,
   seo_title: "",
   seo_desc: "",
 };
@@ -97,6 +99,8 @@ export default function ProductFormModal({
         description: product.description,
         specs: { ...product.specs },
         images: [...product.images],
+        is_featured: product.is_featured,
+        is_trending: product.is_trending,
         seo_title: product.seo_title,
         seo_desc: product.seo_desc,
       });

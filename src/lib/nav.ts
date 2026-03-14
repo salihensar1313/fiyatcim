@@ -1,61 +1,46 @@
-import { Shield, Camera, Home, Fingerprint } from "lucide-react";
+import {
+  Shield,
+  Camera,
+  Home,
+  Fingerprint,
+  Package,
+  Bell,
+  Lock,
+  Wifi,
+  Eye,
+  Monitor,
+  Radio,
+  Flame,
+  Zap,
+  Speaker,
+  Server,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-export interface MegaMenuItem {
-  key: string;
-  label: string;
-  href: string;
-  icon: LucideIcon;
-  items: { label: string; href: string }[];
+/** Lucide ikon adi → component mapping. Yeni ikon eklemek icin buraya ekle. */
+export const CATEGORY_ICONS: Record<string, LucideIcon> = {
+  Shield,
+  Camera,
+  Home,
+  Fingerprint,
+  Package,
+  Bell,
+  Lock,
+  Wifi,
+  Eye,
+  Monitor,
+  Radio,
+  Flame,
+  Zap,
+  Speaker,
+  Server,
+};
+
+/** Ikon adina gore LucideIcon dondurur. Bulunamazsa Package (varsayilan). */
+export function getCategoryIcon(iconName?: string): LucideIcon {
+  if (!iconName) return Package;
+  return CATEGORY_ICONS[iconName] || Package;
 }
 
-export const MEGA_MENU_DATA: MegaMenuItem[] = [
-  {
-    key: "alarm",
-    label: "Alarm Sistemleri",
-    href: "/kategori/alarm-sistemleri",
-    icon: Shield,
-    items: [
-      { label: "Kablosuz Alarm Setleri", href: "/urunler?search=kablosuz+alarm" },
-      { label: "Kablolu Alarm Panelleri", href: "/urunler?search=kablolu+alarm" },
-      { label: "Alarm Sensörleri", href: "/urunler?search=alarm+sensör" },
-      { label: "Alarm Aksesuarları", href: "/urunler?search=alarm+aksesuar" },
-    ],
-  },
-  {
-    key: "kamera",
-    label: "Güvenlik Kameraları",
-    href: "/kategori/guvenlik-kameralari",
-    icon: Camera,
-    items: [
-      { label: "IP Kamera Sistemleri", href: "/urunler?search=ip+kamera" },
-      { label: "Analog Kamera Setleri", href: "/urunler?search=analog+kamera" },
-      { label: "NVR / DVR Kayıt Cihazları", href: "/urunler?search=nvr+dvr" },
-      { label: "Kamera Aksesuarları", href: "/urunler?search=kamera+aksesuar" },
-    ],
-  },
-  {
-    key: "akilli-ev",
-    label: "Akıllı Ev",
-    href: "/kategori/akilli-ev-sistemleri",
-    icon: Home,
-    items: [
-      { label: "Akıllı Priz & Anahtar", href: "/urunler?search=akıllı+priz" },
-      { label: "Akıllı Aydınlatma", href: "/urunler?search=akıllı+aydınlatma" },
-      { label: "Akıllı Sensörler", href: "/urunler?search=akıllı+sensör" },
-      { label: "Akıllı Ev Hub", href: "/urunler?search=akıllı+ev+hub" },
-    ],
-  },
-  {
-    key: "gecis",
-    label: "Geçiş Kontrol",
-    href: "/kategori/gecis-kontrol-sistemleri",
-    icon: Fingerprint,
-    items: [
-      { label: "Parmak İzi Sistemleri", href: "/urunler?search=parmak+izi" },
-      { label: "Kartlı Geçiş", href: "/urunler?search=kartlı+geçiş" },
-      { label: "Turnike Sistemleri", href: "/urunler?search=turnike" },
-      { label: "Kapı Otomasyonu", href: "/urunler?search=kapı+otomasyon" },
-    ],
-  },
-];
+/** Masaustu uygulamada dropdown icin kullanilabilecek ikon listesi. */
+export const AVAILABLE_ICONS = Object.keys(CATEGORY_ICONS);

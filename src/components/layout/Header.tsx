@@ -8,7 +8,6 @@ import {
   ShoppingCart,
   Menu,
   Heart,
-  ChevronDown,
   Package,
   GitCompareArrows,
   Phone,
@@ -17,21 +16,19 @@ import {
   Truck,
 } from "lucide-react";
 import { SITE_FULL_NAME, CONTACT } from "@/lib/constants";
-import { MEGA_MENU_DATA } from "@/lib/nav";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useCurrency } from "@/context/CurrencyContext";
 import MobileMenu from "./MobileMenu";
 import NotificationBell from "@/components/ui/NotificationBell";
 import SearchAutocomplete from "./SearchAutocomplete";
+import NavCategories from "./NavCategories";
 import AccountDropdown from "@/components/ui/AccountDropdown";
 import { useCompare } from "@/hooks/useCompare";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeMega, setActiveMega] = useState<string | null>(null);
-  const megaTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pathname = usePathname();
   const { getItemCount } = useCart();
   const { getCount: getWishlistCount } = useWishlist();
@@ -56,18 +53,8 @@ export default function Header() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      if (megaTimeoutRef.current) clearTimeout(megaTimeoutRef.current);
     };
   }, [handleScroll]);
-
-  const handleMegaEnter = (key: string) => {
-    if (megaTimeoutRef.current) clearTimeout(megaTimeoutRef.current);
-    setActiveMega(key);
-  };
-
-  const handleMegaLeave = () => {
-    megaTimeoutRef.current = setTimeout(() => setActiveMega(null), 150);
-  };
 
   return (
     <>
@@ -195,58 +182,10 @@ export default function Header() {
           <SearchAutocomplete isMobile />
         </div>
 
-        {/* Red Navigation Bar - Desktop with Mega Menu */}
+        {/* Red Navigation Bar - Desktop with Dynamic Categories */}
         <nav className="hidden bg-primary-600 lg:block">
           <div className="container-custom flex items-center gap-0">
-            {MEGA_MENU_DATA.map((megaItem) => (
-              <div
-                key={megaItem.key}
-                className="relative"
-                onMouseEnter={() => handleMegaEnter(megaItem.key)}
-                onMouseLeave={handleMegaLeave}
-              >
-                <Link
-                  href={megaItem.href}
-                  className={`flex items-center gap-1 px-4 py-3 text-sm font-semibold transition-colors hover:bg-primary-700 ${
-                    pathname.startsWith(megaItem.href) ? "bg-primary-700 text-white" : "text-white"
-                  }`}
-                >
-                  {megaItem.label}
-                  <ChevronDown size={14} className={`transition-transform ${activeMega === megaItem.key ? "rotate-180" : ""}`} />
-                </Link>
-
-                {/* Mega dropdown */}
-                {activeMega === megaItem.key && (
-                  <div
-                    className="absolute left-0 top-full z-40 w-72 rounded-b-xl border border-t-0 border-dark-100 bg-white dark:bg-dark-800 py-3 shadow-xl dark:border-dark-700"
-                    onMouseEnter={() => handleMegaEnter(megaItem.key)}
-                    onMouseLeave={handleMegaLeave}
-                  >
-                    {/* Category header */}
-                    <div className="mb-2 flex items-center gap-2 px-4">
-                      <megaItem.icon size={18} className="text-primary-600" />
-                      <Link
-                        href={megaItem.href}
-                        className="text-sm font-bold text-dark-900 hover:text-primary-600 dark:text-dark-50"
-                      >
-                        Tümünü Gör
-                      </Link>
-                    </div>
-                    <div className="mx-4 mb-2 h-px bg-dark-100 dark:bg-dark-700" />
-                    {/* Sub-items */}
-                    {megaItem.items.map((sub) => (
-                      <Link
-                        key={sub.label}
-                        href={sub.href}
-                        className="block px-4 py-2 text-sm text-dark-600 transition-colors hover:bg-primary-50 hover:text-primary-700 dark:text-dark-300 dark:hover:bg-dark-700"
-                      >
-                        {sub.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+            <NavCategories />
             {/* Tüm Ürünler */}
             <Link
               href="/urunler"

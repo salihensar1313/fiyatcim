@@ -15,10 +15,33 @@
 
   html {
     scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 
   body {
     @apply bg-white text-dark-900 antialiased dark:bg-dark-900 dark:text-dark-100;
+  }
+
+  /* Global focus-visible for keyboard navigation */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary-500;
+  }
+
+  /* Remove default focus outline — only show on keyboard nav */
+  :focus:not(:focus-visible) {
+    outline: none;
   }
 }
 

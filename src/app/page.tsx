@@ -43,7 +43,7 @@ export default function HomePage() {
     <>
       <JsonLd data={buildOrganizationSchema()} />
       <JsonLd data={buildWebSiteSchema()} />
-      <Suspense fallback={<div className="min-h-[380px] animate-pulse bg-dark-900 sm:min-h-[450px] lg:min-h-[540px]" />}>
+      <Suspense fallback={<div className="min-h-[300px] animate-pulse bg-dark-900 sm:min-h-[400px] lg:min-h-[540px]" />}>
         <HeroSlider />
       </Suspense>
       <PromoBanner />

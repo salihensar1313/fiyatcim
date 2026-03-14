@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { CreditCard, Truck, FileText, MapPin, Plus, Smartphone, LogIn, UserX } from "lucide-react";
+import { CreditCard, Truck, FileText, MapPin, Plus, Smartphone, LogIn, UserX, Building2, User } from "lucide-react";
+import type { InvoiceType } from "@/types";
 import SmsOtpVerify from "@/components/ui/SmsOtpVerify";
 import CartRecommendations from "@/components/product/CartRecommendations";
 import { useCart } from "@/context/CartContext";
@@ -41,6 +42,18 @@ export default function CheckoutPage() {
   const [agreeMarketing, setAgreeMarketing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Ticari fatura
+  const [wantsInvoice, setWantsInvoice] = useState(false);
+  const [invoiceType, setInvoiceType] = useState<InvoiceType>("kurumsal");
+  const [invoiceInfo, setInvoiceInfo] = useState({
+    companyName: "",
+    taxOffice: "",
+    taxNumber: "",
+    tcKimlik: "",
+    fullName: "",
+  });
+  const [invoiceAttempted, setInvoiceAttempted] = useState(false);
+
   const allMandatoryAgreed = agreeSales && agreePreInfo && agreeKVKK && agreeTerms;
 
   const isAddressValid =
@@ -53,11 +66,29 @@ export default function CheckoutPage() {
 
   const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
+  const isInvoiceValid = !wantsInvoice || (
+    invoiceType === "kurumsal"
+      ? invoiceInfo.companyName.trim() && invoiceInfo.taxOffice.trim() && /^\d{10}$/.test(invoiceInfo.taxNumber)
+      : invoiceInfo.fullName.trim() && /^\d{11}$/.test(invoiceInfo.tcKimlik)
+  );
+
   const handleAddressSubmit = () => {
     setAddressAttempted(true);
-    if (!isAddressValid) return;
+    if (wantsInvoice) setInvoiceAttempted(true);
+    if (!isAddressValid || !isInvoiceValid) return;
     setStep(IS_DEMO ? "sms" : "payment");
   };
+
+  const buildInvoiceInfo = () =>
+    wantsInvoice
+      ? {
+          wantsInvoice: true as const,
+          invoiceType,
+          ...(invoiceType === "kurumsal"
+            ? { companyName: invoiceInfo.companyName, taxOffice: invoiceInfo.taxOffice, taxNumber: invoiceInfo.taxNumber }
+            : { fullName: invoiceInfo.fullName, tcKimlik: invoiceInfo.tcKimlik }),
+        }
+      : undefined;
 
   // Redirect to cart only when both auth and cart are fully loaded and cart is empty
   useEffect(() => {
@@ -338,9 +369,151 @@ export default function CheckoutPage() {
                         />
                       </div>
 
+                      {/* Ticari Fatura */}
+                      <div className="rounded-lg border border-dark-100 dark:border-dark-700 p-4">
+                        <label className="flex cursor-pointer items-center gap-3">
+                          <input
+                            type="checkbox"
+                            checked={wantsInvoice}
+                            onChange={(e) => {
+                              setWantsInvoice(e.target.checked);
+                              if (!e.target.checked) setInvoiceAttempted(false);
+                            }}
+                            className="h-4 w-4 rounded border-dark-300 text-primary-600 focus:ring-primary-500"
+                          />
+                          <div className="flex items-center gap-2">
+                            <FileText size={16} className="text-primary-600" />
+                            <span className="text-sm font-medium text-dark-900 dark:text-dark-50">Ticari Fatura İstiyorum</span>
+                          </div>
+                        </label>
+
+                        {wantsInvoice && (
+                          <div className="mt-4 space-y-4">
+                            {/* Fatura Tipi Seçimi */}
+                            <div className="flex gap-3">
+                              <button
+                                type="button"
+                                onClick={() => setInvoiceType("kurumsal")}
+                                className={`flex flex-1 items-center justify-center gap-2 rounded-lg border py-2.5 text-sm font-medium transition-colors ${
+                                  invoiceType === "kurumsal"
+                                    ? "border-primary-600 bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400"
+                                    : "border-dark-200 dark:border-dark-600 text-dark-600 dark:text-dark-300 hover:border-dark-300"
+                                }`}
+                              >
+                                <Building2 size={16} />
+                                Kurumsal
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setInvoiceType("bireysel")}
+                                className={`flex flex-1 items-center justify-center gap-2 rounded-lg border py-2.5 text-sm font-medium transition-colors ${
+                                  invoiceType === "bireysel"
+                                    ? "border-primary-600 bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400"
+                                    : "border-dark-200 dark:border-dark-600 text-dark-600 dark:text-dark-300 hover:border-dark-300"
+                                }`}
+                              >
+                                <User size={16} />
+                                Bireysel
+                              </button>
+                            </div>
+
+                            {invoiceType === "kurumsal" ? (
+                              <div className="space-y-3">
+                                <div>
+                                  <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Şirket Ünvanı <span className="text-primary-600">*</span></label>
+                                  <input
+                                    type="text"
+                                    value={invoiceInfo.companyName}
+                                    onChange={(e) => setInvoiceInfo({ ...invoiceInfo, companyName: e.target.value })}
+                                    placeholder="Örn: ABC Güvenlik Ltd. Şti."
+                                    className={`w-full rounded-lg border dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400 ${
+                                      invoiceAttempted && !invoiceInfo.companyName.trim() ? "border-red-400" : "border-dark-200 dark:border-dark-600"
+                                    }`}
+                                  />
+                                </div>
+                                <div className="grid gap-3 sm:grid-cols-2">
+                                  <div>
+                                    <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Vergi Dairesi <span className="text-primary-600">*</span></label>
+                                    <input
+                                      type="text"
+                                      value={invoiceInfo.taxOffice}
+                                      onChange={(e) => setInvoiceInfo({ ...invoiceInfo, taxOffice: e.target.value })}
+                                      placeholder="Örn: Adapazarı"
+                                      className={`w-full rounded-lg border dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400 ${
+                                        invoiceAttempted && !invoiceInfo.taxOffice.trim() ? "border-red-400" : "border-dark-200 dark:border-dark-600"
+                                      }`}
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Vergi No <span className="text-primary-600">*</span></label>
+                                    <input
+                                      type="text"
+                                      value={invoiceInfo.taxNumber}
+                                      onChange={(e) => {
+                                        const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                                        setInvoiceInfo({ ...invoiceInfo, taxNumber: val });
+                                      }}
+                                      placeholder="10 haneli vergi no"
+                                      inputMode="numeric"
+                                      maxLength={10}
+                                      className={`w-full rounded-lg border dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400 ${
+                                        invoiceAttempted && !/^\d{10}$/.test(invoiceInfo.taxNumber) ? "border-red-400" : "border-dark-200 dark:border-dark-600"
+                                      }`}
+                                    />
+                                    {invoiceAttempted && invoiceInfo.taxNumber && !/^\d{10}$/.test(invoiceInfo.taxNumber) && (
+                                      <p className="mt-1 text-xs text-red-500">Vergi no 10 haneli olmalıdır</p>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="space-y-3">
+                                <div>
+                                  <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Ad Soyad <span className="text-primary-600">*</span></label>
+                                  <input
+                                    type="text"
+                                    value={invoiceInfo.fullName}
+                                    onChange={(e) => setInvoiceInfo({ ...invoiceInfo, fullName: e.target.value })}
+                                    placeholder="Fatura üzerinde görünecek ad soyad"
+                                    className={`w-full rounded-lg border dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400 ${
+                                      invoiceAttempted && !invoiceInfo.fullName.trim() ? "border-red-400" : "border-dark-200 dark:border-dark-600"
+                                    }`}
+                                  />
+                                </div>
+                                <div>
+                                  <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">TC Kimlik No <span className="text-primary-600">*</span></label>
+                                  <input
+                                    type="text"
+                                    value={invoiceInfo.tcKimlik}
+                                    onChange={(e) => {
+                                      const val = e.target.value.replace(/\D/g, "").slice(0, 11);
+                                      setInvoiceInfo({ ...invoiceInfo, tcKimlik: val });
+                                    }}
+                                    placeholder="11 haneli TC kimlik no"
+                                    inputMode="numeric"
+                                    maxLength={11}
+                                    className={`w-full rounded-lg border dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400 ${
+                                      invoiceAttempted && !/^\d{11}$/.test(invoiceInfo.tcKimlik) ? "border-red-400" : "border-dark-200 dark:border-dark-600"
+                                    }`}
+                                  />
+                                  {invoiceAttempted && invoiceInfo.tcKimlik && !/^\d{11}$/.test(invoiceInfo.tcKimlik) && (
+                                    <p className="mt-1 text-xs text-red-500">TC kimlik no 11 haneli olmalıdır</p>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
                       {addressAttempted && !isAddressValid && (
                         <p className="text-sm text-red-600">
                           Lütfen zorunlu (*) alanların tamamını doldurun.
+                        </p>
+                      )}
+                      {invoiceAttempted && !isInvoiceValid && (
+                        <p className="text-sm text-red-600">
+                          Lütfen fatura bilgilerini eksiksiz doldurun.
                         </p>
                       )}
 
@@ -474,6 +647,7 @@ export default function CheckoutPage() {
                           discount,
                           total: safeTotal,
                           couponCode,
+                          invoiceInfo: buildInvoiceInfo(),
                         });
                         setOrderCompleted(true);
                         clearCart();
@@ -557,7 +731,7 @@ export default function CheckoutPage() {
 
       {/* Sticky Mobile CTA — Checkout */}
       {step === "payment" && (
-        <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-dark-200 bg-white dark:border-dark-700 dark:bg-dark-800 p-3 shadow-lg lg:hidden">
+        <div className="fixed bottom-16 left-0 right-0 z-30 border-t border-dark-200 bg-white dark:border-dark-700 dark:bg-dark-800 p-3 shadow-lg lg:hidden">
           <div className="flex flex-col gap-2">
             {!allMandatoryAgreed && (
               <p className="text-center text-xs text-red-500">Devam etmek için sözleşmeleri onaylayın</p>
@@ -580,6 +754,7 @@ export default function CheckoutPage() {
                     discount,
                     total: safeTotal,
                     couponCode,
+                    invoiceInfo: buildInvoiceInfo(),
                   });
                   setOrderCompleted(true);
                   clearCart();
