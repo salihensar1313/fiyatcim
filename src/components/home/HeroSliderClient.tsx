@@ -78,7 +78,7 @@ export default function HeroSliderClient({ slides }: Props) {
               />
 
               {/* Full overlay on mobile for readability, gradient on desktop */}
-              <div className="absolute inset-0 bg-dark-900/70 sm:inset-y-0 sm:left-0 sm:right-auto sm:w-3/5 sm:bg-gradient-to-r sm:from-dark-900 sm:via-dark-900/85 sm:to-transparent" />
+              <div className="absolute inset-0 bg-dark-900/60 sm:bg-[linear-gradient(to_right,rgba(15,23,42,0.9)_0%,rgba(15,23,42,0.7)_25%,rgba(15,23,42,0.2)_50%,transparent_65%)]" />
 
               <div className="container-custom relative z-10 flex min-h-[300px] items-center sm:min-h-[400px] lg:min-h-[540px]">
                 <div className="w-full max-w-lg py-8 text-center sm:py-12 sm:text-left lg:py-16">

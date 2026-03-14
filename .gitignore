@@ -45,3 +45,12 @@ _writer.js
 
 .vercel
 NUL
+
+# Python / Product Manager
+__pycache__/
+*.pyc
+tools/product-manager/build/
+tools/product-manager/dist/
+tools/product-manager/*.spec
+tools/product-manager/config.json
+.env.vercel
