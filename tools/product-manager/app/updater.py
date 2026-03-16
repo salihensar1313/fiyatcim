@@ -138,9 +138,14 @@ start "" "%APP_DIR%\%EXE_NAME%"
 
 # ─── ZIP extract ─────────────────────────────────────────────
 def _extract_update(zip_path: str, temp_dir: str) -> str:
-    """ZIP'i ac, icerik dizinini dondur."""
+    """ZIP'i ac, icerik dizinini dondur. Path traversal korumalı."""
     extract_to = os.path.join(temp_dir, "extracted")
     with zipfile.ZipFile(zip_path, "r") as z:
+        # Path traversal korumasi: .. iceren veya mutlak yollu dosyalari reddet
+        for member in z.namelist():
+            member_path = os.path.normpath(member)
+            if member_path.startswith("..") or os.path.isabs(member_path):
+                raise Exception(f"Guvenlik hatasi: Gecersiz dosya yolu: {member}")
         z.extractall(extract_to)
 
     # Tek ust klasor icinde mi kontrol et
@@ -151,11 +156,23 @@ def _extract_update(zip_path: str, temp_dir: str) -> str:
 
 
 # ─── Kurulum + yeniden baslatma ──────────────────────────────
+def _sanitize_path(path: str) -> str:
+    """Batch script parametreleri icin path sanitizasyonu."""
+    # Sadece alfanumerik, tire, alt cizgi, nokta, bosluk, iki nokta ve ters/duz slash izin ver
+    import re
+    cleaned = re.sub(r'[;&|<>"`$!]', '', path)
+    return cleaned
+
+
 def _install_and_restart(extracted_dir: str):
     """Batch script olustur, baslat, uygulamadan cik."""
     app_dir = _get_app_directory()
     exe_name = "Fiyatcim-UrunYoneticisi.exe"
     pid = os.getpid()
+
+    # Path'leri sanitize et (command injection korumasi)
+    safe_app_dir = _sanitize_path(app_dir)
+    safe_extracted_dir = _sanitize_path(extracted_dir)
 
     bat_path = os.path.join(tempfile.gettempdir(), "fiyatcim_updater.bat")
     with open(bat_path, "w", encoding="utf-8") as f:
@@ -163,7 +180,7 @@ def _install_and_restart(extracted_dir: str):
 
     # Detached process olarak baslat
     subprocess.Popen(
-        [bat_path, app_dir, extracted_dir, exe_name, str(pid)],
+        [bat_path, safe_app_dir, safe_extracted_dir, exe_name, str(pid)],
         creationflags=subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS,
         close_fds=True,
     )

@@ -101,8 +101,23 @@ class App(ctk.CTk):
 
 
 def main():
-    app = App()
-    app.mainloop()
+    import logging
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+        handlers=[logging.StreamHandler()]
+    )
+
+    try:
+        app = App()
+        app.mainloop()
+    except Exception as e:
+        logging.error("Uygulama baslatma hatasi: %s", e, exc_info=True)
+        try:
+            from tkinter import messagebox
+            messagebox.showerror("Hata", f"Uygulama baslatilamadi:\n{e}")
+        except Exception:
+            print(f"KRITIK HATA: {e}")
 
 
 if __name__ == "__main__":

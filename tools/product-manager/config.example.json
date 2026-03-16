@@ -1,0 +1,9 @@
+{
+  "supabase_url": "https://your-project.supabase.co",
+  "supabase_anon_key": "your-anon-key-here",
+  "parasut_company_id": "",
+  "parasut_client_id": "",
+  "parasut_client_secret": "",
+  "parasut_username": "",
+  "parasut_password": ""
+}

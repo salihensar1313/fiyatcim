@@ -9,20 +9,32 @@ import os
 import io
 import urllib.request
 
+# Site base URL — relative path'leri tam URL'ye cevirmek icin
+SITE_BASE_URL = "https://fiyatcim.com"
 
 # Basit in-memory cache: URL → PIL.Image
 _url_image_cache: dict[str, Image.Image] = {}
 
 
+def _resolve_image_path(item: str) -> str:
+    """Relative path'leri tam URL'ye cevir."""
+    if item.startswith(("http://", "https://", "data:")):
+        return item
+    if item.startswith("/"):
+        return SITE_BASE_URL + item
+    return item
+
+
 def _load_image_from_url(url: str) -> Image.Image | None:
     """URL'den görseli indir ve PIL Image olarak döndür (cache'li)."""
+    url = _resolve_image_path(url)
     if url in _url_image_cache:
         return _url_image_cache[url].copy()
     try:
         import ssl
         ctx = ssl.create_default_context()
         req = urllib.request.Request(url, headers={"User-Agent": "FiyatcimApp/1.0"})
-        with urllib.request.urlopen(req, timeout=10, context=ctx) as resp:
+        with urllib.request.urlopen(req, timeout=15, context=ctx) as resp:
             data = resp.read()
         img = Image.open(io.BytesIO(data))
         _url_image_cache[url] = img.copy()
@@ -227,6 +239,10 @@ class ImageManager(ctk.CTkFrame):
         self._refresh_thumbs()
         self._update_info()
 
+    def _is_remote(self, item: str) -> bool:
+        """URL veya site-relative path mi?"""
+        return item.startswith(("http://", "https://", "/"))
+
     def _show_main_image(self, index: int):
         all_items = self._get_all_items()
         if not all_items or index >= len(all_items):
@@ -237,7 +253,7 @@ class ImageManager(ctk.CTkFrame):
 
         try:
             img = None
-            if item.startswith("http"):
+            if self._is_remote(item):
                 img = _load_image_from_url(item)
             elif item.startswith("data:"):
                 self.main_label.configure(image=None, text=f"Gorsel #{index+1}\n(Base64)")
@@ -277,7 +293,7 @@ class ImageManager(ctk.CTkFrame):
 
             try:
                 img = None
-                if item.startswith("http"):
+                if self._is_remote(item):
                     img = _load_image_from_url(item)
                 elif item.startswith("data:"):
                     lbl = ctk.CTkLabel(card, text=f"#{idx+1}",
@@ -317,8 +333,8 @@ class ImageManager(ctk.CTkFrame):
         item = all_items[self.selected_index]
         self.info_index.configure(text=f"Sira: {self.selected_index + 1} / {len(all_items)}")
 
-        if item.startswith("http"):
-            # URL'den dosya adını çıkar
+        if self._is_remote(item):
+            # URL/path'den dosya adını çıkar
             url_name = item.rsplit("/", 1)[-1].split("?")[0] if "/" in item else "URL"
             self.info_name.configure(text=f"Dosya: {url_name}")
             img = _load_image_from_url(item)
@@ -376,13 +392,12 @@ class ImageManager(ctk.CTkFrame):
         self._refresh()
 
     def _swap(self, i: int, j: int):
-        """Birleşik listede iki öğeyi yer değiştir."""
+        """Birlesik listede iki ogeyi yer degistir, siralama korunur."""
         combined = self.image_urls + self.image_paths
+        if i < 0 or j < 0 or i >= len(combined) or j >= len(combined):
+            return
         combined[i], combined[j] = combined[j], combined[i]
-        url_count = len(self.image_urls)
-        self.image_urls = [x for x in combined[:url_count] if x.startswith("http") or x.startswith("data:")]
-        self.image_paths = [x for x in combined if not (x.startswith("http") or x.startswith("data:"))]
-        # Daha basit: hepsini birleşik tutup yeniden ayır
+        # Siralama korunarak URL ve path listelerini yeniden olustur
         self.image_urls = []
         self.image_paths = []
         for item in combined:

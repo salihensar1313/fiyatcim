@@ -11,11 +11,23 @@ from supabase import create_client, Client
 logger = logging.getLogger("fiyatcim")
 
 CONFIG_PATH = Path(__file__).parent.parent / "config.json"
+CONFIG_EXAMPLE_PATH = Path(__file__).parent.parent / "config.example.json"
 
 
 def load_config() -> dict:
+    if not CONFIG_PATH.exists():
+        if CONFIG_EXAMPLE_PATH.exists():
+            raise FileNotFoundError(
+                "config.json bulunamadi. config.example.json dosyasini config.json olarak kopyalayip "
+                "Supabase bilgilerinizi girin."
+            )
+        raise FileNotFoundError("config.json bulunamadi.")
     with open(CONFIG_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)
+        config = json.load(f)
+    # Zorunlu alanlari kontrol et
+    if not config.get("supabase_url") or not config.get("supabase_anon_key"):
+        raise ValueError("config.json icinde supabase_url ve supabase_anon_key zorunludur.")
+    return config
 
 
 class SupabaseManager:
@@ -31,7 +43,14 @@ class SupabaseManager:
     # ─── AUTH ───────────────────────────────────────────
 
     def sign_in(self, email: str, password: str) -> dict:
-        """Email + şifre ile giriş. Hata varsa exception fırlatır."""
+        """Email + sifre ile giris. Hata varsa exception firlatir."""
+        # Input validation
+        if not email or not isinstance(email, str) or len(email) > 254:
+            raise ValueError("Gecersiz e-posta adresi")
+        if not password or not isinstance(password, str) or len(password) > 256:
+            raise ValueError("Gecersiz sifre")
+        email = email.strip().lower()
+
         res = self.client.auth.sign_in_with_password({
             "email": email,
             "password": password,

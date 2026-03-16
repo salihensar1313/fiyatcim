@@ -94,9 +94,10 @@ class ProductForm(ctk.CTkScrollableFrame):
         )
         self.category_menu.pack(fill="x")
 
-        # SKU + Slug gizli — otomatik olusturulur
-        self.sku_entry = ctk.CTkEntry(basic_card, height=0)
-        self.slug_entry = ctk.CTkEntry(basic_card, height=0)
+        # SKU + Slug gizli — otomatik olusturulur (pack edilmiyor, sadece veri tutucu)
+        self._hidden_frame = ctk.CTkFrame(basic_card, fg_color="transparent", height=1)
+        self.sku_entry = ctk.CTkEntry(self._hidden_frame)
+        self.slug_entry = ctk.CTkEntry(self._hidden_frame)
 
         # ═══════════════════════════════════════════════
         # BÖLÜM 3: Fiyat & Stok

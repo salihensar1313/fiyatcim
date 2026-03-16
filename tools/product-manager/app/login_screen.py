@@ -110,10 +110,25 @@ class LoginScreen(ctk.CTkFrame):
                 return
             except Exception:
                 pass
-        # Fallback: base64 (eski yöntem)
-        data = {"email": email, "pwd": base64.b64encode(password.encode("utf-8")).decode("utf-8")}
+        # Fallback: basit obfuscation (base64 + reverse) — gercek sifreleme degil ama
+        # plain text'ten iyidir. Keyring kurulmasi oneriliyor.
+        import hashlib
+        scramble_key = hashlib.sha256(email.encode("utf-8")).digest()[:16]
+        pwd_bytes = password.encode("utf-8")
+        # XOR obfuscation
+        obfuscated = bytes(b ^ scramble_key[i % len(scramble_key)] for i, b in enumerate(pwd_bytes))
+        data = {
+            "email": email,
+            "pwd": base64.b64encode(obfuscated).decode("utf-8"),
+            "v": 2  # versiyon: yeni format
+        }
         with open(SESSION_FILE, "w", encoding="utf-8") as f:
             json.dump(data, f)
+        # Dosya izinlerini kisitla (sadece sahibi okuyabilsin)
+        try:
+            os.chmod(SESSION_FILE, 0o600)
+        except Exception:
+            pass
 
     @staticmethod
     def _load_session() -> tuple[str, str]:
@@ -129,7 +144,14 @@ class LoginScreen(ctk.CTkFrame):
             if data.get("store") == "keyring" and _HAS_KEYRING:
                 pwd = _keyring.get_password(_KEYRING_SERVICE, email)
                 return email, pwd or ""
-            # Eski base64 yöntemi
+            # v2: XOR obfuscated format
+            if data.get("v") == 2:
+                import hashlib
+                scramble_key = hashlib.sha256(email.encode("utf-8")).digest()[:16]
+                obfuscated = base64.b64decode(data.get("pwd", ""))
+                pwd_bytes = bytes(b ^ scramble_key[i % len(scramble_key)] for i, b in enumerate(obfuscated))
+                return email, pwd_bytes.decode("utf-8")
+            # Eski base64 yöntemi (geriye uyumluluk)
             pwd = base64.b64decode(data.get("pwd", "")).decode("utf-8")
             return email, pwd
         except Exception:

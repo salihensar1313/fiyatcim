@@ -1,6 +1,9 @@
 .session.json
+config.json
 __pycache__/
 *.pyc
 dist/
 build/
 *.spec
+*.env
+.env*
