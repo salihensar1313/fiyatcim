@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, Mail, Clock, Instagram, Youtube, Linkedin, ShieldCheck } from "lucide-react";
+import { MapPin, Mail, Phone, Clock, Instagram, Youtube, Linkedin, ShieldCheck } from "lucide-react";
 import { FOOTER_LINKS, CONTACT, SOCIAL, SITE_FULL_NAME } from "@/lib/constants";
 
 export default function Footer() {
@@ -110,6 +110,11 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
+            </ul>
+            <h3 className="mb-4 mt-6 text-sm font-semibold uppercase tracking-wider text-white">
+              Yasal
+            </h3>
+            <ul className="space-y-3">
               {FOOTER_LINKS.yasal.map((link) => (
                 <li key={link.href}>
                   <Link
@@ -132,6 +137,15 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin size={18} className="mt-0.5 shrink-0 text-primary-500" />
                 <span className="text-sm text-dark-400">{CONTACT.address}</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <Phone size={18} className="shrink-0 text-primary-500" />
+                <a
+                  href={`tel:${CONTACT.phone.replace(/\s|\(|\)/g, "")}`}
+                  className="text-sm text-dark-400 transition-colors hover:text-white"
+                >
+                  {CONTACT.phone}
+                </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={18} className="shrink-0 text-primary-500" />
