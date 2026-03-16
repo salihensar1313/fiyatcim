@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { MapPin, Mail, Clock, Instagram, Youtube, Linkedin, ShieldCheck } from "lucide-react";
-import { FOOTER_LINKS, CONTACT, SOCIAL, SITE_FULL_NAME, SITE_DESCRIPTION } from "@/lib/constants";
+import { FOOTER_LINKS, CONTACT, SOCIAL, SITE_FULL_NAME } from "@/lib/constants";
 
 export default function Footer() {
   return (

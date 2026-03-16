@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Target, Eye, CheckCircle, Shield, Lightbulb, MapPin, Phone } from "lucide-react";
 import Breadcrumb from "@/components/ui/Breadcrumb";
-import { SITE_FULL_NAME, SITE_URL, CONTACT } from "@/lib/constants";
+import { SITE_FULL_NAME, SITE_URL } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Hakkımızda",

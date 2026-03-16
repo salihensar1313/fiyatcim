@@ -1177,7 +1177,7 @@ export default function ChatBot() {
         onClick={() => {
           // Ignore click if user was dragging
           if (dragRef.current?.moved) return;
-          isOpen ? setIsOpen(false) : handleOpen();
+          if (isOpen) { setIsOpen(false); } else { handleOpen(); }
         }}
         className={`group relative flex items-center justify-center rounded-full transition-all duration-200 hover:scale-110 ${
           isOpen

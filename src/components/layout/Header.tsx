@@ -18,7 +18,6 @@ import {
 import { SITE_FULL_NAME, CONTACT } from "@/lib/constants";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
-import { useCurrency } from "@/context/CurrencyContext";
 import MobileMenu from "./MobileMenu";
 import NotificationBell from "@/components/ui/NotificationBell";
 import SearchAutocomplete from "./SearchAutocomplete";
@@ -32,7 +31,6 @@ export default function Header() {
   const pathname = usePathname();
   const { getItemCount } = useCart();
   const { getCount: getWishlistCount } = useWishlist();
-  const { usdTry, isLoading: currencyLoading } = useCurrency();
   const { compareCount } = useCompare();
 
   const cartCount = getItemCount();
