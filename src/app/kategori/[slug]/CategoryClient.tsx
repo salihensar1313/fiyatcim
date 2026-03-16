@@ -17,6 +17,15 @@ interface Props {
   slug: string;
 }
 
+const CATEGORY_INTROS: Record<string, string> = {
+  "alarm-sistemleri": "Ev, villa ve işyeri güvenliğiniz için kablosuz ve kablolu alarm sistemleri. Ajax, Paradox ve daha fazla marka seçeneğiyle profesyonel güvenlik.",
+  "guvenlik-kameralari": "İç ve dış mekan güvenlik kameraları, NVR setleri ve aksesuarlar. Hikvision, Dahua gibi dünya markalarıyla kristal netliğinde görüntü.",
+  "akilli-ev-sistemleri": "Akıllı ev otomasyon ürünleri, sensörler ve kontrol üniteleri. Evinizi tek tuşla yönetin, güvenliğinizi artırın.",
+  "akilli-kilit": "Parmak izi, şifre ve kart okuyuculu akıllı kilit çözümleri. Apartman, ofis ve villa girişleriniz için güvenli erişim.",
+  "gecis-kontrol-sistemleri": "Yüz tanıma, parmak izi ve kartlı geçiş terminalleri. İşyeri ve bina girişlerinde profesyonel personel takibi.",
+  "yangin-algilama": "Duman dedektörleri, yangın alarm panelleri ve söndürme sistemleri. İşyeri ve depo güvenliğiniz için erken uyarı teknolojileri.",
+};
+
 export default function CategoryClient({ slug }: Props) {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [cats, setCats] = useState<Category[]>([]);
@@ -119,7 +128,10 @@ export default function CategoryClient({ slug }: Props) {
       <div className="container mx-auto px-4">
         <div className="mb-6 rounded-xl bg-dark-900 p-5 text-white sm:mb-8 sm:p-8">
           <h1 className="text-xl font-bold sm:text-2xl md:text-3xl">{category.name}</h1>
-          <p className="mt-1 text-sm text-dark-300 sm:mt-2 sm:text-base">{filtered.length} ürün listeleniyor</p>
+          {CATEGORY_INTROS[slug] && (
+            <p className="mt-2 max-w-2xl text-sm text-dark-300 sm:text-base">{CATEGORY_INTROS[slug]}</p>
+          )}
+          <p className="mt-1 text-sm text-dark-400">{filtered.length} ürün listeleniyor</p>
         </div>
 
         <div className="mb-6 flex flex-wrap gap-1.5 sm:gap-2">
@@ -135,8 +147,9 @@ export default function CategoryClient({ slug }: Props) {
         </div>
 
         {/* Toolbar */}
-        <div className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-3">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-2 sm:p-3">
           <ProductFiltersPanel
+            mode="toolbar"
             filterGroups={filterGroups}
             filters={specFilters}
             priceRange={priceRange}
@@ -148,9 +161,8 @@ export default function CategoryClient({ slug }: Props) {
             onClearGroup={(k) => { clearGroup(k); setPage(1); }}
           />
 
-          <div className="flex-1" />
-
-          <div className="flex items-center gap-2">
+          <div className="ml-auto flex items-center gap-2">
+            <span className="hidden text-xs text-dark-500 lg:inline">{filtered.length} ürün</span>
             <ArrowUpDown size={16} className="text-dark-500" />
             <select
               value={sort}
@@ -162,29 +174,46 @@ export default function CategoryClient({ slug }: Props) {
               <option value="price_desc">Fiyat ↓</option>
               <option value="name_asc">A-Z</option>
             </select>
-          </div>
-
-          <div className="hidden items-center gap-1 rounded-lg border border-dark-200 p-1 sm:flex">
-            <button
-              onClick={() => setViewMode("grid")}
-              className={`rounded p-1.5 ${viewMode === "grid" ? "bg-primary-600 text-white" : "text-dark-500 hover:text-dark-600 dark:text-dark-300"}`}
-            >
-              <LayoutGrid size={16} />
-            </button>
-            <button
-              onClick={() => setViewMode("list")}
-              className={`rounded p-1.5 ${viewMode === "list" ? "bg-primary-600 text-white" : "text-dark-500 hover:text-dark-600 dark:text-dark-300"}`}
-            >
-              <List size={16} />
-            </button>
+            <div className="hidden items-center gap-1 rounded-lg border border-dark-200 p-1 sm:flex">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`rounded p-1.5 ${viewMode === "grid" ? "bg-primary-600 text-white" : "text-dark-500 hover:text-dark-600 dark:text-dark-300"}`}
+              >
+                <LayoutGrid size={16} />
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={`rounded p-1.5 ${viewMode === "list" ? "bg-primary-600 text-white" : "text-dark-500 hover:text-dark-600 dark:text-dark-300"}`}
+              >
+                <List size={16} />
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Content */}
+        {/* Content: Sidebar + Grid */}
         <div className="flex gap-6">
+          {/* Desktop Sidebar */}
+          <aside className="hidden w-64 shrink-0 lg:block">
+            <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto">
+              <ProductFiltersPanel
+                mode="sidebar"
+                filterGroups={filterGroups}
+                filters={specFilters}
+                priceRange={priceRange}
+                activeFilterCount={activeFilterCount}
+                onToggleSpec={(key, val) => { toggleSpecFilter(key, val); setPage(1); }}
+                onToggleBrand={(b) => { toggleBrand(b); setPage(1); }}
+                onPriceRange={(min, max) => { setPriceRange(min, max); setPage(1); }}
+                onClearAll={() => { clearFilters(); setPage(1); }}
+                onClearGroup={(k) => { clearGroup(k); setPage(1); }}
+              />
+            </div>
+          </aside>
+
           <div className="flex-1">
             {paginatedProducts.length > 0 ? (
-              <div className={viewMode === "grid" ? "grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3" : "space-y-4"}>
+              <div className={viewMode === "grid" ? "grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4" : "space-y-4"}>
                 {paginatedProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}

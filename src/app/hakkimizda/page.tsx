@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { Target, Eye, CheckCircle, Shield, Lightbulb } from "lucide-react";
+import Link from "next/link";
+import { Target, Eye, CheckCircle, Shield, Lightbulb, MapPin, Phone } from "lucide-react";
 import Breadcrumb from "@/components/ui/Breadcrumb";
-import { SITE_FULL_NAME, SITE_URL } from "@/lib/constants";
+import { SITE_FULL_NAME, SITE_URL, CONTACT } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Hakkımızda",
@@ -21,18 +22,18 @@ export default function AboutPage() {
         <div className="mb-12 rounded-xl bg-dark-900 p-8 text-center text-white md:p-16">
           <h1 className="text-3xl font-bold md:text-4xl">{SITE_FULL_NAME}</h1>
           <p className="mx-auto mt-4 max-w-2xl text-dark-300">
-            Fiyatcim.com, elektronik alışverişinde doğru karar vermen için rehber içerikler,
-            karşılaştırmalar ve şeffaf alışveriş deneyimi sunar. Hedefimiz; önce Türkiye&apos;nin
-            elektronik rehberi olmak, sonra en güvenilir elektronik mağazası olarak güveni büyütmek
-            ve uzun vadede Türkiye&apos;nin en büyük elektronik platformuna dönüşmektir.
+            Fiyatcim.com, Temiz İş Güvenlik ailesinin dijital markasıdır. Alarm, kamera, akıllı ev
+            ve geçiş kontrol sistemlerinde uzman onaylı ürünler, rehber içerikler ve şeffaf
+            alışveriş deneyimi sunar. Sakarya merkezli ekibimiz, Marmara Bölgesi başta olmak üzere
+            tüm Türkiye&apos;ye profesyonel kurulum ve satış sonrası destek sağlar.
           </p>
         </div>
 
         {/* Stats */}
         <div className="mb-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[
-            { value: "500+", label: "Kapsamlı rehber & karşılaştırma hedefi" },
-            { value: "100+", label: "Marka ve kategori ölçek hedefi (Yıl 1)" },
+            { value: "130+", label: "Aktif güvenlik ürünü" },
+            { value: "6", label: "Ürün kategorisi" },
             { value: "%100", label: "Şeffaflık + güven odaklı yaklaşım" },
           ].map((stat) => (
             <div key={stat.label} className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6 text-center">
@@ -95,6 +96,31 @@ export default function AboutPage() {
                 <p className="mt-2 text-sm text-dark-600 dark:text-dark-300">{item.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Servis Bölgesi & İletişim CTA */}
+        <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6 md:p-8">
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div>
+              <div className="mb-2 flex items-center gap-2">
+                <MapPin size={20} className="text-primary-600" />
+                <h2 className="text-xl font-bold text-dark-900 dark:text-dark-50">Servis Bölgemiz</h2>
+              </div>
+              <p className="text-sm text-dark-600 dark:text-dark-300">
+                Sakarya (Adapazarı) merkezli ekibimiz; Kocaeli, İstanbul Anadolu Yakası, Bolu ve Düzce
+                bölgelerinde profesyonel keşif ve kurulum hizmeti sunmaktadır. Online satış Türkiye genelinde geçerlidir.
+              </p>
+            </div>
+            <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+              <Link
+                href="/iletisim"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-primary-700"
+              >
+                <Phone size={16} />
+                Bize Ulaşın
+              </Link>
+            </div>
           </div>
         </div>
       </div>

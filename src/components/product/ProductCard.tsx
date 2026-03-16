@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ShoppingCart, Heart, Plus, Minus, Trash2, GitCompareArrows, Zap } from "lucide-react";
@@ -35,6 +35,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const [imgSrc, setImgSrc] = useState(() => getProductImage(product));
+  useEffect(() => { setImgSrc(getProductImage(product)); }, [product.id, product.images]);
   const { addItem, items, updateQuantity, removeItem, isInCart } = useCart();
   const { toggleItem, isInWishlist } = useWishlist();
   const { showToast } = useToast();

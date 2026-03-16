@@ -110,15 +110,6 @@ export default function Header() {
               <Image src="/images/logo-white.png" alt={SITE_FULL_NAME} width={180} height={50} priority className="h-10 w-auto sm:h-14" />
             </Link>
 
-            {/* Exchange Rate Badge */}
-            <div className="hidden items-center gap-1.5 rounded-md bg-dark-800 px-3 py-1.5 text-xs lg:flex">
-              <span className="font-medium text-dark-400">$1</span>
-              <span className="text-dark-500 dark:text-dark-400">=</span>
-              <span className="font-bold text-green-400">
-                {currencyLoading ? "..." : `₺${usdTry.toFixed(2)}`}
-              </span>
-            </div>
-
             {/* Search - Desktop */}
             <div className="hidden flex-1 lg:block lg:max-w-xl">
               <SearchAutocomplete />

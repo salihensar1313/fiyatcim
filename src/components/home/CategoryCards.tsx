@@ -6,6 +6,15 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
+const CATEGORY_FALLBACK_IMAGES: Record<string, string> = {
+  "alarm-sistemleri": "/images/categories/alarm.png",
+  "guvenlik-kameralari": "/images/categories/kamera.png",
+  "akilli-ev-sistemleri": "/images/categories/akilli-ev.png",
+  "akilli-kilit": "/images/categories/gecis-kontrol.png",
+  "gecis-kontrol-sistemleri": "/images/categories/gecis-kontrol.png",
+  "yangin-algilama": "/images/categories/alarm.png",
+};
+
 export default async function CategoryCards() {
   const client = IS_DEMO ? undefined : await createServerSupabaseClient();
   const cats = await getCategories(client);
@@ -25,7 +34,7 @@ export default async function CategoryCards() {
               href={`/kategori/${cat.slug}`}
               className="group flex flex-col overflow-hidden rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 shadow-sm transition-shadow hover:shadow-lg"
             >
-              <div className="aspect-[4/3] overflow-hidden bg-dark-50 dark:bg-dark-700">
+              <div className="aspect-[4/3] overflow-hidden bg-white dark:bg-dark-200">
                 {cat.image_url?.startsWith("data:") ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -35,10 +44,11 @@ export default async function CategoryCards() {
                   />
                 ) : (
                   <Image
-                    src={cat.image_url || "/images/categories/alarm.png"}
+                    src={cat.image_url || CATEGORY_FALLBACK_IMAGES[cat.slug] || "/images/categories/alarm.png"}
                     alt={cat.name}
                     width={400}
                     height={300}
+                    unoptimized
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 )}

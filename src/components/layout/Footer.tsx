@@ -15,7 +15,7 @@ export default function Footer() {
               <Image src="/images/logo-white.png" alt={SITE_FULL_NAME} width={140} height={40} className="h-10 w-auto" />
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-dark-400">
-              {SITE_DESCRIPTION}
+              Güvenlik teknolojilerinde uzman onaylı ürünler, karşılaştırmalar ve şeffaf alışveriş deneyimi. Bir Temiz İş Güvenlik kuruluşudur.
             </p>
             {/* Social */}
             <div className="mt-6 flex gap-3">
@@ -162,15 +162,15 @@ export default function Footer() {
               Bu bir Temiz İş kuruluşudur.
             </p>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-1.5 text-xs sm:justify-end">
-            <span className="flex items-center gap-1 rounded-full bg-green-900/40 px-2.5 py-1 font-medium text-green-400">
-              <ShieldCheck size={12} />
-              SSL
+          <div className="flex flex-wrap items-center justify-center gap-2 text-sm sm:justify-end">
+            <span className="flex items-center gap-1.5 rounded-full bg-green-900/40 px-3 py-1.5 font-semibold text-green-400">
+              <ShieldCheck size={14} />
+              SSL Güvenli
             </span>
-            <span className="rounded-full bg-dark-800 px-2.5 py-1 font-medium text-dark-400">Visa</span>
-            <span className="rounded-full bg-dark-800 px-2.5 py-1 font-medium text-dark-400">Mastercard</span>
-            <span className="rounded-full bg-dark-800 px-2.5 py-1 font-medium text-dark-400">Troy</span>
-            <span className="rounded-full bg-dark-800 px-2.5 py-1 font-medium text-dark-400">Havale/EFT</span>
+            <span className="rounded-full bg-dark-800 px-3 py-1.5 font-semibold text-dark-300">Visa</span>
+            <span className="rounded-full bg-dark-800 px-3 py-1.5 font-semibold text-dark-300">Mastercard</span>
+            <span className="rounded-full bg-dark-800 px-3 py-1.5 font-semibold text-dark-300">Troy</span>
+            <span className="rounded-full bg-dark-800 px-3 py-1.5 font-semibold text-dark-300">Havale/EFT</span>
           </div>
         </div>
       </div>

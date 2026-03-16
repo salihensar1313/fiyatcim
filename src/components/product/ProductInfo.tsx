@@ -1,6 +1,6 @@
 "use client";
 
-import { ShoppingCart, Heart, Truck, Shield, Package, Minus, Plus, Trash2 } from "lucide-react";
+import { ShoppingCart, Heart, Truck, Shield, Package, Minus, Plus, Trash2, Wrench, Users } from "lucide-react";
 import { useState } from "react";
 import type { Product } from "@/types";
 import { formatPrice, getDiscountPercent, getEffectivePrice, getStockStatus } from "@/lib/utils";
@@ -11,6 +11,15 @@ import Badge from "@/components/ui/Badge";
 import { useToast } from "@/components/ui/Toast";
 import PriceDisplay from "@/components/ui/PriceDisplay";
 import { useProductReviews } from "@/hooks/useProductReviews";
+
+const USE_CASE_TAGS: Record<string, string[]> = {
+  "alarm-sistemleri": ["Ev", "Villa", "Daire", "İşyeri"],
+  "guvenlik-kameralari": ["İç Mekan", "Dış Mekan", "İşyeri", "Bahçe"],
+  "akilli-ev-sistemleri": ["Ev", "Villa", "Ofis"],
+  "akilli-kilit": ["Apartman", "Ofis", "Villa"],
+  "gecis-kontrol-sistemleri": ["İşyeri", "Fabrika", "Bina Girişi"],
+  "yangin-algilama": ["İşyeri", "Fabrika", "Depo"],
+};
 
 interface ProductInfoProps {
   product: Product;
@@ -256,7 +265,36 @@ export default function ProductInfo({ product }: ProductInfoProps) {
             <p className="text-xs text-dark-500 dark:text-dark-400">Koşulsuz iade ve değişim</p>
           </div>
         </div>
+        <div className="flex items-center gap-3">
+          <Wrench size={18} className="text-primary-600" />
+          <div>
+            <p className="text-sm font-medium text-dark-900 dark:text-dark-50">Profesyonel Kurulum</p>
+            <p className="text-xs text-dark-500 dark:text-dark-400">Ücretsiz keşif ve kurulum desteği</p>
+          </div>
+        </div>
       </div>
+
+      {/* Kime Uygun etiketleri */}
+      {product.category?.slug && (() => {
+        const tags = USE_CASE_TAGS[product.category!.slug];
+        if (!tags || tags.length === 0) return null;
+        return (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="flex items-center gap-1 text-xs font-medium text-dark-500 dark:text-dark-400">
+              <Users size={14} />
+              Uygun:
+            </span>
+            {tags.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-full bg-primary-50 dark:bg-primary-900/20 px-3 py-1 text-xs font-medium text-primary-700 dark:text-primary-300"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        );
+      })()}
     </div>
   );
 }

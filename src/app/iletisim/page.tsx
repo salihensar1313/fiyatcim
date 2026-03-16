@@ -1,19 +1,43 @@
 "use client";
 
 import { useState } from "react";
-import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, Send, Loader2, CheckCircle } from "lucide-react";
 import { CONTACT } from "@/lib/constants";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Demo: form göndermiyoruz
-    setSent(true);
-    setTimeout(() => setSent(false), 3000);
+    if (status === "loading") return;
+
+    setStatus("loading");
+    setErrorMsg("");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setStatus("error");
+        setErrorMsg(data.error || "Bir hata oluştu. Lütfen tekrar deneyin.");
+        return;
+      }
+
+      setStatus("success");
+      setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+    } catch {
+      setStatus("error");
+      setErrorMsg("Bağlantı hatası. Lütfen internet bağlantınızı kontrol edin.");
+    }
   };
 
   return (
@@ -51,13 +75,27 @@ export default function ContactPage() {
             <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
               <h2 className="mb-4 text-lg font-bold text-dark-900 dark:text-dark-50">Bize Yazın</h2>
 
-              {sent ? (
+              {status === "success" ? (
                 <div className="rounded-lg bg-green-50 dark:bg-green-900/30 p-6 text-center">
-                  <p className="font-semibold text-green-700">Mesajınız gönderildi!</p>
-                  <p className="mt-1 text-sm text-green-600">En kısa sürede size dönüş yapacağız.</p>
+                  <CheckCircle size={40} className="mx-auto mb-3 text-green-600" />
+                  <p className="font-semibold text-green-700 dark:text-green-400">Mesajınız gönderildi!</p>
+                  <p className="mt-1 text-sm text-green-600 dark:text-green-500">En kısa sürede size dönüş yapacağız.</p>
+                  <button
+                    type="button"
+                    onClick={() => setStatus("idle")}
+                    className="mt-4 text-sm font-medium text-primary-600 hover:underline"
+                  >
+                    Yeni mesaj gönder
+                  </button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
+                  {status === "error" && (
+                    <div className="rounded-lg bg-red-50 dark:bg-red-900/30 px-4 py-3 text-sm text-red-700 dark:text-red-400">
+                      {errorMsg}
+                    </div>
+                  )}
+
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
                       <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Ad Soyad</label>
@@ -118,10 +156,20 @@ export default function ContactPage() {
                   </div>
                   <button
                     type="submit"
-                    className="flex items-center gap-2 rounded-lg bg-primary-600 px-6 py-3 text-sm font-bold text-white hover:bg-primary-700"
+                    disabled={status === "loading"}
+                    className="flex items-center gap-2 rounded-lg bg-primary-600 px-6 py-3 text-sm font-bold text-white hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    <Send size={16} />
-                    Gönder
+                    {status === "loading" ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin" />
+                        Gönderiliyor...
+                      </>
+                    ) : (
+                      <>
+                        <Send size={16} />
+                        Gönder
+                      </>
+                    )}
                   </button>
                 </form>
               )}

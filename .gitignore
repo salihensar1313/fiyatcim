@@ -54,3 +54,10 @@ tools/product-manager/dist/
 tools/product-manager/*.spec
 tools/product-manager/config.json
 .env.vercel
+
+# Temporary files
+tmp-*.mjs
+tmp-*.json
+tmp-*.txt
+fix-images.sql
+image-url-fixes.json

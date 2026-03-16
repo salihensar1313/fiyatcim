@@ -125,7 +125,7 @@ export default function ProductGallery({ images, productName, categoryId, catego
       {/* Thumbnails */}
       {images.length > 1 && (
         <div className="flex gap-2 overflow-x-auto pb-1">
-          {images.map((_, index) => (
+          {images.map((imgUrl, index) => (
             <button
               key={index}
               onClick={() => setActiveIndex(index)}
@@ -135,11 +135,12 @@ export default function ProductGallery({ images, productName, categoryId, catego
             >
               <div className="relative h-full w-full p-1">
                 <Image
-                  src={productImage}
+                  src={failedUrls.has(imgUrl) ? categoryFallback : imgUrl}
                   alt={`${productName} - ${index + 1}`}
                   width={80}
                   height={80}
                   className="h-full w-full object-contain"
+                  onError={() => setFailedUrls((prev) => new Set(prev).add(imgUrl))}
                 />
               </div>
             </button>

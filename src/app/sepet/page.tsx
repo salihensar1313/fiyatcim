@@ -100,7 +100,7 @@ export default function CartPage() {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 py-20">
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 py-16">
             <ShoppingCart size={64} className="mb-4 text-dark-200" />
             <h2 className="text-xl font-bold text-dark-900 dark:text-dark-50">Sepetiniz Boş</h2>
             <p className="mt-2 text-dark-500 dark:text-dark-400">
@@ -112,6 +112,23 @@ export default function CartPage() {
             >
               Alışverişe Başla
             </Link>
+            <div className="mt-8 flex flex-wrap justify-center gap-2">
+              {[
+                { label: "Alarm Sistemleri", href: "/kategori/alarm-sistemleri" },
+                { label: "Güvenlik Kameraları", href: "/kategori/guvenlik-kameralari" },
+                { label: "Akıllı Ev", href: "/kategori/akilli-ev-sistemleri" },
+                { label: "Akıllı Kilit", href: "/kategori/akilli-kilit" },
+                { label: "Geçiş Kontrol", href: "/kategori/gecis-kontrol-sistemleri" },
+              ].map((cat) => (
+                <Link
+                  key={cat.href}
+                  href={cat.href}
+                  className="rounded-full border border-dark-200 dark:border-dark-600 px-4 py-1.5 text-xs font-medium text-dark-600 dark:text-dark-300 hover:border-primary-600 hover:text-primary-600 transition-colors"
+                >
+                  {cat.label}
+                </Link>
+              ))}
+            </div>
           </div>
         )}
 

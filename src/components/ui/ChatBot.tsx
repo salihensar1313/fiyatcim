@@ -765,6 +765,11 @@ export default function ChatBot() {
   const [initialized, setInitialized] = useState(false);
   const [isAngry, setIsAngry] = useState(false); // CimBot küs mü (localStorage'dan yüklenir)
 
+  /* ─── Drag state (mobile only) ─── */
+  const [dragPos, setDragPos] = useState<{ x: number; y: number } | null>(null);
+  const dragRef = useRef<{ startX: number; startY: number; origX: number; origY: number; moved: boolean } | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -833,6 +838,55 @@ export default function ChatBot() {
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     };
   }, []);
+
+  /* ─── Mobile drag handlers ─── */
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (isOpen) return; // Don't drag when chat is open
+    const touch = e.touches[0];
+    const el = containerRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    dragRef.current = {
+      startX: touch.clientX,
+      startY: touch.clientY,
+      origX: rect.left,
+      origY: rect.top,
+      moved: false,
+    };
+  }, [isOpen]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    const d = dragRef.current;
+    if (!d) return;
+    const touch = e.touches[0];
+    const dx = touch.clientX - d.startX;
+    const dy = touch.clientY - d.startY;
+    // Only start dragging after 8px movement to avoid accidental drags
+    if (!d.moved && Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+    d.moved = true;
+    e.preventDefault(); // Prevent scroll while dragging
+
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const size = 72; // FAB size
+    // Clamp within viewport
+    const newX = Math.max(8, Math.min(vw - size - 8, d.origX + dx));
+    const newY = Math.max(8, Math.min(vh - size - 8, d.origY + dy));
+    setDragPos({ x: newX, y: newY });
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    const d = dragRef.current;
+    if (!d) return;
+    // Snap to nearest horizontal edge
+    if (d.moved && dragPos) {
+      const vw = window.innerWidth;
+      const size = 72;
+      const snappedX = dragPos.x < vw / 2 ? 12 : vw - size - 12;
+      setDragPos({ x: snappedX, y: dragPos.y });
+    }
+    dragRef.current = null;
+  }, [dragPos]);
 
   /* ─── Initialize with greeting ─── */
   const initChat = useCallback(() => {
@@ -938,7 +992,14 @@ export default function ChatBot() {
   };
 
   return (
-    <div className="fixed bottom-[7.5rem] right-3 z-[55] sm:bottom-8 sm:right-8">
+    <div
+      ref={containerRef}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      className={dragPos ? "fixed z-[55]" : "fixed bottom-20 right-3 z-[55] sm:bottom-6 sm:right-6 lg:bottom-8 lg:right-8"}
+      style={dragPos ? { left: dragPos.x, top: dragPos.y, right: "auto", bottom: "auto" } : undefined}
+    >
       {/* ─── Chat Panel ─── */}
       {isOpen && (
         <div
@@ -1072,7 +1133,7 @@ export default function ChatBot() {
 
       {/* ─── Tooltip (first visit) ─── */}
       {showTooltip && !isOpen && !showNudge && (
-        <div className="absolute bottom-[100px] right-0 mb-2 animate-fade-in whitespace-nowrap rounded-lg bg-dark-900 px-3 py-2 text-sm text-white shadow-lg">
+        <div className="absolute bottom-[72px] right-0 mb-2 animate-fade-in whitespace-nowrap rounded-lg bg-dark-900 px-3 py-2 text-sm text-white shadow-lg sm:bottom-[80px]">
           Selam! Ben CimBot, yardım ister misin? 😊
           <div className="absolute -bottom-1 right-6 h-2 w-2 rotate-45 bg-dark-900" />
         </div>
@@ -1081,7 +1142,7 @@ export default function ChatBot() {
       {/* ─── Nudge Notification Bubble ─── */}
       {showNudge && !isOpen && !showTooltip && (
         <div
-          className="absolute bottom-[100px] right-0 mb-2 w-[240px] animate-bounce-in cursor-pointer rounded-xl bg-white px-4 py-3 shadow-xl ring-1 ring-dark-100 dark:bg-dark-800 dark:ring-dark-600"
+          className="absolute bottom-[72px] right-0 mb-2 w-[240px] animate-bounce-in cursor-pointer rounded-xl bg-white px-4 py-3 shadow-xl ring-1 ring-dark-100 dark:bg-dark-800 dark:ring-dark-600 sm:bottom-[80px]"
           onClick={() => {
             setShowNudge(false);
             handleOpen();
@@ -1113,11 +1174,15 @@ export default function ChatBot() {
 
       {/* ─── FAB Button ─── */}
       <button
-        onClick={() => (isOpen ? setIsOpen(false) : handleOpen())}
+        onClick={() => {
+          // Ignore click if user was dragging
+          if (dragRef.current?.moved) return;
+          isOpen ? setIsOpen(false) : handleOpen();
+        }}
         className={`group relative flex items-center justify-center rounded-full transition-all duration-200 hover:scale-110 ${
           isOpen
             ? "h-14 w-14 bg-dark-700 shadow-lg hover:bg-dark-600 hover:shadow-xl"
-            : "h-28 w-28 sm:h-32 sm:w-32"
+            : "h-16 w-16 sm:h-[72px] sm:w-[72px]"
         }`}
         aria-label={isOpen ? "CimBot'u kapat" : "CimBot'u aç"}
         aria-expanded={isOpen}
@@ -1130,7 +1195,7 @@ export default function ChatBot() {
             alt="CimBot"
             width={96}
             height={96}
-            className="h-28 w-28 sm:h-32 sm:w-32 animate-cimbot-wave object-contain drop-shadow-lg"
+            className="h-14 w-14 sm:h-16 sm:w-16 animate-cimbot-wave object-contain drop-shadow-lg"
           />
         )}
 
@@ -1142,7 +1207,7 @@ export default function ChatBot() {
 
       {/* Pulse animation (only when closed) */}
       {!isOpen && (
-        <span className="absolute bottom-0 right-0 -z-10 h-28 w-28 sm:h-32 sm:w-32 animate-ping rounded-full bg-primary-600/30" />
+        <span className="absolute bottom-0 right-0 -z-10 h-16 w-16 sm:h-[72px] sm:w-[72px] animate-ping rounded-full bg-primary-600/30" />
       )}
     </div>
   );

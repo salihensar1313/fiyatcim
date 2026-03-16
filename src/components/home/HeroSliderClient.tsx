@@ -50,10 +50,25 @@ export default function HeroSliderClient({ slides }: Props) {
     }
   };
 
+  const [heroLoaded, setHeroLoaded] = useState(false);
+
   if (slides.length === 0) return null;
 
   return (
     <section className="group/slider relative overflow-hidden bg-dark-900">
+      {/* Skeleton placeholder while first image loads */}
+      {!heroLoaded && (
+        <div className="absolute inset-0 z-[1] min-h-[300px] sm:min-h-[400px] lg:min-h-[540px]">
+          <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-dark-800 via-dark-700 to-dark-800" />
+          <div className="container-custom relative flex min-h-[300px] items-center sm:min-h-[400px] lg:min-h-[540px]">
+            <div className="w-full max-w-lg py-8 sm:py-12 lg:py-16">
+              <div className="mx-auto h-8 w-3/4 rounded bg-dark-600 sm:mx-0 sm:h-10 lg:h-14" />
+              <div className="mx-auto mt-4 h-4 w-2/3 rounded bg-dark-700 sm:mx-0 sm:h-5" />
+              <div className="mx-auto mt-6 h-11 w-40 rounded-lg bg-dark-600 sm:mx-0" />
+            </div>
+          </div>
+        </div>
+      )}
       <div
         className="relative"
         onTouchStart={handleTouchStart}
@@ -75,6 +90,7 @@ export default function HeroSliderClient({ slides }: Props) {
                 sizes="100vw"
                 priority={i === 0}
                 className="scale-[1.01] object-cover object-center"
+                onLoad={i === 0 ? () => setHeroLoaded(true) : undefined}
               />
 
               {/* Full overlay on mobile for readability, gradient on desktop */}

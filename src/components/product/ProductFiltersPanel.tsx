@@ -14,6 +14,8 @@ interface ProductFiltersPanelProps {
   onPriceRange: (min: number | null, max: number | null) => void;
   onClearAll: () => void;
   onClearGroup: (key: string) => void;
+  /** "toolbar" = mobile button only, "sidebar" = desktop filter content */
+  mode?: "toolbar" | "sidebar";
 }
 
 export default function ProductFiltersPanel({
@@ -26,6 +28,7 @@ export default function ProductFiltersPanel({
   onPriceRange,
   onClearAll,
   onClearGroup: _onClearGroup,
+  mode = "toolbar",
 }: ProductFiltersPanelProps) {
   void _onClearGroup; // available for future use
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -112,7 +115,7 @@ export default function ProductFiltersPanel({
                 onChange={(e) =>
                   onPriceRange(e.target.value ? Number(e.target.value) : null, filters.maxPrice)
                 }
-                className="w-full rounded border border-dark-200 px-2 py-1.5 text-sm"
+                className="w-full rounded border border-dark-200 px-2 py-1.5 text-sm dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100"
               />
               <span className="text-dark-500">-</span>
               <input
@@ -122,7 +125,7 @@ export default function ProductFiltersPanel({
                 onChange={(e) =>
                   onPriceRange(filters.minPrice, e.target.value ? Number(e.target.value) : null)
                 }
-                className="w-full rounded border border-dark-200 px-2 py-1.5 text-sm"
+                className="w-full rounded border border-dark-200 px-2 py-1.5 text-sm dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100"
               />
             </div>
           </div>
@@ -151,7 +154,7 @@ export default function ProductFiltersPanel({
               {group.options.map((option) => (
                 <label
                   key={option.value}
-                  className="flex cursor-pointer items-center gap-2 rounded px-1 py-1 hover:bg-dark-50"
+                  className="flex cursor-pointer items-center gap-2 rounded px-1 py-1 hover:bg-dark-50 dark:hover:bg-dark-700"
                 >
                   <input
                     type="checkbox"
@@ -170,6 +173,12 @@ export default function ProductFiltersPanel({
     </div>
   );
 
+  // Sidebar mode: render filter content directly (no button, no drawer)
+  if (mode === "sidebar") {
+    return filterContent;
+  }
+
+  // Toolbar mode: mobile button + mobile drawer only
   return (
     <>
       {/* Mobile filter button */}
@@ -186,23 +195,18 @@ export default function ProductFiltersPanel({
         )}
       </button>
 
-      {/* Desktop sidebar */}
-      <div className="hidden w-64 flex-shrink-0 lg:block">
-        {filterContent}
-      </div>
-
       {/* Mobile drawer */}
       {mobileOpen && (
         <>
           <div className="fixed inset-0 z-40 bg-black/30 lg:hidden" onClick={() => setMobileOpen(false)} />
-          <div className="fixed inset-y-0 left-0 z-50 w-80 max-w-[85vw] overflow-y-auto bg-dark-50 p-4 shadow-xl lg:hidden">
+          <div className="fixed inset-y-0 left-0 z-50 w-80 max-w-[85vw] overflow-y-auto bg-dark-50 dark:bg-dark-900 p-4 shadow-xl lg:hidden">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-lg font-bold text-dark-800 dark:text-dark-100">Filtreler</h3>
               <button
                 onClick={() => setMobileOpen(false)}
-                className="rounded-full p-1 hover:bg-dark-200"
+                className="rounded-full p-1 hover:bg-dark-200 dark:hover:bg-dark-700"
               >
-                <X size={20} />
+                <X size={20} className="text-dark-600 dark:text-dark-300" />
               </button>
             </div>
             {filterContent}
