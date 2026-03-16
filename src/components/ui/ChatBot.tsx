@@ -997,7 +997,7 @@ export default function ChatBot() {
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      className={dragPos ? "fixed z-[55]" : "fixed bottom-20 right-3 z-[55] sm:bottom-6 sm:right-6 lg:bottom-8 lg:right-8"}
+      className={dragPos ? "fixed z-[55]" : "fixed bottom-20 right-1 z-[55] sm:bottom-6 sm:right-4 lg:bottom-8 lg:right-6"}
       style={dragPos ? { left: dragPos.x, top: dragPos.y, right: "auto", bottom: "auto" } : undefined}
     >
       {/* ─── Chat Panel ─── */}
@@ -1133,7 +1133,7 @@ export default function ChatBot() {
 
       {/* ─── Tooltip (first visit) ─── */}
       {showTooltip && !isOpen && !showNudge && (
-        <div className="absolute bottom-[72px] right-0 mb-2 animate-fade-in whitespace-nowrap rounded-lg bg-dark-900 px-3 py-2 text-sm text-white shadow-lg sm:bottom-[80px]">
+        <div className="absolute bottom-[136px] right-0 mb-2 animate-fade-in whitespace-nowrap rounded-lg bg-dark-900 px-3 py-2 text-sm text-white shadow-lg sm:bottom-[152px]">
           Selam! Ben CimBot, yardım ister misin? 😊
           <div className="absolute -bottom-1 right-6 h-2 w-2 rotate-45 bg-dark-900" />
         </div>
@@ -1142,7 +1142,7 @@ export default function ChatBot() {
       {/* ─── Nudge Notification Bubble ─── */}
       {showNudge && !isOpen && !showTooltip && (
         <div
-          className="absolute bottom-[72px] right-0 mb-2 w-[240px] animate-bounce-in cursor-pointer rounded-xl bg-white px-4 py-3 shadow-xl ring-1 ring-dark-100 dark:bg-dark-800 dark:ring-dark-600 sm:bottom-[80px]"
+          className="absolute bottom-[136px] right-0 mb-2 w-[240px] animate-bounce-in cursor-pointer rounded-xl bg-white px-4 py-3 shadow-xl ring-1 ring-dark-100 dark:bg-dark-800 dark:ring-dark-600 sm:bottom-[152px]"
           onClick={() => {
             setShowNudge(false);
             handleOpen();
@@ -1182,7 +1182,7 @@ export default function ChatBot() {
         className={`group relative flex items-center justify-center rounded-full transition-all duration-200 hover:scale-110 ${
           isOpen
             ? "h-14 w-14 bg-dark-700 shadow-lg hover:bg-dark-600 hover:shadow-xl"
-            : "h-16 w-16 sm:h-[72px] sm:w-[72px]"
+            : "h-32 w-32 sm:h-36 sm:w-36"
         }`}
         aria-label={isOpen ? "CimBot'u kapat" : "CimBot'u aç"}
         aria-expanded={isOpen}
@@ -1195,19 +1195,19 @@ export default function ChatBot() {
             alt="CimBot"
             width={96}
             height={96}
-            className="h-14 w-14 sm:h-16 sm:w-16 animate-cimbot-wave object-contain drop-shadow-lg"
+            className="h-28 w-28 sm:h-32 sm:w-32 animate-cimbot-wave object-contain drop-shadow-lg"
           />
         )}
 
         {/* Online dot indicator */}
         {!isOpen && (
-          <span className="absolute right-1 top-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-green-500" />
+          <span className="absolute right-3 top-5 h-4 w-4 rounded-full border-2 border-white bg-green-500" />
         )}
       </button>
 
       {/* Pulse animation (only when closed) */}
       {!isOpen && (
-        <span className="absolute bottom-0 right-0 -z-10 h-16 w-16 sm:h-[72px] sm:w-[72px] animate-ping rounded-full bg-primary-600/30" />
+        <span className="absolute bottom-0 right-0 -z-10 h-32 w-32 sm:h-36 sm:w-36 animate-ping rounded-full bg-primary-600/30" />
       )}
     </div>
   );
