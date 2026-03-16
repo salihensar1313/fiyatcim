@@ -3,24 +3,25 @@
 import { useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, ZoomIn, X } from "lucide-react";
-import { CATEGORY_IMAGES } from "@/lib/constants";
+import { CATEGORY_IMAGES, CATEGORY_IMAGES_BY_SLUG } from "@/lib/constants";
 
 interface ProductGalleryProps {
   images: string[];
   productName: string;
   categoryId?: string;
+  categorySlug?: string;
 }
 
-export default function ProductGallery({ images, productName, categoryId }: ProductGalleryProps) {
+export default function ProductGallery({ images, productName, categoryId, categorySlug }: ProductGalleryProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [zoomed, setZoomed] = useState(false);
   const [lensActive, setLensActive] = useState(false);
   const [lensPos, setLensPos] = useState({ x: 50, y: 50 });
   const imgContainerRef = useRef<HTMLDivElement>(null);
 
-  const productImage = categoryId
-    ? CATEGORY_IMAGES[categoryId] || "/images/categories/alarm.png"
-    : "/images/categories/alarm.png";
+  const productImage = (categoryId && CATEGORY_IMAGES[categoryId])
+    || (categorySlug && CATEGORY_IMAGES_BY_SLUG[categorySlug])
+    || "/images/categories/alarm.png";
 
   const goTo = (index: number) => {
     if (index < 0) setActiveIndex(images.length - 1);

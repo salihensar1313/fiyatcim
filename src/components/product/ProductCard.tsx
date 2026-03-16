@@ -9,7 +9,7 @@ import PriceDisplay from "@/components/ui/PriceDisplay";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import Rating from "@/components/ui/Rating";
-import { CATEGORY_IMAGES } from "@/lib/constants";
+import { CATEGORY_IMAGES, CATEGORY_IMAGES_BY_SLUG } from "@/lib/constants";
 import { useToast } from "@/components/ui/Toast";
 import { useCompare } from "@/hooks/useCompare";
 import { useCountdown } from "@/hooks/useFlashSale";
@@ -99,7 +99,13 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Product Image */}
       <Link href={`/urunler/${product.slug}`} className="relative aspect-square overflow-hidden bg-white p-4 dark:bg-dark-700">
         <Image
-          src={CATEGORY_IMAGES[product.category_id] || "/images/categories/alarm.png"}
+          src={
+            (product.images && product.images.length > 0 && product.images[0])
+              ? product.images[0]
+              : CATEGORY_IMAGES[product.category_id]
+                || (product.category?.slug && CATEGORY_IMAGES_BY_SLUG[product.category.slug])
+                || "/images/categories/alarm.png"
+          }
           alt={`${product.name} - ${product.brand?.name || "ürün"} | Fiyatcim.com`}
           width={300}
           height={300}

@@ -80,7 +80,7 @@ export default function ProductDetailClient({ initialProduct }: Props) {
 
       <div className="container mx-auto px-4">
         <div className="grid gap-8 lg:grid-cols-2">
-          <ProductGallery images={product.images} productName={product.name} categoryId={product.category_id} />
+          <ProductGallery images={product.images} productName={product.name} categoryId={product.category_id} categorySlug={product.category?.slug} />
           <div>
             <ProductInfo product={product} />
             {/* Sentinel div — IntersectionObserver hedefi */}

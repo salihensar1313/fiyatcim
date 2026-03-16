@@ -6,7 +6,7 @@ import { Trash2, Minus, Plus } from "lucide-react";
 import type { CartItem as CartItemType } from "@/types";
 import { formatPrice, getEffectivePrice, getDiscountPercent } from "@/lib/utils";
 import { useCart } from "@/context/CartContext";
-import { CATEGORY_IMAGES } from "@/lib/constants";
+import { CATEGORY_IMAGES, CATEGORY_IMAGES_BY_SLUG } from "@/lib/constants";
 import PriceDisplay from "@/components/ui/PriceDisplay";
 import GiftWrapOption from "./GiftWrapOption";
 
@@ -45,7 +45,9 @@ export default function CartItem({ item }: CartItemProps) {
       <Link href={`/urunler/${product.slug}`} className="shrink-0">
         <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-lg bg-dark-50 dark:bg-white/10">
           <Image
-            src={CATEGORY_IMAGES[product.category_id] || "/images/categories/alarm.png"}
+            src={CATEGORY_IMAGES[product.category_id]
+              || (product.category?.slug && CATEGORY_IMAGES_BY_SLUG[product.category.slug])
+              || "/images/categories/alarm.png"}
             alt={product.name}
             width={96}
             height={96}

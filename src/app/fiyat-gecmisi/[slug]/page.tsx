@@ -11,7 +11,7 @@ import type { Product } from "@/types";
 import PriceHistoryChart from "@/components/product/PriceHistoryChart";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { formatPrice } from "@/lib/utils";
-import { CATEGORY_IMAGES } from "@/lib/constants";
+import { CATEGORY_IMAGES, CATEGORY_IMAGES_BY_SLUG } from "@/lib/constants";
 
 export default function PriceHistoryPage() {
   const params = useParams();
@@ -68,7 +68,9 @@ export default function PriceHistoryPage() {
   }
 
   const currentPrice = product.sale_price || product.price;
-  const productImage = CATEGORY_IMAGES[product.category_id] || "/images/categories/alarm.png";
+  const productImage = CATEGORY_IMAGES[product.category_id]
+    || (product.category?.slug && CATEGORY_IMAGES_BY_SLUG[product.category.slug])
+    || "/images/categories/alarm.png";
 
   return (
     <div className="bg-dark-50 dark:bg-dark-900 pb-16">
@@ -154,7 +156,9 @@ export default function PriceHistoryPage() {
                 >
                   <div className="relative mx-auto mb-3 h-20 w-20 overflow-hidden rounded bg-dark-50 dark:bg-dark-800">
                     <Image
-                      src={CATEGORY_IMAGES[rp.category_id] || "/images/categories/alarm.png"}
+                      src={CATEGORY_IMAGES[rp.category_id]
+                        || (rp.category?.slug && CATEGORY_IMAGES_BY_SLUG[rp.category.slug])
+                        || "/images/categories/alarm.png"}
                       alt={rp.name}
                       fill
                       className="object-contain p-1"

@@ -44,6 +44,8 @@ export const CATEGORY_IMAGES_BY_SLUG: Record<string, string> = {
   "guvenlik-kameralari": "/images/categories/kamera.png",
   "akilli-ev-sistemleri": "/images/categories/akilli-ev.png",
   "gecis-kontrol-sistemleri": "/images/categories/gecis-kontrol.png",
+  "akilli-kilit": "/images/categories/gecis-kontrol.png",
+  "yangin-algilama": "/images/categories/alarm.png",
 };
 
 // Footer linkleri

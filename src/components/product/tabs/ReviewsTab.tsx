@@ -8,7 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 import Rating from "@/components/ui/Rating";
 import { useToast } from "@/components/ui/Toast";
 import { formatDate } from "@/lib/utils";
-import { CATEGORY_IMAGES } from "@/lib/constants";
+import { CATEGORY_IMAGES, CATEGORY_IMAGES_BY_SLUG } from "@/lib/constants";
 import ImageLightbox from "@/components/ui/ImageLightbox";
 import Image from "next/image";
 
@@ -101,7 +101,9 @@ export default function ReviewsTab({ product }: ReviewsTabProps) {
   }, []);
 
   const sortedReviews = getSortedReviews(sortBy);
-  const productImage = CATEGORY_IMAGES[product.category_id] || "/images/categories/alarm.png";
+  const productImage = CATEGORY_IMAGES[product.category_id]
+    || (product.category?.slug && CATEGORY_IMAGES_BY_SLUG[product.category.slug])
+    || "/images/categories/alarm.png";
 
   const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
