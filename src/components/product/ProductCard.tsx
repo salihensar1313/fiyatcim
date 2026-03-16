@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ShoppingCart, Heart, Plus, Minus, Trash2, GitCompareArrows, Zap } from "lucide-react";
@@ -11,23 +12,29 @@ import { useWishlist } from "@/context/WishlistContext";
 import Rating from "@/components/ui/Rating";
 import { CATEGORY_IMAGES, CATEGORY_IMAGES_BY_SLUG } from "@/lib/constants";
 import { useToast } from "@/components/ui/Toast";
+import { useCompare } from "@/hooks/useCompare";
+import { useCountdown } from "@/hooks/useFlashSale";
+import PriceDropBadge from "./PriceDropBadge";
 
 const DEFAULT_IMG = "/images/categories/alarm.png";
-function getProductImage(product: Product): string {
-  if (product.images?.length && product.images[0]) return product.images[0];
+
+function getCategoryFallback(product: Product): string {
   return CATEGORY_IMAGES[product.category_id]
     || CATEGORY_IMAGES_BY_SLUG[product.category?.slug ?? ""]
     || DEFAULT_IMG;
 }
-import { useCompare } from "@/hooks/useCompare";
-import { useCountdown } from "@/hooks/useFlashSale";
-import PriceDropBadge from "./PriceDropBadge";
+
+function getProductImage(product: Product): string {
+  if (product.images?.length && product.images[0]) return product.images[0];
+  return getCategoryFallback(product);
+}
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const [imgSrc, setImgSrc] = useState(() => getProductImage(product));
   const { addItem, items, updateQuantity, removeItem, isInCart } = useCart();
   const { toggleItem, isInWishlist } = useWishlist();
   const { showToast } = useToast();
@@ -107,11 +114,12 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Product Image */}
       <Link href={`/urunler/${product.slug}`} className="relative aspect-square overflow-hidden bg-white p-4 dark:bg-dark-700">
         <Image
-          src={getProductImage(product)}
+          src={imgSrc}
           alt={`${product.name} - ${product.brand?.name || "ürün"} | Fiyatcim.com`}
           width={300}
           height={300}
           className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+          onError={() => setImgSrc(getCategoryFallback(product))}
         />
       </Link>
 

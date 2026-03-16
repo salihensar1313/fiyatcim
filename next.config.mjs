@@ -37,6 +37,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "www.fiyatcim.com",
       },
+      {
+        protocol: "https",
+        hostname: "**",
+      },
     ],
     formats: ["image/webp", "image/avif"],
   },

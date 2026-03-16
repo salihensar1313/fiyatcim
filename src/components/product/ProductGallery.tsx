@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, ZoomIn, X } from "lucide-react";
 import { CATEGORY_IMAGES, CATEGORY_IMAGES_BY_SLUG } from "@/lib/constants";
@@ -19,9 +19,19 @@ export default function ProductGallery({ images, productName, categoryId, catego
   const [lensPos, setLensPos] = useState({ x: 50, y: 50 });
   const imgContainerRef = useRef<HTMLDivElement>(null);
 
-  const productImage = (categoryId && CATEGORY_IMAGES[categoryId])
+  const categoryFallback = (categoryId && CATEGORY_IMAGES[categoryId])
     || (categorySlug && CATEGORY_IMAGES_BY_SLUG[categorySlug])
     || "/images/categories/alarm.png";
+
+  const [imgSrc, setImgSrc] = useState(images[activeIndex] || categoryFallback);
+  const [failedUrls, setFailedUrls] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    const url = images[activeIndex] || categoryFallback;
+    setImgSrc(failedUrls.has(url) ? categoryFallback : url);
+  }, [activeIndex, images, categoryFallback, failedUrls]);
+
+  const productImage = imgSrc;
 
   const goTo = (index: number) => {
     if (index < 0) setActiveIndex(images.length - 1);
@@ -59,6 +69,10 @@ export default function ProductGallery({ images, productName, categoryId, catego
                 transform: "scale(2)",
                 transformOrigin: `${lensPos.x}% ${lensPos.y}%`,
               } : undefined}
+              onError={() => {
+                setFailedUrls((prev) => new Set(prev).add(productImage));
+                setImgSrc(categoryFallback);
+              }}
             />
           </div>
 
@@ -147,6 +161,10 @@ export default function ProductGallery({ images, productName, categoryId, catego
                 fill
                 sizes="85vw"
                 className="object-contain"
+                onError={() => {
+                  setFailedUrls((prev) => new Set(prev).add(productImage));
+                  setImgSrc(categoryFallback);
+                }}
               />
             </div>
 
