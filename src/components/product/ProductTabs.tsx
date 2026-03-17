@@ -122,11 +122,10 @@ export default function ProductTabs({ product }: ProductTabsProps) {
       <div className="py-6">
         {activeTab === "description" && (
           <div className="space-y-6">
-            <div className="prose max-w-none">
-              <p className="whitespace-pre-line leading-relaxed text-dark-700 dark:text-dark-200">
-                {product.description}
-              </p>
-            </div>
+            <div
+              className="prose max-w-none text-dark-700 dark:text-dark-200 leading-relaxed [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:my-2 [&_li]:my-1 [&_p]:my-2"
+              dangerouslySetInnerHTML={{ __html: product.description || "" }}
+            />
 
             {/* Highlights */}
             <div className="grid gap-4 sm:grid-cols-3">
