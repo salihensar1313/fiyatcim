@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { getProductBySlug } from "@/lib/queries";
+
+export const revalidate = 60; // Revalidate every 60 seconds
 import { SITE_NAME, SITE_URL, CATEGORY_IMAGES, CATEGORY_IMAGES_BY_SLUG } from "@/lib/constants";
 import JsonLd, { buildProductSchema, buildBreadcrumbSchema } from "@/components/seo/JsonLd";
 import ProductDetailClient from "./ProductDetailClient";
