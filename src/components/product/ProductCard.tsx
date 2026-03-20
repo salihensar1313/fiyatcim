@@ -100,7 +100,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
 
       {/* Product Image */}
-      <Link href={`/urunler/${product.slug}`} className="relative aspect-square overflow-hidden bg-white p-4 dark:bg-dark-700">
+      <Link href={`/urunler/${product.slug}`} className="relative aspect-square overflow-hidden bg-white p-4">
         <Image
           src={imgSrc}
           alt={`${product.name} - ${product.brand?.name || "ürün"} | Fiyatcim.com`}

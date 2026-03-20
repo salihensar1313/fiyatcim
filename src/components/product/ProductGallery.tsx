@@ -48,7 +48,7 @@ export default function ProductGallery({ images, productName, categoryId, catego
   return (
     <div className="space-y-4">
       {/* Main Image with Hover Zoom */}
-      <div className="relative overflow-hidden rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800">
+      <div className="relative overflow-hidden rounded-xl border border-dark-100 bg-white dark:border-dark-700">
         <div
           ref={imgContainerRef}
           className="relative aspect-square cursor-crosshair"
@@ -56,7 +56,7 @@ export default function ProductGallery({ images, productName, categoryId, catego
           onMouseLeave={() => setLensActive(false)}
           onMouseMove={handleMouseMove}
         >
-          <div className="relative h-full w-full bg-white dark:bg-dark-800 p-8">
+          <div className="relative h-full w-full bg-white p-8">
             <Image
               src={productImage}
               alt={productName}
@@ -128,7 +128,7 @@ export default function ProductGallery({ images, productName, categoryId, catego
             <button
               key={index}
               onClick={() => setActiveIndex(index)}
-              className={`aspect-square w-20 shrink-0 overflow-hidden rounded-lg border-2 bg-white dark:bg-dark-800 transition-all ${
+              className={`aspect-square w-20 shrink-0 overflow-hidden rounded-lg border-2 bg-white transition-all ${
                 activeIndex === index ? "border-primary-600 ring-2 ring-primary-600/20" : "border-dark-100 hover:border-dark-300"
               }`}
             >
@@ -155,7 +155,7 @@ export default function ProductGallery({ images, productName, categoryId, catego
           onClick={() => setZoomed(false)}
         >
           <div className="relative max-h-[90vh] max-w-5xl" onClick={(e) => e.stopPropagation()}>
-            <div className="relative h-[85vh] w-[85vw] rounded-xl bg-white dark:bg-dark-800 p-4">
+            <div className="relative h-[85vh] w-[85vw] rounded-xl bg-white p-4">
               <Image
                 src={productImage}
                 alt={productName}
