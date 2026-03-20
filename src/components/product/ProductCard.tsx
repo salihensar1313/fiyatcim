@@ -10,32 +10,19 @@ import PriceDisplay from "@/components/ui/PriceDisplay";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import Rating from "@/components/ui/Rating";
-import { CATEGORY_IMAGES, CATEGORY_IMAGES_BY_SLUG } from "@/lib/constants";
 import { useToast } from "@/components/ui/Toast";
 import { useCompare } from "@/hooks/useCompare";
 import { useCountdown } from "@/hooks/useFlashSale";
+import { getCategoryFallbackImage, getProductPrimaryImage, isRemoteImage } from "@/lib/product-images";
 import PriceDropBadge from "./PriceDropBadge";
-
-const DEFAULT_IMG = "/images/categories/alarm.png";
-
-function getCategoryFallback(product: Product): string {
-  return CATEGORY_IMAGES[product.category_id]
-    || CATEGORY_IMAGES_BY_SLUG[product.category?.slug ?? ""]
-    || DEFAULT_IMG;
-}
-
-function getProductImage(product: Product): string {
-  if (product.images?.length && product.images[0]) return product.images[0];
-  return getCategoryFallback(product);
-}
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const [imgSrc, setImgSrc] = useState(() => getProductImage(product));
-  useEffect(() => { setImgSrc(getProductImage(product)); }, [product.id, product.images]);
+  const [imgSrc, setImgSrc] = useState(() => getProductPrimaryImage(product));
+  useEffect(() => { setImgSrc(getProductPrimaryImage(product)); }, [product.id, product.images, product.category_id, product.category?.slug]);
   const { addItem, items, updateQuantity, removeItem, isInCart } = useCart();
   const { toggleItem, isInWishlist } = useWishlist();
   const { showToast } = useToast();
@@ -119,8 +106,9 @@ export default function ProductCard({ product }: ProductCardProps) {
           alt={`${product.name} - ${product.brand?.name || "ürün"} | Fiyatcim.com`}
           width={300}
           height={300}
+          unoptimized={isRemoteImage(imgSrc)}
           className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
-          onError={() => setImgSrc(getCategoryFallback(product))}
+          onError={() => setImgSrc(getCategoryFallbackImage(product.category_id, product.category?.slug))}
         />
       </Link>
 

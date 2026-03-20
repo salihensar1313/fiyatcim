@@ -11,7 +11,7 @@ import type { Product } from "@/types";
 import PriceHistoryChart from "@/components/product/PriceHistoryChart";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { formatPrice } from "@/lib/utils";
-import { CATEGORY_IMAGES, CATEGORY_IMAGES_BY_SLUG } from "@/lib/constants";
+import { getProductPrimaryImage, isRemoteImage } from "@/lib/product-images";
 
 export default function PriceHistoryPage() {
   const params = useParams();
@@ -68,9 +68,7 @@ export default function PriceHistoryPage() {
   }
 
   const currentPrice = product.sale_price || product.price;
-  const productImage = CATEGORY_IMAGES[product.category_id]
-    || (product.category?.slug && CATEGORY_IMAGES_BY_SLUG[product.category.slug])
-    || "/images/categories/alarm.png";
+  const productImage = getProductPrimaryImage(product);
 
   return (
     <div className="bg-dark-50 dark:bg-dark-900 pb-16">
@@ -100,6 +98,7 @@ export default function PriceHistoryPage() {
                 src={productImage}
                 alt={product.name}
                 fill
+                unoptimized={isRemoteImage(productImage)}
                 className="object-contain p-2"
                 sizes="128px"
               />
@@ -156,11 +155,10 @@ export default function PriceHistoryPage() {
                 >
                   <div className="relative mx-auto mb-3 h-20 w-20 overflow-hidden rounded bg-dark-50 dark:bg-dark-800">
                     <Image
-                      src={CATEGORY_IMAGES[rp.category_id]
-                        || (rp.category?.slug && CATEGORY_IMAGES_BY_SLUG[rp.category.slug])
-                        || "/images/categories/alarm.png"}
+                      src={getProductPrimaryImage(rp)}
                       alt={rp.name}
                       fill
+                      unoptimized={isRemoteImage(getProductPrimaryImage(rp))}
                       className="object-contain p-1"
                       sizes="80px"
                     />

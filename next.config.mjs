@@ -27,20 +27,12 @@ const nextConfig = {
     ];
   },
   images: {
+    // Remote product images are served directly to avoid Vercel optimizer 402 fallbacks.
+    unoptimized: true,
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "qnsvqshljktoiktwprkr.supabase.co",
-        pathname: "/storage/v1/object/public/**",
-      },
-      {
-        protocol: "https",
-        hostname: "www.fiyatcim.com",
-      },
-      {
-        protocol: "https",
-        hostname: "**",
-      },
+      // Tüm HTTPS kaynaklarından ürün fotoğraflarına izin ver
+      // Ürünler 33+ farklı domain'den fotoğraf içeriyor
+      { protocol: "https", hostname: "**" },
     ],
     formats: ["image/webp", "image/avif"],
   },

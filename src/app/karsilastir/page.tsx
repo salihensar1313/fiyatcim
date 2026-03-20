@@ -7,10 +7,10 @@ import { Trash2, ArrowLeft, GitCompareArrows } from "lucide-react";
 import { useProducts } from "@/context/ProductContext";
 import { useCompare } from "@/hooks/useCompare";
 
-import { CATEGORY_IMAGES, CATEGORY_IMAGES_BY_SLUG } from "@/lib/constants";
 import Rating from "@/components/ui/Rating";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import PriceDisplay from "@/components/ui/PriceDisplay";
+import { getProductPrimaryImage, isRemoteImage } from "@/lib/product-images";
 
 export default function ComparePage() {
   const { products } = useProducts();
@@ -85,11 +85,10 @@ export default function ComparePage() {
                     <div className="flex flex-col items-center gap-2">
                       <div className="relative h-24 w-24">
                         <Image
-                          src={CATEGORY_IMAGES[product.category_id]
-                            || (product.category?.slug && CATEGORY_IMAGES_BY_SLUG[product.category.slug])
-                            || "/images/categories/alarm.png"}
+                          src={getProductPrimaryImage(product)}
                           alt={product.name}
                           fill
+                          unoptimized={isRemoteImage(getProductPrimaryImage(product))}
                           className="object-contain"
                         />
                       </div>

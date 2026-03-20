@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, ZoomIn, X } from "lucide-react";
-import { CATEGORY_IMAGES, CATEGORY_IMAGES_BY_SLUG } from "@/lib/constants";
+import { getCategoryFallbackImage, isRemoteImage } from "@/lib/product-images";
 
 interface ProductGalleryProps {
   images: string[];
@@ -19,9 +19,7 @@ export default function ProductGallery({ images, productName, categoryId, catego
   const [lensPos, setLensPos] = useState({ x: 50, y: 50 });
   const imgContainerRef = useRef<HTMLDivElement>(null);
 
-  const categoryFallback = (categoryId && CATEGORY_IMAGES[categoryId])
-    || (categorySlug && CATEGORY_IMAGES_BY_SLUG[categorySlug])
-    || "/images/categories/alarm.png";
+  const categoryFallback = getCategoryFallbackImage(categoryId, categorySlug);
 
   const [imgSrc, setImgSrc] = useState(images[activeIndex] || categoryFallback);
   const [failedUrls, setFailedUrls] = useState<Set<string>>(new Set());
@@ -64,6 +62,7 @@ export default function ProductGallery({ images, productName, categoryId, catego
               alt={productName}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
+              unoptimized={isRemoteImage(productImage)}
               className="object-contain transition-transform duration-300"
               style={lensActive ? {
                 transform: "scale(2)",
@@ -139,6 +138,7 @@ export default function ProductGallery({ images, productName, categoryId, catego
                   alt={`${productName} - ${index + 1}`}
                   width={80}
                   height={80}
+                  unoptimized={isRemoteImage(failedUrls.has(imgUrl) ? categoryFallback : imgUrl)}
                   className="h-full w-full object-contain"
                   onError={() => setFailedUrls((prev) => new Set(prev).add(imgUrl))}
                 />
@@ -161,6 +161,7 @@ export default function ProductGallery({ images, productName, categoryId, catego
                 alt={productName}
                 fill
                 sizes="85vw"
+                unoptimized={isRemoteImage(productImage)}
                 className="object-contain"
                 onError={() => {
                   setFailedUrls((prev) => new Set(prev).add(productImage));

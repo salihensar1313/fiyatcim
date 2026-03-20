@@ -6,7 +6,7 @@ import { ArrowLeftRight } from "lucide-react";
 import { useProducts } from "@/context/ProductContext";
 import { getAlternatives } from "@/lib/recommendations";
 import PriceDisplay from "@/components/ui/PriceDisplay";
-import { CATEGORY_IMAGES, CATEGORY_IMAGES_BY_SLUG } from "@/lib/constants";
+import { getProductPrimaryImage, isRemoteImage } from "@/lib/product-images";
 import type { Product } from "@/types";
 
 interface ProductAlternativesProps {
@@ -47,12 +47,11 @@ export default function ProductAlternatives({ product }: ProductAlternativesProp
                 {/* Image */}
                 <div className="relative aspect-square overflow-hidden bg-white dark:bg-dark-800 p-4 dark:bg-dark-700">
                   <Image
-                    src={CATEGORY_IMAGES[alt.category_id]
-                      || (alt.category?.slug && CATEGORY_IMAGES_BY_SLUG[alt.category.slug])
-                      || "/images/categories/alarm.png"}
+                    src={getProductPrimaryImage(alt)}
                     alt={alt.name}
                     width={200}
                     height={200}
+                    unoptimized={isRemoteImage(getProductPrimaryImage(alt))}
                     className="h-full w-full object-contain transition-transform group-hover:scale-105"
                   />
                   {/* Price diff badge */}

@@ -7,7 +7,7 @@ import { useSearch } from "@/hooks/useSearch";
 import { useSearchHistory } from "@/hooks/useSearchHistory";
 import { formatPrice } from "@/lib/utils";
 import Image from "next/image";
-import { CATEGORY_IMAGES, CATEGORY_IMAGES_BY_SLUG } from "@/lib/constants";
+import { getProductPrimaryImage, isRemoteImage } from "@/lib/product-images";
 
 interface SearchAutocompleteProps {
   onClose?: () => void;
@@ -178,9 +178,10 @@ export default function SearchAutocomplete({ onClose, className = "", isMobile =
                       >
                         <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded bg-dark-100">
                           <Image
-                            src={r.product.images?.[0] || CATEGORY_IMAGES[r.product.category_id] || CATEGORY_IMAGES_BY_SLUG[r.product.category?.slug ?? ""] || "/images/categories/alarm.png"}
+                            src={getProductPrimaryImage(r.product)}
                             alt={r.product.name}
                             fill
+                            unoptimized={isRemoteImage(getProductPrimaryImage(r.product))}
                             className="object-contain"
                             sizes="40px"
                           />
