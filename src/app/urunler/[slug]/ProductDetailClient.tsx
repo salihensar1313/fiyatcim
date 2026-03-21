@@ -11,6 +11,7 @@ import Breadcrumb from "@/components/ui/Breadcrumb";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import { recordPrice } from "@/hooks/usePriceHistory";
 import { incrementViewCount } from "@/hooks/useTrendingProducts";
+import { useUserBehavior } from "@/hooks/useUserBehavior";
 import AlertButtons from "@/components/product/AlertButtons";
 import ProductAlternatives from "@/components/product/ProductAlternatives";
 import SmartRecommendations from "@/components/product/SmartRecommendations";
@@ -30,6 +31,7 @@ export default function ProductDetailClient({ initialProduct }: Props) {
   const { addViewed } = useRecentlyViewed();
   const { addItem, isInCart } = useCart();
   const { showToast } = useToast();
+  const { trackProductView } = useUserBehavior();
   const ctaRef = useRef<HTMLDivElement>(null);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
 
@@ -38,8 +40,14 @@ export default function ProductDetailClient({ initialProduct }: Props) {
       addViewed(product.id);
       recordPrice(product);
       incrementViewCount(product.id);
+      // IBP: Ürün görüntüleme sinyali
+      trackProductView(
+        product.category?.slug || "",
+        product.brand?.slug,
+        product.sale_price || product.price
+      );
     }
-  }, [product, addViewed]);
+  }, [product, addViewed, trackProductView]);
 
   // IntersectionObserver: sticky CTA'yı ana buton görünmezken göster
   useEffect(() => {

@@ -3,12 +3,17 @@
 import Link from "next/link";
 import { ArrowRight, TrendingUp } from "lucide-react";
 import { useTrendingProducts } from "@/hooks/useTrendingProducts";
+import { usePersonalization } from "@/hooks/usePersonalization";
 import ProductCard from "@/components/product/ProductCard";
 
 export default function TrendingProducts() {
-  const trending = useTrendingProducts(4);
+  const trending = useTrendingProducts(8);
+  const { personalize } = usePersonalization();
 
-  if (trending.length === 0) return null;
+  // IBP: kişiselleştirilmiş sıralama (max 4 göster)
+  const personalized = personalize(trending, 4);
+
+  if (personalized.length === 0) return null;
 
   return (
     <section className="py-12 sm:py-16">
@@ -31,7 +36,7 @@ export default function TrendingProducts() {
         </div>
 
         <div className="mt-8 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
-          {trending.map((product) => (
+          {personalized.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>

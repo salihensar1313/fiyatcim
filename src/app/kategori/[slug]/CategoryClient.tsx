@@ -12,6 +12,7 @@ import { useProductFilters } from "@/hooks/useProductFilters";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import Pagination from "@/components/ui/Pagination";
 import { PAGINATION } from "@/lib/constants";
+import { useUserBehavior } from "@/hooks/useUserBehavior";
 
 interface Props {
   slug: string;
@@ -30,10 +31,16 @@ export default function CategoryClient({ slug }: Props) {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [cats, setCats] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const { trackCategoryVisit } = useUserBehavior();
 
   const [sort, setSort] = useState<string>("newest");
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [page, setPage] = useState(1);
+
+  // IBP: Kategori ziyareti sinyali
+  useEffect(() => {
+    if (slug) trackCategoryVisit(slug);
+  }, [slug, trackCategoryVisit]);
 
   useEffect(() => {
     Promise.all([getAllActiveProducts(), getCategories()])

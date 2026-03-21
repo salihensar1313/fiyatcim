@@ -1,33 +1,42 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { HeroSlide } from "@/types";
+import { usePersonalization } from "@/hooks/usePersonalization";
 
 interface Props {
   slides: HeroSlide[];
 }
 
 export default function HeroSliderClient({ slides }: Props) {
+  const { personalizeSlideOrder } = usePersonalization();
+
+  // IBP: İlgili kategori slide'ını öne al
+  const orderedSlides = useMemo(
+    () => personalizeSlideOrder(slides),
+    [slides, personalizeSlideOrder]
+  );
+
   const [current, setCurrent] = useState(0);
 
   // Auto-play
   useEffect(() => {
-    if (slides.length <= 1) return;
+    if (orderedSlides.length <= 1) return;
     const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % slides.length);
+      setCurrent((prev) => (prev + 1) % orderedSlides.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, [slides.length]);
+  }, [orderedSlides.length]);
 
   const goPrev = () => {
-    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+    setCurrent((prev) => (prev - 1 + orderedSlides.length) % orderedSlides.length);
   };
 
   const goNext = () => {
-    setCurrent((prev) => (prev + 1) % slides.length);
+    setCurrent((prev) => (prev + 1) % orderedSlides.length);
   };
 
   // Touch swipe
@@ -52,7 +61,7 @@ export default function HeroSliderClient({ slides }: Props) {
 
   const [heroLoaded, setHeroLoaded] = useState(false);
 
-  if (slides.length === 0) return null;
+  if (orderedSlides.length === 0) return null;
 
   return (
     <section className="group/slider relative overflow-hidden bg-dark-900">
@@ -75,7 +84,7 @@ export default function HeroSliderClient({ slides }: Props) {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {slides.map((slide, i) => (
+        {orderedSlides.map((slide, i) => (
           <div
             key={slide.id}
             className={`transition-opacity duration-700 ${
@@ -117,7 +126,7 @@ export default function HeroSliderClient({ slides }: Props) {
         ))}
       </div>
 
-      {slides.length > 1 && (
+      {orderedSlides.length > 1 && (
         <>
           <button
             onClick={goPrev}
@@ -137,7 +146,7 @@ export default function HeroSliderClient({ slides }: Props) {
       )}
 
       <div className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 gap-2">
-        {slides.map((_, i) => (
+        {orderedSlides.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrent(i)}

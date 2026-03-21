@@ -11,6 +11,7 @@ import Badge from "@/components/ui/Badge";
 import { useToast } from "@/components/ui/Toast";
 import PriceDisplay from "@/components/ui/PriceDisplay";
 import { useProductReviews } from "@/hooks/useProductReviews";
+import { useUserBehavior } from "@/hooks/useUserBehavior";
 
 const USE_CASE_TAGS: Record<string, string[]> = {
   "alarm-sistemleri": ["Ev", "Villa", "Daire", "İşyeri"],
@@ -38,11 +39,18 @@ export default function ProductInfo({ product }: ProductInfoProps) {
   const inWishlist = isInWishlist(product.id);
   const brand = product.brand;
   const { reviews, averageRating } = useProductReviews(product.id);
+  const { trackCartAdd } = useUserBehavior();
 
   const handleAddToCart = () => {
     for (let i = 0; i < qty; i++) {
       addItem(product);
     }
+    // IBP: Sepete ekleme sinyali (en güçlü sinyal)
+    trackCartAdd(
+      product.category?.slug || "",
+      product.brand?.slug,
+      product.sale_price || product.price
+    );
     showToast(`${qty > 1 ? qty + " adet ürün" : "Ürün"} sepete eklendi`, "success");
   };
 

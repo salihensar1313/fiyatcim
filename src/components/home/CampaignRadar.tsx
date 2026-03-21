@@ -3,20 +3,25 @@
 import Link from "next/link";
 import { ArrowRight, Percent } from "lucide-react";
 import { useProducts } from "@/context/ProductContext";
+import { usePersonalization } from "@/hooks/usePersonalization";
 import ProductCard from "@/components/product/ProductCard";
 
 export default function CampaignRadar() {
   const { products } = useProducts();
+  const { personalize } = usePersonalization();
 
   // Campaigns = products with active discounts, sorted by discount %
-  const campaigns = products
+  const allCampaigns = products
     .filter((p) => p.is_active && !p.deleted_at && p.stock > 0 && p.sale_price && p.sale_price < p.price)
     .sort((a, b) => {
       const discA = a.sale_price ? (a.price - a.sale_price) / a.price : 0;
       const discB = b.sale_price ? (b.price - b.sale_price) / b.price : 0;
       return discB - discA;
     })
-    .slice(0, 6);
+    .slice(0, 12);
+
+  // IBP: kişiselleştirilmiş sıralama
+  const campaigns = personalize(allCampaigns, 4);
 
   if (campaigns.length === 0) return null;
 
@@ -43,7 +48,7 @@ export default function CampaignRadar() {
         </div>
 
         <div className="mt-8 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
-          {campaigns.slice(0, 4).map((product) => (
+          {campaigns.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>

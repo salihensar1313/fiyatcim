@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { ArrowRight, Flame } from "lucide-react";
 import { useProducts } from "@/context/ProductContext";
+import { usePersonalization } from "@/hooks/usePersonalization";
 import ProductCard from "@/components/product/ProductCard";
 
 export default function BestSellers() {
   const { products } = useProducts();
+  const { personalize } = usePersonalization();
 
   // İndirimli ürünler (sale_price olanlar), en yüksek indirim oranına göre sırala
   const discounted = products
@@ -16,9 +18,12 @@ export default function BestSellers() {
       const discountB = (b.price - (b.sale_price || b.price)) / b.price;
       return discountB - discountA;
     })
-    .slice(0, 4);
+    .slice(0, 12);
 
-  if (discounted.length === 0) return null;
+  // IBP: kişiselleştirilmiş sıralama (max 4 göster)
+  const personalized = personalize(discounted, 4);
+
+  if (personalized.length === 0) return null;
 
   return (
     <section className="py-12 sm:py-16">
@@ -41,7 +46,7 @@ export default function BestSellers() {
         </div>
 
         <div className="mt-8 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
-          {discounted.map((product) => (
+          {personalized.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
