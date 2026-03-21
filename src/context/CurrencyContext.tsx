@@ -26,7 +26,7 @@ interface CurrencyContextType extends CurrencyState {
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
 
 const STORAGE_KEY = "fiyatcim_exchange_rate";
-const FALLBACK_RATE = 38.5; // Varsay\u0131lan kur (API ba\u015far\u0131s\u0131z olursa)
+const FALLBACK_RATE = 44.30; // Varsay\u0131lan kur (API ba\u015far\u0131s\u0131z olursa) — Mart 2026
 const REFRESH_INTERVAL = 10 * 60 * 1000; // 10 dakikada bir g\u00fcncelle
 const CACHE_MAX_AGE = 30 * 60 * 1000; // 30 dakika cache ge\u00e7erlilik
 

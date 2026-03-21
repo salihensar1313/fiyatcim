@@ -355,13 +355,13 @@ export default function CimBotV2() {
         >
           {/* Header */}
           <div className="flex items-center gap-3 bg-primary-600 px-4 py-3 lg:rounded-t-2xl">
-            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/20">
-              <Image src="/images/cimbot-transparent.png" alt="CimBot" width={36} height={36} className="h-full w-full object-cover" />
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-white shadow-sm">
+              <Image src="/images/cimbot.png" alt="CimBot" width={40} height={40} className="h-9 w-9 rounded-full object-cover" unoptimized />
             </div>
             <div className="flex-1">
-              <h3 className="text-sm font-bold text-white">CimBot</h3>
+              <h3 className="text-sm font-bold text-white flex items-center gap-1.5">CimBot <span className="inline-block h-2 w-2 rounded-full bg-green-400"></span></h3>
               <p className="text-[11px] text-white/70">
-                {isTyping ? "Yazıyor..." : "Fiyatcim.com Asistanı"}
+                {isTyping ? "Yazıyor..." : "7/24 Dijital Asistan"}
               </p>
             </div>
             <div className="flex items-center gap-0.5">
