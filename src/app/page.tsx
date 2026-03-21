@@ -3,6 +3,8 @@ import { Suspense } from "react";
 import dynamic from "next/dynamic";
 import JsonLd, { buildOrganizationSchema, buildWebSiteSchema } from "@/components/seo/JsonLd";
 
+export const revalidate = 3600; // 1 saat
+
 export const metadata: Metadata = {
   title: "Fiyatcim — Alarm ve Güvenlik Sistemleri | En Uygun Fiyatlar",
   description: "Alarm sistemleri, güvenlik kameraları, akıllı ev çözümleri ve yangın algılama sistemleri en uygun fiyatlarla Fiyatcim.com'da. Ücretsiz kargo ve profesyonel kurulum.",
@@ -10,8 +12,8 @@ export const metadata: Metadata = {
 };
 import HeroSlider from "@/components/home/HeroSlider";
 import PromoBanner from "@/components/home/PromoBanner";
-import CategoryCards from "@/components/home/CategoryCards";
 import FeaturedProducts from "@/components/home/FeaturedProducts";
+import RandomProducts from "@/components/home/RandomProducts";
 
 // Below-the-fold: dynamic imports for code splitting
 const FlashSale = dynamic(() => import("@/components/home/FlashSale"));
@@ -50,11 +52,11 @@ export default function HomePage() {
       <Suspense fallback={<div className="border-y border-dark-100 bg-white dark:bg-dark-800 py-6 sm:py-8"><div className="container-custom"><div className="grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-8">{Array.from({ length: 4 }).map((_, i) => (<div key={i} className="h-12 animate-pulse rounded bg-dark-50 dark:bg-dark-800" />))}</div></div></div>}>
         <TrustBadges />
       </Suspense>
-      <Suspense fallback={<div className="py-12 sm:py-16"><div className="container-custom"><div className="grid grid-cols-2 gap-4 lg:grid-cols-4">{Array.from({ length: 4 }).map((_, i) => (<div key={i} className="h-48 animate-pulse rounded-xl bg-dark-100" />))}</div></div></div>}>
-        <CategoryCards />
-      </Suspense>
       <Suspense fallback={<div className="bg-dark-50 py-12 sm:py-16"><div className="container-custom"><div className="grid grid-cols-2 gap-4 lg:grid-cols-4">{Array.from({ length: 4 }).map((_, i) => (<div key={i} className="h-72 animate-pulse rounded-xl bg-dark-100" />))}</div></div></div>}>
         <FeaturedProducts />
+      </Suspense>
+      <Suspense fallback={<div className="py-12 sm:py-16"><div className="container-custom"><div className="grid grid-cols-2 gap-4 lg:grid-cols-4">{Array.from({ length: 4 }).map((_, i) => (<div key={i} className="h-72 animate-pulse rounded-xl bg-dark-100" />))}</div></div></div>}>
+        <RandomProducts />
       </Suspense>
       <FlashSale />
       <BestSellers />
