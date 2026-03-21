@@ -47,6 +47,11 @@ export interface Product {
   images: string[];
   seo_title: string;
   sale_ends_at?: string; // ISO date — flash sale bitis zamani
+  cost_price?: number | null;
+  cost_currency?: string | null;
+  price_source_id?: string | null;
+  price_locked?: boolean;
+  last_price_update?: string | null;
   is_featured: boolean;
   is_trending: boolean;
   seo_desc: string;
@@ -229,6 +234,180 @@ export interface SiteSetting {
 }
 
 // ==========================================
+// PRICING TYPES
+// ==========================================
+
+export type PriceSourceStatus =
+  | "active"
+  | "fallback_candidate"
+  | "blocked"
+  | "not_found"
+  | "invalid_match"
+  | "manual_review"
+  | "disabled";
+
+export type PriceSourceVerificationMethod = "auto" | "manual" | null;
+export type PriceHistoryType = "source_cost" | "sale_price" | "manual_override";
+export type PricingRuleType = "global" | "brand" | "category" | "product";
+export type PricingRoundingStrategy = "none" | "round_99" | "round_nearest_10";
+export type PriceAlertSeverity = "info" | "warning" | "critical";
+export type SourceScrapeLogStatus = "success" | "blocked" | "not_found" | "failed" | "manual_review";
+export type PricingDecisionType = "auto_update" | "fallback" | "manual_override" | "rule_change";
+export type PricingJobType = "batch_scrape" | "batch_price_update" | "batch_margin_change" | "csv_import";
+export type PricingJobStatus = "pending" | "running" | "completed" | "failed" | "cancelled";
+
+export interface SourceSite {
+  id: string;
+  name: string;
+  base_url: string;
+  is_active: boolean;
+  priority: number;
+  rate_limit_ms: number;
+  selectors: Record<string, unknown>;
+  extractor_config: Record<string, unknown>;
+  headers: Record<string, string>;
+  health_score: number;
+  last_success_at: string | null;
+  last_failure_at: string | null;
+  failure_count: number;
+  total_scrapes_30d: number;
+  successful_scrapes_30d: number;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PriceSource {
+  id: string;
+  product_id: string;
+  source_site_id: string;
+  source_url: string;
+  source_sku: string | null;
+  source_brand: string | null;
+  source_title: string | null;
+  status: PriceSourceStatus;
+  match_verified: boolean;
+  verification_method: PriceSourceVerificationMethod;
+  match_score: number | null;
+  manual_review_required: boolean;
+  review_reason: string | null;
+  last_price: number | null;
+  last_price_currency: string | null;
+  last_checked_at: string | null;
+  last_success_at: string | null;
+  confidence_score: number;
+  failure_count: number;
+  check_interval_hours: number;
+  custom_selectors: Record<string, unknown>;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+  product?: Product;
+  source_site?: SourceSite;
+}
+
+export interface PriceHistoryRecord {
+  id: string;
+  product_id: string;
+  source_id: string | null;
+  price_type: PriceHistoryType;
+  old_price: number | null;
+  new_price: number;
+  currency: string | null;
+  change_percent: number | null;
+  change_reason: string | null;
+  changed_by: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface PricingRule {
+  id: string;
+  name: string;
+  rule_type: PricingRuleType;
+  target_id: string | null;
+  product_id: string | null;
+  margin_percent: number | null;
+  min_margin_amount: number | null;
+  max_price: number | null;
+  min_price: number | null;
+  rounding_strategy: PricingRoundingStrategy;
+  priority: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PriceAlert {
+  id: string;
+  product_id: string;
+  source_id: string | null;
+  alert_type: string;
+  severity: PriceAlertSeverity;
+  message: string;
+  metadata: Record<string, unknown>;
+  is_read: boolean;
+  is_resolved: boolean;
+  resolved_by: string | null;
+  resolved_at: string | null;
+  created_at: string;
+}
+
+export interface SourceScrapeLog {
+  id: string;
+  source_id: string;
+  status: SourceScrapeLogStatus;
+  http_status: number | null;
+  response_time_ms: number | null;
+  extractor_used: string | null;
+  extracted_price: number | null;
+  extracted_title: string | null;
+  extracted_brand: string | null;
+  extracted_sku: string | null;
+  title_match_score: number | null;
+  error_message: string | null;
+  raw_html_snippet: string | null;
+  created_at: string;
+}
+
+export interface PricingDecision {
+  id: string;
+  product_id: string;
+  selected_source_id: string | null;
+  source_price: number | null;
+  source_currency: string | null;
+  applied_rule_id: string | null;
+  margin_percent_applied: number | null;
+  calculated_price: number | null;
+  final_price: number | null;
+  decision_type: PricingDecisionType;
+  confidence_at_decision: number | null;
+  rejection_reasons: string[];
+  was_price_locked: boolean;
+  price_actually_updated: boolean;
+  decided_by: string | null;
+  metadata?: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface PricingJob {
+  id: string;
+  type: PricingJobType;
+  status: PricingJobStatus;
+  started_at: string | null;
+  finished_at: string | null;
+  total_items: number;
+  processed_items: number;
+  success_count: number;
+  failure_count: number;
+  skipped_count: number;
+  triggered_by: string | null;
+  filters: Record<string, unknown>;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
+
+// ==========================================
 // PRICE HISTORY TYPES
 // ==========================================
 
@@ -408,4 +587,49 @@ export interface ReturnRequest {
   rejectionReason?: string;
   refundAmount?: number;
   notes?: string;
+}
+
+// ==========================================
+// PRICING TYPES
+// ==========================================
+
+export interface SourceSite {
+  id: string;
+  name: string;
+  base_url: string;
+  scraper_config?: Record<string, unknown>;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PricingRule {
+  id: string;
+  name: string;
+  description?: string;
+  rule_type: string;
+  conditions: Record<string, unknown>;
+  actions: Record<string, unknown>;
+  priority: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PricingJob {
+  id: string;
+  job_type: string;
+  status: "pending" | "running" | "completed" | "failed" | "cancelled";
+  total_items: number;
+  processed_items: number;
+  success_count: number;
+  error_count: number;
+  skipped_count: number;
+  config?: Record<string, unknown>;
+  result?: Record<string, unknown>;
+  error_message?: string;
+  started_at?: string;
+  completed_at?: string;
+  created_at: string;
+  updated_at: string;
 }
