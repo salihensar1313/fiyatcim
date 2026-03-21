@@ -8,6 +8,7 @@ import { useActivityLog } from "@/context/ActivityLogContext";
 import { formatDate } from "@/lib/utils";
 import type { Review } from "@/types";
 import Image from "next/image";
+import { logger } from "@/lib/logger";
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
@@ -27,7 +28,7 @@ export default function AdminProductReviewsPage() {
     }
     getAllReviews()
       .then(setReviews)
-      .catch((err) => console.error("Failed to load reviews:", err))
+      .catch((err) => logger.error("admin_reviews_load_failed", { fn: "AdminProductReviewsPage", error: err instanceof Error ? err.message : String(err) }))
       .finally(() => setLoading(false));
   }, []);
 

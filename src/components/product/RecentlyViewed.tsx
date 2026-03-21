@@ -6,6 +6,7 @@ import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import { getAllActiveProducts } from "@/lib/queries";
 import type { Product } from "@/types";
 import ProductCard from "./ProductCard";
+import { logger } from "@/lib/logger";
 
 interface RecentlyViewedProps {
   excludeId?: string;
@@ -18,7 +19,7 @@ export default function RecentlyViewed({ excludeId }: RecentlyViewedProps) {
   useEffect(() => {
     getAllActiveProducts()
       .then(setAllProducts)
-      .catch((err) => console.error("getAllActiveProducts failed:", err));
+      .catch((err) => logger.error("recently_viewed_load_failed", { fn: "RecentlyViewed", error: err instanceof Error ? err.message : String(err) }));
   }, []);
 
   const viewedProducts = viewedIds

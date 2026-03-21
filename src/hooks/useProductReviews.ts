@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { safeGetJSON, safeSetJSON } from "@/lib/safe-storage";
 import { getProductReviews, addReviewToDB, upsertReviewVote } from "@/lib/queries";
 import type { Review, ReviewVote } from "@/types";
+import { logger } from "@/lib/logger";
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 const STORAGE_KEY = "fiyatcim_reviews";
@@ -33,7 +34,7 @@ export function useProductReviews(productId?: string) {
       // Production: Supabase
       getProductReviews(productId)
         .then((reviews) => setAllReviews(reviews))
-        .catch((err) => console.error("Failed to load reviews:", err))
+        .catch((err) => logger.error("reviews_load_failed", { fn: "useProductReviews", error: err instanceof Error ? err.message : String(err) }))
         .finally(() => setLoading(false));
     }
   }, [productId]);

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { logger } from "@/lib/logger";
 
 const envSchema = z.object({
   // Demo Mode
@@ -24,7 +25,7 @@ function validateEnv() {
   const parsed = envSchema.safeParse(process.env);
 
   if (!parsed.success) {
-    console.error("Invalid environment variables:", parsed.error.flatten().fieldErrors);
+    logger.error("invalid_env_vars", { fn: "validateEnv", error: JSON.stringify(parsed.error.flatten().fieldErrors) });
     throw new Error("Invalid environment variables. Check .env.example for required values.");
   }
 

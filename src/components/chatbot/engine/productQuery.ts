@@ -6,6 +6,7 @@
 import { createClient } from "@/lib/supabase/client";
 import type { Product } from "@/types";
 import type { ProductFilters } from "../types";
+import { logger } from "@/lib/logger";
 
 function mapProduct(row: Record<string, unknown>): Product {
   const images = row.images;
@@ -154,7 +155,7 @@ export async function queryProducts(filters: ProductFilters): Promise<Product[]>
   const { data, error } = await query;
 
   if (error) {
-    console.error("CimBot product query error:", error.message);
+    logger.error("cimbot_product_query_failed", { fn: "queryProducts", error: error.message });
     return [];
   }
 

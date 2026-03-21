@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { sendEmail } from "@/lib/email";
 import { CONTACT } from "@/lib/constants";
+import { logger } from "@/lib/logger";
 
 /* ─── Simple in-memory rate limiter ─── */
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -95,13 +96,13 @@ export async function POST(request: NextRequest) {
     });
 
     if (!result.success) {
-      console.error("[Contact] Email send failed:", result.error);
+      logger.error("contact_email_send_failed", { fn: "POST", error: result.error || "unknown" });
       return NextResponse.json({ error: "E-posta gönderilemedi. Lütfen daha sonra tekrar deneyin." }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("[Contact] Error:", err);
+    logger.error("contact_api_error", { fn: "POST", error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Beklenmeyen bir hata oluştu." }, { status: 500 });
   }
 }

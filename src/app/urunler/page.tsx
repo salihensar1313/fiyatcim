@@ -6,6 +6,7 @@ import { LayoutGrid, List, Search } from "lucide-react";
 import { getAllActiveProducts, getCategories, getBrands } from "@/lib/queries";
 import { getEffectivePrice, formatPrice } from "@/lib/utils";
 import type { Product, Category, Brand, ViewMode } from "@/types";
+import { logger } from "@/lib/logger";
 import ProductCard from "@/components/product/ProductCard";
 import ProductFilter from "@/components/product/ProductFilter";
 import Breadcrumb from "@/components/ui/Breadcrumb";
@@ -37,7 +38,7 @@ function ProductsContent() {
         setCats(categories);
         setAllBrands(brands);
       })
-      .catch((err) => console.error("Products page load failed:", err))
+      .catch((err) => logger.error("products_page_load_failed", { fn: "ProductsContent", error: err instanceof Error ? err.message : String(err) }))
       .finally(() => setLoading(false));
   }, []);
 

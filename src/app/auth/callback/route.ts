@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -13,7 +14,7 @@ export async function GET(request: Request) {
   // Handle OAuth provider errors (e.g. user denied consent)
   if (errorParam) {
     const msg = errorDescription || errorParam;
-    console.error("[Auth Callback] OAuth error:", msg);
+    logger.error("auth_oauth_error", { fn: "GET", error: msg });
     return NextResponse.redirect(`${origin}/giris?error=auth`);
   }
 
@@ -68,9 +69,9 @@ export async function GET(request: Request) {
         return NextResponse.redirect(`${origin}${next}`);
       }
 
-      console.error("[Auth Callback] Code exchange error:", error.message);
+      logger.error("auth_code_exchange_failed", { fn: "GET", error: error.message });
     } catch (err) {
-      console.error("[Auth Callback] Unexpected error:", err);
+      logger.error("auth_callback_unexpected", { fn: "GET", error: err instanceof Error ? err.message : String(err) });
     }
   }
 

@@ -32,6 +32,7 @@ import {
   getRandomChallenge,
 } from "./knowledge";
 import { CONTACT } from "@/lib/constants";
+import { logger } from "@/lib/logger";
 
 // ─── Initial Context ───
 export function createInitialContext(): ConversationContext {
@@ -994,7 +995,7 @@ async function searchAndShowProducts(
       },
     };
   } catch (error) {
-    console.error("CimBot product search error:", error);
+    logger.error("cimbot_search_failed", { fn: "handleProductSearch", error: error instanceof Error ? error.message : String(error) });
     return {
       text: "Ürünleri yüklerken bir sorun oluştu 😔 Lütfen tekrar deneyin veya bize ulaşın.",
       actions: [

@@ -8,6 +8,7 @@ import { ArrowLeft, ExternalLink } from "lucide-react";
 import { getProductBySlug } from "@/lib/queries";
 import { useProducts } from "@/context/ProductContext";
 import type { Product } from "@/types";
+import { logger } from "@/lib/logger";
 import PriceHistoryChart from "@/components/product/PriceHistoryChart";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { formatPrice } from "@/lib/utils";
@@ -24,7 +25,7 @@ export default function PriceHistoryPage() {
     if (!slug) return;
     getProductBySlug(slug)
       .then(setProduct)
-      .catch((err) => console.error("getProductBySlug failed:", err))
+      .catch((err) => logger.error("price_history_load_failed", { fn: "PriceHistoryPage", error: err instanceof Error ? err.message : String(err) }))
       .finally(() => setLoading(false));
   }, [slug]);
 

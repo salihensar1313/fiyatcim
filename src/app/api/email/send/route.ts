@@ -3,6 +3,7 @@ import { z } from "zod";
 import { sendEmail } from "@/lib/email";
 import { emailVerificationEmail, orderConfirmationEmail, orderShippedEmail, orderDeliveredEmail, orderCancelledEmail, orderRefundedEmail } from "@/lib/email-templates";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { logger } from "@/lib/logger";
 
 /* ─── In-memory rate limiter (per IP + per recipient) ─── */
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -139,7 +140,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, id: result.id });
   } catch (err) {
-    console.error("[API/email] Error:", err);
+    logger.error("email_api_error", { fn: "POST", error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

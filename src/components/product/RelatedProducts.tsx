@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { getRelatedProducts } from "@/lib/queries";
 import type { Product } from "@/types";
 import ProductCard from "./ProductCard";
+import { logger } from "@/lib/logger";
 
 interface RelatedProductsProps {
   productId: string;
@@ -16,7 +17,7 @@ export default function RelatedProducts({ productId, categoryId }: RelatedProduc
   useEffect(() => {
     getRelatedProducts(productId, categoryId, 4)
       .then(setRelated)
-      .catch((err) => console.error("getRelatedProducts failed:", err));
+      .catch((err) => logger.error("related_products_load_failed", { fn: "RelatedProducts", error: err instanceof Error ? err.message : String(err) }));
   }, [productId, categoryId]);
 
   if (related.length === 0) return null;

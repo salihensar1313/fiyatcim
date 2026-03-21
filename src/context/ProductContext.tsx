@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useCallback, useEffect, useMemo, R
 import type { Product } from "@/types";
 import { getAllActiveProducts } from "@/lib/queries";
 import { createProduct as apiCreateProduct, updateProduct as apiUpdateProduct, softDeleteProduct as apiSoftDeleteProduct } from "@/lib/mutations";
+import { logger } from "@/lib/logger";
 
 interface ProductContextType {
   products: Product[];
@@ -29,7 +30,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       const data = await getAllActiveProducts();
       setProducts(data);
     } catch (err) {
-      console.error("ProductContext load failed:", err);
+      logger.error("product_context_load_failed", { fn: "loadProducts", error: err instanceof Error ? err.message : String(err) });
     } finally {
       setLoading(false);
     }

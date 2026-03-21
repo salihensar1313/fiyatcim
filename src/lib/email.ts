@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { logger } from "@/lib/logger";
 
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "Fiyatcim <noreply@fiyatcim.com>";
 
@@ -19,7 +20,7 @@ interface SendEmailParams {
 export async function sendEmail({ to, subject, html }: SendEmailParams) {
   const resend = getResend();
   if (!resend) {
-    console.warn("[Email] RESEND_API_KEY not set, skipping email");
+    logger.warn("email_api_key_missing", { fn: "sendEmail", error: "RESEND_API_KEY not set" });
     return { success: false, error: "API key not configured" };
   }
 
@@ -32,13 +33,13 @@ export async function sendEmail({ to, subject, html }: SendEmailParams) {
     });
 
     if (error) {
-      console.error("[Email] Send failed:", error);
+      logger.error("email_send_failed", { fn: "sendEmail", error: error.message });
       return { success: false, error: error.message };
     }
 
     return { success: true, id: data?.id };
   } catch (err) {
-    console.error("[Email] Unexpected error:", err);
+    logger.error("email_unexpected_error", { fn: "sendEmail", error: err instanceof Error ? err.message : String(err) });
     return { success: false, error: "Unexpected error" };
   }
 }

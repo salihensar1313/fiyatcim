@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState, useCallback, ReactNode 
 import type { Order, OrderStatus, OrderItem, OrderStatusLog, CartItem, Address, PaymentStatus, InvoiceInfo } from "@/types";
 import { safeGetJSON, safeSetJSON } from "@/lib/safe-storage";
 import { createClient } from "@/lib/supabase/client";
+import { logger } from "@/lib/logger";
 
 // ==========================================
 // TYPES
@@ -90,7 +91,7 @@ function sendOrderEmail(order: Order, email: string, customerName: string) {
         shippingAddress,
       },
     }),
-  }).catch((err) => console.error("[Email] Failed to send order confirmation:", err));
+  }).catch((err) => logger.error("order_email_failed", { fn: "sendOrderEmail", error: err instanceof Error ? err.message : String(err) }));
 }
 
 // Map Supabase order row to Order type
@@ -171,7 +172,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
 
     const { data, error } = await query;
     if (error) {
-      console.error("[OrderContext] Failed to load orders:", error.message);
+      logger.error("order_load_failed", { fn: "loadOrders", error: error.message });
       setOrders([]);
     } else {
       setOrders((data ?? []).map((row) => mapSupabaseOrder(row as Record<string, unknown>)));
@@ -288,7 +289,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     });
 
     if (error) {
-      console.error("[OrderContext] create_order_rpc failed:", error.message);
+      logger.error("order_create_rpc_failed", { fn: "createOrder", error: error.message });
       throw new Error(error.message);
     }
 
@@ -376,7 +377,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
       .eq("id", orderId)
       .then(({ error }) => {
         if (error) {
-          console.error("[OrderContext] updateOrderStatus failed:", error.message);
+          logger.error("order_status_update_failed", { fn: "updateOrderStatus", error: error.message });
           return;
         }
         // Update local state

@@ -5,6 +5,7 @@ import type { Profile } from "@/types";
 import { safeGetJSON, safeSetJSON, safeRemove } from "@/lib/safe-storage";
 import { createClient } from "@/lib/supabase/client";
 import { validatePassword } from "@/lib/password";
+import { logger } from "@/lib/logger";
 
 interface User {
   id: string;
@@ -446,7 +447,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const supabase = createClient();
       await supabase.auth.signOut();
     } catch (err) {
-      console.error("Sign out error:", err);
+      logger.error("sign_out_failed", { fn: "signOut", error: err instanceof Error ? err.message : String(err) });
     }
   }, [persistDemo]);
 
@@ -473,7 +474,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else if (user) {
         const supabase = createClient();
         supabase.from("profiles").update(data).eq("user_id", user.id).then(({ error }) => {
-          if (error) console.error("Profile update error:", error.message);
+          if (error) logger.error("profile_update_failed", { fn: "updateProfile", error: error.message });
         });
       }
 
@@ -604,7 +605,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } else {
       const supabase = createClient();
       supabase.from("profiles").update(data).eq("user_id", userId).then(({ error }) => {
-        if (error) console.error("Admin profile update error:", error.message);
+        if (error) logger.error("admin_profile_update_failed", { fn: "adminUpdateUser", error: error.message });
       });
     }
   }, []);

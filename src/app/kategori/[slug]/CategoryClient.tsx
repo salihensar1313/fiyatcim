@@ -6,6 +6,7 @@ import { LayoutGrid, List, ArrowUpDown } from "lucide-react";
 import { getCategories, getAllActiveProducts } from "@/lib/queries";
 import { getEffectivePrice } from "@/lib/utils";
 import type { Product, Category, ViewMode } from "@/types";
+import { logger } from "@/lib/logger";
 import ProductCard from "@/components/product/ProductCard";
 import ProductFiltersPanel from "@/components/product/ProductFiltersPanel";
 import { useProductFilters } from "@/hooks/useProductFilters";
@@ -48,7 +49,7 @@ export default function CategoryClient({ slug }: Props) {
         setAllProducts(products);
         setCats(categories);
       })
-      .catch((err) => console.error("Category page load failed:", err))
+      .catch((err) => logger.error("category_page_load_failed", { fn: "CategoryClient", error: err instanceof Error ? err.message : String(err) }))
       .finally(() => setLoading(false));
   }, []);
 

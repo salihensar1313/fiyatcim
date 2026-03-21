@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useCallback, useEffect } from "rea
 import type { SavedAddress, Address } from "@/types";
 import { safeGetJSON, safeSetJSON } from "@/lib/safe-storage";
 import { createClient } from "@/lib/supabase/client";
+import { logger } from "@/lib/logger";
 
 const STORAGE_KEY = "fiyatcim_addresses";
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
@@ -46,7 +47,7 @@ export function AddressProvider({ children }: { children: React.ReactNode }) {
         .then(({ data, error }) => {
           if (!isMounted) return;
           if (error) {
-            console.error("[AddressContext] load failed:", error.message);
+            logger.error("address_load_failed", { fn: "AddressProvider", error: error.message });
             setAddresses([]);
           } else {
             setAddresses(
@@ -99,7 +100,7 @@ export function AddressProvider({ children }: { children: React.ReactNode }) {
         posta_kodu: data.posta_kodu || "",
       }).select("id").single().then(({ data: inserted, error }) => {
         if (error) {
-          console.error("[AddressContext] insert failed:", error.message);
+          logger.error("address_insert_failed", { fn: "addAddress", error: error.message });
         } else if (inserted) {
           setAddresses((prev) =>
             prev.map((a) => (a.id === newAddr.id ? { ...a, id: inserted.id } : a))
@@ -120,7 +121,7 @@ export function AddressProvider({ children }: { children: React.ReactNode }) {
       const supabase = createClient();
       supabase.from("addresses").update(data).eq("id", id)
         .then(({ error }) => {
-          if (error) console.error("[AddressContext] update failed:", error.message);
+          if (error) logger.error("address_update_failed", { fn: "updateAddress", error: error.message });
         });
     }
   }, []);
@@ -132,7 +133,7 @@ export function AddressProvider({ children }: { children: React.ReactNode }) {
       const supabase = createClient();
       supabase.from("addresses").delete().eq("id", id)
         .then(({ error }) => {
-          if (error) console.error("[AddressContext] delete failed:", error.message);
+          if (error) logger.error("address_delete_failed", { fn: "removeAddress", error: error.message });
         });
     }
   }, []);

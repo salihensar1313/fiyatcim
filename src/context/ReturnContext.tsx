@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useEffect, useCallback, ReactNode 
 import type { ReturnRequest, ReturnStatus, ReturnReason, ReturnRequestItem } from "@/types";
 import { safeGetJSON, safeSetJSON } from "@/lib/safe-storage";
 import { createClient } from "@/lib/supabase/client";
+import { logger } from "@/lib/logger";
 
 const STORAGE_KEY = "fiyatcim_returns";
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
@@ -87,7 +88,7 @@ export function ReturnProvider({ children }: { children: ReactNode }) {
         const { data, error } = await query;
         if (!isMounted) return;
         if (error) {
-          console.error("[ReturnContext] load failed:", error.message);
+          logger.error("return_load_failed", { fn: "ReturnProvider", error: error.message });
           setReturns([]);
         } else {
           setReturns((data ?? []).map((row) => ({
@@ -110,7 +111,7 @@ export function ReturnProvider({ children }: { children: ReactNode }) {
         }
       } catch (err) {
         if (!isMounted) return;
-        console.error("[ReturnContext] unexpected error:", err);
+        logger.error("return_unexpected_error", { fn: "ReturnProvider", error: err instanceof Error ? err.message : String(err) });
         setReturns([]);
       } finally {
         if (isMounted) setIsLoaded(true);
@@ -170,7 +171,7 @@ export function ReturnProvider({ children }: { children: ReactNode }) {
           items: params.items,
         }).select("id").single().then(({ data: inserted, error }) => {
           if (error) {
-            console.error("[ReturnContext] insert failed:", error.message);
+            logger.error("return_insert_failed", { fn: "createReturn", error: error.message });
           } else if (inserted) {
             setReturns((prev) =>
               prev.map((r) => (r.id === entry.id ? { ...r, id: inserted.id } : r))
@@ -213,7 +214,7 @@ export function ReturnProvider({ children }: { children: ReactNode }) {
         if (extra?.notes) updateData.notes = extra.notes;
         supabase.from("returns").update(updateData).eq("id", id)
           .then(({ error }) => {
-            if (error) console.error("[ReturnContext] update failed:", error.message);
+            if (error) logger.error("return_update_failed", { fn: "updateReturnStatus", error: error.message });
           });
       }
 

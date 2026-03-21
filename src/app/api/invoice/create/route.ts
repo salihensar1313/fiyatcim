@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isParasutConfigured, createContact, createSalesInvoice, convertToEInvoice } from "@/lib/parasut";
 import type { InvoiceInfo, Address, OrderItem } from "@/types";
+import { logger } from "@/lib/logger";
 
 /**
  * POST /api/invoice/create
@@ -60,7 +61,7 @@ export async function POST(request: NextRequest) {
       salesInvoiceId,
     });
   } catch (err) {
-    console.error("[Invoice API] Fatura oluşturma hatası:", err);
+    logger.error("invoice_create_failed", { fn: "POST", error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "Fatura oluşturulamadı" },
       { status: 500 }

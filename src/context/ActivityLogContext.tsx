@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useEffect, useCallback, ReactNode 
 import type { ActivityLogEntry, ActivityLogType } from "@/types/admin";
 import { safeGetJSON, safeSetJSON } from "@/lib/safe-storage";
 import { createClient } from "@/lib/supabase/client";
+import { logger } from "@/lib/logger";
 
 const STORAGE_KEY = "fiyatcim_activity_log";
 const MAX_ENTRIES = 200;
@@ -41,7 +42,7 @@ export function ActivityLogProvider({ children }: { children: ReactNode }) {
       .then(({ data, error }) => {
         if (!isMounted) return;
         if (error) {
-          console.error("[ActivityLog] load failed:", error.message);
+          logger.error("activity_log_load_failed", { fn: "ActivityLogProvider", error: error.message });
           setLogs([]);
         } else {
           setLogs((data ?? []).map((row) => ({
@@ -87,7 +88,7 @@ export function ActivityLogProvider({ children }: { children: ReactNode }) {
           entity_id: entityId,
           new_value: meta,
         }).then(({ error }) => {
-          if (error) console.error("[ActivityLog] insert failed:", error.message);
+          if (error) logger.error("activity_log_insert_failed", { fn: "addLog", error: error.message });
         });
       }
     },

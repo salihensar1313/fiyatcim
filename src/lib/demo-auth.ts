@@ -4,10 +4,12 @@
  * This is NOT used in production — Supabase handles real auth.
  */
 
+import { logger } from "@/lib/logger";
+
 const DEMO_SECRET = process.env.DEMO_ADMIN_SECRET;
 
 if (!DEMO_SECRET) {
-  console.warn("[demo-auth] DEMO_ADMIN_SECRET env var is not set. Admin auth will fail in demo mode.");
+  logger.warn("demo_admin_secret_missing", { fn: "init", error: "DEMO_ADMIN_SECRET env var is not set. Admin auth will fail in demo mode." });
 }
 
 export const DEMO_ADMIN_COOKIE = "fiyatcim_demo_admin";

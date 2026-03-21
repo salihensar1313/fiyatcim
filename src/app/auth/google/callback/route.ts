@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -8,12 +9,12 @@ export async function GET(request: Request) {
 
   // Handle OAuth errors (e.g. user denied consent)
   if (errorParam) {
-    console.error("[Google Callback] OAuth error:", errorParam);
+    logger.error("google_oauth_error", { fn: "GET", error: errorParam });
     return NextResponse.redirect(`${origin}/giris?error=auth`);
   }
 
   if (!code) {
-    console.error("[Google Callback] No authorization code");
+    logger.error("google_no_auth_code", { fn: "GET", error: "No authorization code" });
     return NextResponse.redirect(`${origin}/giris?error=auth`);
   }
 
@@ -34,7 +35,7 @@ export async function GET(request: Request) {
     const tokenData = await tokenRes.json();
 
     if (!tokenData.id_token) {
-      console.error("[Google Callback] No id_token received:", tokenData.error || "unknown");
+      logger.error("google_no_id_token", { fn: "GET", error: tokenData.error || "unknown" });
       return NextResponse.redirect(`${origin}/giris?error=auth`);
     }
 
@@ -47,7 +48,7 @@ export async function GET(request: Request) {
     });
 
     if (authError) {
-      console.error("[Google Callback] Supabase signInWithIdToken error:", authError.message);
+      logger.error("google_sign_in_failed", { fn: "GET", error: authError.message });
       return NextResponse.redirect(`${origin}/giris?error=auth`);
     }
 
@@ -92,7 +93,7 @@ export async function GET(request: Request) {
     // Step 4: Redirect to hesabim with success indicator
     return NextResponse.redirect(`${origin}/hesabim?login=google`);
   } catch (err) {
-    console.error("[Google Callback] Unexpected error:", err);
+    logger.error("google_callback_unexpected", { fn: "GET", error: err instanceof Error ? err.message : String(err) });
     return NextResponse.redirect(`${origin}/giris?error=auth`);
   }
 }

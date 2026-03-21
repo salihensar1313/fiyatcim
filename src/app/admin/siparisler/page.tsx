@@ -12,6 +12,7 @@ import { formatPrice, timeAgo, downloadCsv } from "@/lib/utils";
 import { ORDER_STATUS_LABELS } from "@/types";
 import { ADMIN_CARD, ADMIN_INPUT, ADMIN_SELECT } from "@/lib/admin-classes";
 import type { OrderStatus, Order } from "@/types";
+import { logger } from "@/lib/logger";
 
 const STATUS_COLORS: Record<OrderStatus, string> = {
   pending_payment: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
@@ -65,7 +66,7 @@ function sendOrderStatusEmail(order: Order, newStatus: OrderStatus) {
         trackingCode: order.tracking_no || undefined,
       },
     }),
-  }).catch((err) => console.warn("[Email] Gönderilemedi:", err));
+  }).catch((err) => logger.warn("order_status_email_failed", { fn: "sendOrderStatusEmail", error: err instanceof Error ? err.message : String(err) }));
 }
 
 export default function AdminOrdersPage() {
