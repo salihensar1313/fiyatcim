@@ -1,0 +1,24 @@
+import { z } from "zod";
+import { listPriceAlerts } from "@/lib/pricing/queries";
+import { getPricingAdminContext, jsonError, jsonOk } from "../_helpers";
+
+export const runtime = "nodejs";
+
+const querySchema = z.object({
+  productId: z.string().uuid().optional(),
+  severity: z.string().optional(),
+  unresolvedOnly: z.coerce.boolean().optional(),
+  alertType: z.string().optional(),
+});
+
+export async function GET(request: Request) {
+  const { serviceSupabase, isAdmin } = await getPricingAdminContext();
+  if (!isAdmin || !serviceSupabase) return jsonError("Yetkiniz yok", 403);
+
+  const url = new URL(request.url);
+  const parsed = querySchema.safeParse(Object.fromEntries(url.searchParams.entries()));
+  if (!parsed.success) return jsonError("Geçersiz filtre parametreleri");
+
+  const data = await listPriceAlerts(serviceSupabase, parsed.data);
+  return jsonOk(data, { total: data.length });
+}
