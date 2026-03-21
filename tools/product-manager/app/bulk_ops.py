@@ -1,6 +1,7 @@
 """Toplu Islemler v2 — kendi urun listesi + modern islem paneli."""
 
 import customtkinter as ctk
+import threading
 from tkinter import ttk, messagebox
 
 from app.theme import COLORS, FONTS, SPACING, TREEVIEW_STYLE, TREEVIEW_HEADING_STYLE, TREEVIEW_MAP, DROPDOWN_COLORS, apply_dark_scrollbar, bind_treeview_scroll
@@ -17,7 +18,9 @@ class BulkOps(ctk.CTkFrame):
         self.configure(fg_color="transparent")
         self.products: list[dict] = []
         self.selected_ids: set[str] = set()
+        self.latest_pricing_job_id: str | None = None
         self._build_ui()
+        self.refresh()
 
     def _build_ui(self):
         # ─── Başlık ───────────────────────────────
@@ -135,6 +138,63 @@ class BulkOps(ctk.CTkFrame):
         # ═══ SAĞ: İşlem Paneli ═══════════════════
         right = ctk.CTkScrollableFrame(main, fg_color="transparent", width=300)
         right.grid(row=0, column=1, sticky="nsew")
+
+        # ─── Otomatik Pricing ───────────────────
+        self._section(right, "Otomatik Pricing", COLORS["accent"])
+
+        pricing_card = ctk.CTkFrame(right, fg_color=COLORS["bg_card"],
+                                    corner_radius=8, border_width=1,
+                                    border_color=COLORS["border"])
+        pricing_card.pack(fill="x", pady=(0, 10))
+
+        prc = ctk.CTkFrame(pricing_card, fg_color="transparent")
+        prc.pack(fill="x", padx=12, pady=10)
+
+        ctk.CTkLabel(
+            prc,
+            text="Aktif fiyat kaynaklari uzerinden tum urunlerde otomatik fiyat kontrolu ve guncelleme baslatir.",
+            font=FONTS["small"], text_color=COLORS["text_secondary"],
+            justify="left", wraplength=260,
+        ).pack(anchor="w", pady=(0, 8))
+
+        self.auto_pricing_btn = ctk.CTkButton(
+            prc, text="Tum Urunlerde Otomatik Fiyat Guncelle", width=260, height=36,
+            font=FONTS["body_bold"], fg_color=COLORS["accent"],
+            hover_color=COLORS["accent_hover"], corner_radius=8,
+            command=self._start_auto_pricing_batch,
+        )
+        self.auto_pricing_btn.pack(anchor="w")
+
+        actions_row = ctk.CTkFrame(prc, fg_color="transparent")
+        actions_row.pack(fill="x", pady=(8, 8))
+
+        ctk.CTkButton(
+            actions_row, text="Job Durumunu Yenile", width=130, height=30,
+            font=FONTS["small"], fg_color=COLORS["bg_input"],
+            hover_color=COLORS["border_light"], corner_radius=6,
+            command=self._load_pricing_jobs,
+        ).pack(side="left")
+
+        self.pricing_job_badge = ctk.CTkLabel(
+            actions_row, text="Hazir", font=FONTS["small_bold"],
+            text_color=COLORS["text_on_accent"], fg_color=COLORS["text_muted"],
+            corner_radius=8,
+        )
+        self.pricing_job_badge.pack(side="right")
+
+        self.pricing_job_summary = ctk.CTkLabel(
+            prc, text="Henuz pricing job yok",
+            font=FONTS["small"], text_color=COLORS["text_muted"],
+            justify="left", wraplength=260,
+        )
+        self.pricing_job_summary.pack(anchor="w")
+
+        self.pricing_job_list = ctk.CTkTextbox(
+            prc, height=120, font=FONTS["tiny"],
+            fg_color=COLORS["bg_input"], border_color=COLORS["border"],
+            border_width=1, text_color=COLORS["text_primary"],
+        )
+        self.pricing_job_list.pack(fill="x", pady=(8, 0))
 
         # ─── Fiyat İşlemi ────────────────────────
         self._section(right, "Fiyat Islemleri", COLORS["info"])
@@ -289,6 +349,7 @@ class BulkOps(ctk.CTkFrame):
 
     def refresh(self):
         self._load_products()
+        self._load_pricing_jobs()
 
     def _filter(self):
         search = self.search_var.get().strip().lower()
@@ -405,6 +466,114 @@ class BulkOps(ctk.CTkFrame):
             self._load_products()
         except Exception as e:
             messagebox.showerror("Hata", str(e))
+
+    def _set_pricing_job_state(self, text: str, color: str):
+        self.pricing_job_badge.configure(text=f" {text} ", fg_color=color)
+
+    def _load_pricing_jobs(self):
+        try:
+            jobs = self.sb.get_pricing_jobs(limit=10)
+            self.pricing_job_list.delete("1.0", "end")
+
+            if not jobs:
+                self.latest_pricing_job_id = None
+                self.pricing_job_summary.configure(text="Henuz pricing job yok")
+                self._set_pricing_job_state("Hazir", COLORS["text_muted"])
+                self.pricing_job_list.insert("1.0", "Kayit bulunamadi.")
+                return
+
+            latest = jobs[0]
+            self.latest_pricing_job_id = latest.get("id")
+            status = latest.get("status", "unknown")
+            processed = latest.get("processed_items", 0)
+            total = latest.get("total_items", 0)
+            self.pricing_job_summary.configure(
+                text=(
+                    f"Son job: {latest.get('type', '-')}\n"
+                    f"Durum: {status}\n"
+                    f"Ilerleme: {processed}/{total}\n"
+                    f"Basari/Hata/Atlanan: {latest.get('success_count', 0)}/"
+                    f"{latest.get('failure_count', 0)}/{latest.get('skipped_count', 0)}"
+                )
+            )
+
+            badge_color = COLORS["text_muted"]
+            if status == "running":
+                badge_color = COLORS["info"]
+            elif status == "completed":
+                badge_color = COLORS["success"]
+            elif status == "failed":
+                badge_color = COLORS["danger"]
+            elif status == "pending":
+                badge_color = COLORS["warning"]
+            self._set_pricing_job_state(status.upper(), badge_color)
+
+            lines = []
+            for job in jobs:
+                filters = job.get("filters") or {}
+                filter_text = ", ".join(f"{k}={v}" for k, v in filters.items()) or "tum aktif kaynaklar"
+                lines.append(
+                    f"{job.get('created_at', '')[:16].replace('T', ' ')} | "
+                    f"{job.get('status', '-')} | "
+                    f"{job.get('processed_items', 0)}/{job.get('total_items', 0)} | "
+                    f"{filter_text}"
+                )
+            self.pricing_job_list.insert("1.0", "\n".join(lines))
+        except Exception as e:
+            self.pricing_job_summary.configure(text=f"Pricing job okunamadi: {e}")
+            self._set_pricing_job_state("HATA", COLORS["danger"])
+
+    def _start_auto_pricing_batch(self):
+        # Ön kontrol: gerekli env degiskenleri mevcut mu?
+        try:
+            check = self.sb.check_pricing_batch_requirements()
+        except Exception as exc:
+            messagebox.showerror("Pricing Batch Hatasi", f"Gereksinim kontrolu basarisiz:\n{exc}")
+            return
+
+        if not check["ok"]:
+            missing_list = "\n".join(f"  - {k}" for k in check["missing"])
+            messagebox.showerror(
+                "Eksik Yapilandirma",
+                f"Otomatik pricing batch baslatmak icin gerekli ortam degiskenleri eksik.\n\n"
+                f"Eksik degiskenler:\n{missing_list}\n\n"
+                f"Aranan dosya:\n  {check['env_path']}\n\n"
+                f"Lütfen .env.local dosyasina eksik degiskenleri ekleyip uygulamayi yeniden baslatin."
+            )
+            return
+
+        if not messagebox.askyesno(
+            "Onay",
+            "Tum urunlerde aktif fiyat kaynaklari uzerinden otomatik fiyat guncelleme baslatilsin mi?"
+        ):
+            return
+
+        self.auto_pricing_btn.configure(state="disabled", text="Batch baslatiliyor...")
+        self._set_pricing_job_state("BASLATIYOR", COLORS["warning"])
+
+        def worker():
+            try:
+                job = self.sb.start_pricing_batch_job(filters={})
+                self.after(0, lambda: self._on_pricing_batch_started(job))
+            except Exception as exc:
+                self.after(0, lambda: self._on_pricing_batch_error(str(exc)))
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    def _on_pricing_batch_started(self, job: dict):
+        self.auto_pricing_btn.configure(state="normal", text="Tum Urunlerde Otomatik Fiyat Guncelle")
+        self.latest_pricing_job_id = job.get("id")
+        self._set_pricing_job_state("RUNNING", COLORS["info"])
+        self._load_pricing_jobs()
+        messagebox.showinfo(
+            "Batch Basladi",
+            f"Otomatik fiyat guncelleme basladi.\n\nJob ID: {job.get('id')}"
+        )
+
+    def _on_pricing_batch_error(self, error: str):
+        self.auto_pricing_btn.configure(state="normal", text="Tum Urunlerde Otomatik Fiyat Guncelle")
+        self._set_pricing_job_state("HATA", COLORS["danger"])
+        messagebox.showerror("Pricing Batch Hatasi", error)
 
     def _update_stock(self):
         if not self._check_selection():

@@ -230,7 +230,8 @@ class ProductForm(ctk.CTkScrollableFrame):
         self.active_tab = ctk.StringVar(value="desc")
         self.tab_buttons = {}
 
-        for key, label in [("desc", "Urun Aciklamasi"), ("specs", "Teknik Ozellikler"), ("seo", "SEO")]:
+        for key, label in [("desc", "Urun Aciklamasi"), ("specs", "Teknik Ozellikler"), ("seo", "SEO"),
+                           ("p_sources", "Fiyat Kaynaklari"), ("p_pricing", "Fiyatlandirma"), ("p_history", "Gecmis")]:
             btn = ctk.CTkButton(
                 tab_frame, text=label, height=38, font=FONTS["h4"],
                 fg_color=COLORS["bg_card"] if key == "desc" else "transparent",
@@ -300,9 +301,141 @@ class ProductForm(ctk.CTkScrollableFrame):
 
         self.tab_contents["seo"] = seo_frame
 
+        # ── Fiyat Kaynaklari tab ──
+        sources_frame = ctk.CTkFrame(self, fg_color=COLORS["bg_card"], corner_radius=0)
+        sources_inner = ctk.CTkFrame(sources_frame, fg_color="transparent")
+        sources_inner.pack(fill="x", padx=16, pady=16)
+
+        # Source ekleme formu
+        add_src_label = ctk.CTkLabel(sources_inner, text="KAYNAK EKLE",
+                                      font=FONTS["small_bold"], text_color=COLORS["accent_light"])
+        add_src_label.pack(anchor="w", pady=(0, 6))
+
+        src_form = ctk.CTkFrame(sources_inner, fg_color=COLORS["bg_input"],
+                                 corner_radius=8, border_width=1, border_color=COLORS["border"])
+        src_form.pack(fill="x", pady=(0, 12))
+        src_form_inner = ctk.CTkFrame(src_form, fg_color="transparent")
+        src_form_inner.pack(fill="x", padx=12, pady=10)
+
+        # Site secimi
+        row1 = ctk.CTkFrame(src_form_inner, fg_color="transparent")
+        row1.pack(fill="x", pady=(0, 6))
+        row1.columnconfigure(0, weight=1)
+        row1.columnconfigure(1, weight=2)
+
+        ctk.CTkLabel(row1, text="Site:", font=FONTS["small"],
+                     text_color=COLORS["text_muted"], width=60, anchor="w").grid(row=0, column=0, sticky="w")
+        self.source_site_var = ctk.StringVar(value="")
+        self.source_site_menu = ctk.CTkOptionMenu(
+            row1, values=["Site yuklenemedi"], variable=self.source_site_var,
+            height=30, font=FONTS["small"], fg_color=COLORS["bg_card"],
+            button_color=COLORS["accent"], **DROPDOWN_COLORS)
+        self.source_site_menu.grid(row=0, column=1, sticky="ew")
+
+        # URL
+        row2 = ctk.CTkFrame(src_form_inner, fg_color="transparent")
+        row2.pack(fill="x", pady=(0, 6))
+        row2.columnconfigure(0, weight=0)
+        row2.columnconfigure(1, weight=1)
+        ctk.CTkLabel(row2, text="URL:", font=FONTS["small"],
+                     text_color=COLORS["text_muted"], width=60, anchor="w").grid(row=0, column=0, sticky="w")
+        self.source_url_entry = ctk.CTkEntry(
+            row2, height=30, font=FONTS["small"],
+            fg_color=COLORS["bg_card"], border_color=COLORS["border"],
+            placeholder_text="https://example.com/urun-sayfasi")
+        self.source_url_entry.grid(row=0, column=1, sticky="ew")
+
+        # Opsiyonel alanlar
+        row3 = ctk.CTkFrame(src_form_inner, fg_color="transparent")
+        row3.pack(fill="x", pady=(0, 6))
+        for i in range(3):
+            row3.columnconfigure(i, weight=1)
+
+        f_sku = ctk.CTkFrame(row3, fg_color="transparent")
+        f_sku.grid(row=0, column=0, sticky="ew", padx=(0, 4))
+        ctk.CTkLabel(f_sku, text="SKU", font=FONTS["tiny"], text_color=COLORS["text_muted"]).pack(anchor="w")
+        self.source_sku_entry = ctk.CTkEntry(f_sku, height=28, font=FONTS["tiny"],
+                                              fg_color=COLORS["bg_card"], border_color=COLORS["border"])
+        self.source_sku_entry.pack(fill="x")
+
+        f_brand = ctk.CTkFrame(row3, fg_color="transparent")
+        f_brand.grid(row=0, column=1, sticky="ew", padx=(4, 4))
+        ctk.CTkLabel(f_brand, text="Marka", font=FONTS["tiny"], text_color=COLORS["text_muted"]).pack(anchor="w")
+        self.source_brand_entry = ctk.CTkEntry(f_brand, height=28, font=FONTS["tiny"],
+                                                fg_color=COLORS["bg_card"], border_color=COLORS["border"])
+        self.source_brand_entry.pack(fill="x")
+
+        f_title = ctk.CTkFrame(row3, fg_color="transparent")
+        f_title.grid(row=0, column=2, sticky="ew", padx=(4, 0))
+        ctk.CTkLabel(f_title, text="Baslik", font=FONTS["tiny"], text_color=COLORS["text_muted"]).pack(anchor="w")
+        self.source_title_entry = ctk.CTkEntry(f_title, height=28, font=FONTS["tiny"],
+                                                fg_color=COLORS["bg_card"], border_color=COLORS["border"])
+        self.source_title_entry.pack(fill="x")
+
+        # Butonlar
+        btn_row = ctk.CTkFrame(src_form_inner, fg_color="transparent")
+        btn_row.pack(fill="x", pady=(4, 0))
+
+        self.add_source_btn = ctk.CTkButton(
+            btn_row, text="Kaynak Ekle", width=120, height=32,
+            font=FONTS["body_bold"], fg_color=COLORS["accent"],
+            hover_color=COLORS["accent_hover"], corner_radius=6,
+            command=self._add_price_source)
+        self.add_source_btn.pack(side="left")
+
+        self.source_status_label = ctk.CTkLabel(
+            btn_row, text="", font=FONTS["small"], text_color=COLORS["text_muted"])
+        self.source_status_label.pack(side="left", padx=(12, 0))
+
+        # Separator
+        ctk.CTkFrame(sources_inner, height=1, fg_color=COLORS["border"]).pack(fill="x", pady=(8, 8))
+
+        # Mevcut kaynaklar listesi
+        ctk.CTkLabel(sources_inner, text="MEVCUT KAYNAKLAR",
+                     font=FONTS["small_bold"], text_color=COLORS["text_muted"]).pack(anchor="w", pady=(0, 6))
+
+        self.sources_placeholder = ctk.CTkLabel(
+            sources_inner, text="Henuz pricing verisi yok",
+            font=FONTS["body"], text_color=COLORS["text_muted"])
+        self.sources_placeholder.pack(anchor="w")
+        self.sources_content = ctk.CTkFrame(sources_inner, fg_color="transparent")
+        self.sources_content.pack(fill="x")
+        self.tab_contents["p_sources"] = sources_frame
+
+        # Source sites cache
+        self._source_sites_cache: list[dict] = []
+        self._load_source_sites_bg()
+
+        # ── Fiyatlandirma tab ──
+        pricing_frame = ctk.CTkFrame(self, fg_color=COLORS["bg_card"], corner_radius=0)
+        pricing_inner = ctk.CTkFrame(pricing_frame, fg_color="transparent")
+        pricing_inner.pack(fill="x", padx=16, pady=16)
+        self.pricing_placeholder = ctk.CTkLabel(
+            pricing_inner, text="Henuz pricing verisi yok",
+            font=FONTS["body"], text_color=COLORS["text_muted"])
+        self.pricing_placeholder.pack(anchor="w")
+        self.pricing_content = ctk.CTkFrame(pricing_inner, fg_color="transparent")
+        self.pricing_content.pack(fill="x")
+        self.tab_contents["p_pricing"] = pricing_frame
+
+        # ── Gecmis tab ──
+        history_frame = ctk.CTkFrame(self, fg_color=COLORS["bg_card"], corner_radius=0)
+        history_inner = ctk.CTkFrame(history_frame, fg_color="transparent")
+        history_inner.pack(fill="x", padx=16, pady=16)
+        self.history_placeholder = ctk.CTkLabel(
+            history_inner, text="Henuz pricing verisi yok",
+            font=FONTS["body"], text_color=COLORS["text_muted"])
+        self.history_placeholder.pack(anchor="w")
+        self.history_content = ctk.CTkFrame(history_inner, fg_color="transparent")
+        self.history_content.pack(fill="x")
+        self.tab_contents["p_history"] = history_frame
+
         # Başlangıçta sadece desc tab görünür
         self.tab_contents["specs"].pack_forget()
         self.tab_contents["seo"].pack_forget()
+        self.tab_contents["p_sources"].pack_forget()
+        self.tab_contents["p_pricing"].pack_forget()
+        self.tab_contents["p_history"].pack_forget()
 
         # ═══════════════════════════════════════════════
         # BÖLÜM 7: Aksiyon butonları
@@ -627,7 +760,252 @@ class ProductForm(ctk.CTkScrollableFrame):
         self._auto_slug()
         messagebox.showinfo("Kopyalandi", "Urun kopyalandi. SKU girip kaydedin.")
 
-    # ─── LOAD / CLEAR ───────────────────────────────
+    # ─── SOURCE MANAGEMENT ─────────────────────────────
+
+    def _load_source_sites_bg(self):
+        """Background'da source_sites listesini cekerip dropdown'i doldurur."""
+        def fetch():
+            try:
+                sites = self.sb.get_source_sites()
+                self._source_sites_cache = sites
+                names = [s["name"] for s in sites] if sites else ["Henuz site eklenmemis"]
+                self.after(0, lambda: self._update_site_dropdown(names))
+            except Exception:
+                self.after(0, lambda: self._update_site_dropdown(["Site yuklenemedi"]))
+        threading.Thread(target=fetch, daemon=True).start()
+
+    def _update_site_dropdown(self, names: list[str]):
+        """Site dropdown'ini gunceller."""
+        self.source_site_menu.configure(values=names)
+        if names:
+            self.source_site_var.set(names[0])
+
+    def _add_price_source(self):
+        """Kaynak Ekle butonuna basildiginda price_sources'a insert eder."""
+        if not self.editing_id:
+            messagebox.showwarning("Uyari", "Once bir urun secin veya kaydedin.")
+            return
+
+        site_name = self.source_site_var.get()
+        url = self.source_url_entry.get().strip()
+
+        if not url:
+            messagebox.showwarning("Uyari", "Kaynak URL bos olamaz.")
+            return
+
+        # Site id bul
+        site_id = None
+        for s in self._source_sites_cache:
+            if s["name"] == site_name:
+                site_id = s["id"]
+                break
+
+        if not site_id:
+            messagebox.showerror("Hata", "Gecerli bir kaynak site secin.")
+            return
+
+        self.add_source_btn.configure(state="disabled", text="Ekleniyor...")
+        self.source_status_label.configure(text="")
+
+        def do_insert():
+            try:
+                data = {
+                    "product_id": self.editing_id,
+                    "source_site_id": site_id,
+                    "source_url": url,
+                    "source_sku": self.source_sku_entry.get().strip() or None,
+                    "source_brand": self.source_brand_entry.get().strip() or None,
+                    "source_title": self.source_title_entry.get().strip() or None,
+                }
+                result = self.sb.create_price_source(data)
+                if result:
+                    self.after(0, lambda: self._on_source_added(result))
+                else:
+                    self.after(0, lambda: self._on_source_error("Kayit olusturulamadi"))
+            except Exception as e:
+                self.after(0, lambda: self._on_source_error(str(e)))
+
+        threading.Thread(target=do_insert, daemon=True).start()
+
+    def _on_source_added(self, result: dict):
+        """Kaynak basariyla eklendikten sonra UI guncelle."""
+        self.add_source_btn.configure(state="normal", text="Kaynak Ekle")
+        self.source_status_label.configure(text="Kaynak eklendi!", text_color=COLORS["success"])
+        # Formu temizle
+        self.source_url_entry.delete(0, "end")
+        self.source_sku_entry.delete(0, "end")
+        self.source_brand_entry.delete(0, "end")
+        self.source_title_entry.delete(0, "end")
+        # Pricing verilerini yeniden yukle
+        if self.editing_id:
+            self._load_pricing_data(self.editing_id)
+
+    def _on_source_error(self, error: str):
+        """Kaynak ekleme hatasi."""
+        self.add_source_btn.configure(state="normal", text="Kaynak Ekle")
+        self.source_status_label.configure(text=f"Hata: {error}", text_color=COLORS["danger"])
+
+    def _set_active_source(self, source_id: str):
+        """Bir kaynak icin 'Aktif Kaynak Yap' butonuna basildiginda."""
+        if not self.editing_id:
+            return
+
+        def do_set():
+            try:
+                self.sb.set_product_price_source(self.editing_id, source_id)
+                self.sb.update_price_source_status(source_id, "active")
+                self.after(0, lambda: self._load_pricing_data(self.editing_id))
+            except Exception as e:
+                self.after(0, lambda: messagebox.showerror("Hata", f"Aktif kaynak atanamadi: {e}"))
+
+        threading.Thread(target=do_set, daemon=True).start()
+
+    # ─── PRICING TABS ──────────────────────────────────
+
+    def _load_pricing_data(self, product_id: str):
+        """Pricing snapshot'i background'da cekip tablara basar."""
+        def fetch():
+            try:
+                snap = self.sb.get_product_pricing_snapshot(product_id)
+                self.after(0, lambda: self._render_pricing(snap))
+            except Exception as e:
+                self.after(0, lambda: self._render_pricing_error(str(e)))
+        threading.Thread(target=fetch, daemon=True).start()
+
+    def _render_pricing(self, snap: dict):
+        """Pricing snapshot verilerini 3 sekmeye render eder."""
+        # ── Fiyat Kaynaklari ──
+        self._clear_pricing_tabs()
+        sources = snap.get("sources", [])
+        pp = snap.get("product_pricing", {})
+
+        if sources:
+            self.sources_placeholder.pack_forget()
+            active_src_id = pp.get("price_source_id")
+            for src in sources:
+                row = ctk.CTkFrame(self.sources_content, fg_color="transparent")
+                row.pack(fill="x", pady=(0, 6))
+                site = src.get("source_sites") or {}
+                site_name = site.get("name", "-")
+                status = src.get("status", "-")
+                conf = src.get("confidence_score", 0)
+                last_price = src.get("last_price")
+                last_check = (src.get("last_checked_at") or "")[:16].replace("T", " ")
+                is_active = src.get("id") == active_src_id
+                src_id = src.get("id")
+
+                badge_color = COLORS["success"] if status == "active" else (
+                    COLORS["warning"] if status == "manual_review" else COLORS["text_muted"])
+                prefix = "★ " if is_active else "  "
+
+                info = f"{prefix}{site_name}  |  {status}  |  Guven: {conf}%"
+                if last_price:
+                    info += f"  |  {last_price} TL"
+                if last_check:
+                    info += f"  |  {last_check}"
+
+                ctk.CTkLabel(row, text=info, font=FONTS["small"],
+                             text_color=badge_color, anchor="w").pack(side="left", fill="x", expand=True)
+
+                if not is_active and src_id:
+                    ctk.CTkButton(
+                        row, text="Aktif Yap", width=70, height=24,
+                        font=FONTS["tiny"], fg_color=COLORS["accent"],
+                        hover_color=COLORS["accent_hover"], corner_radius=4,
+                        command=lambda sid=src_id: self._set_active_source(sid)
+                    ).pack(side="right", padx=(4, 0))
+        else:
+            self.sources_placeholder.configure(text="Fiyat kaynagi bulunamadi")
+            self.sources_placeholder.pack(anchor="w")
+
+        # ── Fiyatlandirma ──
+        if pp:
+            self.pricing_placeholder.pack_forget()
+            fields = [
+                ("Satis Fiyati", f"{pp.get('price', '-')} TL"),
+                ("Indirimli Fiyat", f"{pp.get('sale_price', '-')} TL" if pp.get('sale_price') else "-"),
+                ("Maliyet", f"{pp.get('cost_price', '-')} {pp.get('cost_currency', 'TRY')}"),
+                ("Fiyat Kilitli", "Evet" if pp.get("price_locked") else "Hayir"),
+                ("Son Guncelleme", (pp.get("last_price_update") or "-")[:16].replace("T", " ")),
+            ]
+            for label, val in fields:
+                row = ctk.CTkFrame(self.pricing_content, fg_color="transparent")
+                row.pack(fill="x", pady=(0, 4))
+                ctk.CTkLabel(row, text=f"{label}:", font=FONTS["small_bold"],
+                             text_color=COLORS["text_muted"], width=140, anchor="w").pack(side="left")
+                color = COLORS["danger"] if label == "Fiyat Kilitli" and pp.get("price_locked") else COLORS["text_primary"]
+                ctk.CTkLabel(row, text=val, font=FONTS["body"],
+                             text_color=color, anchor="w").pack(side="left")
+        else:
+            self.pricing_placeholder.configure(text="Pricing verisi bulunamadi")
+            self.pricing_placeholder.pack(anchor="w")
+
+        # ── Gecmis ──
+        history = snap.get("history", [])
+        decisions = snap.get("decisions", [])
+        alerts = snap.get("alerts", [])
+
+        if history or decisions or alerts:
+            self.history_placeholder.pack_forget()
+
+            if history:
+                ctk.CTkLabel(self.history_content, text="Fiyat Gecmisi",
+                             font=FONTS["small_bold"], text_color=COLORS["accent_light"]).pack(anchor="w", pady=(0, 4))
+                for h in history[:10]:
+                    dt = (h.get("created_at") or "")[:16].replace("T", " ")
+                    old_p = h.get("old_price", "-")
+                    new_p = h.get("new_price", "-")
+                    ptype = h.get("price_type", "")
+                    txt = f"  {dt}  |  {old_p} → {new_p} TL  |  {ptype}"
+                    ctk.CTkLabel(self.history_content, text=txt, font=FONTS["tiny"],
+                                 text_color=COLORS["text_secondary"], anchor="w").pack(fill="x")
+
+            if decisions:
+                ctk.CTkLabel(self.history_content, text="\nKararlar",
+                             font=FONTS["small_bold"], text_color=COLORS["accent_light"]).pack(anchor="w", pady=(6, 4))
+                for d in decisions[:10]:
+                    dt = (d.get("created_at") or "")[:16].replace("T", " ")
+                    dtype = d.get("decision_type", "")
+                    fprice = d.get("final_price", "-")
+                    updated = "✓" if d.get("price_actually_updated") else "✗"
+                    txt = f"  {dt}  |  {dtype}  |  {fprice} TL  |  {updated}"
+                    ctk.CTkLabel(self.history_content, text=txt, font=FONTS["tiny"],
+                                 text_color=COLORS["text_secondary"], anchor="w").pack(fill="x")
+
+            if alerts:
+                ctk.CTkLabel(self.history_content, text="\nAlarmlar",
+                             font=FONTS["small_bold"], text_color=COLORS["warning"]).pack(anchor="w", pady=(6, 4))
+                for a in alerts[:10]:
+                    dt = (a.get("created_at") or "")[:16].replace("T", " ")
+                    atype = a.get("alert_type", "")
+                    resolved = "Cozuldu" if a.get("resolved_at") else "Aktif"
+                    txt = f"  {dt}  |  {atype}  |  {resolved}"
+                    ctk.CTkLabel(self.history_content, text=txt, font=FONTS["tiny"],
+                                 text_color=COLORS["text_secondary"], anchor="w").pack(fill="x")
+        else:
+            self.history_placeholder.configure(text="Gecmis kaydi bulunamadi")
+            self.history_placeholder.pack(anchor="w")
+
+    def _render_pricing_error(self, error: str):
+        """Pricing snapshot cekiminde hata olursa placeholder goster."""
+        self.sources_placeholder.configure(text=f"Hata: {error}")
+        self.pricing_placeholder.configure(text=f"Hata: {error}")
+        self.history_placeholder.configure(text=f"Hata: {error}")
+
+    def _clear_pricing_tabs(self):
+        """3 pricing sekmesini temizler."""
+        for widget in self.sources_content.winfo_children():
+            widget.destroy()
+        for widget in self.pricing_content.winfo_children():
+            widget.destroy()
+        for widget in self.history_content.winfo_children():
+            widget.destroy()
+        self.sources_placeholder.configure(text="Henuz pricing verisi yok")
+        self.sources_placeholder.pack(anchor="w")
+        self.pricing_placeholder.configure(text="Henuz pricing verisi yok")
+        self.pricing_placeholder.pack(anchor="w")
+        self.history_placeholder.configure(text="Henuz pricing verisi yok")
+        self.history_placeholder.pack(anchor="w")
 
     def load_product(self, product: dict, is_copy: bool = False):
         self.clear_form()
@@ -704,6 +1082,10 @@ class ProductForm(ctk.CTkScrollableFrame):
         self._calc_discount()
         self._update_stock_badge()
 
+        # Pricing verilerini yukle (yeni urun veya kopya degilse)
+        if self.editing_id and not is_copy:
+            self._load_pricing_data(self.editing_id)
+
     def clear_form(self):
         self.editing_id = None
         for entry in [self.name_entry, self.sku_entry, self.price_entry,
@@ -738,6 +1120,13 @@ class ProductForm(ctk.CTkScrollableFrame):
         self._update_seo_count()
         self.discount_label.configure(text="")
         self.stock_badge.configure(text="● Stokta", text_color=COLORS["success"])
+        self._clear_pricing_tabs()
+        # Source form temizle
+        self.source_url_entry.delete(0, "end")
+        self.source_sku_entry.delete(0, "end")
+        self.source_brand_entry.delete(0, "end")
+        self.source_title_entry.delete(0, "end")
+        self.source_status_label.configure(text="")
 
     def refresh_dropdowns(self, categories: list[dict], brands: list[dict]):
         """Kategori ve marka dropdown'larini gunceller."""

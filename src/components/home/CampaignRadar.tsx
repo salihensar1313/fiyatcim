@@ -42,8 +42,8 @@ export default function CampaignRadar() {
           </Link>
         </div>
 
-        <div className="mt-8 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3">
-          {campaigns.map((product) => (
+        <div className="mt-8 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+          {campaigns.slice(0, 4).map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>

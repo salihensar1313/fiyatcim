@@ -19,6 +19,7 @@ from app.invoice_manager import InvoiceManager
 from app.csv_export import CsvExport
 from app.site_guide import SiteGuide
 from app.discount_manager import DiscountManager
+from app.source_matcher import SourceMatcher
 
 
 class MainWindow(ctk.CTkFrame):
@@ -86,7 +87,8 @@ class MainWindow(ctk.CTkFrame):
         nav_groups = [
             [("home", "Ana Sayfa"), ("dashboard", "Ozet")],
             [("products", "Urunler"), ("new_product", "Yeni Urun"),
-             ("discounts", "Indirimler"), ("bulk", "Toplu Islem")],
+             ("discounts", "Indirimler"), ("bulk", "Toplu Islem"),
+             ("source_match", "Kaynak Esleme")],
             [("orders", "Siparisler"), ("invoices", "Faturalar")],
             [("categories", "Kategoriler"), ("brands", "Markalar"),
              ("stock", "Stok"), ("csv", "CSV / Yedek"), ("guide", "Rehber")],
@@ -198,7 +200,8 @@ class MainWindow(ctk.CTkFrame):
         ))
 
         self.discount_mgr = _safe_create("discounts", lambda: DiscountManager(self.content_frame, self.sb))
-        _safe_create("bulk", lambda: BulkOps(self.content_frame, self.sb))
+        self.bulk_ops = _safe_create("bulk", lambda: BulkOps(self.content_frame, self.sb))
+        self.source_matcher = _safe_create("source_match", lambda: SourceMatcher(self.content_frame, self.sb))
         self.order_mgr = _safe_create("orders", lambda: OrderManager(self.content_frame, self.sb))
         self.invoice_mgr = _safe_create("invoices", lambda: InvoiceManager(self.content_frame, self.sb))
 
@@ -239,6 +242,8 @@ class MainWindow(ctk.CTkFrame):
             "brands": "brand_mgr",
             "stock": "stock_mgr",
             "discounts": "discount_mgr",
+            "bulk": "bulk_ops",
+            "source_match": "source_matcher",
             "orders": "order_mgr",
             "invoices": "invoice_mgr",
         }

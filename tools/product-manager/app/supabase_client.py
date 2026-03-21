@@ -4,14 +4,18 @@ import json
 import os
 import base64
 import logging
+import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 from supabase import create_client, Client
+from dotenv import dotenv_values
 
 logger = logging.getLogger("fiyatcim")
 
 CONFIG_PATH = Path(__file__).parent.parent / "config.json"
 CONFIG_EXAMPLE_PATH = Path(__file__).parent.parent / "config.example.json"
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+ROOT_ENV_PATH = PROJECT_ROOT / ".env.local"
 
 
 def load_config() -> dict:
@@ -39,6 +43,8 @@ class SupabaseManager:
         self.anon_key = config["supabase_anon_key"]
         self.client: Client = create_client(self.url, self.anon_key)
         self.user = None
+        self._pricing_service_client: Client | None = None
+        self._pricing_env_cache: dict | None = None
 
     # ─── AUTH ───────────────────────────────────────────
 
@@ -64,6 +70,74 @@ class SupabaseManager:
 
     def get_user_email(self) -> str:
         return self.user.email if self.user else ""
+
+    def get_user_id(self) -> str | None:
+        return self.user.id if self.user else None
+
+    def _load_pricing_env(self) -> dict:
+        if self._pricing_env_cache is not None:
+            return self._pricing_env_cache
+
+        file_env = dotenv_values(ROOT_ENV_PATH) if ROOT_ENV_PATH.exists() else {}
+        merged = {
+            **file_env,
+            **{k: v for k, v in os.environ.items() if v is not None},
+        }
+        self._pricing_env_cache = merged
+        return merged
+
+    def check_pricing_batch_requirements(self) -> dict:
+        """Pricing batch icin gerekli env degiskenlerini kontrol eder.
+
+        Returns:
+            {"ok": bool, "missing": list[str], "env_path": str}
+        """
+        env = self._load_pricing_env()
+        required = ["NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"]
+        missing = [key for key in required if not env.get(key)]
+        return {
+            "ok": len(missing) == 0,
+            "missing": missing,
+            "env_path": str(ROOT_ENV_PATH),
+        }
+
+    def _get_pricing_service_client(self) -> Client:
+        if self._pricing_service_client is not None:
+            return self._pricing_service_client
+
+        env = self._load_pricing_env()
+        url = env.get("NEXT_PUBLIC_SUPABASE_URL") or self.url
+        service_role_key = env.get("SUPABASE_SERVICE_ROLE_KEY")
+        if not service_role_key:
+            raise RuntimeError(
+                f"SUPABASE_SERVICE_ROLE_KEY eksik.\n\n"
+                f"Aranan dosya: {ROOT_ENV_PATH}\n"
+                f"Gerekli env: SUPABASE_SERVICE_ROLE_KEY\n\n"
+                f"Otomatik pricing batch runner service role key gerektirir.\n"
+                f".env.local dosyasina SUPABASE_SERVICE_ROLE_KEY=... satirini ekleyin."
+            )
+
+        self._pricing_service_client = create_client(url, service_role_key)
+        return self._pricing_service_client
+
+    def _normalize_batch_filters(self, filters: dict | None = None) -> dict:
+        source = filters or {}
+        normalized = {
+            "siteId": source.get("siteId"),
+            "status": source.get("status"),
+            "productId": source.get("productId"),
+            "brandId": source.get("brandId"),
+            "categoryId": source.get("categoryId"),
+            "manualReviewRequired": source.get("manualReviewRequired"),
+            "selectedOnly": bool(source.get("selectedOnly", False)),
+            "confidenceMin": source.get("confidenceMin"),
+            "confidenceMax": source.get("confidenceMax"),
+            "checkedBeforeHours": source.get("checkedBeforeHours"),
+        }
+        return {
+            key: value for key, value in normalized.items()
+            if value not in (None, "", [])
+        }
 
     # ─── PRODUCTS ───────────────────────────────────────
 
@@ -370,6 +444,426 @@ class SupabaseManager:
         # Sadece stock <= critical_stock olanlari filtrele
         return [p for p in (res.data or [])
                 if p.get("stock", 0) <= p.get("critical_stock", 5)]
+
+    # ─── PRICING ────────────────────────────────────────
+
+    def get_product_pricing_snapshot(self, product_id: str) -> dict:
+        """Pricing verilerini toplu ceker: sources, history, decisions, alerts."""
+        snapshot = {
+            "sources": [],
+            "history": [],
+            "decisions": [],
+            "alerts": [],
+            "product_pricing": {},
+        }
+        try:
+            # Urun pricing alanlari
+            prod_res = (
+                self.client.table("products")
+                .select("price, sale_price, cost_price, cost_currency, price_locked, price_source_id, last_price_update")
+                .eq("id", product_id)
+                .single()
+                .execute()
+            )
+            snapshot["product_pricing"] = prod_res.data or {}
+        except Exception as e:
+            logger.warning("Pricing product read hatasi: %s", e)
+
+        try:
+            # Fiyat kaynaklari
+            src_res = (
+                self.client.table("price_sources")
+                .select("*, source_sites(name, base_url)")
+                .eq("product_id", product_id)
+                .order("created_at", desc=True)
+                .limit(20)
+                .execute()
+            )
+            snapshot["sources"] = src_res.data or []
+        except Exception as e:
+            logger.warning("Pricing sources read hatasi: %s", e)
+
+        try:
+            # Fiyat gecmisi
+            hist_res = (
+                self.client.table("price_history")
+                .select("*")
+                .eq("product_id", product_id)
+                .order("created_at", desc=True)
+                .limit(30)
+                .execute()
+            )
+            snapshot["history"] = hist_res.data or []
+        except Exception as e:
+            logger.warning("Pricing history read hatasi: %s", e)
+
+        try:
+            # Fiyatlandirma kararlari
+            dec_res = (
+                self.client.table("pricing_decisions")
+                .select("*")
+                .eq("product_id", product_id)
+                .order("created_at", desc=True)
+                .limit(20)
+                .execute()
+            )
+            snapshot["decisions"] = dec_res.data or []
+        except Exception as e:
+            logger.warning("Pricing decisions read hatasi: %s", e)
+
+        try:
+            # Fiyat alarmlari
+            alert_res = (
+                self.client.table("price_alerts")
+                .select("*")
+                .eq("product_id", product_id)
+                .order("created_at", desc=True)
+                .limit(20)
+                .execute()
+            )
+            snapshot["alerts"] = alert_res.data or []
+        except Exception as e:
+            logger.warning("Pricing alerts read hatasi: %s", e)
+
+        return snapshot
+
+    def get_pricing_jobs(self, limit: int = 20) -> list[dict]:
+        """Son pricing job kayitlarini getirir."""
+        client = self._get_pricing_service_client()
+        res = (
+            client.table("pricing_jobs")
+            .select("*")
+            .order("created_at", desc=True)
+            .limit(limit)
+            .execute()
+        )
+        return res.data or []
+
+    def get_pricing_job(self, job_id: str) -> dict | None:
+        """Tek pricing job kaydini getirir."""
+        client = self._get_pricing_service_client()
+        res = (
+            client.table("pricing_jobs")
+            .select("*")
+            .eq("id", job_id)
+            .single()
+            .execute()
+        )
+        return res.data or None
+
+    def start_pricing_batch_job(self, filters: dict | None = None,
+                                job_type: str = "batch_price_update") -> dict:
+        """Pricing batch job olusturur ve node runner'i arka planda baslatir."""
+        client = self._get_pricing_service_client()
+        normalized_filters = self._normalize_batch_filters(filters)
+        dedupe_key = f"{job_type}:{json.dumps(normalized_filters, sort_keys=True, ensure_ascii=False)}"
+
+        existing_res = (
+            client.table("pricing_jobs")
+            .select("*")
+            .eq("type", job_type)
+            .in_("status", ["pending", "running"])
+            .order("created_at", desc=True)
+            .limit(10)
+            .execute()
+        )
+        for job in (existing_res.data or []):
+            metadata = job.get("metadata") or {}
+            if metadata.get("dedupe_key") == dedupe_key:
+                raise RuntimeError(f"Benzer bir batch job zaten calisiyor: {job.get('id')}")
+
+        payload = {
+            "type": job_type,
+            "status": "pending",
+            "total_items": 0,
+            "processed_items": 0,
+            "success_count": 0,
+            "failure_count": 0,
+            "skipped_count": 0,
+            "triggered_by": self.get_user_id(),
+            "filters": normalized_filters,
+            "metadata": {
+                "dedupe_key": dedupe_key,
+                "requested_at": datetime.now(timezone.utc).isoformat(),
+                "requested_via": "desktop_product_manager",
+            },
+        }
+
+        job_res = client.table("pricing_jobs").insert(payload).execute()
+        if not job_res.data:
+            raise RuntimeError("Pricing job olusturulamadi")
+
+        job = job_res.data[0]
+
+        try:
+            self._spawn_pricing_batch_runner(job["id"])
+        except Exception as exc:
+            client.table("pricing_jobs").update({
+                "status": "failed",
+                "finished_at": datetime.now(timezone.utc).isoformat(),
+                "metadata": {
+                    **(job.get("metadata") or {}),
+                    "error_summary": str(exc),
+                },
+            }).eq("id", job["id"]).execute()
+            raise
+
+        try:
+            client.table("audit_logs").insert({
+                "user_id": self.get_user_id(),
+                "action": "pricing.job.start",
+                "entity_type": "pricing_job",
+                "entity_id": job["id"],
+                "old_value": None,
+                "new_value": {
+                    "type": job_type,
+                    "filters": normalized_filters,
+                    "dedupe_key": dedupe_key,
+                },
+            }).execute()
+        except Exception as exc:
+            logger.warning("Pricing job audit log yazilamadi: %s", exc)
+
+        return job
+
+    def _spawn_pricing_batch_runner(self, job_id: str):
+        """Node pricing batch runner'i arka planda baslatir."""
+        env = self._load_pricing_env()
+        script_path = PROJECT_ROOT / "tools" / "pricing" / "cli.mjs"
+        if not script_path.exists():
+            raise RuntimeError(f"Pricing CLI bulunamadi: {script_path}")
+
+        child_env = os.environ.copy()
+        for key, value in env.items():
+            if value is not None:
+                child_env[str(key)] = str(value)
+
+        creationflags = 0
+        if os.name == "nt":
+            creationflags = getattr(subprocess, "DETACHED_PROCESS", 0) | getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
+
+        subprocess.Popen(
+            ["node", str(script_path), "--job-id", job_id],
+            cwd=str(PROJECT_ROOT),
+            env=child_env,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            stdin=subprocess.DEVNULL,
+            creationflags=creationflags,
+            close_fds=True,
+        )
+
+    def get_source_sites(self) -> list[dict]:
+        """Aktif kaynak siteleri listeler."""
+        res = (
+            self.client.table("source_sites")
+            .select("id, name, base_url, is_active")
+            .eq("is_active", True)
+            .order("name")
+            .execute()
+        )
+        return res.data or []
+
+    def get_product_price_sources(self, product_id: str) -> list[dict]:
+        """Bir urune ait tum price_sources kayitlarini getirir."""
+        res = (
+            self.client.table("price_sources")
+            .select("*, source_sites(name, base_url)")
+            .eq("product_id", product_id)
+            .order("created_at", desc=True)
+            .limit(20)
+            .execute()
+        )
+        return res.data or []
+
+    def create_price_source(self, data: dict) -> dict:
+        """Yeni price source olusturur. Default: manual_review, unverified."""
+        payload = {
+            "product_id": data["product_id"],
+            "source_site_id": data["source_site_id"],
+            "source_url": data["source_url"],
+            "source_sku": data.get("source_sku") or None,
+            "source_brand": data.get("source_brand") or None,
+            "source_title": data.get("source_title") or None,
+            "notes": data.get("notes") or None,
+            "status": "manual_review",
+            "match_verified": False,
+            "manual_review_required": True,
+            "confidence_score": 0,
+            "failure_count": 0,
+            "check_interval_hours": 24,
+            "custom_selectors": {},
+        }
+        res = self.client.table("price_sources").insert(payload).execute()
+        return res.data[0] if res.data else {}
+
+    def set_product_price_source(self, product_id: str, source_id: str) -> dict:
+        """Urune aktif fiyat kaynagi atar (products.price_source_id)."""
+        res = (
+            self.client.table("products")
+            .update({"price_source_id": source_id})
+            .eq("id", product_id)
+            .execute()
+        )
+        return res.data[0] if res.data else {}
+
+    def update_price_source_status(self, source_id: str, status: str) -> dict:
+        """Price source status gunceller."""
+        res = (
+            self.client.table("price_sources")
+            .update({"status": status})
+            .eq("id", source_id)
+            .execute()
+        )
+        return res.data[0] if res.data else {}
+
+    # ─── BULK SOURCE HELPERS ─────────────────────────────
+
+    def get_all_source_sites(self) -> list[dict]:
+        """Tum kaynak siteleri listeler (aktif/pasif)."""
+        res = (
+            self.client.table("source_sites")
+            .select("id, name, base_url, is_active")
+            .order("priority")
+            .execute()
+        )
+        return res.data or []
+
+    def find_product_by_sku(self, sku: str) -> dict | None:
+        """SKU ile urun arar. Bulamazsa None doner."""
+        res = (
+            self.client.table("products")
+            .select("id, name, sku, brand_id, brands(name)")
+            .eq("sku", sku)
+            .is_("deleted_at", "null")
+            .limit(1)
+            .execute()
+        )
+        return res.data[0] if res.data else None
+
+    def find_products_by_skus(self, skus: list[str]) -> dict[str, dict]:
+        """Birden fazla SKU ile urun arar. {sku: product} dict doner."""
+        if not skus:
+            return {}
+        result = {}
+        # Supabase in_ filtresi
+        batch_size = 50
+        for i in range(0, len(skus), batch_size):
+            batch = skus[i:i + batch_size]
+            res = (
+                self.client.table("products")
+                .select("id, name, sku, brand_id, price_source_id, brands(name)")
+                .in_("sku", batch)
+                .is_("deleted_at", "null")
+                .execute()
+            )
+            for p in (res.data or []):
+                result[p["sku"]] = p
+        return result
+
+    def get_existing_price_sources(self, product_ids: list[str]) -> set[tuple[str, str]]:
+        """Mevcut (product_id, source_site_id) ciftlerini doner."""
+        if not product_ids:
+            return set()
+        pairs = set()
+        batch_size = 50
+        for i in range(0, len(product_ids), batch_size):
+            batch = product_ids[i:i + batch_size]
+            res = (
+                self.client.table("price_sources")
+                .select("product_id, source_site_id")
+                .in_("product_id", batch)
+                .execute()
+            )
+            for r in (res.data or []):
+                pairs.add((r["product_id"], r["source_site_id"]))
+        return pairs
+
+    def bulk_create_price_sources(self, records: list[dict]) -> list[dict]:
+        """Toplu price_source insert. Her kayit icin default degerler atar."""
+        if not records:
+            return []
+        payloads = []
+        for r in records:
+            payloads.append({
+                "product_id": r["product_id"],
+                "source_site_id": r["source_site_id"],
+                "source_url": r["source_url"],
+                "source_sku": r.get("source_sku") or None,
+                "source_brand": r.get("source_brand") or None,
+                "source_title": r.get("source_title") or None,
+                "notes": r.get("notes") or None,
+                "status": "manual_review",
+                "match_verified": False,
+                "manual_review_required": True,
+                "confidence_score": 0,
+                "failure_count": 0,
+                "check_interval_hours": 24,
+                "custom_selectors": {},
+            })
+        # Supabase batch insert (max ~100 per call)
+        results = []
+        batch_size = 100
+        for i in range(0, len(payloads), batch_size):
+            batch = payloads[i:i + batch_size]
+            res = self.client.table("price_sources").insert(batch).execute()
+            results.extend(res.data or [])
+        return results
+
+    def auto_assign_single_sources(self) -> dict:
+        """Tek kaynagi olan urunlerde otomatik price_source_id atar.
+        Sadece price_source_id NULL olan urunleri etkiler.
+        Returns: {assigned: int, skipped: int}"""
+        # Tek kaynagi olan ve price_source_id bos olan urunleri bul
+        res = self.client.rpc("auto_assign_single_sources", {}).execute()
+        if res.data:
+            return res.data
+        # RPC yoksa manuel yap
+        return self._auto_assign_single_sources_manual()
+
+    def _auto_assign_single_sources_manual(self) -> dict:
+        """RPC olmadan tek kaynakli urunlere aktif kaynak atar."""
+        # price_source_id NULL olan urunleri bul
+        products_res = (
+            self.client.table("products")
+            .select("id")
+            .is_("price_source_id", "null")
+            .is_("deleted_at", "null")
+            .limit(1000)
+            .execute()
+        )
+        products = products_res.data or []
+        if not products:
+            return {"assigned": 0, "skipped": 0}
+
+        product_ids = [p["id"] for p in products]
+        assigned = 0
+        skipped = 0
+
+        # Her urunun kaynak sayisini kontrol et
+        for pid in product_ids:
+            src_res = (
+                self.client.table("price_sources")
+                .select("id")
+                .eq("product_id", pid)
+                .neq("status", "disabled")
+                .neq("status", "invalid_match")
+                .execute()
+            )
+            sources = src_res.data or []
+            if len(sources) == 1:
+                source_id = sources[0]["id"]
+                self.client.table("products").update(
+                    {"price_source_id": source_id}
+                ).eq("id", pid).execute()
+                self.client.table("price_sources").update(
+                    {"status": "active"}
+                ).eq("id", source_id).execute()
+                assigned += 1
+            else:
+                skipped += 1
+
+        return {"assigned": assigned, "skipped": skipped}
 
     # ─── STORAGE (GÖRSELLER) ────────────────────────────
 
