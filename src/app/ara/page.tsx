@@ -2,12 +2,80 @@
 
 import { Suspense, useEffect, useState, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Search, SearchX, TrendingUp } from "lucide-react";
+import { Search, SearchX, TrendingUp, ChevronRight } from "lucide-react";
 import { useProducts } from "@/context/ProductContext";
 import { searchProducts, POPULAR_SEARCHES } from "@/lib/search";
 import { useSearchHistory } from "@/hooks/useSearchHistory";
 import ProductCard from "@/components/product/ProductCard";
 import Link from "next/link";
+
+// ─── Arama sorgusunu kategorilerle eşleştirme ───
+const CATEGORY_SEARCH_MAP: Record<string, { slug: string; name: string; image: string; keywords: string[] }> = {
+  "alarm-sistemleri": {
+    slug: "alarm-sistemleri",
+    name: "Alarm Sistemleri",
+    image: "/images/categories/alarm-sistemleri.svg",
+    keywords: ["alarm", "siren", "keypad", "panel", "hareket sensör", "pir", "manyetik kontak", "kumanda"],
+  },
+  "guvenlik-kameralari": {
+    slug: "guvenlik-kameralari",
+    name: "Güvenlik Kameraları",
+    image: "/images/categories/guvenlik-kameralari.svg",
+    keywords: ["kamera", "camera", "dome", "bullet", "ptz", "nvr", "dvr", "xvr", "ip kamera", "cctv", "kayıt", "güvenlik kamera"],
+  },
+  "akilli-ev-sistemleri": {
+    slug: "akilli-ev-sistemleri",
+    name: "Akıllı Ev Sistemleri",
+    image: "/images/categories/akilli-ev-sistemleri.svg",
+    keywords: ["akıllı ev", "smart home", "hub", "sensör", "doorbell", "kapı zili", "otomasyon", "wifi", "zigbee"],
+  },
+  "akilli-kilit": {
+    slug: "akilli-kilit",
+    name: "Akıllı Kilit",
+    image: "/images/categories/akilli-kilit.svg",
+    keywords: ["kilit", "lock", "akıllı kilit", "smart lock", "parmak izi", "şifreli", "kartlı kilit", "bluetooth kilit"],
+  },
+  "gecis-kontrol-sistemleri": {
+    slug: "gecis-kontrol-sistemleri",
+    name: "Geçiş Kontrol Sistemleri",
+    image: "/images/categories/gecis-kontrol-sistemleri.svg",
+    keywords: ["geçiş kontrol", "kart okuyucu", "turnike", "bariyer", "rfid", "yüz tanıma", "pdks", "access"],
+  },
+  "yangin-algilama": {
+    slug: "yangin-algilama",
+    name: "Yangın Algılama",
+    image: "/images/categories/yangin-algilama.svg",
+    keywords: ["yangın", "duman", "fire", "dedektör", "smoke", "yangın alarm", "yangın panel", "sprinkler", "söndürme"],
+  },
+};
+
+function detectCategory(query: string): (typeof CATEGORY_SEARCH_MAP)[string] | null {
+  const normalized = query
+    .toLowerCase()
+    .replace(/ı/g, "i")
+    .replace(/ö/g, "o")
+    .replace(/ü/g, "u")
+    .replace(/ş/g, "s")
+    .replace(/ç/g, "c")
+    .replace(/ğ/g, "g");
+
+  for (const cat of Object.values(CATEGORY_SEARCH_MAP)) {
+    for (const kw of cat.keywords) {
+      const normalizedKw = kw
+        .toLowerCase()
+        .replace(/ı/g, "i")
+        .replace(/ö/g, "o")
+        .replace(/ü/g, "u")
+        .replace(/ş/g, "s")
+        .replace(/ç/g, "c")
+        .replace(/ğ/g, "g");
+      if (normalized.includes(normalizedKw) || normalizedKw.includes(normalized)) {
+        return cat;
+      }
+    }
+  }
+  return null;
+}
 
 export default function AraPage() {
   return (
@@ -45,6 +113,12 @@ function AraContent() {
     if (!query || query.trim().length < 2) return [];
     return searchProducts(products, query);
   }, [products, query]);
+
+  // Detect matching category for banner
+  const matchedCategory = useMemo(() => {
+    if (!queryParam || queryParam.trim().length < 2) return null;
+    return detectCategory(queryParam.trim());
+  }, [queryParam]);
 
   // Popular products (for empty results)
   const popularProducts = useMemo(() => {
@@ -91,6 +165,51 @@ function AraContent() {
       ) : queryParam.trim().length >= 2 ? (
         results.length > 0 ? (
           <>
+            {/* ─── Kategori Banner ─── */}
+            {matchedCategory && (
+              <Link
+                href={`/kategori/${matchedCategory.slug}`}
+                className="group relative mb-8 block overflow-hidden rounded-2xl"
+              >
+                <div className="relative flex items-center gap-6 bg-dark-900 p-0">
+                  {/* SVG Görsel */}
+                  <div className="hidden w-[280px] flex-shrink-0 sm:block">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={matchedCategory.image}
+                      alt={matchedCategory.name}
+                      className="h-[160px] w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                  {/* Mobilde tam genişlik görsel */}
+                  <div className="absolute inset-0 sm:hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={matchedCategory.image}
+                      alt={matchedCategory.name}
+                      className="h-full w-full object-cover opacity-30"
+                    />
+                  </div>
+                  {/* İçerik */}
+                  <div className="relative z-10 flex-1 px-6 py-6 sm:py-0">
+                    <p className="text-xs font-medium uppercase tracking-wider text-primary-400">
+                      Kategori
+                    </p>
+                    <h2 className="mt-1 text-xl font-bold text-white sm:text-2xl">
+                      {matchedCategory.name}
+                    </h2>
+                    <p className="mt-1 text-sm text-dark-400">
+                      {results.length} ürün bulundu — Tüm kategoriyi keşfedin
+                    </p>
+                    <span className="mt-3 inline-flex items-center gap-1 rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white transition-colors group-hover:bg-primary-700">
+                      Kategoriye Git
+                      <ChevronRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            )}
+
             {/* Results header */}
             <div className="mb-6 flex items-center justify-between">
               <h1 className="text-lg font-bold text-dark-800 dark:text-dark-100">
