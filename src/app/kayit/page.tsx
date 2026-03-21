@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, UserPlus, Mail, ShieldCheck, ArrowLeft, ArrowRight, User, Smartphone } from "lucide-react";
+import { Eye, EyeOff, UserPlus, Mail, ShieldCheck, ArrowLeft, ArrowRight, User, Smartphone, MailCheck } from "lucide-react";
 import SmsOtpVerify from "@/components/ui/SmsOtpVerify";
 import { useAuth } from "@/context/AuthContext";
 import Breadcrumb from "@/components/ui/Breadcrumb";
@@ -17,7 +17,7 @@ const OTP_COOLDOWN_MS = 60 * 1000; // 60 saniye resend cooldown
 const MAX_OTP_ATTEMPTS = 5;
 const LOCK_DURATION_MS = 2 * 60 * 1000; // 2 dakika kilit
 
-type Step = "email" | "otp" | "info" | "sms" | "agreements";
+type Step = "email" | "otp" | "info" | "sms" | "agreements" | "done";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -180,7 +180,8 @@ export default function RegisterPage() {
       setError(result.error);
       setLoading(false);
     } else {
-      router.push("/hesabim");
+      setLoading(false);
+      setStep("done");
     }
   };
 
@@ -434,7 +435,7 @@ export default function RegisterPage() {
                         const raw = e.target.value.replace(/[^0-9]/g, "").slice(0, 10);
                         setTelefon("90" + raw);
                       }}
-                      placeholder="5XX XXX XX XX"
+                      placeholder="05XX XXX XX XX"
                       inputMode="numeric"
                       maxLength={10}
                       className="w-full rounded-r-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
@@ -650,6 +651,51 @@ export default function RegisterPage() {
             </>
           )}
 
+          {/* STEP: E-posta Onay Bekleniyor */}
+          {step === "done" && (() => {
+            const [localPart, domain] = email.split("@");
+            const masked = localPart.length <= 2
+              ? localPart + "***"
+              : localPart.slice(0, 2) + "***";
+            const maskedEmail = `${masked}@${domain}`;
+            return (
+              <>
+                <div className="mb-6 text-center">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+                    <MailCheck size={32} className="text-green-600" />
+                  </div>
+                  <h1 className="text-2xl font-bold text-dark-900 dark:text-dark-50">E-postanizi Kontrol Edin</h1>
+                  <p className="mt-2 text-sm text-dark-500 dark:text-dark-400">
+                    <span className="font-medium text-dark-700 dark:text-dark-200">{maskedEmail}</span> adresine bir dogrulama baglantisi gonderdik.
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="rounded-lg bg-blue-50 dark:bg-blue-900/30 p-4">
+                    <p className="text-sm text-blue-700 dark:text-blue-300">
+                      E-postanızdaki bağlantıya tıklayarak hesabınızı onaylayın. Onay sonrası giriş yapabilirsiniz.
+                    </p>
+                  </div>
+
+                  <div className="rounded-lg bg-dark-50 dark:bg-dark-700 p-4">
+                    <p className="text-xs text-dark-500 dark:text-dark-400">
+                      E-postayı göremiyorsanız spam/gereksiz klasörünü kontrol edin. E-posta birkaç dakika içinde ulaşacaktır.
+                    </p>
+                  </div>
+
+                  <Link
+                    href="/giris"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary-600 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-700"
+                  >
+                    Giriş Sayfasına Git
+                    <ArrowRight size={16} />
+                  </Link>
+                </div>
+              </>
+            );
+          })()}
+
+          {step !== "done" && (
           <div className="mt-6 text-center">
             <p className="text-sm text-dark-500 dark:text-dark-400">
               Zaten hesabınız var mı?{" "}
@@ -658,6 +704,7 @@ export default function RegisterPage() {
               </Link>
             </p>
           </div>
+          )}
         </div>
       </div>
     </div>

@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Mail, Phone, Camera, Trash2, Lock, AlertTriangle, Eye, EyeOff } from "lucide-react";
+import { Mail, Phone, Camera, Trash2, Lock, AlertTriangle, Eye, EyeOff, X, CheckCircle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/components/ui/Toast";
 import SmsOtpVerify from "@/components/ui/SmsOtpVerify";
@@ -67,7 +67,7 @@ export default function AccountPageWrapper() {
 }
 
 function AccountPage() {
-  const { user, profile, updateProfile, changePassword, deleteAccount } = useAuth();
+  const { user, profile, updateProfile, changePassword, updateEmail, deleteAccount } = useAuth();
   const { showToast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -94,6 +94,12 @@ function AccountPage() {
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteText, setDeleteText] = useState("");
+
+  // Email change state
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [emailSuccess, setEmailSuccess] = useState(false);
 
   // Login success toast
   useEffect(() => {
@@ -193,6 +199,28 @@ function AccountPage() {
     } else {
       showToast("Hesabınız silindi.", "success");
       router.push("/");
+    }
+  };
+
+  const handleChangeEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newEmail || !newEmail.includes("@")) {
+      showToast("Geçerli bir e-posta adresi giriniz.", "error");
+      return;
+    }
+    setEmailLoading(true);
+    const result = await updateEmail(newEmail);
+    setEmailLoading(false);
+    if (result.error) {
+      showToast(result.error, "error");
+    } else {
+      if (IS_DEMO) {
+        showToast("E-posta adresiniz başarıyla güncellendi.", "success");
+        setEmailModalOpen(false);
+        setNewEmail("");
+      } else {
+        setEmailSuccess(true);
+      }
     }
   };
 
@@ -379,13 +407,97 @@ function AccountPage() {
                 </div>
               </div>
               <button
-                disabled
-                className="text-sm font-semibold text-primary-600 opacity-50"
-                title="Yakında"
+                onClick={() => { setEmailModalOpen(true); setEmailSuccess(false); setNewEmail(""); }}
+                className="text-sm font-semibold text-primary-600 hover:text-primary-700"
               >
                 Değiştir
               </button>
             </div>
+
+            {/* Email Change Modal */}
+            {emailModalOpen && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+                <div className="relative w-full max-w-md rounded-xl bg-white dark:bg-dark-800 p-6 shadow-xl">
+                  <button
+                    onClick={() => { setEmailModalOpen(false); setEmailSuccess(false); setNewEmail(""); }}
+                    className="absolute right-4 top-4 text-dark-400 hover:text-dark-600 dark:hover:text-dark-200"
+                  >
+                    <X size={20} />
+                  </button>
+
+                  {emailSuccess ? (
+                    <div className="text-center py-4">
+                      <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+                        <CheckCircle size={28} className="text-green-600" />
+                      </div>
+                      <h3 className="text-lg font-bold text-dark-900 dark:text-dark-50 mb-2">
+                        Doğrulama E-postası Gönderildi
+                      </h3>
+                      <p className="text-sm text-dark-500 dark:text-dark-400 mb-2">
+                        <span className="font-medium text-dark-700 dark:text-dark-200">{newEmail}</span> adresine bir doğrulama e-postası gönderdik.
+                      </p>
+                      <p className="text-sm text-dark-500 dark:text-dark-400 mb-6">
+                        E-postanızdaki bağlantıya tıklayarak değişikliği onaylayın. Onaylanana kadar mevcut e-posta adresiniz geçerli olmaya devam edecektir.
+                      </p>
+                      <button
+                        onClick={() => { setEmailModalOpen(false); setEmailSuccess(false); setNewEmail(""); }}
+                        className="rounded-lg bg-primary-600 px-6 py-2.5 text-sm font-bold text-white hover:bg-primary-700"
+                      >
+                        Tamam
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <h3 className="text-lg font-bold text-dark-900 dark:text-dark-50 mb-1">
+                        E-posta Adresini Değiştir
+                      </h3>
+                      <p className="text-sm text-dark-500 dark:text-dark-400 mb-5">
+                        Yeni e-posta adresinize bir doğrulama bağlantısı gönderilecektir.
+                      </p>
+                      <form onSubmit={handleChangeEmail} className="space-y-4">
+                        <div>
+                          <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">
+                            Mevcut E-posta
+                          </label>
+                          <p className="text-sm text-dark-500 dark:text-dark-400 bg-dark-50 dark:bg-dark-700 rounded-lg px-4 py-2.5">
+                            {user.email}
+                          </p>
+                        </div>
+                        <div>
+                          <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">
+                            Yeni E-posta
+                          </label>
+                          <input
+                            type="email"
+                            value={newEmail}
+                            onChange={(e) => setNewEmail(e.target.value)}
+                            placeholder="yeni@eposta.com"
+                            required
+                            className="w-full rounded-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
+                          />
+                        </div>
+                        <div className="flex gap-3 pt-2">
+                          <button
+                            type="submit"
+                            disabled={emailLoading || !newEmail || newEmail === user.email}
+                            className="rounded-lg bg-primary-600 px-6 py-2.5 text-sm font-bold text-white hover:bg-primary-700 disabled:opacity-50"
+                          >
+                            {emailLoading ? "Gönderiliyor..." : "Doğrulama Gönder"}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => { setEmailModalOpen(false); setNewEmail(""); }}
+                            className="rounded-lg border border-dark-200 dark:border-dark-600 px-6 py-2.5 text-sm font-medium text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:hover:bg-dark-700"
+                          >
+                            Vazgeç
+                          </button>
+                        </div>
+                      </form>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Telefon */}
             <div className="flex items-center justify-between rounded-lg border border-dark-100 dark:border-dark-700 px-4 py-3">

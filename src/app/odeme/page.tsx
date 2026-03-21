@@ -320,7 +320,7 @@ export default function CheckoutPage() {
                               const raw = e.target.value.replace(/[^0-9]/g, "").slice(0, 10);
                               setAddress({ ...address, telefon: "90" + raw });
                             }}
-                            placeholder="5XX XXX XX XX"
+                            placeholder="05XX XXX XX XX"
                             inputMode="numeric"
                             maxLength={10}
                             className={`w-full rounded-r-lg border dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400 ${addressAttempted && address.telefon.length < 12 ? "border-red-400" : "border-dark-200 dark:border-dark-600"}`}

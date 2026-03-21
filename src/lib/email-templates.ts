@@ -127,6 +127,55 @@ function trackingLink(): string {
   </p>`;
 }
 
+export function emailVerificationEmail(name: string, verifyUrl: string): string {
+  const safeName = escapeHtml(name);
+  const content = `
+  ${emailHeader("Hesabınızı Onaylayın")}
+  <tr>
+    <td class="email-body" style="padding: 28px 32px;">
+      <p style="margin: 0 0 4px; font-size: 16px; color: #333333; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        Merhaba <strong>${safeName}</strong>,
+      </p>
+      <p style="margin: 0 0 24px; color: #555555; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6;">
+        Fiyatcim.com&rsquo;a hoş geldiniz! Hesabınızı aktifleştirmek için aşağıdaki butona tıklayın.
+      </p>
+
+      <!-- CTA Button -->
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 24px;">
+        <tr>
+          <td align="center">
+            <a href="${verifyUrl}" target="_blank" style="display: inline-block; background-color: #DC2626; color: #ffffff; font-size: 16px; font-weight: 700; text-decoration: none; padding: 14px 40px; border-radius: 8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+              E-postamı Onayla
+            </a>
+          </td>
+        </tr>
+      </table>
+
+      ${infoBox("Bu bağlantı 24 saat geçerlidir. Süre dolduktan sonra yeni bir doğrulama e-postası talep edebilirsiniz.", "#eff6ff", "#bfdbfe", "#1e40af")}
+
+      <p style="margin: 0 0 8px; font-size: 13px; color: #888888; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        Buton çalışmıyorsa aşağıdaki bağlantıyı tarayıcınıza kopyalayın:
+      </p>
+      <p style="margin: 0; font-size: 12px; color: #DC2626; word-break: break-all; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        ${verifyUrl}
+      </p>
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 24px; border-top: 1px solid #eeeeee; padding-top: 16px;">
+        <tr>
+          <td>
+            <p style="margin: 0; font-size: 12px; color: #aaaaaa; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+              Bu e-postayı siz talep etmediyseniz güvenle yok sayabilirsiniz.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  ${emailFooter()}`;
+
+  return emailWrapper(content);
+}
+
 export function orderConfirmationEmail(data: OrderEmailData): string {
   const itemRows = data.items
     .map(

@@ -32,6 +32,7 @@ interface AuthContextType {
   signOut: () => void;
   updateProfile: (data: Partial<Profile>) => void;
   changePassword: (currentPassword: string, newPassword: string) => Promise<{ error?: string }>;
+  updateEmail: (newEmail: string) => Promise<{ error?: string }>;
   deleteAccount: () => Promise<{ error?: string }>;
   adminUpdateUser: (userId: string, data: { ad: string; soyad: string; telefon: string }) => void;
   adminChangePassword: (email: string, newPassword: string) => Promise<{ error?: string }>;
@@ -512,6 +513,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   // ========================================
+  // UPDATE EMAIL (user self-service)
+  // ========================================
+  const updateEmail = useCallback(async (newEmail: string): Promise<{ error?: string }> => {
+    if (!user) return { error: "Giriş yapmanız gerekiyor." };
+    if (!newEmail || !newEmail.includes("@")) return { error: "Geçerli bir e-posta adresi giriniz." };
+
+    if (IS_DEMO_MODE) {
+      // Demo: update email directly
+      const oldEmail = user.email;
+      setUser((prev) => prev ? { ...prev, email: newEmail } : prev);
+      persistDemo({ ...user, email: newEmail }, profile);
+
+      // Sync registered users
+      const users = safeGetJSON<RegisteredUser[]>("fiyatcim_registered_users", []);
+      const arr = Array.isArray(users) ? users : [];
+      const idx = arr.findIndex((u) => u.user_id === user.id || u.email === oldEmail);
+      if (idx >= 0) {
+        arr[idx] = { ...arr[idx], email: newEmail };
+        safeSetJSON("fiyatcim_registered_users", arr);
+      }
+
+      // Update password hash key
+      const hashes = safeGetJSON<Record<string, string>>("fiyatcim_demo_pw_hashes", {});
+      const hashMap = typeof hashes === "object" && hashes ? hashes : {};
+      if (hashMap[oldEmail]) {
+        hashMap[newEmail] = hashMap[oldEmail];
+        delete hashMap[oldEmail];
+        safeSetJSON("fiyatcim_demo_pw_hashes", hashMap);
+      }
+
+      return {};
+    }
+
+    // Non-demo: Supabase Auth — sends verification email to new address
+    const supabase = createClient();
+    const { error } = await supabase.auth.updateUser({ email: newEmail });
+    if (error) return { error: translateAuthError(error.message) };
+    return {};
+  }, [user, profile, persistDemo]);
+
+  // ========================================
   // DELETE ACCOUNT (user self-service)
   // ========================================
   const deleteAccount = useCallback(async (): Promise<{ error?: string }> => {
@@ -589,7 +631,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, profile, isLoading, isAdmin, signIn, signInWithGoogle, signUp, signOut, updateProfile, changePassword, deleteAccount, adminUpdateUser, adminChangePassword }}
+      value={{ user, profile, isLoading, isAdmin, signIn, signInWithGoogle, signUp, signOut, updateProfile, changePassword, updateEmail, deleteAccount, adminUpdateUser, adminChangePassword }}
     >
       {children}
     </AuthContext.Provider>

@@ -247,7 +247,7 @@ export default function AddressesPage() {
                     type="tel"
                     value={form.telefon.slice(2)}
                     onChange={(e) => handlePhoneChange(e.target.value)}
-                    placeholder="5XX XXX XX XX"
+                    placeholder="05XX XXX XX XX"
                     inputMode="numeric"
                     maxLength={10}
                     className="w-full rounded-r-lg border border-dark-200 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 px-4 py-2.5 text-sm focus:border-primary-600 focus:outline-none dark:placeholder:text-dark-400"
