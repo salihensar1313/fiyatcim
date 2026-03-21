@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="400" y2="300" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#16213e"/>
+    </linearGradient>
+    <linearGradient id="cam-body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e2e8f0"/>
+      <stop offset="100%" stop-color="#94a3b8"/>
+    </linearGradient>
+    <radialGradient id="lens-glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="300" rx="12" fill="url(#bg)"/>
+  <!-- Grid -->
+  <g opacity="0.04" stroke="#fff" stroke-width="0.5">
+    <line x1="0" y1="60" x2="400" y2="60"/><line x1="0" y1="120" x2="400" y2="120"/>
+    <line x1="0" y1="180" x2="400" y2="180"/><line x1="0" y1="240" x2="400" y2="240"/>
+    <line x1="80" y1="0" x2="80" y2="300"/><line x1="160" y1="0" x2="160" y2="300"/>
+    <line x1="240" y1="0" x2="240" y2="300"/><line x1="320" y1="0" x2="320" y2="300"/>
+  </g>
+  <!-- Dome Camera (center-left) -->
+  <g transform="translate(140, 60)">
+    <!-- Mount plate -->
+    <rect x="-30" y="-10" width="60" height="8" rx="2" fill="#475569"/>
+    <!-- Dome body -->
+    <ellipse cx="0" cy="30" rx="45" ry="35" fill="url(#cam-body)"/>
+    <ellipse cx="0" cy="28" rx="38" ry="28" fill="#1e293b"/>
+    <!-- Lens -->
+    <circle cx="0" cy="28" r="16" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+    <circle cx="0" cy="28" r="10" fill="#1a1a2e" stroke="#475569" stroke-width="1"/>
+    <circle cx="0" cy="28" r="5" fill="#dc2626" opacity="0.8"/>
+    <circle cx="-3" cy="25" r="2" fill="#fff" opacity="0.4"/>
+    <!-- IR LEDs -->
+    <circle cx="-20" cy="20" r="2" fill="#dc2626" opacity="0.4"/>
+    <circle cx="20" cy="20" r="2" fill="#dc2626" opacity="0.4"/>
+    <circle cx="-15" cy="38" r="2" fill="#dc2626" opacity="0.4"/>
+    <circle cx="15" cy="38" r="2" fill="#dc2626" opacity="0.4"/>
+  </g>
+  <!-- Bullet Camera (right) -->
+  <g transform="translate(290, 85)">
+    <!-- Wall mount arm -->
+    <rect x="-8" y="-40" width="16" height="40" rx="3" fill="#475569"/>
+    <rect x="-12" y="-42" width="24" height="6" rx="2" fill="#64748b"/>
+    <!-- Camera body -->
+    <rect x="-22" y="0" width="70" height="35" rx="6" fill="url(#cam-body)"/>
+    <!-- Lens barrel -->
+    <rect x="48" y="5" width="20" height="25" rx="12" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+    <circle cx="68" cy="17.5" r="10" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+    <circle cx="68" cy="17.5" r="6" fill="#1a1a2e"/>
+    <circle cx="68" cy="17.5" r="3" fill="#dc2626" opacity="0.8"/>
+    <circle cx="66" cy="15" r="1.5" fill="#fff" opacity="0.3"/>
+    <!-- Status LED -->
+    <circle cx="-12" cy="17" r="2" fill="#22c55e">
+      <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  <!-- Field of view lines -->
+  <g stroke="#22d3ee" stroke-width="0.8" opacity="0.15">
+    <line x1="140" y1="90" x2="60" y2="260"/>
+    <line x1="140" y1="90" x2="220" y2="260"/>
+    <line x1="290" y1="120" x2="340" y2="260"/>
+    <line x1="358" y1="102" x2="400" y2="220"/>
+  </g>
+  <!-- Lens glow -->
+  <circle cx="140" cy="88" r="30" fill="url(#lens-glow)">
+    <animate attributeName="r" values="30;35;30" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  <!-- NVR box (bottom left) -->
+  <g transform="translate(60, 200)">
+    <rect x="0" y="0" width="80" height="50" rx="4" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+    <rect x="8" y="8" width="22" height="14" rx="2" fill="#0f172a"/>
+    <rect x="36" y="8" width="22" height="14" rx="2" fill="#0f172a"/>
+    <circle cx="10" cy="38" r="2" fill="#22c55e" opacity="0.8"/>
+    <circle cx="18" cy="38" r="2" fill="#22c55e" opacity="0.5"/>
+    <circle cx="26" cy="38" r="2" fill="#eab308" opacity="0.6"/>
+    <rect x="60" y="12" width="12" height="3" rx="1" fill="#475569"/>
+    <rect x="60" y="18" width="12" height="3" rx="1" fill="#475569"/>
+    <text x="40" y="40" fill="#64748b" font-family="monospace" font-size="7">NVR</text>
+  </g>
+  <!-- Glow -->
+  <ellipse cx="200" cy="280" rx="120" ry="15" fill="#22d3ee" opacity="0.06"/>
+</svg>

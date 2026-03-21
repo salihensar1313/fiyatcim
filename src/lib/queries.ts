@@ -104,6 +104,11 @@ function mapProduct(row: Record<string, unknown>): Product {
     sale_price: row.sale_price != null ? Number(row.sale_price) : null,
     price_usd: Number(row.price_usd) || 0,
     sale_price_usd: row.sale_price_usd != null ? Number(row.sale_price_usd) : null,
+    cost_price: row.cost_price != null ? Number(row.cost_price) : null,
+    cost_currency: (row.cost_currency as string | null) ?? null,
+    price_source_id: (row.price_source_id as string | null) ?? null,
+    price_locked: (row.price_locked as boolean) ?? false,
+    last_price_update: (row.last_price_update as string | null) ?? null,
     stock: (row.stock as number) ?? 0,
     critical_stock: (row.critical_stock as number) ?? 5,
     tax_rate: Number(row.tax_rate) ?? 20,
@@ -486,6 +491,52 @@ export async function getFeaturedProducts(limit = 8, client?: SupabaseClient): P
   return result;
 }
 
+/**
+ * Rastgele ürünler — Ana sayfada "Keşfet" bölümü
+ * Her sayfa yenilemesinde farklı ürünler gösterir
+ */
+export async function getRandomProducts(limit = 12, client?: SupabaseClient): Promise<Product[]> {
+  const start = performance.now();
+
+  if (IS_DEMO) {
+    const active = seedProducts.filter((p) => p.is_active && !p.deleted_at && p.stock > 0);
+    // Fisher-Yates shuffle
+    const shuffled = [...active];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    const result = shuffled.slice(0, limit).map(enrichSeedProduct);
+    logger.info("query_ok", { fn: "getRandomProducts", demo: true, rows: result.length, ms: performance.now() - start });
+    return result;
+  }
+
+  const supabase = getSupabase(client);
+
+  // Supabase doesn't have RANDOM(), so fetch more and shuffle client-side
+  const { data, error } = await supabase
+    .from("products")
+    .select("*, category:categories(*), brand:brands(*)")
+    .eq("is_active", true)
+    .is("deleted_at", null)
+    .gt("stock", 0)
+    .limit(limit * 3); // fetch more for better randomness
+
+  if (error || !data || data.length === 0) {
+    logger.warn("query_fail", { fn: "getRandomProducts", error: error?.message });
+    const active = seedProducts.filter((p) => p.is_active && !p.deleted_at && p.stock > 0);
+    const shuffled = [...active].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, limit).map(enrichSeedProduct);
+  }
+
+  // Shuffle and take limit
+  const all = data.map((row) => mapProduct(row as Record<string, unknown>));
+  const shuffled = [...all].sort(() => Math.random() - 0.5);
+  const result = shuffled.slice(0, limit);
+  logger.info("query_ok", { fn: "getRandomProducts", rows: result.length, ms: performance.now() - start });
+  return result;
+}
+
 export async function getTrendingProducts(limit = 8, client?: SupabaseClient): Promise<Product[]> {
   const start = performance.now();
 
@@ -860,7 +911,7 @@ export async function addReviewToDB(
       rating: review.rating,
       comment: review.comment,
       images: review.images ?? [],
-      is_approved: false,
+      is_approved: true,
     })
     .select()
     .single();
