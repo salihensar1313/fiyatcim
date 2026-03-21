@@ -16,6 +16,8 @@
   html {
     scroll-behavior: smooth;
     -webkit-tap-highlight-color: transparent;
+    min-height: 100%;
+    overflow-x: hidden;
   }
 
   /* Respect reduced motion preference */
@@ -32,6 +34,9 @@
 
   body {
     @apply bg-white text-dark-900 antialiased dark:bg-dark-900 dark:text-dark-100;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   /* Global focus-visible for keyboard navigation */

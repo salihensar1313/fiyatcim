@@ -3,6 +3,7 @@
 import { useEffect, useCallback, useState } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 interface ImageLightboxProps {
   images: string[];
@@ -12,6 +13,7 @@ interface ImageLightboxProps {
 
 export default function ImageLightbox({ images, initialIndex = 0, onClose }: ImageLightboxProps) {
   const [index, setIndex] = useState(initialIndex);
+  useScrollLock(true);
 
   const goNext = useCallback(() => {
     setIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
@@ -31,14 +33,6 @@ export default function ImageLightbox({ images, initialIndex = 0, onClose }: Ima
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
   }, [onClose, goNext, goPrev]);
-
-  // Lock body scroll
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, []);
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90">

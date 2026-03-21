@@ -220,14 +220,15 @@ export function buildLocalBusinessSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "Store",
-    name: "Fiyatcim.com",
+    name: "Fiyatcim",
     url: "https://www.fiyatcim.com",
     logo: "https://www.fiyatcim.com/images/logo.png",
     image: "https://www.fiyatcim.com/images/logo.png",
     description: "Uzman onaylı elektronik ürünler ve güvenilir alışveriş deneyimi.",
     address: {
       "@type": "PostalAddress",
-      addressLocality: "İstanbul",
+      addressLocality: "Adapazarı",
+      addressRegion: "Sakarya",
       addressCountry: "TR",
     },
     priceRange: "$$",

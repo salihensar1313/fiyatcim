@@ -1,23 +1,43 @@
 "use client";
 
 import { useState } from "react";
-import { X } from "lucide-react";
+import { X, DollarSign } from "lucide-react";
 import { useSettings } from "@/hooks/useSettings";
+import { useCurrency } from "@/context/CurrencyContext";
 
 export default function AnnouncementBar() {
   const [isVisible, setIsVisible] = useState(true);
   const settings = useSettings();
+  const { usdTry, isLoading } = useCurrency();
 
   if (!isVisible) return null;
 
   const threshold = settings.freeShippingThreshold.toLocaleString("tr-TR");
+  const formattedRate = usdTry.toFixed(2).replace(".", ",");
 
   return (
     <div className="relative bg-primary-600 px-4 py-2 text-center text-sm text-white">
-      <div className="container-custom flex items-center justify-center gap-2">
+      <div className="container-custom flex items-center justify-center gap-2 sm:gap-3">
+        {/* Dolar Kuru */}
+        <span className="hidden items-center gap-1 rounded-full bg-white/15 px-2.5 py-0.5 text-xs font-semibold sm:inline-flex">
+          <DollarSign size={13} className="text-green-300" />
+          <span className="text-green-200">USD/TRY:</span>{" "}
+          {isLoading ? "..." : formattedRate}
+        </span>
+
+        {/* Separator - desktop */}
+        <span className="hidden text-white/40 sm:inline">|</span>
+
+        {/* Ana mesaj */}
         <span>
-          <strong>Ucretsiz Kargo:</strong> {threshold}&#8378; Uzeri Alisverislerde |{" "}
+          <strong>Ücretsiz Kargo:</strong> {threshold}&#8378;+ Üzeri |{" "}
           <strong>7/24</strong> Teknik Destek
+        </span>
+
+        {/* Dolar Kuru - mobile compact */}
+        <span className="inline-flex items-center gap-1 text-xs font-medium text-green-200 sm:hidden">
+          <DollarSign size={12} />
+          {isLoading ? "..." : formattedRate}₺
         </span>
       </div>
       <button

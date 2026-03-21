@@ -4,10 +4,31 @@ import { Target, Eye, CheckCircle, Shield, Lightbulb, MapPin, Phone } from "luci
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { SITE_FULL_NAME, SITE_URL } from "@/lib/constants";
 
+export const revalidate = 86400; // 1 gün
+
 export const metadata: Metadata = {
   title: "Hakkımızda",
   description: "Fiyatcim.com hakkında bilgi edinin. Uzman onaylı elektronik ürünler ve güvenilir alışveriş deneyimi.",
   alternates: { canonical: `${SITE_URL}/hakkimizda` },
+  openGraph: {
+    title: "Hakkımızda",
+    description: "Fiyatcim.com hakkında bilgi edinin. Uzman onaylı elektronik ürünler ve güvenilir alışveriş deneyimi.",
+    url: `${SITE_URL}/hakkimizda`,
+    type: "website",
+    images: [
+      {
+        url: "/images/og-default.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Hakkımızda",
+    description: "Fiyatcim.com hakkında bilgi edinin. Uzman onaylı elektronik ürünler ve güvenilir alışveriş deneyimi.",
+    images: ["/images/og-default.png"],
+  },
 };
 
 export default function AboutPage() {
@@ -32,7 +53,7 @@ export default function AboutPage() {
         {/* Stats */}
         <div className="mb-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[
-            { value: "130+", label: "Aktif güvenlik ürünü" },
+            { value: "25+", label: "Aktif güvenlik ürünü" },
             { value: "6", label: "Ürün kategorisi" },
             { value: "%100", label: "Şeffaflık + güven odaklı yaklaşım" },
           ].map((stat) => (

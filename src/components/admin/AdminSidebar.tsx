@@ -17,6 +17,7 @@ import {
   Warehouse,
   BarChart3,
   Activity,
+  BadgeDollarSign,
 } from "lucide-react";
 import { SITE_NAME } from "@/lib/constants";
 
@@ -30,6 +31,7 @@ const menuItems = [
   { label: "Müşteriler", href: "/admin/musteriler", icon: Users },
   { label: "İçerik", href: "/admin/icerik", icon: FileText },
   { label: "Raporlar", href: "/admin/raporlar", icon: BarChart3 },
+  { label: "Fiyatlandırma", href: "/admin/fiyatlandirma", icon: BadgeDollarSign },
   { label: "Aktivite", href: "/admin/aktivite", icon: Activity },
   { label: "SEO", href: "/admin/seo", icon: Globe },
   { label: "Ayarlar", href: "/admin/ayarlar", icon: Settings },

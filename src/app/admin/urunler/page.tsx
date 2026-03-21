@@ -5,11 +5,16 @@ import { Plus, Search, Edit, Trash2, Eye, Download, CheckSquare, Square } from "
 import Link from "next/link";
 import { getCategories, getBrands } from "@/lib/queries";
 import type { Category, Brand, Product } from "@/types";
+import type { PriceSourceWithRelations } from "@/lib/pricing/queries";
 import { formatPrice, formatUSD, getStockStatus } from "@/lib/utils";
 import Badge from "@/components/ui/Badge";
 import { useProducts } from "@/context/ProductContext";
 import { useActivityLog } from "@/context/ActivityLogContext";
 import { useToast } from "@/components/ui/Toast";
+import {
+  PricingConfidenceBadge,
+  PricingSourceStatusBadge,
+} from "@/components/admin/pricing/PricingBadges";
 import dynamic from "next/dynamic";
 const ProductFormModal = dynamic(() => import("@/components/admin/ProductFormModal"), { ssr: false });
 const ConfirmModal = dynamic(() => import("@/components/ui/ConfirmModal"), { ssr: false });
@@ -20,11 +25,29 @@ export default function AdminProductsPage() {
   const { addLog } = useActivityLog();
   const [categories, setCategories] = useState<Category[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [pricingSources, setPricingSources] = useState<Record<string, PriceSourceWithRelations>>({});
 
   useEffect(() => {
     getCategories().then(setCategories).catch(console.error);
     getBrands().then(setBrands).catch(console.error);
   }, []);
+
+  useEffect(() => {
+    fetch("/api/pricing/sources?selectedOnly=true")
+      .then(async (response) => {
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload?.error ?? "Kaynak verileri alınamadı");
+        return payload.data as PriceSourceWithRelations[];
+      })
+      .then((rows) => {
+        const next = rows.reduce<Record<string, PriceSourceWithRelations>>((acc, row) => {
+          acc[row.product_id] = row;
+          return acc;
+        }, {});
+        setPricingSources(next);
+      })
+      .catch(() => setPricingSources({}));
+  }, [products.length]);
   const { showToast } = useToast();
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
@@ -257,6 +280,10 @@ export default function AdminProductsPage() {
                 <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Kategori</th>
                 <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Marka</th>
                 <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Fiyat</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Kaynak Maliyet</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Confidence</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Kaynak Status</th>
+                <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Price Locked</th>
                 <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Stok</th>
                 <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">Durum</th>
                 <th className="px-4 py-3 font-semibold text-dark-700 dark:text-dark-200">İşlemler</th>
@@ -267,6 +294,7 @@ export default function AdminProductsPage() {
                 const cat = categories.find((c) => c.id === product.category_id);
                 const brand = brands.find((b) => b.id === product.brand_id);
                 const stock = getStockStatus(product.stock, product.critical_stock);
+                const pricingSource = pricingSources[product.id];
 
                 return (
                   <tr key={product.id} className="hover:bg-dark-50/50 dark:hover:bg-dark-700/50">
@@ -290,6 +318,43 @@ export default function AdminProductsPage() {
                           {formatPrice(product.sale_price || product.price)}
                         </span>
                       </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="text-sm text-dark-700 dark:text-dark-200">
+                        {product.cost_price != null ? formatPrice(product.cost_price) : "—"}
+                      </div>
+                      <div className="text-xs text-dark-500 dark:text-dark-400">
+                        {product.cost_currency ?? pricingSource?.last_price_currency ?? "—"}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      {pricingSource ? (
+                        <div className="space-y-1">
+                          <PricingConfidenceBadge score={pricingSource.confidence_score} />
+                          <div className="text-xs text-dark-500 dark:text-dark-400">
+                            {pricingSource.source_site?.name ?? "Kaynak yok"}
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-dark-500 dark:text-dark-400">—</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {pricingSource ? (
+                        <div className="space-y-1">
+                          <PricingSourceStatusBadge status={pricingSource.status} />
+                          <div className="text-xs text-dark-500 dark:text-dark-400">
+                            {pricingSource.last_checked_at
+                              ? new Date(pricingSource.last_checked_at).toLocaleDateString("tr-TR")
+                              : "Henüz kontrol edilmedi"}
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-dark-500 dark:text-dark-400">Kaynak yok</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {product.price_locked ? <Badge variant="red">Kilitli</Badge> : <Badge variant="green">Açık</Badge>}
                     </td>
                     <td className="px-4 py-3">
                       <span className={`text-sm font-medium ${stock.color}`}>

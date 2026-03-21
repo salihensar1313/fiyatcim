@@ -6,6 +6,7 @@ import Image from "next/image";
 import { X, ExternalLink, Phone, Mail, Send } from "lucide-react";
 import { CONTACT } from "@/lib/constants";
 import { safeGetJSON, safeSetJSON } from "@/lib/safe-storage";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 /* ─────────────────────────────────────────────
    Types
@@ -773,6 +774,7 @@ export default function ChatBot() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  useScrollLock(isOpen && typeof window !== "undefined" && window.innerWidth < 640);
 
   /* ─── Load angry state from localStorage ─── */
   useEffect(() => {
@@ -822,14 +824,6 @@ export default function ChatBot() {
       clearInterval(interval);
       if (nudgeTimeout) clearTimeout(nudgeTimeout);
     };
-  }, [isOpen]);
-
-  /* ─── Body scroll lock when open on mobile ─── */
-  useEffect(() => {
-    if (isOpen && window.innerWidth < 640) {
-      document.body.style.overflow = "hidden";
-      return () => { document.body.style.overflow = ""; };
-    }
   }, [isOpen]);
 
   /* ─── Cleanup ─── */
@@ -997,7 +991,7 @@ export default function ChatBot() {
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      className={dragPos ? "fixed z-[55]" : "fixed bottom-20 right-1 z-[55] sm:bottom-6 sm:right-4 lg:bottom-8 lg:right-6"}
+      className={dragPos ? "fixed z-[55]" : "fixed bottom-20 right-1 z-[55] hidden sm:block sm:bottom-6 sm:right-4 lg:bottom-8 lg:right-6"}
       style={dragPos ? { left: dragPos.x, top: dragPos.y, right: "auto", bottom: "auto" } : undefined}
     >
       {/* ─── Chat Panel ─── */}

@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, useMemo, ReactNode } from "react";
 import type { Product } from "@/types";
 import { getAllActiveProducts } from "@/lib/queries";
 import { createProduct as apiCreateProduct, updateProduct as apiUpdateProduct, softDeleteProduct as apiSoftDeleteProduct } from "@/lib/mutations";
@@ -114,10 +114,12 @@ export function ProductProvider({ children }: { children: ReactNode }) {
     [products]
   );
 
+  const value = useMemo(() => ({
+    products, loading, addProduct, updateProduct, deleteProduct, getProductById, getProductBySlug, refreshProducts,
+  }), [products, loading, addProduct, updateProduct, deleteProduct, getProductById, getProductBySlug, refreshProducts]);
+
   return (
-    <ProductContext.Provider
-      value={{ products, loading, addProduct, updateProduct, deleteProduct, getProductById, getProductBySlug, refreshProducts }}
-    >
+    <ProductContext.Provider value={value}>
       {children}
     </ProductContext.Provider>
   );

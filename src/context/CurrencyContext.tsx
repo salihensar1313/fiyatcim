@@ -117,7 +117,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
     }, REFRESH_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [fetchRate]);
+  }, [fetchRate, state.lastUpdated]);
 
   // \u00c7evirme fonksiyonlar\u0131
   const usdToTry = useCallback(

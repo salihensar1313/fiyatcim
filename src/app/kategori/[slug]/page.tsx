@@ -4,6 +4,8 @@ import { SITE_NAME, SITE_URL } from "@/lib/constants";
 import JsonLd, { buildBreadcrumbSchema } from "@/components/seo/JsonLd";
 import CategoryClient from "./CategoryClient";
 
+export const revalidate = 300; // 5 dakika
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const categories = await getCategories();
@@ -24,6 +26,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description,
       url: `${SITE_URL}/kategori/${category.slug}`,
       type: "website",
+      images: [
+        {
+          url: "/images/og-default.png",
+          width: 1200,
+          height: 630,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: category.name,
+      description,
+      images: ["/images/og-default.png"],
     },
     alternates: {
       canonical: `${SITE_URL}/kategori/${category.slug}`,

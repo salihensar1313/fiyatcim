@@ -2,15 +2,37 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Calendar, ArrowRight } from "lucide-react";
 import { getBlogPosts } from "@/lib/queries";
+import { SITE_URL } from "@/lib/constants";
+import { formatDate } from "@/lib/utils";
+import Breadcrumb from "@/components/ui/Breadcrumb";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+
+export const revalidate = 3600; // 1 saat
 
 export const metadata: Metadata = {
   title: "Blog — Güvenlik Sistemleri Rehberi",
   description: "Alarm sistemleri, güvenlik kameraları ve akıllı ev teknolojileri hakkında uzman rehberler, ipuçları ve güncel haberler.",
   alternates: { canonical: "/blog" },
+  openGraph: {
+    title: "Blog — Güvenlik Sistemleri Rehberi",
+    description: "Alarm sistemleri, güvenlik kameraları ve akıllı ev teknolojileri hakkında uzman rehberler, ipuçları ve güncel haberler.",
+    url: `${SITE_URL}/blog`,
+    type: "website",
+    images: [
+      {
+        url: "/images/og-default.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Blog — Güvenlik Sistemleri Rehberi",
+    description: "Alarm sistemleri, güvenlik kameraları ve akıllı ev teknolojileri hakkında uzman rehberler, ipuçları ve güncel haberler.",
+    images: ["/images/og-default.png"],
+  },
 };
-import { formatDate } from "@/lib/utils";
-import Breadcrumb from "@/components/ui/Breadcrumb";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 

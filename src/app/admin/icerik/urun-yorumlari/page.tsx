@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/Toast";
 import { useActivityLog } from "@/context/ActivityLogContext";
 import { formatDate } from "@/lib/utils";
 import type { Review } from "@/types";
+import Image from "next/image";
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
@@ -183,7 +184,7 @@ export default function AdminProductReviewsPage() {
                     <div className="mt-2 flex gap-2">
                       {review.images.map((img, idx) => (
                         <div key={idx} className="h-12 w-12 overflow-hidden rounded border border-dark-200">
-                          <img src={img} alt="" className="h-full w-full object-cover" />
+                          <Image src={img} alt="" width={48} height={48} className="h-full w-full object-cover" />
                         </div>
                       ))}
                     </div>

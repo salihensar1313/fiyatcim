@@ -5,9 +5,11 @@ import type { Metadata } from "next";
 import { getBlogPostBySlug } from "@/lib/queries";
 import { formatDate } from "@/lib/utils";
 import Breadcrumb from "@/components/ui/Breadcrumb";
-import { SITE_NAME } from "@/lib/constants";
+import { SITE_NAME, SITE_URL } from "@/lib/constants";
 import JsonLd, { buildArticleSchema, buildBreadcrumbSchema } from "@/components/seo/JsonLd";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+
+export const revalidate = 3600; // 1 saat
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
@@ -23,6 +25,25 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${post.title} | ${SITE_NAME}`,
     description: post.excerpt || post.title,
+    openGraph: {
+      title: post.title,
+      description: post.excerpt || post.title,
+      url: `${SITE_URL}/blog/${post.slug}`,
+      type: "article",
+      images: [
+        {
+          url: "/images/og-default.png",
+          width: 1200,
+          height: 630,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt || post.title,
+      images: ["/images/og-default.png"],
+    },
   };
 }
 

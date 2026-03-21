@@ -126,7 +126,7 @@ export function searchProducts(products: Product[], query: string): SearchResult
 export function getGroupedSuggestions(
   products: Product[],
   query: string,
-  maxProducts = 4,
+  maxProducts = 6,
   maxCategories = 2,
   maxBrands = 2
 ): GroupedSuggestions {
@@ -169,15 +169,26 @@ export function getGroupedSuggestions(
   };
 }
 
-/** Highlight matching text with <mark> tags */
-export function highlightText(text: string, query: string): string {
-  if (!query.trim()) return text;
+/** Escape HTML to prevent XSS */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
+}
 
+/** Highlight matching text with <mark> tags (XSS-safe) */
+export function highlightText(text: string, query: string): string {
+  if (!query.trim()) return escapeHtml(text);
+
+  // Escape HTML first, then apply highlights
+  const safe = escapeHtml(text);
   const queryTokens = tokenize(query);
-  let result = text;
+  let result = safe;
 
   for (const token of queryTokens) {
-    // Case-insensitive, Turkish-aware highlight
     const regex = new RegExp(
       `(${token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
       "gi"

@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { getProductBySlug } from "@/lib/queries";
 
 export const revalidate = 60; // Revalidate every 60 seconds
-import { SITE_NAME, SITE_URL, CATEGORY_IMAGES, CATEGORY_IMAGES_BY_SLUG } from "@/lib/constants";
+import { SITE_NAME, SITE_URL } from "@/lib/constants";
 import JsonLd, { buildProductSchema, buildBreadcrumbSchema } from "@/components/seo/JsonLd";
+import { getProductPrimaryImage } from "@/lib/product-images";
 import ProductDetailClient from "./ProductDetailClient";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -17,9 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const title = product.seo_title || `${product.name} | ${SITE_NAME}`;
   const description = product.seo_desc || product.short_desc || `${product.name} - En uygun fiyatlarla Fiyatcim.com'da`;
 
-  const productImage = CATEGORY_IMAGES[product.category_id]
-    || (product.category ? CATEGORY_IMAGES_BY_SLUG[product.category.slug] : null)
-    || "/images/categories/alarm.png";
+  const productImage = getProductPrimaryImage(product);
 
   return {
     title,
@@ -58,11 +57,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const product = await getProductBySlug(slug);
 
   const category = product?.category;
-  const productImage = product
-    ? CATEGORY_IMAGES[product.category_id] ||
-      (category ? CATEGORY_IMAGES_BY_SLUG[category.slug] : null) ||
-      "/images/categories/alarm.png"
-    : "";
+  const productImage = product ? getProductPrimaryImage(product) : "";
 
   return (
     <>
@@ -77,7 +72,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             salePrice: product.sale_price,
             stock: product.stock,
             brand: product.brand?.name || "Fiyatcim",
-            imageUrl: `${SITE_URL}${productImage}`,
+            imageUrl: productImage.startsWith("http") ? productImage : `${SITE_URL}${productImage}`,
           })} />
           <JsonLd data={buildBreadcrumbSchema([
             { name: "Ürünler", href: "/urunler" },
