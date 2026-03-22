@@ -58,13 +58,54 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCouponCode(typeof data.couponCode === "string" ? data.couponCode : null);
     setDiscount(0);
     setLoadedKey(storageKey);
-  }, [storageKey]);
+
+    // Supabase'den sepet sync (giris yapmis kullanicilar)
+    if (user?.id) {
+      import("@/lib/supabase/client").then(({ createClient }) => {
+        const supabase = createClient();
+        supabase.from("user_carts").select("items").eq("user_id", user.id).single()
+          .then(({ data: cartData }) => {
+            if (!cartData?.items || !Array.isArray(cartData.items) || cartData.items.length === 0) return;
+            // Fetch product details
+            const pids = (cartData.items as { product_id: string; qty: number }[]).map(i => i.product_id);
+            supabase.from("products").select("*").in("id", pids).then(({ data: products }) => {
+              if (!products) return;
+              const pMap = new Map(products.map(p => [p.id, p]));
+              const serverItems: CartItem[] = [];
+              for (const ci of cartData.items as { product_id: string; qty: number }[]) {
+                const p = pMap.get(ci.product_id);
+                if (p) serverItems.push({ product_id: ci.product_id, qty: ci.qty, product: p });
+              }
+              // Merge: local + server (local wins for duplicates)
+              setItems((prev) => {
+                const merged = new Map<string, CartItem>();
+                for (const si of serverItems) merged.set(si.product_id, si);
+                for (const li of prev) merged.set(li.product_id, li);
+                return Array.from(merged.values());
+              });
+            });
+          });
+      }).catch(() => {});
+    }
+  }, [storageKey, user?.id]);
 
   // localStorage'a kaydet — safeSetJSON ile (GATE 3)
   useEffect(() => {
     if (!isLoaded) return;
     safeSetJSON(storageKey, { items, couponCode });
-  }, [items, couponCode, isLoaded, storageKey]);
+
+    // Supabase sync (giris yapmis kullanicilar icin)
+    if (user?.id) {
+      const cartData = items.map((i) => ({ product_id: i.product_id, qty: i.qty }));
+      import("@/lib/supabase/client").then(({ createClient }) => {
+        const supabase = createClient();
+        supabase.from("user_carts").upsert(
+          { user_id: user.id, items: cartData, updated_at: new Date().toISOString() },
+          { onConflict: "user_id" }
+        ).then(() => {}).catch(() => {});
+      }).catch(() => {});
+    }
+  }, [items, couponCode, isLoaded, storageKey, user?.id]);
 
   // Cross-tab sync via storage event
   useEffect(() => {
