@@ -69,8 +69,8 @@ class App(ctk.CTk):
         while w:
             # CTkScrollableFrame icindeki _parent_canvas'i hedefle
             if hasattr(w, '_parent_canvas'):
-                # 3 birim kaydır (varsayılan 1 çok yavaş)
-                w._parent_canvas.yview_scroll(-3 * (event.delta // 120), "units")
+                # 6 birim kaydır
+                w._parent_canvas.yview_scroll(-6 * (event.delta // 120), "units")
                 return
             try:
                 w = w.master
