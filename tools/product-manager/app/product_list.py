@@ -1,6 +1,7 @@
 """Ürün listesi: tablo, arama, filtre, sıralama, inline edit, kopyalama."""
 
 import customtkinter as ctk
+import threading
 from tkinter import ttk, messagebox
 
 from app.theme import COLORS, FONTS, SPACING, TREEVIEW_STYLE, TREEVIEW_HEADING_STYLE, TREEVIEW_MAP, DROPDOWN_COLORS, apply_dark_scrollbar, bind_treeview_scroll
@@ -22,6 +23,7 @@ class ProductList(ctk.CTkFrame):
         self.products: list[dict] = []
         self.selected_ids: set[str] = set()
         self._inline_entry = None
+        self._search_timer = None
 
         self.configure(fg_color="transparent")
         self._build_ui()
@@ -68,7 +70,7 @@ class ProductList(ctk.CTkFrame):
             border_color=COLORS["border"]
         )
         self.search_entry.pack(side="left", padx=(0, 8))
-        self.search_entry.bind("<KeyRelease>", lambda e: self._filter())
+        self.search_entry.bind("<KeyRelease>", self._on_search_key)
 
         # Kategori filtresi
         cat_names = ["Tumu"] + [c["name"] for c in self.categories]
@@ -177,6 +179,11 @@ class ProductList(ctk.CTkFrame):
         self.tree.tag_configure("critical", foreground=COLORS["danger"])
         self.tree.tag_configure("discount", foreground=COLORS["success"])
 
+    def _on_search_key(self, event=None):
+        if self._search_timer:
+            self.after_cancel(self._search_timer)
+        self._search_timer = self.after(300, self._filter)
+
     def _set_quick_filter(self, label: str, color: str):
         self.quick_filter_var.set(label)
         for lbl, (btn, c) in self.quick_btns.items():
@@ -187,12 +194,27 @@ class ProductList(ctk.CTkFrame):
         self._filter()
 
     def refresh(self):
-        """DB'den ürünleri yeniden çeker."""
-        try:
-            self.products = self.sb.get_products()
-            self._filter()
-        except Exception as e:
-            messagebox.showerror("Hata", f"Urunler yuklenemedi: {e}")
+        """DB'den ürünleri yeniden çeker (background thread)."""
+        self._set_loading(True)
+
+        def _worker():
+            try:
+                data = self.sb.get_products()
+            except Exception:
+                data = []
+            self.after(0, lambda: self._on_refresh_done(data))
+
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _set_loading(self, loading):
+        if loading:
+            self.tree.delete(*self.tree.get_children())
+            self.tree.insert("", "end", values=("Yukleniyor...", "", "", "", "", "", ""))
+            self.count_label.configure(text="Yukleniyor...")
+
+    def _on_refresh_done(self, data):
+        self.products = data
+        self._filter()
 
     def _filter(self):
         search = self.search_entry.get().strip().lower()

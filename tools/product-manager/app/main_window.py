@@ -33,16 +33,19 @@ class MainWindow(ctk.CTkFrame):
         self.categories: list[dict] = []
         self.brands: list[dict] = []
         self.pages: dict[str, ctk.CTkFrame] = {}
+        self._page_factories: dict[str, tuple] = {}
         self.current_page = None
         self.nav_buttons: dict[str, ctk.CTkButton] = {}
         self._badge_labels: dict[str, ctk.CTkLabel] = {}
 
-        self._load_data()
         self.pack(fill="both", expand=True)
         self._build_layout()
 
-        # Varsayilan sayfa
+        # Varsayilan sayfa (home — veri gerektirmez)
         self._show_page("home")
+
+        # Veriyi arka planda yukle
+        threading.Thread(target=self._load_data_async, daemon=True).start()
 
         # Bildirim badge guncelle (background thread — UI kasmasin)
         self.after(3000, self._check_notifications_bg)
@@ -51,12 +54,22 @@ class MainWindow(ctk.CTkFrame):
     # DATA
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-    def _load_data(self):
+    def _load_data_async(self):
+        """Background thread: kategorileri ve markalari yukle."""
         try:
-            self.categories = self.sb.get_categories()
-            self.brands = self.sb.get_brands()
-        except Exception as e:
-            messagebox.showerror("Veri Yuklenemedi", str(e))
+            cats = self.sb.get_categories()
+            brands = self.sb.get_brands()
+        except Exception:
+            cats = []
+            brands = []
+        self.after(0, lambda: self._on_data_ready(cats, brands))
+
+    def _on_data_ready(self, cats, brands):
+        """Ana thread: veri hazir, sayfa factory'lerini kaydet."""
+        self.categories = cats
+        self.brands = brands
+        self._register_page_factories()
+        self._update_status()
 
     def _build_layout(self):
         # ─── Sol Navigasyon ──────────────────
@@ -159,63 +172,85 @@ class MainWindow(ctk.CTkFrame):
         )
         self.status_label.pack(side="left", padx=12)
 
-        # ─── Sayfalari olustur ──────────────
-        self._create_pages()
+        # Home ve guide sayfalarini hemen olustur (veri gerektirmez)
+        self._page_factories = {
+            "home": lambda: HomePage(
+                self.content_frame,
+                user_email=self.sb.get_user_email(),
+                on_navigate=self._show_page,
+            ),
+            "guide": lambda: SiteGuide(self.content_frame),
+        }
 
-    def _create_pages(self):
-        def _safe_create(key, factory):
-            try:
-                page = factory()
-                self.pages[key] = page
-                return page
-            except Exception as e:
-                print(f"[HATA] Sayfa olusturulamadi: {key} — {e}")
-                fallback = ctk.CTkFrame(self.content_frame, fg_color="transparent")
-                ctk.CTkLabel(fallback, text=f"Sayfa yuklenemedi: {key}\n{e}",
-                             font=FONTS["body"], text_color=COLORS["danger"]).pack(pady=40)
-                self.pages[key] = fallback
-                return None
+    def _register_page_factories(self):
+        """Sayfa factory'lerini kaydet — sayfalar ilk erisimde olusturulur."""
+        self._page_factories = {
+            "home": lambda: HomePage(
+                self.content_frame,
+                user_email=self.sb.get_user_email(),
+                on_navigate=self._show_page,
+            ),
+            "dashboard": lambda: Dashboard(
+                self.content_frame, self.sb,
+                on_navigate=self._show_page,
+            ),
+            "products": lambda: ProductList(
+                self.content_frame, self.sb, self.categories, self.brands,
+                on_edit=self._edit_product,
+                on_copy=self._copy_product,
+                on_selection_change=self._on_product_selection,
+            ),
+            "new_product": lambda: ProductForm(
+                self.content_frame, self.sb, self.categories, self.brands,
+                on_saved=self._on_product_saved,
+            ),
+            "discounts": lambda: DiscountManager(self.content_frame, self.sb),
+            "bulk": lambda: BulkOps(self.content_frame, self.sb),
+            "source_match": lambda: SourceMatcher(self.content_frame, self.sb),
+            "orders": lambda: OrderManager(self.content_frame, self.sb),
+            "invoices": lambda: InvoiceManager(self.content_frame, self.sb),
+            "categories": lambda: CategoryManager(
+                self.content_frame, self.sb, on_change=self._on_category_change,
+            ),
+            "brands": lambda: BrandManager(
+                self.content_frame, self.sb, on_change=self._on_brand_change,
+            ),
+            "stock": lambda: StockManager(self.content_frame, self.sb),
+            "csv": lambda: CsvExport(self.content_frame, self.sb),
+            "guide": lambda: SiteGuide(self.content_frame),
+        }
 
-        self.home_page = _safe_create("home", lambda: HomePage(
-            self.content_frame,
-            user_email=self.sb.get_user_email(),
-            on_navigate=self._show_page,
-        ))
+    def _get_or_create_page(self, key: str) -> ctk.CTkFrame | None:
+        """Sayfa yoksa factory'den olustur, varsa dondur."""
+        if key in self.pages:
+            return self.pages[key]
 
-        self.dashboard = _safe_create("dashboard", lambda: Dashboard(
-            self.content_frame, self.sb,
-            on_navigate=self._show_page
-        ))
+        factory = self._page_factories.get(key)
+        if not factory:
+            return None
 
-        self.product_list = _safe_create("products", lambda: ProductList(
-            self.content_frame, self.sb, self.categories, self.brands,
-            on_edit=self._edit_product,
-            on_copy=self._copy_product,
-            on_selection_change=self._on_product_selection
-        ))
-
-        self.product_form = _safe_create("new_product", lambda: ProductForm(
-            self.content_frame, self.sb, self.categories, self.brands,
-            on_saved=self._on_product_saved
-        ))
-
-        self.discount_mgr = _safe_create("discounts", lambda: DiscountManager(self.content_frame, self.sb))
-        self.bulk_ops = _safe_create("bulk", lambda: BulkOps(self.content_frame, self.sb))
-        self.source_matcher = _safe_create("source_match", lambda: SourceMatcher(self.content_frame, self.sb))
-        self.order_mgr = _safe_create("orders", lambda: OrderManager(self.content_frame, self.sb))
-        self.invoice_mgr = _safe_create("invoices", lambda: InvoiceManager(self.content_frame, self.sb))
-
-        self.category_mgr = _safe_create("categories", lambda: CategoryManager(
-            self.content_frame, self.sb, on_change=self._on_category_change
-        ))
-
-        self.brand_mgr = _safe_create("brands", lambda: BrandManager(
-            self.content_frame, self.sb, on_change=self._on_brand_change
-        ))
-
-        self.stock_mgr = _safe_create("stock", lambda: StockManager(self.content_frame, self.sb))
-        _safe_create("csv", lambda: CsvExport(self.content_frame, self.sb))
-        _safe_create("guide", lambda: SiteGuide(self.content_frame))
+        try:
+            page = factory()
+            self.pages[key] = page
+            # Attr atamalari — geriye uyumluluk
+            attr_map = {
+                "home": "home_page", "dashboard": "dashboard",
+                "products": "product_list", "new_product": "product_form",
+                "discounts": "discount_mgr", "bulk": "bulk_ops",
+                "source_match": "source_matcher", "orders": "order_mgr",
+                "invoices": "invoice_mgr", "categories": "category_mgr",
+                "brands": "brand_mgr", "stock": "stock_mgr",
+            }
+            if key in attr_map:
+                setattr(self, attr_map[key], page)
+            return page
+        except Exception as e:
+            print(f"[HATA] Sayfa olusturulamadi: {key} — {e}")
+            fallback = ctk.CTkFrame(self.content_frame, fg_color="transparent")
+            ctk.CTkLabel(fallback, text=f"Sayfa yuklenemedi: {key}\n{e}",
+                         font=FONTS["body"], text_color=COLORS["danger"]).pack(pady=40)
+            self.pages[key] = fallback
+            return fallback
 
     def _show_page(self, key: str):
         if self.current_page and self.current_page in self.pages:
@@ -230,31 +265,26 @@ class MainWindow(ctk.CTkFrame):
                               text_color=COLORS["text_secondary"])
 
         self.current_page = key
-        page = self.pages[key]
+
+        # Lazy page creation
+        page = self._get_or_create_page(key)
+        if not page:
+            # Factories not registered yet (data still loading)
+            if not hasattr(self, '_loading_frame'):
+                self._loading_frame = ctk.CTkFrame(self.content_frame, fg_color="transparent")
+                ctk.CTkLabel(self._loading_frame, text="Veriler yukleniyor...",
+                             font=FONTS["h3"], text_color=COLORS["text_muted"]).pack(pady=60)
+            page = self._loading_frame
+
         page.pack(fill="both", expand=True, padx=SPACING["page_pad"],
                   pady=SPACING["page_pad"])
 
         # Sayfa acildiginda refresh cagir (varsa)
-        refresh_map = {
-            "products": "product_list",
-            "dashboard": "dashboard",
-            "categories": "category_mgr",
-            "brands": "brand_mgr",
-            "stock": "stock_mgr",
-            "discounts": "discount_mgr",
-            "bulk": "bulk_ops",
-            "source_match": "source_matcher",
-            "orders": "order_mgr",
-            "invoices": "invoice_mgr",
-        }
-        attr = refresh_map.get(key)
-        if attr and hasattr(self, attr):
-            obj = getattr(self, attr)
-            if obj and hasattr(obj, "refresh"):
-                try:
-                    obj.refresh()
-                except Exception as e:
-                    print(f"[HATA] {key} refresh hatasi: {e}")
+        if hasattr(page, "refresh"):
+            try:
+                page.refresh()
+            except Exception as e:
+                print(f"[HATA] {key} refresh hatasi: {e}")
 
     def _edit_product(self, product: dict):
         self.product_form.load_product(product)
@@ -271,15 +301,33 @@ class MainWindow(ctk.CTkFrame):
         pass
 
     def _on_category_change(self):
-        self.categories = self.sb.get_categories()
+        def _worker():
+            try:
+                cats = self.sb.get_categories()
+            except Exception:
+                return
+            self.after(0, lambda: self._apply_category_change(cats))
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _apply_category_change(self, cats):
+        self.categories = cats
         self._update_status()
-        if hasattr(self, 'product_form'):
+        if hasattr(self, 'product_form') and self.product_form:
             self.product_form.refresh_dropdowns(self.categories, self.brands)
 
     def _on_brand_change(self):
-        self.brands = self.sb.get_brands()
+        def _worker():
+            try:
+                brands = self.sb.get_brands()
+            except Exception:
+                return
+            self.after(0, lambda: self._apply_brand_change(brands))
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _apply_brand_change(self, brands):
+        self.brands = brands
         self._update_status()
-        if hasattr(self, 'product_form'):
+        if hasattr(self, 'product_form') and self.product_form:
             self.product_form.refresh_dropdowns(self.categories, self.brands)
 
     def _update_status(self):

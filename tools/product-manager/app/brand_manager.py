@@ -1,6 +1,7 @@
 """Marka yönetimi: liste + ekleme/düzenleme/silme — premium tema."""
 
 import customtkinter as ctk
+import threading
 from tkinter import ttk, messagebox
 
 from app.theme import COLORS, FONTS, TREEVIEW_STYLE, TREEVIEW_HEADING_STYLE, TREEVIEW_MAP, TEXTBOX_COLORS, bind_treeview_scroll
@@ -92,11 +93,25 @@ class BrandManager(ctk.CTkFrame):
         ).pack(side="left")
 
     def refresh(self):
-        try:
-            self.brands = self.sb.get_brands()
-            self._populate()
-        except Exception as e:
-            messagebox.showerror("Hata", str(e))
+        self._set_loading(True)
+
+        def _worker():
+            try:
+                data = self.sb.get_brands()
+            except Exception:
+                data = []
+            self.after(0, lambda: self._on_refresh_done(data))
+
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _set_loading(self, loading):
+        if loading:
+            self.tree.delete(*self.tree.get_children())
+            self.tree.insert("", "end", values=("Yukleniyor...", ""))
+
+    def _on_refresh_done(self, data):
+        self.brands = data
+        self._populate()
 
     def _populate(self):
         self.tree.delete(*self.tree.get_children())

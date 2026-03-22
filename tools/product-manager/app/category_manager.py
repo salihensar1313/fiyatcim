@@ -2,6 +2,7 @@
 
 import os
 import customtkinter as ctk
+import threading
 from tkinter import ttk, messagebox, filedialog
 from PIL import Image, ImageTk
 
@@ -142,11 +143,25 @@ class CategoryManager(ctk.CTkFrame):
         ).pack(side="left")
 
     def refresh(self):
-        try:
-            self.categories = self.sb.get_categories()
-            self._populate()
-        except Exception as e:
-            messagebox.showerror("Hata", str(e))
+        self._set_loading(True)
+
+        def _worker():
+            try:
+                data = self.sb.get_categories()
+            except Exception:
+                data = []
+            self.after(0, lambda: self._on_refresh_done(data))
+
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _set_loading(self, loading):
+        if loading:
+            self.tree.delete(*self.tree.get_children())
+            self.tree.insert("", "end", values=("Yukleniyor...", "", "", "", ""))
+
+    def _on_refresh_done(self, data):
+        self.categories = data
+        self._populate()
 
     def _populate(self):
         self.tree.delete(*self.tree.get_children())

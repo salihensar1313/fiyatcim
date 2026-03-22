@@ -1,6 +1,7 @@
 """Dashboard — Ozet istatistikler, son siparisler, kritik stok."""
 
 import customtkinter as ctk
+import threading
 from tkinter import ttk
 
 from app.theme import COLORS, FONTS, SPACING, TREEVIEW_STYLE, TREEVIEW_HEADING_STYLE, TREEVIEW_MAP
@@ -151,55 +152,82 @@ class Dashboard(ctk.CTkScrollableFrame):
                                   anchor="w")
 
     def refresh(self):
-        """Dashboard verilerini yenile."""
-        try:
-            # Stat kartlari
-            products = self.sb.get_products()
-            self.stat_labels["total_products"].configure(text=str(len(products)))
+        """Dashboard verilerini yenile (background thread)."""
+        # Show loading state
+        for key in self.stat_labels:
+            self.stat_labels[key].configure(text="...")
+        self.critical_label.configure(text="Yukleniyor...", text_color=COLORS["text_muted"])
+        self.orders_tree.delete(*self.orders_tree.get_children())
 
+        def _worker():
+            results = {}
             try:
-                active = self.sb.get_active_product_count()
-                self.stat_labels["active_products"].configure(text=str(active))
+                products = self.sb.get_products()
+                results["total_products"] = len(products)
+                results["active_products"] = len([p for p in products if p.get("is_active")])
             except Exception:
-                active = len([p for p in products if p.get("is_active")])
-                self.stat_labels["active_products"].configure(text=str(active))
+                results["total_products"] = "Hata"
+                results["active_products"] = "0"
 
             try:
-                total_orders = self.sb.get_order_count()
-                self.stat_labels["total_orders"].configure(text=str(total_orders))
-            except Exception:
-                self.stat_labels["total_orders"].configure(text="0")
-
-            try:
-                today_orders = self.sb.get_orders_today_count()
-                self.stat_labels["today_orders"].configure(text=str(today_orders))
-            except Exception:
-                self.stat_labels["today_orders"].configure(text="0")
-
-            try:
-                revenue = self.sb.get_total_revenue()
-                self.stat_labels["total_revenue"].configure(text=format_price(revenue))
-            except Exception:
-                self.stat_labels["total_revenue"].configure(text="0 ₺")
-
-            # Kritik stok
-            try:
-                critical = self.sb.get_critical_stock_products()
-                self.stat_labels["critical_stock"].configure(text=str(len(critical)))
-                self._update_critical_list(critical)
-            except Exception:
-                self.stat_labels["critical_stock"].configure(text="0")
-                self.critical_label.configure(text="Veri alinamadi")
-
-            # Son siparisler
-            try:
-                recent = self.sb.get_recent_orders(10)
-                self._update_orders_table(recent)
+                results["active_products_db"] = self.sb.get_active_product_count()
             except Exception:
                 pass
 
-        except Exception as e:
-            self.stat_labels["total_products"].configure(text="Hata")
+            try:
+                results["total_orders"] = self.sb.get_order_count()
+            except Exception:
+                results["total_orders"] = 0
+
+            try:
+                results["today_orders"] = self.sb.get_orders_today_count()
+            except Exception:
+                results["today_orders"] = 0
+
+            try:
+                results["revenue"] = self.sb.get_total_revenue()
+            except Exception:
+                results["revenue"] = 0
+
+            try:
+                results["critical"] = self.sb.get_critical_stock_products()
+            except Exception:
+                results["critical"] = None
+
+            try:
+                results["recent_orders"] = self.sb.get_recent_orders(10)
+            except Exception:
+                results["recent_orders"] = []
+
+            self.after(0, lambda: self._on_refresh_done(results))
+
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _on_refresh_done(self, results: dict):
+        """Update UI with fetched data (main thread)."""
+        tp = results.get("total_products", "0")
+        self.stat_labels["total_products"].configure(text=str(tp))
+
+        active = results.get("active_products_db") or results.get("active_products", "0")
+        self.stat_labels["active_products"].configure(text=str(active))
+
+        self.stat_labels["total_orders"].configure(text=str(results.get("total_orders", 0)))
+        self.stat_labels["today_orders"].configure(text=str(results.get("today_orders", 0)))
+
+        revenue = results.get("revenue", 0)
+        self.stat_labels["total_revenue"].configure(text=format_price(revenue) if revenue else "0 ₺")
+
+        critical = results.get("critical")
+        if critical is not None:
+            self.stat_labels["critical_stock"].configure(text=str(len(critical)))
+            self._update_critical_list(critical)
+        else:
+            self.stat_labels["critical_stock"].configure(text="0")
+            self.critical_label.configure(text="Veri alinamadi")
+
+        recent = results.get("recent_orders", [])
+        if recent:
+            self._update_orders_table(recent)
 
     def _update_orders_table(self, orders: list[dict]):
         self.orders_tree.delete(*self.orders_tree.get_children())

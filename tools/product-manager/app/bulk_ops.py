@@ -335,17 +335,30 @@ class BulkOps(ctk.CTkFrame):
                       text_color=COLORS["text_primary"]).pack(side="left")
 
     def _load_products(self):
-        try:
-            self.products = self.sb.get_products()
-            # Kategori filtresini guncelle
-            cats = sorted(set(
-                (p.get("categories") or {}).get("name", "")
-                for p in self.products if (p.get("categories") or {}).get("name")
-            ))
-            self.cat_menu.configure(values=["Tumu"] + cats)
-            self._filter()
-        except Exception as e:
-            messagebox.showerror("Hata", str(e))
+        self._set_loading(True)
+
+        def _worker():
+            try:
+                data = self.sb.get_products()
+            except Exception:
+                data = []
+            self.after(0, lambda: self._on_products_loaded(data))
+
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _set_loading(self, loading):
+        if loading:
+            self.tree.delete(*self.tree.get_children())
+            self.tree.insert("", "end", values=("Yukleniyor...", "", "", "", ""))
+
+    def _on_products_loaded(self, data):
+        self.products = data
+        cats = sorted(set(
+            (p.get("categories") or {}).get("name", "")
+            for p in self.products if (p.get("categories") or {}).get("name")
+        ))
+        self.cat_menu.configure(values=["Tumu"] + cats)
+        self._filter()
 
     def refresh(self):
         self._load_products()
@@ -471,57 +484,67 @@ class BulkOps(ctk.CTkFrame):
         self.pricing_job_badge.configure(text=f" {text} ", fg_color=color)
 
     def _load_pricing_jobs(self):
-        try:
-            jobs = self.sb.get_pricing_jobs(limit=10)
-            self.pricing_job_list.delete("1.0", "end")
-
-            if not jobs:
-                self.latest_pricing_job_id = None
-                self.pricing_job_summary.configure(text="Henuz pricing job yok")
-                self._set_pricing_job_state("Hazir", COLORS["text_muted"])
-                self.pricing_job_list.insert("1.0", "Kayit bulunamadi.")
+        def _worker():
+            try:
+                jobs = self.sb.get_pricing_jobs(limit=10)
+            except Exception as e:
+                self.after(0, lambda: self._on_pricing_jobs_error(e))
                 return
+            self.after(0, lambda: self._on_pricing_jobs_loaded(jobs))
 
-            latest = jobs[0]
-            self.latest_pricing_job_id = latest.get("id")
-            status = latest.get("status", "unknown")
-            processed = latest.get("processed_items", 0)
-            total = latest.get("total_items", 0)
-            self.pricing_job_summary.configure(
-                text=(
-                    f"Son job: {latest.get('type', '-')}\n"
-                    f"Durum: {status}\n"
-                    f"Ilerleme: {processed}/{total}\n"
-                    f"Basari/Hata/Atlanan: {latest.get('success_count', 0)}/"
-                    f"{latest.get('failure_count', 0)}/{latest.get('skipped_count', 0)}"
-                )
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _on_pricing_jobs_loaded(self, jobs):
+        self.pricing_job_list.delete("1.0", "end")
+
+        if not jobs:
+            self.latest_pricing_job_id = None
+            self.pricing_job_summary.configure(text="Henuz pricing job yok")
+            self._set_pricing_job_state("Hazir", COLORS["text_muted"])
+            self.pricing_job_list.insert("1.0", "Kayit bulunamadi.")
+            return
+
+        latest = jobs[0]
+        self.latest_pricing_job_id = latest.get("id")
+        status = latest.get("status", "unknown")
+        processed = latest.get("processed_items", 0)
+        total = latest.get("total_items", 0)
+        self.pricing_job_summary.configure(
+            text=(
+                f"Son job: {latest.get('type', '-')}\n"
+                f"Durum: {status}\n"
+                f"Ilerleme: {processed}/{total}\n"
+                f"Basari/Hata/Atlanan: {latest.get('success_count', 0)}/"
+                f"{latest.get('failure_count', 0)}/{latest.get('skipped_count', 0)}"
             )
+        )
 
-            badge_color = COLORS["text_muted"]
-            if status == "running":
-                badge_color = COLORS["info"]
-            elif status == "completed":
-                badge_color = COLORS["success"]
-            elif status == "failed":
-                badge_color = COLORS["danger"]
-            elif status == "pending":
-                badge_color = COLORS["warning"]
-            self._set_pricing_job_state(status.upper(), badge_color)
+        badge_color = COLORS["text_muted"]
+        if status == "running":
+            badge_color = COLORS["info"]
+        elif status == "completed":
+            badge_color = COLORS["success"]
+        elif status == "failed":
+            badge_color = COLORS["danger"]
+        elif status == "pending":
+            badge_color = COLORS["warning"]
+        self._set_pricing_job_state(status.upper(), badge_color)
 
-            lines = []
-            for job in jobs:
-                filters = job.get("filters") or {}
-                filter_text = ", ".join(f"{k}={v}" for k, v in filters.items()) or "tum aktif kaynaklar"
-                lines.append(
-                    f"{job.get('created_at', '')[:16].replace('T', ' ')} | "
-                    f"{job.get('status', '-')} | "
-                    f"{job.get('processed_items', 0)}/{job.get('total_items', 0)} | "
-                    f"{filter_text}"
-                )
-            self.pricing_job_list.insert("1.0", "\n".join(lines))
-        except Exception as e:
-            self.pricing_job_summary.configure(text=f"Pricing job okunamadi: {e}")
-            self._set_pricing_job_state("HATA", COLORS["danger"])
+        lines = []
+        for job in jobs:
+            filters = job.get("filters") or {}
+            filter_text = ", ".join(f"{k}={v}" for k, v in filters.items()) or "tum aktif kaynaklar"
+            lines.append(
+                f"{job.get('created_at', '')[:16].replace('T', ' ')} | "
+                f"{job.get('status', '-')} | "
+                f"{job.get('processed_items', 0)}/{job.get('total_items', 0)} | "
+                f"{filter_text}"
+            )
+        self.pricing_job_list.insert("1.0", "\n".join(lines))
+
+    def _on_pricing_jobs_error(self, e):
+        self.pricing_job_summary.configure(text=f"Pricing job okunamadi: {e}")
+        self._set_pricing_job_state("HATA", COLORS["danger"])
 
     def _start_auto_pricing_batch(self):
         # Ön kontrol: gerekli env degiskenleri mevcut mu?

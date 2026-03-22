@@ -37,6 +37,8 @@ def load_config() -> dict:
 class SupabaseManager:
     """Supabase bağlantı ve CRUD operasyonları."""
 
+    CACHE_TTL = 30  # seconds
+
     def __init__(self):
         config = load_config()
         self.url = config["supabase_url"]
@@ -45,6 +47,8 @@ class SupabaseManager:
         self.user = None
         self._pricing_service_client: Client | None = None
         self._pricing_env_cache: dict | None = None
+        self._product_cache: list[dict] | None = None
+        self._product_cache_time: float = 0
 
     # ─── AUTH ───────────────────────────────────────────
 
@@ -141,8 +145,14 @@ class SupabaseManager:
 
     # ─── PRODUCTS ───────────────────────────────────────
 
-    def get_products(self) -> list[dict]:
-        """Tüm aktif ürünleri çeker (silinmemiş)."""
+    def get_products(self, force_refresh: bool = False) -> list[dict]:
+        """Tüm aktif ürünleri çeker (silinmemiş). Sonucu cache'ler."""
+        import time
+        now = time.time()
+        if (not force_refresh
+                and self._product_cache is not None
+                and (now - self._product_cache_time) < self.CACHE_TTL):
+            return self._product_cache
         res = (
             self.client.table("products")
             .select("*, categories(id, name, slug), brands(id, name, slug)")
@@ -150,7 +160,14 @@ class SupabaseManager:
             .order("created_at", desc=True)
             .execute()
         )
-        return res.data or []
+        self._product_cache = res.data or []
+        self._product_cache_time = now
+        return self._product_cache
+
+    def invalidate_cache(self):
+        """Ürün cache'ini temizle — create/update/delete sonrası çağır."""
+        self._product_cache = None
+        self._product_cache_time = 0
 
     def get_product(self, product_id: str) -> dict | None:
         res = (
@@ -191,6 +208,7 @@ class SupabaseManager:
         product = res.data[0] if res.data else {}
         if product:
             self._audit_log("product_create", product.get("id"), None, product)
+        self.invalidate_cache()
         return product
 
     def update_product(self, product_id: str, data: dict, expected_updated_at: str | None = None) -> dict:
@@ -205,6 +223,7 @@ class SupabaseManager:
         product = res.data[0] if res.data else {}
         if product:
             self._audit_log("product_update", product_id, None, clean)
+        self.invalidate_cache()
         return product
 
     def soft_delete_product(self, product_id: str):
@@ -214,6 +233,7 @@ class SupabaseManager:
             "is_active": False,
         }).eq("id", product_id).execute()
         self._audit_log("product_delete", product_id, None, None)
+        self.invalidate_cache()
 
     def bulk_update_products(self, product_ids: list[str], data: dict) -> dict:
         """Birden fazla ürünü günceller. Basari/hata sayisi döner."""

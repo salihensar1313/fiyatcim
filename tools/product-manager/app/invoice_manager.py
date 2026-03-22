@@ -2,6 +2,7 @@
 
 import os
 import customtkinter as ctk
+import threading
 from tkinter import ttk, messagebox, filedialog
 
 from app.theme import (COLORS, FONTS, SPACING, TREEVIEW_STYLE,
@@ -167,11 +168,26 @@ class InvoiceManager(ctk.CTkFrame):
             pass
 
     def refresh(self):
-        try:
-            self.orders = self.sb.get_orders(limit=100)
-            self._filter()
-        except Exception as e:
-            messagebox.showerror("Hata", f"Siparisler yuklenemedi: {e}")
+        self._set_loading(True)
+
+        def _worker():
+            try:
+                data = self.sb.get_orders(limit=100)
+            except Exception:
+                data = []
+            self.after(0, lambda: self._on_refresh_done(data))
+
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _set_loading(self, loading):
+        if loading:
+            self.tree.delete(*self.tree.get_children())
+            self.tree.insert("", "end", values=("Yukleniyor...", "", "", "", "", ""))
+            self.count_label.configure(text="Yukleniyor...")
+
+    def _on_refresh_done(self, data):
+        self.orders = data
+        self._filter()
 
     def _filter(self):
         search = self.search_entry.get().strip().lower()

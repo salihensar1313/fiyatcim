@@ -1,6 +1,7 @@
 """İndirimli ürün yönetimi: fiyat ve indirim ayarlama sayfası."""
 
 import customtkinter as ctk
+import threading
 from tkinter import ttk, messagebox
 
 from app.theme import COLORS, FONTS, TREEVIEW_STYLE, TREEVIEW_HEADING_STYLE, TREEVIEW_MAP, DROPDOWN_COLORS, apply_dark_scrollbar, bind_treeview_scroll
@@ -150,11 +151,26 @@ class DiscountManager(ctk.CTkFrame):
     # ─── Veri ────────────────────────────────────
 
     def refresh(self):
-        try:
-            self.products = self.sb.get_products()
-            self._filter()
-        except Exception as e:
-            messagebox.showerror("Hata", f"Urunler yuklenemedi: {e}")
+        self._set_loading(True)
+
+        def _worker():
+            try:
+                data = self.sb.get_products()
+            except Exception:
+                data = []
+            self.after(0, lambda: self._on_refresh_done(data))
+
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _set_loading(self, loading):
+        if loading:
+            self.tree.delete(*self.tree.get_children())
+            self.tree.insert("", "end", values=("Yukleniyor...", "", "", "", "", ""))
+            self.count_label.configure(text="Yukleniyor...")
+
+    def _on_refresh_done(self, data):
+        self.products = data
+        self._filter()
 
     def _filter(self):
         search = self.search_entry.get().strip().lower()

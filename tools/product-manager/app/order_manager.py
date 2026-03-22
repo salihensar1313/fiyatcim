@@ -1,6 +1,7 @@
 """Siparis Takibi — siparis listesi, detay, durum guncelleme."""
 
 import customtkinter as ctk
+import threading
 from tkinter import ttk, messagebox
 
 from app.theme import (COLORS, FONTS, SPACING, TREEVIEW_STYLE,
@@ -140,12 +141,27 @@ class OrderManager(ctk.CTkFrame):
         self.detail_placeholder.pack(pady=40)
 
     def refresh(self):
-        """Siparisleri yeniden yukle."""
-        try:
-            self.orders = self.sb.get_orders(limit=100)
-            self._filter()
-        except Exception as e:
-            messagebox.showerror("Hata", f"Siparisler yuklenemedi: {e}")
+        """Siparisleri yeniden yukle (background thread)."""
+        self._set_loading(True)
+
+        def _worker():
+            try:
+                data = self.sb.get_orders(limit=100)
+            except Exception:
+                data = []
+            self.after(0, lambda: self._on_refresh_done(data))
+
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _set_loading(self, loading):
+        if loading:
+            self.tree.delete(*self.tree.get_children())
+            self.tree.insert("", "end", values=("Yukleniyor...", "", "", "", "", ""))
+            self.count_label.configure(text="Yukleniyor...")
+
+    def _on_refresh_done(self, data):
+        self.orders = data
+        self._filter()
 
     def _filter(self):
         status_label = self.status_var.get()

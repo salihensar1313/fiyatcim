@@ -1,6 +1,7 @@
 """Stok yönetimi: filtre, inline edit, kritik stok uyarı — premium tema."""
 
 import customtkinter as ctk
+import threading
 from tkinter import ttk, messagebox
 
 from app.theme import COLORS, FONTS, TREEVIEW_STYLE, TREEVIEW_HEADING_STYLE, TREEVIEW_MAP, apply_dark_scrollbar, bind_treeview_scroll
@@ -13,6 +14,7 @@ class StockManager(ctk.CTkFrame):
         super().__init__(master, **kwargs)
         self.sb = sb_manager
         self.products: list[dict] = []
+        self._search_timer = None
         self.configure(fg_color="transparent")
         self._build_ui()
 
@@ -50,7 +52,7 @@ class StockManager(ctk.CTkFrame):
             fg_color=COLORS["bg_input"], border_color=COLORS["border"]
         )
         self.search_entry.pack(side="right")
-        self.search_entry.bind("<KeyRelease>", lambda e: self._filter())
+        self.search_entry.bind("<KeyRelease>", self._on_search_key)
 
         # Tablo
         tree_frame = ctk.CTkFrame(self, fg_color=COLORS["bg_card"], corner_radius=10,
@@ -115,6 +117,11 @@ class StockManager(ctk.CTkFrame):
             font=FONTS["body"], command=self._update_critical
         ).pack(side="left")
 
+    def _on_search_key(self, event=None):
+        if self._search_timer:
+            self.after_cancel(self._search_timer)
+        self._search_timer = self.after(300, self._filter)
+
     def _stat_card(self, parent, title: str, value: str, color: str):
         card = ctk.CTkFrame(parent, width=130, height=70, fg_color=COLORS["bg_card"],
                              corner_radius=10, border_width=1, border_color=COLORS["border"])
@@ -132,12 +139,26 @@ class StockManager(ctk.CTkFrame):
         return lbl
 
     def refresh(self):
-        try:
-            self.products = self.sb.get_products()
-            self._update_summary()
-            self._filter()
-        except Exception as e:
-            messagebox.showerror("Hata", str(e))
+        self._set_loading(True)
+
+        def _worker():
+            try:
+                data = self.sb.get_products()
+            except Exception:
+                data = []
+            self.after(0, lambda: self._on_refresh_done(data))
+
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _set_loading(self, loading):
+        if loading:
+            self.tree.delete(*self.tree.get_children())
+            self.tree.insert("", "end", values=("Yukleniyor...", "", "", "", ""))
+
+    def _on_refresh_done(self, data):
+        self.products = data
+        self._update_summary()
+        self._filter()
 
     def _update_summary(self):
         total = len(self.products)
