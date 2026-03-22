@@ -19,19 +19,30 @@ export default function ResetPasswordPage() {
   const [sessionReady, setSessionReady] = useState(false);
   const [denied, setDenied] = useState(false);
 
-  // ONLY allow access via the email recovery link (PASSWORD_RECOVERY event)
+  // Check for valid session (set by callback route after code exchange)
   useEffect(() => {
     const supabase = createClient();
     let recovered = false;
 
+    // Listen for PASSWORD_RECOVERY event (hash fragment flow)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY") {
+      if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
         recovered = true;
         setSessionReady(true);
       }
     });
 
-    // If PASSWORD_RECOVERY doesn't fire within 5 seconds, deny access
+    // Also check if we already have a session (PKCE flow — callback already exchanged code)
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session && !recovered) {
+        recovered = true;
+        setSessionReady(true);
+      }
+    };
+    checkSession();
+
+    // If no session or recovery event within 5 seconds, deny access
     const timeout = setTimeout(() => {
       if (!recovered) {
         setDenied(true);

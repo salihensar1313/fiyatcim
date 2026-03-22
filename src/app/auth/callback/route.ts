@@ -18,12 +18,20 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}/giris?error=auth`);
   }
 
+  // Handle password recovery type — redirect to reset-password page
+  const type = searchParams.get("type");
+
   if (code) {
     try {
       const supabase = await createServerSupabaseClient();
       const { error } = await supabase.auth.exchangeCodeForSession(code);
 
       if (!error) {
+        // If this is a password recovery, redirect to reset-password page
+        if (type === "recovery") {
+          return NextResponse.redirect(`${origin}/auth/reset-password`);
+        }
+
         // Get user info and ensure profile exists (for OAuth users)
         const {
           data: { user },
