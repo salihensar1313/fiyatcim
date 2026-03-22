@@ -172,12 +172,14 @@ TEXTBOX_COLORS = {
 def bind_treeview_scroll(tree):
     """Treeview'a mouse wheel scroll desteği ekle (Windows + Linux/Mac)."""
     def _on_mousewheel(event):
-        tree.yview_scroll(-1 * (event.delta // 120), "units")
+        # Her scroll adımında 4 satır kaydır (varsayılan 1 çok yavaş)
+        tree.yview_scroll(-4 * (event.delta // 120), "units")
+        return "break"  # Event'in üst widget'lara yayılmasını engelle
 
     tree.bind("<MouseWheel>", _on_mousewheel)
     # Linux desteği
-    tree.bind("<Button-4>", lambda e: tree.yview_scroll(-3, "units"))
-    tree.bind("<Button-5>", lambda e: tree.yview_scroll(3, "units"))
+    tree.bind("<Button-4>", lambda e: (tree.yview_scroll(-5, "units"), "break")[-1])
+    tree.bind("<Button-5>", lambda e: (tree.yview_scroll(5, "units"), "break")[-1])
 
 
 def apply_dark_scrollbar(style):
