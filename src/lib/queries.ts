@@ -860,7 +860,7 @@ export async function getProductReviews(productId: string, client?: SupabaseClie
   const supabase = getSupabase(client);
   const { data, error } = await supabase
     .from("reviews")
-    .select("*")
+    .select("*, profile:profiles!reviews_user_id_fkey(ad, soyad)")
     .eq("product_id", productId)
     .eq("is_approved", true)
     .order("created_at", { ascending: false });
@@ -882,7 +882,7 @@ export async function getAllReviews(client?: SupabaseClient): Promise<Review[]> 
   const supabase = getSupabase(client);
   const { data, error } = await supabase
     .from("reviews")
-    .select("*")
+    .select("*, profile:profiles!reviews_user_id_fkey(ad, soyad)")
     .order("created_at", { ascending: false });
 
   if (error) {
