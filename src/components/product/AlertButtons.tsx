@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Bell, BellOff, TrendingDown, Check } from "lucide-react";
 import { useAlerts } from "@/hooks/useAlerts";
 import { useNotifications } from "@/components/ui/NotificationBell";
+import { useAuth } from "@/context/AuthContext";
 import { formatPrice } from "@/lib/utils";
 import type { Product } from "@/types";
 
@@ -14,16 +15,41 @@ interface AlertButtonsProps {
 export default function AlertButtons({ product }: AlertButtonsProps) {
   const { hasAlert, addPrice, addStock, remove } = useAlerts();
   const { addNotification } = useNotifications();
+  const { user } = useAuth();
   const [showPriceInput, setShowPriceInput] = useState(false);
   const currentPrice = product.sale_price || product.price;
   const [targetPrice, setTargetPrice] = useState(Math.floor(currentPrice * 0.9));
+  const [dbPriceAlert, setDbPriceAlert] = useState(false);
+  const [dbStockAlert, setDbStockAlert] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const hasPriceAlert = hasAlert(product.id, "price");
-  const hasStockAlert = hasAlert(product.id, "stock");
+  // Check DB alerts for logged-in users
+  useEffect(() => {
+    if (!user) return;
+    fetch("/api/alerts")
+      .then(r => r.json())
+      .then((alerts: { product_id: string; alert_type: string }[]) => {
+        if (Array.isArray(alerts)) {
+          setDbPriceAlert(alerts.some(a => a.product_id === product.id && a.alert_type === "price"));
+          setDbStockAlert(alerts.some(a => a.product_id === product.id && a.alert_type === "stock"));
+        }
+      })
+      .catch(() => {});
+  }, [user, product.id]);
 
-  const handlePriceAlert = () => {
+  const hasPriceAlert = user ? dbPriceAlert : hasAlert(product.id, "price");
+  const hasStockAlert = user ? dbStockAlert : hasAlert(product.id, "stock");
+
+  const handlePriceAlert = async () => {
     if (hasPriceAlert) {
-      remove(product.id, "price");
+      if (user) {
+        setLoading(true);
+        await fetch(`/api/alerts?productId=${product.id}&alertType=price`, { method: "DELETE" });
+        setDbPriceAlert(false);
+        setLoading(false);
+      } else {
+        remove(product.id, "price");
+      }
       return;
     }
     if (!showPriceInput) {
@@ -31,26 +57,64 @@ export default function AlertButtons({ product }: AlertButtonsProps) {
       return;
     }
     if (targetPrice > 0 && targetPrice < currentPrice) {
-      addPrice(product.id, product.name, targetPrice, currentPrice);
+      if (user) {
+        setLoading(true);
+        const res = await fetch("/api/alerts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            productId: product.id,
+            alertType: "price",
+            targetPrice,
+            currentPrice,
+          }),
+        });
+        if (res.ok) setDbPriceAlert(true);
+        setLoading(false);
+      } else {
+        addPrice(product.id, product.name, targetPrice, currentPrice);
+      }
       addNotification({
         type: "promo",
-        title: "Fiyat Alarmı Kuruldu",
-        message: `${product.name} — ${formatPrice(targetPrice)} altına düşünce bildirim alacaksınız.`,
+        title: "Fiyat Alarmi Kuruldu",
+        message: `${product.name} — ${formatPrice(targetPrice)} altina dusunce bildirim alacaksiniz.`,
       });
       setShowPriceInput(false);
     }
   };
 
-  const handleStockAlert = () => {
+  const handleStockAlert = async () => {
     if (hasStockAlert) {
-      remove(product.id, "stock");
+      if (user) {
+        setLoading(true);
+        await fetch(`/api/alerts?productId=${product.id}&alertType=stock`, { method: "DELETE" });
+        setDbStockAlert(false);
+        setLoading(false);
+      } else {
+        remove(product.id, "stock");
+      }
       return;
     }
-    addStock(product.id, product.name);
+    if (user) {
+      setLoading(true);
+      const res = await fetch("/api/alerts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId: product.id,
+          alertType: "stock",
+          currentPrice,
+        }),
+      });
+      if (res.ok) setDbStockAlert(true);
+      setLoading(false);
+    } else {
+      addStock(product.id, product.name);
+    }
     addNotification({
       type: "system",
-      title: "Stok Alarmı Kuruldu",
-      message: `${product.name} stoğa girince bildirim alacaksınız.`,
+      title: "Stok Alarmi Kuruldu",
+      message: `${product.name} stoga girince bildirim alacaksiniz.`,
     });
   };
 
@@ -61,21 +125,22 @@ export default function AlertButtons({ product }: AlertButtonsProps) {
         <div>
           <button
             onClick={handlePriceAlert}
+            disabled={loading}
             className={`flex w-full items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all ${
               hasPriceAlert
                 ? "border-green-200 bg-green-50 text-green-700 hover:bg-green-100 dark:border-green-900 dark:bg-green-900/20 dark:text-green-400 dark:hover:bg-green-900/30"
                 : "border-dark-200 dark:border-dark-600 text-dark-700 dark:text-dark-200 hover:bg-dark-50 dark:hover:bg-dark-700"
-            }`}
+            } disabled:opacity-50`}
           >
             {hasPriceAlert ? (
               <>
                 <Check size={16} />
-                Fiyat Alarmı Aktif
+                Fiyat Alarmi Aktif
               </>
             ) : (
               <>
                 <TrendingDown size={16} />
-                Fiyat Düşünce Haber Ver
+                Fiyat Dusunce Haber Ver
               </>
             )}
           </button>
@@ -98,7 +163,7 @@ export default function AlertButtons({ product }: AlertButtonsProps) {
               </div>
               <button
                 onClick={handlePriceAlert}
-                disabled={targetPrice <= 0 || targetPrice >= currentPrice}
+                disabled={targetPrice <= 0 || targetPrice >= currentPrice || loading}
                 className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-50"
               >
                 Kur
@@ -107,7 +172,7 @@ export default function AlertButtons({ product }: AlertButtonsProps) {
                 onClick={() => setShowPriceInput(false)}
                 className="text-sm text-dark-500 hover:text-dark-600 dark:text-dark-300"
               >
-                İptal
+                Iptal
               </button>
             </div>
           )}
@@ -118,21 +183,22 @@ export default function AlertButtons({ product }: AlertButtonsProps) {
       {product.stock === 0 && (
         <button
           onClick={handleStockAlert}
+          disabled={loading}
           className={`flex w-full items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-all ${
             hasStockAlert
               ? "border-green-200 bg-green-50 text-green-700 hover:bg-green-100 dark:border-green-900 dark:bg-green-900/20 dark:text-green-400 dark:hover:bg-green-900/30"
               : "border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100 dark:border-orange-900 dark:bg-orange-900/20 dark:text-orange-400 dark:hover:bg-orange-900/30"
-          }`}
+          } disabled:opacity-50`}
         >
           {hasStockAlert ? (
             <>
               <BellOff size={16} />
-              Stok Alarmı Aktif
+              Stok Alarmi Aktif
             </>
           ) : (
             <>
               <Bell size={16} />
-              Stoğa Girince Haber Ver
+              Stoga Girince Haber Ver
             </>
           )}
         </button>
