@@ -942,16 +942,38 @@ class SupabaseManager:
             pass
 
     # ─── Müşteriler (Profiles) ─────────────────────────────
+    # DB şeması: profiles(user_id, ad, soyad, telefon, role, avatar, is_premium, premium_expires_at, updated_at)
+    # Email auth.users'da — admin API ile alınır
 
     def get_customers(self, search: str = "", premium_only: bool = False) -> list[dict]:
-        """Tüm müşteri profillerini getir."""
+        """Tüm müşteri profillerini getir + auth.users'dan email eşleştir."""
         q = self.client.table("profiles").select(
-            "id, email, full_name, phone, avatar_url, is_premium, premium_expires_at, created_at, updated_at"
-        ).order("created_at", desc=True)
+            "user_id, ad, soyad, telefon, role, avatar, is_premium, premium_expires_at, updated_at"
+        ).order("updated_at", desc=True)
         if premium_only:
             q = q.eq("is_premium", True)
         res = q.execute()
-        customers = res.data or []
+        profiles = res.data or []
+
+        # auth.users'dan emailleri çek
+        email_map = self._get_auth_emails()
+
+        customers = []
+        for p in profiles:
+            uid = p.get("user_id", "")
+            full_name = f'{p.get("ad") or ""} {p.get("soyad") or ""}'.strip() or None
+            c = {
+                "id": uid,
+                "email": email_map.get(uid, ""),
+                "full_name": full_name,
+                "phone": p.get("telefon"),
+                "is_premium": p.get("is_premium", False),
+                "premium_expires_at": p.get("premium_expires_at"),
+                "created_at": email_map.get(uid + "_created", p.get("updated_at")),
+                "avatar": p.get("avatar"),
+            }
+            customers.append(c)
+
         if search:
             s = search.lower()
             customers = [c for c in customers if
@@ -960,9 +982,36 @@ class SupabaseManager:
                          s in (c.get("phone") or "").lower()]
         return customers
 
+    def _get_auth_emails(self) -> dict:
+        """auth.users admin API'den email + created_at bilgilerini al."""
+        import urllib.request
+        email_map = {}
+        try:
+            req = urllib.request.Request(
+                f"{self.url}/auth/v1/admin/users?per_page=1000",
+                headers={
+                    "apikey": self.anon_key,
+                    "Authorization": f"Bearer {self._get_service_key()}",
+                },
+            )
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                data = json.loads(resp.read().decode())
+                for u in data.get("users", []):
+                    uid = u.get("id", "")
+                    email_map[uid] = u.get("email", "")
+                    email_map[uid + "_created"] = u.get("created_at", "")
+        except Exception as e:
+            logger.warning("Auth users cekme hatasi: %s", e)
+        return email_map
+
+    def _get_service_key(self) -> str:
+        """Service role key'i env'den al."""
+        env = self._get_root_env()
+        return env.get("SUPABASE_SERVICE_ROLE_KEY", self.anon_key)
+
     def get_customer(self, user_id: str) -> dict | None:
         """Tek müşteri detayı."""
-        res = self.client.table("profiles").select("*").eq("id", user_id).maybe_single().execute()
+        res = self.client.table("profiles").select("*").eq("user_id", user_id).maybe_single().execute()
         return res.data
 
     def get_customer_orders(self, user_id: str) -> list[dict]:
@@ -976,13 +1025,13 @@ class SupabaseManager:
 
     def get_customer_count(self) -> int:
         """Toplam müşteri sayısı."""
-        res = self.client.table("profiles").select("id", count="exact").execute()
+        res = self.client.table("profiles").select("user_id", count="exact").execute()
         return res.count or 0
 
     def get_premium_count(self) -> int:
         """Premium müşteri sayısı."""
         res = (self.client.table("profiles")
-               .select("id", count="exact")
+               .select("user_id", count="exact")
                .eq("is_premium", True)
                .execute())
         return res.count or 0
@@ -996,7 +1045,7 @@ class SupabaseManager:
                    "is_premium": True,
                    "premium_expires_at": expires.isoformat(),
                })
-               .eq("id", user_id)
+               .eq("user_id", user_id)
                .execute())
         return (res.data or [{}])[0]
 
@@ -1007,7 +1056,7 @@ class SupabaseManager:
                    "is_premium": False,
                    "premium_expires_at": None,
                })
-               .eq("id", user_id)
+               .eq("user_id", user_id)
                .execute())
         return (res.data or [{}])[0]
 
