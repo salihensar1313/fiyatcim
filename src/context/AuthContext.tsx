@@ -81,6 +81,8 @@ function mapProfile(data: Record<string, unknown>): Profile {
     telefon: (data.telefon as string) ?? "",
     role: (data.role as "admin" | "user") ?? "user",
     avatar: (data.avatar as string) ?? undefined,
+    is_premium: data.is_premium === true,
+    premium_expires_at: (data.premium_expires_at as string) ?? undefined,
   };
 }
 
