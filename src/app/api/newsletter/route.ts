@@ -2,9 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { sendEmail } from "@/lib/email";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
 // Rate limiter
 const subHits = new Map<string, { count: number; resetAt: number }>();
 
@@ -37,9 +34,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Gecerli bir e-posta adresi giriniz." }, { status: 400 });
     }
 
-    const adminClient = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    });
+    const adminClient = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      { auth: { autoRefreshToken: false, persistSession: false } }
+    );
 
     // Upsert — duplicate'leri sessizce yönet
     const { error } = await adminClient
