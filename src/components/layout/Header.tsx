@@ -13,7 +13,6 @@ import {
   Phone,
   ShieldCheck,
   RotateCcw,
-  Truck,
   Zap,
   Crown,
 } from "lucide-react";
@@ -89,10 +88,10 @@ export default function Header() {
                 14 Gün İade Garantisi
               </span>
               <span className="text-dark-600">|</span>
-              <span className="flex items-center gap-1.5">
-                <Truck size={12} />
-                Premium&apos;a Özel Ücretsiz Kargo
-              </span>
+              <Link href="/premium" className="flex items-center gap-1.5 rounded-full bg-amber-500/20 px-2.5 py-0.5 text-amber-400 transition-colors hover:bg-amber-500/30 hover:text-amber-300">
+                <Crown size={12} />
+                <span className="text-xs font-bold">Premium Ol — Ücretsiz Kargo</span>
+              </Link>
             </div>
           </div>
         </div>

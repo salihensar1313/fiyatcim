@@ -13,6 +13,7 @@ import { AddressProvider } from "@/context/AddressContext";
 import { CurrencyProvider } from "@/context/CurrencyContext";
 import { ToastProvider } from "@/components/ui/Toast";
 import CookieConsent from "@/components/ui/CookieConsent";
+import PremiumPopup from "@/components/premium/PremiumPopup";
 import GoogleAnalytics from "@/components/seo/GoogleAnalytics";
 import MetaPixel from "@/components/analytics/MetaPixel";
 import WebVitals from "@/components/analytics/WebVitals";
@@ -128,6 +129,7 @@ export default function RootLayout({
                       <LayoutShell>{children}</LayoutShell>
                     </ErrorBoundary>
                     <CookieConsent />
+                    <PremiumPopup />
                   </ToastProvider>
                 </ReturnProvider>
                 </ActivityLogProvider>

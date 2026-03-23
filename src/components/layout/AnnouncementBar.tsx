@@ -2,17 +2,14 @@
 
 import { useState } from "react";
 import { X, DollarSign } from "lucide-react";
-import { useSettings } from "@/hooks/useSettings";
 import { useCurrency } from "@/context/CurrencyContext";
 
 export default function AnnouncementBar() {
   const [isVisible, setIsVisible] = useState(true);
-  const settings = useSettings();
   const { usdTry, isLoading } = useCurrency();
 
   if (!isVisible) return null;
 
-  const threshold = settings.freeShippingThreshold.toLocaleString("tr-TR");
   const formattedRate = usdTry.toFixed(2).replace(".", ",");
 
   return (

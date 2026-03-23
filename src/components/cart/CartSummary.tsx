@@ -1,46 +1,42 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingBag, Truck } from "lucide-react";
+import { ShoppingBag, Crown } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/lib/utils";
-import { useSettings } from "@/hooks/useSettings";
 import CouponInput from "./CouponInput";
 
 export default function CartSummary() {
   const { getSubtotal, getShipping, getGiftWrapTotal, getTotal, discount, getItemCount } = useCart();
-  const settings = useSettings();
 
   const subtotal = getSubtotal();
   const shipping = getShipping();
   const giftWrapTotal = getGiftWrapTotal();
   const total = getTotal();
   const itemCount = getItemCount();
-  const threshold = settings.freeShippingThreshold;
-
-  const remainingForFreeShipping = threshold - subtotal;
-  const freeShippingProgress = Math.min((subtotal / threshold) * 100, 100);
 
   return (
     <div className="rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
       <h3 className="mb-4 text-lg font-bold text-dark-900 dark:text-dark-50">Sipariş Özeti</h3>
 
-      {/* Free shipping progress */}
-      {remainingForFreeShipping > 0 && (
-        <div className="mb-4 rounded-lg bg-blue-50 p-3">
-          <div className="flex items-center gap-2 text-sm text-blue-700">
-            <Truck size={16} />
-            <span>
-              Ücretsiz kargo için <strong>{formatPrice(remainingForFreeShipping)}</strong> daha ekleyin!
-            </span>
+      {/* Premium Upsell — ücretsiz kargo progress bar yerine */}
+      {shipping > 0 && (
+        <Link
+          href="/premium"
+          className="mb-4 flex items-center gap-3 rounded-lg border border-amber-300/50 bg-amber-50 p-3 transition-colors hover:bg-amber-100 dark:border-amber-600/30 dark:bg-amber-950/30 dark:hover:bg-amber-950/50"
+        >
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500">
+            <Crown size={14} className="text-white" />
           </div>
-          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-blue-100">
-            <div
-              className="h-full rounded-full bg-blue-500 transition-all"
-              style={{ width: `${freeShippingProgress}%` }}
-            />
+          <div className="min-w-0">
+            <p className="text-xs font-bold text-amber-700 dark:text-amber-300">
+              Premium ol, kargo ücretsiz olsun!
+            </p>
+            <p className="text-[11px] text-amber-600/70 dark:text-amber-400/70">
+              + Ücretsiz kurulum, Netflix & Spotify hediye
+            </p>
           </div>
-        </div>
+        </Link>
       )}
 
       {/* Coupon */}
@@ -70,13 +66,13 @@ export default function CartSummary() {
             {shipping === 0 ? (
               <span className="text-green-600">Ücretsiz</span>
             ) : (
-              formatPrice(shipping)
+              <span>{formatPrice(shipping)}</span>
             )}
           </span>
         </div>
       </div>
 
-      {/* KDV — fiyatlar zaten KDV dahil, sadece KDV tutarını göster */}
+      {/* KDV */}
       <div className="mt-3 flex items-center justify-between text-sm">
         <span className="text-dark-600 dark:text-dark-300">KDV (%20 dahil)</span>
         <span className="font-medium text-dark-900 dark:text-dark-50">{formatPrice(total - total / 1.2)}</span>

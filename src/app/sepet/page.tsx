@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ShoppingCart, Trash2, ArrowRight, Truck } from "lucide-react";
+import { ShoppingCart, Trash2, ArrowRight, Crown } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/lib/utils";
 import CartItemComponent from "@/components/cart/CartItem";
@@ -12,15 +12,11 @@ import CartRecommendations from "@/components/product/CartRecommendations";
 import PremiumBanner from "@/components/premium/PremiumBanner";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 
-const FREE_SHIPPING_THRESHOLD = 2000;
-
 export default function CartPage() {
   const { items, clearCart, getItemCount, getTotal } = useCart();
   const itemCount = getItemCount();
   const total = getTotal();
   const [showClearConfirm, setShowClearConfirm] = useState(false);
-  const shippingProgress = Math.min((total / FREE_SHIPPING_THRESHOLD) * 100, 100);
-  const remaining = FREE_SHIPPING_THRESHOLD - total;
 
   return (
     <div className="bg-dark-50 dark:bg-dark-900 pb-16">
@@ -48,28 +44,25 @@ export default function CartPage() {
           )}
         </div>
 
-        {/* Free Shipping Progress Bar */}
+        {/* Premium Upsell — kargo progress bar yerine */}
         {items.length > 0 && (
-          <div className="mb-6 rounded-lg border border-dark-100 bg-white p-4 dark:border-dark-700 dark:bg-dark-800">
-            <div className="flex items-center gap-3">
-              <Truck size={20} className={remaining <= 0 ? "text-green-500" : "text-dark-500"} />
-              <div className="flex-1">
-                <p className="text-sm font-medium text-dark-700 dark:text-dark-200">
-                  {remaining <= 0 ? (
-                    <span className="text-green-600 dark:text-green-400">Tebrikler! Ücretsiz kargo kazandınız! 🎉</span>
-                  ) : (
-                    <>Ücretsiz kargo için <strong className="text-primary-600">{formatPrice(remaining)}</strong> daha ekleyin</>
-                  )}
-                </p>
-                <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-dark-100 dark:bg-dark-600">
-                  <div
-                    className={`h-full rounded-full transition-all duration-500 ${remaining <= 0 ? "bg-green-500" : "bg-primary-600"}`}
-                    style={{ width: `${shippingProgress}%` }}
-                  />
-                </div>
-              </div>
+          <Link
+            href="/premium"
+            className="mb-6 flex items-center gap-4 rounded-lg border-2 border-amber-400/40 bg-gradient-to-r from-amber-50 to-orange-50 p-4 transition-colors hover:from-amber-100 hover:to-orange-100 dark:from-amber-950/30 dark:to-orange-950/30 dark:border-amber-600/30 dark:hover:from-amber-950/50"
+          >
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500">
+              <Crown size={18} className="text-white" />
             </div>
-          </div>
+            <div>
+              <p className="text-sm font-bold text-dark-900 dark:text-dark-50">
+                <span className="text-amber-600">Premium</span> üye ol, kargo her zaman ücretsiz!
+              </p>
+              <p className="text-xs text-dark-500 dark:text-dark-400">
+                + Ücretsiz profesyonel kurulum + Netflix & Spotify hediye
+              </p>
+            </div>
+            <ArrowRight size={18} className="ml-auto shrink-0 text-amber-500" />
+          </Link>
         )}
 
         {/* Clear Cart Confirmation */}
