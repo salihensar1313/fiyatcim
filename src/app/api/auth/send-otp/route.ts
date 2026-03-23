@@ -35,9 +35,11 @@ export async function POST(request: NextRequest) {
     const result = await sendOTP(phone);
 
     if (!result.success) {
+      // SMS sağlayıcısı yoksa 503 (Service Unavailable), diğer hatalar 500
+      const isUnavailable = result.error?.includes("kullanilamamaktadir");
       return NextResponse.json(
         { success: false, error: result.error || "SMS gonderilemedi" },
-        { status: 500 }
+        { status: isUnavailable ? 503 : 500 }
       );
     }
 
