@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Crown, Users, Plus, Search, RefreshCw, Ban, CheckCircle2 } from "lucide-react";
+import { Crown, Plus, Search, RefreshCw, Ban, CheckCircle2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { formatPrice } from "@/lib/utils";
 import type { PremiumMembership, Profile } from "@/types";

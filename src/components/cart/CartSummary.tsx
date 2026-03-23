@@ -7,7 +7,7 @@ import { formatPrice } from "@/lib/utils";
 import CouponInput from "./CouponInput";
 
 export default function CartSummary() {
-  const { getSubtotal, getShipping, getGiftWrapTotal, getPremiumCost, getTotal, discount, getItemCount, premiumInCart, setPremiumInCart } = useCart();
+  const { getSubtotal, getShipping, getGiftWrapTotal, getPremiumCost, getTotal, discount, getItemCount } = useCart();
 
   const subtotal = getSubtotal();
   const shipping = getShipping();
