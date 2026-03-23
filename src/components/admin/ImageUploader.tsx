@@ -132,7 +132,7 @@ export default function ImageUploader({ value, onChange, label = "Gorsel", maxWi
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-600 focus:outline-none dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
-          placeholder="/images/hero/hero-main.png"
+          placeholder="/images/hero/hero-main.webp"
         />
       ) : (
         <div

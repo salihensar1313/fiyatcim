@@ -27,7 +27,9 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
   const loadProducts = useCallback(async () => {
     try {
-      const data = await getAllActiveProducts();
+      // GÜVENLIK: Limitsiz sorgu yerine sayfalı sorgu kullan
+      // Ana sayfa ve context için ilk 200 ürün yeterli
+      const data = await getAllActiveProducts(undefined, { limit: 200 });
       setProducts(data);
     } catch (err) {
       logger.error("product_context_load_failed", { fn: "loadProducts", error: err instanceof Error ? err.message : String(err) });

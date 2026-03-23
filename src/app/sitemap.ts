@@ -1,18 +1,18 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/constants";
-import { getCategories, getAllActiveProducts, getBlogPosts } from "@/lib/queries";
+import { getCategories, getProductSlugs, getBlogPosts } from "@/lib/queries";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date().toISOString();
 
   let categories: Awaited<ReturnType<typeof getCategories>> = [];
-  let products: Awaited<ReturnType<typeof getAllActiveProducts>> = [];
+  let productSlugs: { slug: string; updated_at: string }[] = [];
   let blogPosts: Awaited<ReturnType<typeof getBlogPosts>> = [];
 
   try {
-    [categories, products, blogPosts] = await Promise.all([
+    [categories, productSlugs, blogPosts] = await Promise.all([
       getCategories(),
-      getAllActiveProducts(),
+      getProductSlugs(),
       getBlogPosts(),
     ]);
   } catch {
@@ -51,10 +51,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  // Ürün sayfaları
-  const productPages: MetadataRoute.Sitemap = products.map((p) => ({
+  // Ürün sayfaları (minimal sorgu — sadece slug ve tarih)
+  const productPages: MetadataRoute.Sitemap = productSlugs.map((p) => ({
     url: `${SITE_URL}/urunler/${p.slug}`,
-    lastModified: now,
+    lastModified: p.updated_at || now,
     changeFrequency: "weekly" as const,
     priority: 0.7,
   }));

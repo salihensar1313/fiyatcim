@@ -31,7 +31,7 @@ export function buildOrganizationSchema() {
     logo: "https://www.fiyatcim.com/images/logo.png",
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: "+90-264-xxx-xxxx",
+      email: "destek@fiyatcim.com",
       contactType: "customer service",
       availableLanguage: "Turkish",
     },

@@ -41,11 +41,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      // Mock modda test icin kodu dondur
-      ...(result.code ? { code: result.code } : {}),
-    });
+    // GÜVENLIK: OTP kodu asla HTTP response'a eklenmez.
+    return NextResponse.json({ success: true });
   } catch (err) {
     console.error("[send-otp] Hata:", err);
     return NextResponse.json(

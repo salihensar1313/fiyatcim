@@ -94,18 +94,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const persistDemo = useCallback((u: User | null, p: Profile | null) => {
     if (u) {
       safeSetJSON(AUTH_STORAGE_KEY, { user: u, profile: p });
-      // Set httpOnly admin cookie via API if admin role
-      if (p?.role === "admin") {
-        fetch("/api/auth/demo-admin", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: u.id, email: u.email }),
-        }).catch(() => {});
-      }
     } else {
       safeRemove(AUTH_STORAGE_KEY);
-      // Clear admin cookie on logout
-      fetch("/api/auth/demo-admin", { method: "DELETE" }).catch(() => {});
     }
   }, []);
 

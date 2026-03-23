@@ -3,7 +3,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import type { ActivityLogEntry, ActivityLogType } from "@/types/admin";
 import { safeGetJSON, safeSetJSON } from "@/lib/safe-storage";
-import { createClient } from "@/lib/supabase/client";
 import { logger } from "@/lib/logger";
 
 const STORAGE_KEY = "fiyatcim_activity_log";
@@ -31,30 +30,36 @@ export function ActivityLogProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    // Non-demo: load from audit_logs
+    // GÜVENLIK: audit_logs artık server-side admin route üzerinden okunur.
+    // Client-side doğrudan Supabase erişimi kaldırıldı.
+    // @see claude2-detailed-security-report-2026-03-23.md — Bulgu #3
     let isMounted = true;
-    const supabase = createClient();
-    supabase
-      .from("audit_logs")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(MAX_ENTRIES)
-      .then(({ data, error }) => {
-        if (!isMounted) return;
-        if (error) {
-          logger.error("activity_log_load_failed", { fn: "ActivityLogProvider", error: error.message });
-          setLogs([]);
-        } else {
-          setLogs((data ?? []).map((row) => ({
-            id: row.id,
-            type: (row.action as ActivityLogType) || "info",
-            message: row.action || "",
-            entityType: row.entity_type,
-            entityId: row.entity_id,
-            createdAt: row.created_at,
-            meta: row.new_value as Record<string, unknown> | undefined,
-          })));
+    fetch("/api/admin/audit-logs?limit=200")
+      .then((res) => {
+        if (!res.ok) {
+          // Admin değilse veya auth yoksa sessizce boş dön
+          return { data: [] };
         }
+        return res.json();
+      })
+      .then((result) => {
+        if (!isMounted) return;
+        const rows = result.data ?? [];
+        setLogs(rows.map((row: Record<string, unknown>) => ({
+          id: row.id as string,
+          type: (row.action as ActivityLogType) || "info",
+          message: (row.action as string) || "",
+          entityType: row.entity_type as string | undefined,
+          entityId: row.entity_id as string | undefined,
+          createdAt: row.created_at as string,
+          meta: row.new_value as Record<string, unknown> | undefined,
+        })));
+        setIsLoaded(true);
+      })
+      .catch((err) => {
+        if (!isMounted) return;
+        logger.error("activity_log_load_failed", { fn: "ActivityLogProvider", error: err instanceof Error ? err.message : String(err) });
+        setLogs([]);
         setIsLoaded(true);
       });
 
@@ -81,14 +86,18 @@ export function ActivityLogProvider({ children }: { children: ReactNode }) {
       setLogs((prev) => [entry, ...prev].slice(0, MAX_ENTRIES));
 
       if (!IS_DEMO) {
-        const supabase = createClient();
-        supabase.from("audit_logs").insert({
-          action: message,
-          entity_type: entityType,
-          entity_id: entityId,
-          new_value: meta,
-        }).then(({ error }) => {
-          if (error) logger.error("activity_log_insert_failed", { fn: "addLog", error: error.message });
+        // GÜVENLIK: audit_logs yazma da server-side admin route üzerinden yapılır
+        fetch("/api/admin/audit-logs", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: message,
+            entity_type: entityType,
+            entity_id: entityId,
+            new_value: meta,
+          }),
+        }).catch((err) => {
+          logger.error("activity_log_insert_failed", { fn: "addLog", error: err instanceof Error ? err.message : String(err) });
         });
       }
     },

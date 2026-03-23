@@ -101,7 +101,7 @@ export default function HeroSliderClient({ slides }: Props) {
           >
             <div className="relative min-h-[300px] sm:min-h-[400px] lg:min-h-[540px]">
               <Image
-                src={slide.image || "/images/hero/hero-main.png"}
+                src={slide.image || "/images/hero/hero-main.webp"}
                 alt={slide.title}
                 fill
                 sizes="100vw"
@@ -115,9 +115,9 @@ export default function HeroSliderClient({ slides }: Props) {
 
               <div className="container-custom relative z-10 flex min-h-[300px] items-center sm:min-h-[400px] lg:min-h-[540px]">
                 <div className="w-full max-w-lg py-8 text-center sm:py-12 sm:text-left lg:py-16">
-                  <h1 className="text-2xl font-extrabold uppercase leading-tight text-white sm:text-3xl lg:text-5xl">
+                  <h2 className="text-2xl font-extrabold uppercase leading-tight text-white sm:text-3xl lg:text-5xl">
                     {slide.title}
-                  </h1>
+                  </h2>
                   <p className="mx-auto mt-3 max-w-md text-sm text-dark-200 sm:mx-0 sm:mt-4 sm:text-base lg:text-lg">
                     {slide.subtitle}
                   </p>

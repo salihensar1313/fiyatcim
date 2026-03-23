@@ -1,0 +1,4 @@
+Contact: mailto:destek@fiyatcim.com
+Preferred-Languages: tr, en
+Canonical: https://www.fiyatcim.com/.well-known/security.txt
+Expires: 2027-03-23T00:00:00.000Z

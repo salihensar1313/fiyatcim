@@ -91,7 +91,7 @@ export default function AdminSliderPage() {
         const input = {
           title,
           subtitle,
-          image: image || "/images/hero/hero-main.png",
+          image: image || "/images/hero/hero-main.webp",
           cta_text: ctaText || "Alışverişe Başla",
           cta_link: ctaLink || "/urunler",
         };
@@ -106,7 +106,7 @@ export default function AdminSliderPage() {
             id: `temp-${Date.now()}`,
             title,
             subtitle,
-            image: image || "/images/hero/hero-main.png",
+            image: image || "/images/hero/hero-main.webp",
             cta_text: ctaText || "Alışverişe Başla",
             cta_link: ctaLink || "/urunler",
           };

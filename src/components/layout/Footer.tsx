@@ -138,15 +138,17 @@ export default function Footer() {
                 <MapPin size={18} className="mt-0.5 shrink-0 text-primary-500" />
                 <span className="text-sm text-dark-400">{CONTACT.address}</span>
               </li>
+              {(CONTACT.phone as string).length > 0 && (
               <li className="flex items-center gap-3">
                 <Phone size={18} className="shrink-0 text-primary-500" />
                 <a
-                  href={`tel:${CONTACT.phone.replace(/\s|\(|\)/g, "")}`}
+                  href={`tel:${(CONTACT.phone as string).replace(/\s|\(|\)/g, "")}`}
                   className="text-sm text-dark-400 transition-colors hover:text-white"
                 >
                   {CONTACT.phone}
                 </a>
               </li>
+              )}
               <li className="flex items-center gap-3">
                 <Mail size={18} className="shrink-0 text-primary-500" />
                 <a

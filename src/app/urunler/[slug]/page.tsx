@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       url: `${SITE_URL}/urunler/${product.slug}`,
       siteName: "Fiyatcim.com",
       locale: "tr_TR",
-      type: "article",
+      type: "website", // Ürün sayfaları için — og:type=product Next.js'te desteklenmez, website kullanılır
       images: [
         {
           url: productImage,

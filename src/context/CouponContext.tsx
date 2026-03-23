@@ -4,60 +4,7 @@ import { createContext, useContext, useEffect, useState, useCallback, ReactNode 
 import type { Coupon } from "@/types";
 import { safeGetJSON, safeSetJSON } from "@/lib/safe-storage";
 
-// ==========================================
-// DEMO SEED COUPONS
-// ==========================================
-
-const seedCoupons: Coupon[] = [
-  {
-    id: "coupon-1",
-    code: "HOSGELDIN",
-    type: "percent",
-    value: 10,
-    min_cart: 500,
-    max_uses: null,
-    used_count: 0,
-    active: true,
-    expiry: "2026-12-31T23:59:59Z",
-    created_at: "2024-01-01T00:00:00Z",
-  },
-  {
-    id: "coupon-2",
-    code: "YAZ2026",
-    type: "fixed",
-    value: 200,
-    min_cart: 2000,
-    max_uses: 100,
-    used_count: 12,
-    active: true,
-    expiry: "2026-09-01T00:00:00Z",
-    created_at: "2024-06-01T00:00:00Z",
-  },
-  {
-    id: "coupon-3",
-    code: "UCRETSIZ50",
-    type: "fixed",
-    value: 50,
-    min_cart: 0,
-    max_uses: 50,
-    used_count: 48,
-    active: true,
-    expiry: "2026-06-01T00:00:00Z",
-    created_at: "2024-03-01T00:00:00Z",
-  },
-  {
-    id: "coupon-4",
-    code: "ESKIKUPON",
-    type: "percent",
-    value: 15,
-    min_cart: 1000,
-    max_uses: 20,
-    used_count: 20,
-    active: false,
-    expiry: "2025-01-01T00:00:00Z",
-    created_at: "2024-01-01T00:00:00Z",
-  },
-];
+const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
 // ==========================================
 // TYPES
@@ -69,16 +16,63 @@ interface CouponContextType {
   updateCoupon: (id: string, updates: Partial<Coupon>) => void;
   deleteCoupon: (id: string) => void;
   getCouponByCode: (code: string) => Coupon | undefined;
-  validateCoupon: (code: string, cartTotal: number, userId?: string) => { valid: boolean; error?: string; coupon?: Coupon };
+  validateCoupon: (code: string, cartTotal: number, userId?: string) => { valid: boolean; error?: string; coupon?: Coupon } | Promise<{ valid: boolean; error?: string; coupon?: Coupon }>;
   useCoupon: (couponId: string, userId: string) => void;
 }
 
 const CouponContext = createContext<CouponContextType | undefined>(undefined);
 
 const STORAGE_KEY = "fiyatcim_coupons";
-const USED_COUPONS_KEY = "fiyatcim_used_coupons"; // { couponId: [userId, ...] }
+const USED_COUPONS_KEY = "fiyatcim_used_coupons";
 
-// Removed module-level nextId counter (React Strict Mode safe)
+// ==========================================
+// DEMO SEED COUPONS (yalnızca demo modda yüklenir)
+// GÜVENLIK: Bu veriler production bundle'da
+// tree-shaking ile kaldırılır (IS_DEMO=false ise referans yok).
+// @see claude2-detailed-security-report-2026-03-23.md — Bulgu #4
+// ==========================================
+
+function getDemoSeedCoupons(): Coupon[] {
+  if (!IS_DEMO) return [];
+  return [
+    {
+      id: "coupon-1",
+      code: "HOSGELDIN",
+      type: "percent",
+      value: 10,
+      min_cart: 500,
+      max_uses: null,
+      used_count: 0,
+      active: true,
+      expiry: "2026-12-31T23:59:59Z",
+      created_at: "2024-01-01T00:00:00Z",
+    },
+    {
+      id: "coupon-2",
+      code: "YAZ2026",
+      type: "fixed",
+      value: 200,
+      min_cart: 2000,
+      max_uses: 100,
+      used_count: 12,
+      active: true,
+      expiry: "2026-09-01T00:00:00Z",
+      created_at: "2024-06-01T00:00:00Z",
+    },
+    {
+      id: "coupon-3",
+      code: "UCRETSIZ50",
+      type: "fixed",
+      value: 50,
+      min_cart: 0,
+      max_uses: 50,
+      used_count: 48,
+      active: true,
+      expiry: "2026-06-01T00:00:00Z",
+      created_at: "2024-03-01T00:00:00Z",
+    },
+  ];
+}
 
 // ==========================================
 // PROVIDER
@@ -89,33 +83,36 @@ export function CouponProvider({ children }: { children: ReactNode }) {
   const [usedByUsers, setUsedByUsers] = useState<Record<string, string[]>>({});
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // localStorage'dan yükle — safeGetJSON ile (GATE 3)
+  // Demo: localStorage'dan yükle, Prod: kuponlar yalnızca server-side doğrulanır
   useEffect(() => {
-    const data = safeGetJSON<Coupon[]>(STORAGE_KEY, []);
-    const validCoupons = Array.isArray(data) && data.length > 0
-      ? data.filter((c): c is Coupon =>
-          typeof c === "object" && c !== null && "id" in c && "code" in c
-        )
-      : seedCoupons;
+    if (IS_DEMO) {
+      const data = safeGetJSON<Coupon[]>(STORAGE_KEY, []);
+      const validCoupons = Array.isArray(data) && data.length > 0
+        ? data.filter((c): c is Coupon =>
+            typeof c === "object" && c !== null && "id" in c && "code" in c
+          )
+        : getDemoSeedCoupons();
 
-    const usedData = safeGetJSON<Record<string, string[]>>(USED_COUPONS_KEY, {});
-    const validUsed = typeof usedData === "object" && usedData !== null && !Array.isArray(usedData)
-      ? usedData
-      : {};
+      const usedData = safeGetJSON<Record<string, string[]>>(USED_COUPONS_KEY, {});
+      const validUsed = typeof usedData === "object" && usedData !== null && !Array.isArray(usedData)
+        ? usedData
+        : {};
 
-    setCoupons(validCoupons);
-    setUsedByUsers(validUsed);
+      setCoupons(validCoupons);
+      setUsedByUsers(validUsed);
+    }
+    // Production'da kupon listesi client'a yüklenmez
     setIsLoaded(true);
   }, []);
 
-  // localStorage'a kaydet — safeSetJSON ile (GATE 3)
+  // Demo: localStorage'a kaydet
   useEffect(() => {
-    if (!isLoaded) return;
+    if (!IS_DEMO || !isLoaded) return;
     safeSetJSON(STORAGE_KEY, coupons);
   }, [coupons, isLoaded]);
 
   useEffect(() => {
-    if (!isLoaded) return;
+    if (!IS_DEMO || !isLoaded) return;
     safeSetJSON(USED_COUPONS_KEY, usedByUsers);
   }, [usedByUsers, isLoaded]);
 
@@ -148,13 +145,45 @@ export function CouponProvider({ children }: { children: ReactNode }) {
   );
 
   /**
-   * Kupon doğrulama — demo best-effort.
-   * Prod'da DB + rate limit + audit ile kesin çözülür.
+   * Kupon doğrulama
+   * Demo: client-side (localStorage)
+   * Production: server-side API (/api/coupons/validate)
    */
   const validateCoupon = useCallback(
     (code: string, cartTotal: number, userId?: string) => {
-      const coupon = coupons.find((c) => c.code.toUpperCase() === code.toUpperCase());
+      if (!IS_DEMO) {
+        // Production: server-side doğrulama
+        return fetch("/api/coupons/validate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code, cartTotal }),
+        })
+          .then((res) => res.json())
+          .then((result) => {
+            if (result.valid) {
+              // Server-side geçerli — geçici Coupon nesnesi oluştur
+              return {
+                valid: true,
+                coupon: {
+                  id: result.couponId,
+                  code: code.toUpperCase(),
+                  type: result.type,
+                  value: result.value,
+                  min_cart: 0,
+                  max_uses: null,
+                  used_count: 0,
+                  active: true,
+                  created_at: "",
+                } as Coupon,
+              };
+            }
+            return { valid: false, error: result.error };
+          })
+          .catch(() => ({ valid: false, error: "Kupon dogrulanamadi." }));
+      }
 
+      // Demo: client-side doğrulama
+      const coupon = coupons.find((c) => c.code.toUpperCase() === code.toUpperCase());
       if (!coupon) return { valid: false, error: "Kupon bulunamadı." };
       if (!coupon.active) return { valid: false, error: "Bu kupon artık aktif değil." };
       if (coupon.expiry && new Date(coupon.expiry) < new Date()) {
@@ -166,28 +195,24 @@ export function CouponProvider({ children }: { children: ReactNode }) {
       if (cartTotal < coupon.min_cart) {
         return { valid: false, error: `Minimum sepet tutarı ${coupon.min_cart}₺ olmalıdır.` };
       }
-
-      // Kullanıcı başına 1 kez kontrolü (demo best-effort — K1 test)
       if (userId) {
         const users = usedByUsers[coupon.id] || [];
         if (users.includes(userId)) {
           return { valid: false, error: "Bu kuponu daha önce kullandınız." };
         }
       }
-
       return { valid: true, coupon };
     },
     [coupons, usedByUsers]
   );
 
   const useCoupon = useCallback((couponId: string, userId: string) => {
-    // used_count artır
+    if (!IS_DEMO) return; // Production'da kupon kullanımı create_order_rpc içinde yapılır
     setCoupons((prev) =>
       prev.map((c) =>
         c.id === couponId ? { ...c, used_count: c.used_count + 1 } : c
       )
     );
-    // used_by_users kaydet (demo best-effort)
     setUsedByUsers((prev) => ({
       ...prev,
       [couponId]: [...(prev[couponId] || []), userId],

@@ -803,11 +803,20 @@ export async function getCouponByCode(code: string): Promise<Coupon | null> {
 // UTILITY: Tüm aktif ürünleri getir (ProductContext için)
 // ==========================================
 
-export async function getAllActiveProducts(client?: SupabaseClient): Promise<Product[]> {
+/**
+ * Tüm aktif ürünleri getirir — LIMIT destekli.
+ *
+ * GÜVENLIK: Varsayılan limit 100. Limitsiz çağrı yapılmamalı.
+ * @see claude2-detailed-security-report-2026-03-23.md — Bulgu #5
+ */
+export async function getAllActiveProducts(client?: SupabaseClient, options?: { limit?: number; offset?: number }): Promise<Product[]> {
   const start = performance.now();
+  const limit = options?.limit ?? 100;
+  const offset = options?.offset ?? 0;
 
   if (IS_DEMO) {
-    const result = activeSeedProducts();
+    const all = activeSeedProducts();
+    const result = all.slice(offset, offset + limit);
     logger.info("query_ok", { fn: "getAllActiveProducts", demo: true, rows: result.length, ms: performance.now() - start });
     return result;
   }
@@ -818,18 +827,77 @@ export async function getAllActiveProducts(client?: SupabaseClient): Promise<Pro
     .select("*, category:categories(*), brand:brands(*), reviews:reviews!left(id, rating, is_approved)")
     .eq("is_active", true)
     .is("deleted_at", null)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .range(offset, offset + limit - 1);
 
   if (error) {
     logger.error("query_failed", { fn: "getAllActiveProducts", error: error.message, ms: performance.now() - start });
     if (IS_PROD) throw new Error(`getAllActiveProducts failed: ${error.message}`);
     logger.warn("seed_fallback", { fn: "getAllActiveProducts" });
-    return activeSeedProducts();
+    return activeSeedProducts().slice(0, limit);
   }
 
   const result = (data ?? []).map((row) => mapProduct(row as Record<string, unknown>));
-  logger.info("query_ok", { fn: "getAllActiveProducts", rows: result.length, ms: performance.now() - start });
+  logger.info("query_ok", { fn: "getAllActiveProducts", rows: result.length, limit, offset, ms: performance.now() - start });
   return result;
+}
+
+
+/**
+ * Belirli ID listesine göre ürünleri getirir.
+ * RecentlyViewed gibi bileşenler için — tüm ürünleri çekmek yerine.
+ */
+export async function getProductsByIds(ids: string[], client?: SupabaseClient): Promise<Product[]> {
+  const start = performance.now();
+  if (ids.length === 0) return [];
+
+  if (IS_DEMO) {
+    return activeSeedProducts().filter((p) => ids.includes(p.id));
+  }
+
+  const supabase = getSupabase(client);
+  const { data, error } = await supabase
+    .from("products")
+    .select("*, category:categories(*), brand:brands(*)")
+    .in("id", ids)
+    .eq("is_active", true)
+    .is("deleted_at", null);
+
+  if (error) {
+    logger.error("query_failed", { fn: "getProductsByIds", error: error.message, ms: performance.now() - start });
+    return [];
+  }
+
+  const result = (data ?? []).map((row) => mapProduct(row as Record<string, unknown>));
+  logger.info("query_ok", { fn: "getProductsByIds", rows: result.length, ms: performance.now() - start });
+  return result;
+}
+
+/**
+ * Sitemap için minimal ürün bilgisi — sadece slug ve updated_at.
+ * Tam ürün verisi çekmek yerine kullanılır.
+ */
+export async function getProductSlugs(client?: SupabaseClient): Promise<{ slug: string; updated_at: string }[]> {
+  const start = performance.now();
+
+  if (IS_DEMO) {
+    return activeSeedProducts().map((p) => ({ slug: p.slug, updated_at: p.updated_at || p.created_at }));
+  }
+
+  const supabase = getSupabase(client);
+  const { data, error } = await supabase
+    .from("products")
+    .select("slug, updated_at")
+    .eq("is_active", true)
+    .is("deleted_at", null);
+
+  if (error) {
+    logger.error("query_failed", { fn: "getProductSlugs", error: error.message, ms: performance.now() - start });
+    return [];
+  }
+
+  logger.info("query_ok", { fn: "getProductSlugs", rows: (data ?? []).length, ms: performance.now() - start });
+  return (data ?? []).map((row) => ({ slug: row.slug as string, updated_at: (row.updated_at || new Date().toISOString()) as string }));
 }
 
 // ==========================================

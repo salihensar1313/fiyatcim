@@ -29,8 +29,7 @@ const Newsletter = dynamic(() => import("@/components/home/Newsletter"));
  * 1. HeroSlider — Ana banner
  * 2. PromoBanner — Kampanya barı
  * 3. TrustBadges — Güven rozeti barı (Sprint 2: yukarı taşındı)
- * 4. CategoryCards — Ürün kategorileri
- * 5. FeaturedProducts — Öne çıkan ürünler
+ * 4. FeaturedProducts — Öne çıkan ürünler
  * 6. FlashSale — Flaş indirimler (countdown)
  * 7. BestSellers — Öne çıkan indirimler
  * 8. TrendingProducts — Trend ürünler
@@ -45,6 +44,8 @@ export default function HomePage() {
     <>
       <JsonLd data={buildOrganizationSchema()} />
       <JsonLd data={buildWebSiteSchema()} />
+      {/* SEO: Tek H1 — sayfa başına 1 adet */}
+      <h1 className="sr-only">Fiyatcim — Alarm ve Güvenlik Sistemleri</h1>
       <Suspense fallback={<div className="min-h-[300px] animate-pulse bg-dark-900 sm:min-h-[400px] lg:min-h-[540px]" />}>
         <HeroSlider />
       </Suspense>

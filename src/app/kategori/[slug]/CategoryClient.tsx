@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { LayoutGrid, List, ArrowUpDown } from "lucide-react";
-import { getCategories, getAllActiveProducts } from "@/lib/queries";
+import { getCategories, getProductsByCategory } from "@/lib/queries";
 import { getEffectivePrice } from "@/lib/utils";
 import type { Product, Category, ViewMode } from "@/types";
 import { logger } from "@/lib/logger";
@@ -44,21 +44,20 @@ export default function CategoryClient({ slug }: Props) {
   }, [slug, trackCategoryVisit]);
 
   useEffect(() => {
-    Promise.all([getAllActiveProducts(), getCategories()])
-      .then(([products, categories]) => {
-        setAllProducts(products);
+    // GÜVENLIK: Tüm ürünleri çekmek yerine kategoriye göre filtrelenmiş sorgu
+    Promise.all([getProductsByCategory(slug), getCategories()])
+      .then(([result, categories]) => {
+        setAllProducts(result.data);
         setCats(categories);
       })
       .catch((err) => logger.error("category_page_load_failed", { fn: "CategoryClient", error: err instanceof Error ? err.message : String(err) }))
       .finally(() => setLoading(false));
-  }, []);
+  }, [slug]);
 
   const category = cats.find((c) => c.slug === slug);
 
-  const categoryProducts = useMemo(
-    () => (category ? allProducts.filter((p) => p.category_id === category.id) : []),
-    [allProducts, category]
-  );
+  // Ürünler artık server-side kategori filtresiyle geliyor
+  const categoryProducts = allProducts;
 
   const {
     filters: specFilters,

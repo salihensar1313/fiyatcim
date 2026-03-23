@@ -146,12 +146,26 @@ class MockSMSProvider implements SMSProvider {
 // PROVIDER FACTORY
 // ==========================================
 
-function getProvider(): SMSProvider {
-  // Production'da NetGSM kullanmak icin:
+/**
+ * GÜVENLIK: Güvenli varsayılan — SMS sağlayıcısı yoksa null döner.
+ * Mock provider yalnızca NODE_ENV=development'ta çalışır.
+ * Production'da provider yoksa sendOTP 500 döner.
+ *
+ * @see claude2-detailed-security-report-2026-03-23.md — Bulgu #3
+ */
+function getProvider(): SMSProvider | null {
+  // Production: NetGSM
   // if (process.env.NETGSM_USERCODE && process.env.NETGSM_PASSWORD) {
   //   return new NetGSMProvider();
   // }
-  return new MockSMSProvider();
+
+  // Geliştirme ortamında mock provider kullan
+  if (process.env.NODE_ENV === "development") {
+    return new MockSMSProvider();
+  }
+
+  // Production'da SMS sağlayıcısı yoksa null — endpoint fail eder
+  return null;
 }
 
 // ==========================================
@@ -167,10 +181,17 @@ export async function sendOTP(phone: string): Promise<OTPResult> {
     cleanupExpiredOTPs();
 
     const normalized = normalizePhone(phone);
+    const provider = getProvider();
+
+    // GÜVENLIK: SMS sağlayıcısı yoksa endpoint fail etsin
+    if (!provider) {
+      console.error("[SMS] SMS saglayicisi yapilandirilmamis. OTP gonderilemez.");
+      return { success: false, error: "SMS servisi su anda kullanilamamaktadir." };
+    }
+
     const code = generateOTPCode();
     const message = `Fiyatcim.com dogrulama kodunuz: ${code} — Bu kodu kimseyle paylasmayiniz.`;
 
-    const provider = getProvider();
     const result = await provider.sendSMS(normalized, message);
 
     if (!result.success) {
@@ -185,12 +206,9 @@ export async function sendOTP(phone: string): Promise<OTPResult> {
       attempts: 0,
     });
 
-    // Mock modda kodu dondur (production'da dondurmemeli)
-    const isMock = !process.env.NETGSM_USERCODE;
-    return {
-      success: true,
-      code: isMock ? code : undefined,
-    };
+    // GÜVENLIK: OTP kodu asla HTTP response'a eklenmez.
+    // Geliştirme ortamında bile kod yalnızca console log'da görünür.
+    return { success: true };
   } catch (err) {
     console.error("[SMS] OTP gonderme hatasi:", err);
     return { success: false, error: "Beklenmedik bir hata olustu" };

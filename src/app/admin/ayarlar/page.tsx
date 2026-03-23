@@ -18,12 +18,9 @@ interface SiteSettings {
   facebook: string;
   freeShippingThreshold: number;
   defaultShippingFee: number;
-  paymentApiKey: string;
-  paymentSecretKey: string;
-  smtpHost: string;
-  smtpPort: string;
-  smtpUser: string;
-  smtpPass: string;
+  // GÜVENLIK: Secret alanlar (payment key, SMTP) client-side'da tutulmaz.
+  // Bunlar env/vault üzerinden yönetilir.
+  // @see claude2-detailed-security-report-2026-03-23.md — Bulgu #6
 }
 
 const defaultSettings: SiteSettings = {
@@ -36,12 +33,6 @@ const defaultSettings: SiteSettings = {
   facebook: "",
   freeShippingThreshold: 2000,
   defaultShippingFee: 49,
-  paymentApiKey: "",
-  paymentSecretKey: "",
-  smtpHost: "",
-  smtpPort: "587",
-  smtpUser: "",
-  smtpPass: "",
 };
 
 export default function AdminSettingsPage() {
@@ -199,105 +190,44 @@ export default function AdminSettingsPage() {
           </div>
         )}
 
-        {/* Ödeme Ayarları — GATE 6: DEMO-ONLY Banner */}
+        {/* Ödeme Ayarları — Güvenlik: Secret'lar env/vault'ta tutulur */}
         {activeTab === "odeme" && (
           <div>
-            {/* GATE 6: Demo güvenlik uyarısı */}
-            <div className="mb-6 rounded-lg border border-amber-300 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-900/20">
+            <div className="rounded-lg border border-blue-300 bg-blue-50 p-4 dark:border-blue-700 dark:bg-blue-900/20">
               <div className="flex items-start gap-3">
-                <AlertTriangle size={20} className="mt-0.5 shrink-0 text-amber-600" />
+                <AlertTriangle size={20} className="mt-0.5 shrink-0 text-blue-600" />
                 <div>
-                  <p className="text-sm font-bold text-amber-800">DEMO-ONLY</p>
-                  <p className="mt-1 text-sm text-amber-700">
-                    Bu değerler localStorage&apos;da şifresiz tutulur. Prod&apos;da sunucu-taraflı env/vault kullanınız.
-                    Sprint 2&apos;de bu alanlar işlevsel değildir.
+                  <p className="text-sm font-bold text-blue-800 dark:text-blue-300">Sunucu Taraflı Yapılandırma</p>
+                  <p className="mt-1 text-sm text-blue-700 dark:text-blue-400">
+                    Ödeme entegrasyon anahtarları (iyzico API Key, Secret Key) güvenlik nedeniyle
+                    sunucu ortam değişkenleri (env) üzerinden yönetilir. Bu alanlar tarayıcıda tutulmaz.
+                  </p>
+                  <p className="mt-2 text-xs text-blue-600 dark:text-blue-500">
+                    Yapılandırma: IYZICO_API_KEY, IYZICO_SECRET_KEY ortam değişkenlerini Vercel Dashboard &gt; Settings &gt; Environment Variables bölümünden ayarlayın.
                   </p>
                 </div>
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">API Key</label>
-                <input
-                  type="password"
-                  value={settings.paymentApiKey}
-                  onChange={(e) => updateField("paymentApiKey", e.target.value)}
-                  className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
-                  placeholder="iyzico / PayTR API Key"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Secret Key</label>
-                <input
-                  type="password"
-                  value={settings.paymentSecretKey}
-                  onChange={(e) => updateField("paymentSecretKey", e.target.value)}
-                  className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
-                  placeholder="Secret Key"
-                />
               </div>
             </div>
           </div>
         )}
 
-        {/* E-posta Ayarları — GATE 6: DEMO-ONLY Banner */}
+        {/* E-posta Ayarları — Güvenlik: Secret'lar env/vault'ta tutulur */}
         {activeTab === "eposta" && (
           <div>
-            {/* GATE 6: Demo güvenlik uyarısı */}
-            <div className="mb-6 rounded-lg border border-amber-300 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-900/20">
+            <div className="rounded-lg border border-blue-300 bg-blue-50 p-4 dark:border-blue-700 dark:bg-blue-900/20">
               <div className="flex items-start gap-3">
-                <AlertTriangle size={20} className="mt-0.5 shrink-0 text-amber-600" />
+                <AlertTriangle size={20} className="mt-0.5 shrink-0 text-blue-600" />
                 <div>
-                  <p className="text-sm font-bold text-amber-800">DEMO-ONLY</p>
-                  <p className="mt-1 text-sm text-amber-700">
-                    Bu değerler localStorage&apos;da şifresiz tutulur. Prod&apos;da sunucu-taraflı env/vault kullanınız.
-                    Sprint 2&apos;de SMTP işlevsel değildir.
+                  <p className="text-sm font-bold text-blue-800 dark:text-blue-300">Sunucu Taraflı Yapılandırma</p>
+                  <p className="mt-1 text-sm text-blue-700 dark:text-blue-400">
+                    E-posta entegrasyon bilgileri (SMTP, Resend API Key) güvenlik nedeniyle
+                    sunucu ortam değişkenleri üzerinden yönetilir. Bu alanlar tarayıcıda tutulmaz.
+                  </p>
+                  <p className="mt-2 text-xs text-blue-600 dark:text-blue-500">
+                    Yapılandırma: RESEND_API_KEY ortam değişkenini Vercel Dashboard &gt; Settings &gt; Environment Variables bölümünden ayarlayın.
+                    E-postalar Resend API üzerinden gönderilir.
                   </p>
                 </div>
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">SMTP Sunucu</label>
-                <input
-                  type="text"
-                  value={settings.smtpHost}
-                  onChange={(e) => updateField("smtpHost", e.target.value)}
-                  className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
-                  placeholder="smtp.example.com"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Port</label>
-                <input
-                  type="text"
-                  value={settings.smtpPort}
-                  onChange={(e) => updateField("smtpPort", e.target.value)}
-                  className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
-                  placeholder="587"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Kullanıcı Adı</label>
-                <input
-                  type="text"
-                  value={settings.smtpUser}
-                  onChange={(e) => updateField("smtpUser", e.target.value)}
-                  className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
-                  placeholder="noreply@fiyatcim.com"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Şifre</label>
-                <input
-                  type="password"
-                  value={settings.smtpPass}
-                  onChange={(e) => updateField("smtpPass", e.target.value)}
-                  className="w-full rounded-lg border border-dark-200 bg-white px-3 py-2 text-sm text-dark-900 placeholder-dark-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-dark-600 dark:bg-dark-700 dark:text-dark-100 dark:placeholder-dark-500"
-                  placeholder="SMTP şifresi"
-                />
               </div>
             </div>
           </div>

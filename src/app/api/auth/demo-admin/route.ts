@@ -1,54 +1,28 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createAdminToken, DEMO_ADMIN_COOKIE, DEMO_COOKIE_MAX_AGE } from "@/lib/demo-auth";
-
-const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+import { NextResponse } from "next/server";
 
 /**
- * POST /api/auth/demo-admin
- * Sets an httpOnly, signed admin cookie for demo mode.
- * Body: { userId: string, email: string }
+ * POST/DELETE /api/auth/demo-admin
+ *
+ * GÜVENLIK: Bu endpoint tamamen devre dışı bırakılmıştır.
+ * Demo admin cookie üretimi production'da privilege escalation riski
+ * oluşturduğu için kaldırılmıştır.
+ *
+ * Geçmiş: Bu route demo modda herhangi bir userId/email ile admin cookie
+ * üretiyordu. İnternete açık ortamda doğrudan yetki yükseltme zinciri
+ * oluşturuyordu.
+ *
+ * @see claude2-detailed-security-report-2026-03-23.md — Bulgu #1
  */
-export async function POST(request: NextRequest) {
-  if (!IS_DEMO) {
-    return NextResponse.json({ error: "Not in demo mode" }, { status: 403 });
-  }
-
-  try {
-    const { userId, email } = await request.json();
-
-    if (!userId || !email || typeof userId !== "string" || typeof email !== "string") {
-      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
-    }
-
-    const token = await createAdminToken(userId, email);
-
-    const response = NextResponse.json({ success: true });
-    response.cookies.set(DEMO_ADMIN_COOKIE, token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/",
-      maxAge: DEMO_COOKIE_MAX_AGE,
-    });
-
-    return response;
-  } catch {
-    return NextResponse.json({ error: "Bad request" }, { status: 400 });
-  }
+export async function POST() {
+  return NextResponse.json(
+    { error: "Demo admin endpoint devre disi birakilmistir." },
+    { status: 403 }
+  );
 }
 
-/**
- * DELETE /api/auth/demo-admin
- * Clears the admin cookie on logout.
- */
 export async function DELETE() {
-  const response = NextResponse.json({ success: true });
-  response.cookies.set(DEMO_ADMIN_COOKIE, "", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    path: "/",
-    maxAge: 0, // expire immediately
-  });
-  return response;
+  return NextResponse.json(
+    { error: "Demo admin endpoint devre disi birakilmistir." },
+    { status: 403 }
+  );
 }

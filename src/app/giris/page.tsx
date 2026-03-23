@@ -95,9 +95,12 @@ function LoginForm() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">E-posta</label>
+              <label htmlFor="email" className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">E-posta</label>
               <input
                 type="email"
+                name="email"
+                id="email"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="ornek@email.com"
@@ -107,10 +110,13 @@ function LoginForm() {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Şifre</label>
+              <label htmlFor="password" className="mb-1 block text-sm font-medium text-dark-700 dark:text-dark-200">Şifre</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
+                  name="password"
+                  id="password"
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Şifreniz"

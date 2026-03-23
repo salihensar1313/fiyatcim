@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Clock } from "lucide-react";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
-import { getAllActiveProducts } from "@/lib/queries";
+import { getProductsByIds } from "@/lib/queries";
 import type { Product } from "@/types";
 import ProductCard from "./ProductCard";
 import { logger } from "@/lib/logger";
@@ -12,21 +12,32 @@ interface RecentlyViewedProps {
   excludeId?: string;
 }
 
+/**
+ * Son görüntülenen ürünler bileşeni.
+ * GÜVENLIK: Tüm ürünleri çekmek yerine sadece viewed ID'lere göre sorgu yapar.
+ * @see claude2-detailed-security-report-2026-03-23.md — Bulgu #5
+ */
 export default function RecentlyViewed({ excludeId }: RecentlyViewedProps) {
   const { viewedIds } = useRecentlyViewed();
-  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [viewedProducts, setViewedProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    getAllActiveProducts()
-      .then(setAllProducts)
-      .catch((err) => logger.error("recently_viewed_load_failed", { fn: "RecentlyViewed", error: err instanceof Error ? err.message : String(err) }));
-  }, []);
+    const idsToFetch = viewedIds
+      .filter((id) => id !== excludeId)
+      .slice(0, 4);
 
-  const viewedProducts = viewedIds
-    .filter((id) => id !== excludeId)
-    .map((id) => allProducts.find((p) => p.id === id))
-    .filter((p): p is Product => !!p && p.is_active && !p.deleted_at)
-    .slice(0, 4);
+    if (idsToFetch.length === 0) return;
+
+    getProductsByIds(idsToFetch)
+      .then((products) => {
+        // Sırayı viewedIds'e göre koru
+        const ordered = idsToFetch
+          .map((id) => products.find((p) => p.id === id))
+          .filter((p): p is Product => !!p && p.is_active && !p.deleted_at);
+        setViewedProducts(ordered);
+      })
+      .catch((err) => logger.error("recently_viewed_load_failed", { fn: "RecentlyViewed", error: err instanceof Error ? err.message : String(err) }));
+  }, [viewedIds, excludeId]);
 
   if (viewedProducts.length === 0) return null;
 
