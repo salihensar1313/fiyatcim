@@ -70,7 +70,24 @@ export interface Profile {
   telefon: string;
   role: "user" | "admin";
   avatar?: string;
+  is_premium?: boolean;
+  premium_expires_at?: string;
   created_at?: string;
+}
+
+export interface PremiumMembership {
+  id: string;
+  user_id: string;
+  status: "active" | "expired" | "cancelled";
+  purchased_with_order_id?: string | null;
+  price_paid: number;
+  payment_method: "with_order" | "standalone" | "admin_granted";
+  purchased_at: string;
+  expires_at?: string | null;
+  cancelled_at?: string | null;
+  notes?: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Address {

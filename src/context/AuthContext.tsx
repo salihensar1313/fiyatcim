@@ -27,6 +27,7 @@ interface AuthContextType {
   profile: Profile | null;
   isLoading: boolean;
   isAdmin: boolean;
+  isPremium: boolean;
   signIn: (email: string, password: string) => Promise<{ error?: string }>;
   signInWithGoogle: () => Promise<{ error?: string }>;
   signUp: (email: string, password: string, ad: string, soyad: string, telefon?: string) => Promise<{ error?: string }>;
@@ -650,10 +651,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const isAdmin = profile?.role === "admin";
+  const isPremium = profile?.is_premium === true;
 
   return (
     <AuthContext.Provider
-      value={{ user, profile, isLoading, isAdmin, signIn, signInWithGoogle, signUp, signOut, updateProfile, changePassword, updateEmail, deleteAccount, adminUpdateUser, adminChangePassword }}
+      value={{ user, profile, isLoading, isAdmin, isPremium, signIn, signInWithGoogle, signUp, signOut, updateProfile, changePassword, updateEmail, deleteAccount, adminUpdateUser, adminChangePassword }}
     >
       {children}
     </AuthContext.Provider>

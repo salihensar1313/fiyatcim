@@ -10,6 +10,7 @@ import CartSummary from "@/components/cart/CartSummary";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import CartRecommendations from "@/components/product/CartRecommendations";
 import PremiumBanner from "@/components/premium/PremiumBanner";
+import PremiumCartItem from "@/components/cart/PremiumCartItem";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 
 export default function CartPage() {
@@ -83,6 +84,8 @@ export default function CartPage() {
               {items.map((item) => (
                 <CartItemComponent key={item.product_id} item={item} />
               ))}
+              {/* Premium Üyelik — sepete ekle/çıkar */}
+              <PremiumCartItem />
             </div>
 
             {/* Summary */}

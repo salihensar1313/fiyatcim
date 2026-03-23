@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { SITE_FULL_NAME, CONTACT } from "@/lib/constants";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 import { useWishlist } from "@/context/WishlistContext";
 import MobileMenu from "./MobileMenu";
 import NotificationBell from "@/components/ui/NotificationBell";
@@ -31,6 +32,7 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const { getItemCount } = useCart();
+  const { isPremium } = useAuth();
   const { getCount: getWishlistCount } = useWishlist();
   const { compareCount } = useCompare();
 
@@ -88,10 +90,17 @@ export default function Header() {
                 14 Gün İade Garantisi
               </span>
               <span className="text-dark-600">|</span>
-              <Link href="/premium" className="flex items-center gap-1.5 rounded-full bg-amber-500/20 px-2.5 py-0.5 text-amber-400 transition-colors hover:bg-amber-500/30 hover:text-amber-300">
-                <Crown size={12} />
-                <span className="text-xs font-bold">Premium Ol — Ücretsiz Kargo</span>
-              </Link>
+              {isPremium ? (
+                <span className="flex items-center gap-1.5 rounded-full bg-green-500/20 px-2.5 py-0.5 text-green-400">
+                  <Crown size={12} />
+                  <span className="text-xs font-bold">Premium Üye</span>
+                </span>
+              ) : (
+                <Link href="/premium" className="flex items-center gap-1.5 rounded-full bg-amber-500/20 px-2.5 py-0.5 text-amber-400 transition-colors hover:bg-amber-500/30 hover:text-amber-300">
+                  <Crown size={12} />
+                  <span className="text-xs font-bold">Premium Ol — Ücretsiz Kargo</span>
+                </Link>
+              )}
             </div>
           </div>
         </div>

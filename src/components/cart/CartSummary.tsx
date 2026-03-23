@@ -7,11 +7,12 @@ import { formatPrice } from "@/lib/utils";
 import CouponInput from "./CouponInput";
 
 export default function CartSummary() {
-  const { getSubtotal, getShipping, getGiftWrapTotal, getTotal, discount, getItemCount } = useCart();
+  const { getSubtotal, getShipping, getGiftWrapTotal, getPremiumCost, getTotal, discount, getItemCount, premiumInCart, setPremiumInCart } = useCart();
 
   const subtotal = getSubtotal();
   const shipping = getShipping();
   const giftWrapTotal = getGiftWrapTotal();
+  const premiumCost = getPremiumCost();
   const total = getTotal();
   const itemCount = getItemCount();
 
@@ -70,6 +71,14 @@ export default function CartSummary() {
             )}
           </span>
         </div>
+        {premiumCost > 0 && (
+          <div className="flex items-center justify-between text-sm">
+            <span className="flex items-center gap-1 text-amber-600">
+              <Crown size={12} /> Premium Üyelik
+            </span>
+            <span className="font-medium text-amber-600">{formatPrice(premiumCost)}</span>
+          </div>
+        )}
       </div>
 
       {/* KDV */}

@@ -4,12 +4,25 @@ import Link from "next/link";
 import { Crown, Wrench, Headphones, Shield, Truck, Tv, Music, ArrowRight, Sparkles } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { PREMIUM_PRICE_WITH_ORDER, PREMIUM_PRICE_STANDALONE } from "@/lib/premium";
+import { useAuth } from "@/context/AuthContext";
+import { CheckCircle2 } from "lucide-react";
 
 interface PremiumBannerProps {
   variant?: "home" | "product" | "cart";
 }
 
 export default function PremiumBanner({ variant = "home" }: PremiumBannerProps) {
+  const { isPremium } = useAuth();
+
+  // Premium kullanıcıya kısa onay mesajı göster
+  if (isPremium && variant !== "home") {
+    return (
+      <div className="flex items-center gap-2 rounded-xl border border-green-200 bg-green-50 p-3 dark:border-green-800 dark:bg-green-950/30">
+        <CheckCircle2 size={18} className="text-green-600" />
+        <p className="text-sm font-medium text-green-700 dark:text-green-300">Premium üyesiniz — ücretsiz kargo ve kurulum ayrıcalığınız aktif!</p>
+      </div>
+    );
+  }
   if (variant === "product") {
     return (
       <Link

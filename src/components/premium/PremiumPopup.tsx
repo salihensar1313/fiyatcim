@@ -5,6 +5,7 @@ import Link from "next/link";
 import { X, Crown, Wrench, Truck, Tv, Music, Headphones, Shield, Sparkles } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { PREMIUM_PRICE_WITH_ORDER } from "@/lib/premium";
+import { useAuth } from "@/context/AuthContext";
 
 const BENEFITS = [
   { icon: Wrench, text: "Ücretsiz Profesyonel Kurulum", sub: "*Tüm ürünlerde", color: "from-amber-400 to-orange-500" },
@@ -18,10 +19,13 @@ const BENEFITS = [
 const STORAGE_KEY = "fiyatcim_premium_popup_dismissed";
 
 export default function PremiumPopup() {
+  const { isPremium } = useAuth();
   const [show, setShow] = useState(false);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    // Zaten premium ise popup gösterme
+    if (isPremium) return;
     const dismissed = localStorage.getItem(STORAGE_KEY);
     if (dismissed) {
       const dismissedAt = parseInt(dismissed, 10);
@@ -32,7 +36,7 @@ export default function PremiumPopup() {
       requestAnimationFrame(() => setVisible(true));
     }, 2000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [isPremium]);
 
   const handleClose = () => {
     setVisible(false);
