@@ -120,6 +120,15 @@ function AraContent() {
     return detectCategory(queryParam.trim());
   }, [queryParam]);
 
+  // Featured products in search results (merchandising slot — top 4 from results)
+  const featuredInSearch = useMemo(() => {
+    if (results.length < 8) return []; // Çok az sonuç varsa gösterme
+    return results
+      .filter((r) => r.product.is_featured || r.product.is_trending)
+      .slice(0, 4)
+      .map((r) => r.product);
+  }, [results]);
+
   // Popular products (for empty results)
   const popularProducts = useMemo(() => {
     return products
@@ -208,6 +217,21 @@ function AraContent() {
                   </div>
                 </div>
               </Link>
+            )}
+
+            {/* Öne Çıkan Ürünler — Arama merchandising */}
+            {featuredInSearch.length > 0 && (
+              <div className="mb-8 rounded-xl border border-primary-100 bg-primary-50/30 dark:border-primary-900/30 dark:bg-primary-950/10 p-4">
+                <div className="mb-3 flex items-center gap-2">
+                  <TrendingUp size={16} className="text-primary-600" />
+                  <span className="text-sm font-bold text-dark-800 dark:text-dark-100">Öne Çıkan Ürünler</span>
+                </div>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  {featuredInSearch.map((p) => (
+                    <ProductCard key={p.id} product={p} />
+                  ))}
+                </div>
+              </div>
             )}
 
             {/* Results header */}

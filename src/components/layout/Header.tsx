@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   RotateCcw,
   Truck,
+  Zap,
 } from "lucide-react";
 import { SITE_FULL_NAME, CONTACT } from "@/lib/constants";
 import { useCart } from "@/context/CartContext";
@@ -188,6 +189,15 @@ export default function Header() {
             >
               <Package size={14} />
               Tüm Ürünler
+            </Link>
+            {/* Discovery links — Trendyol-style */}
+            <span className="mx-1 h-5 w-px bg-primary-400/30" />
+            <Link
+              href="/kampanyalar"
+              className="flex items-center gap-1 px-3 py-3 text-sm font-bold text-yellow-300 transition-colors hover:bg-primary-700 hover:text-yellow-200"
+            >
+              <Zap size={14} />
+              Flaş İndirimler
             </Link>
           </div>
         </nav>

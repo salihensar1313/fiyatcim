@@ -25,9 +25,17 @@ export const SOCIAL = {
 export const NAV_LINKS = [
   { label: "Alarm Sistemleri", href: "/kategori/alarm-sistemleri", key: "alarm" },
   { label: "Güvenlik Kameraları", href: "/kategori/guvenlik-kameralari", key: "kamera" },
-  { label: "Akıllı Ev", href: "/kategori/akilli-ev-sistemleri", key: "akilli-ev" },
-  { label: "Geçiş Kontrol", href: "/kategori/gecis-kontrol-sistemleri", key: "gecis" },
+  { label: "Akıllı Ev Sistemleri", href: "/kategori/akilli-ev-sistemleri", key: "akilli-ev" },
+  { label: "Akıllı Kilit", href: "/kategori/akilli-kilit", key: "kilit" },
+  { label: "Geçiş Kontrol Sistemleri", href: "/kategori/gecis-kontrol-sistemleri", key: "gecis" },
+  { label: "Yangın Algılama", href: "/kategori/yangin-algilama", key: "yangin" },
   { label: "Tüm Ürünler", href: "/urunler", key: "urunler" },
+] as const;
+
+/** Discovery linkleri — nav bar'da kategori linklerinden sonra gösterilir */
+export const NAV_DISCOVERY_LINKS = [
+  { label: "Flaş İndirimler", href: "/kampanyalar", key: "flas", badge: "hot" as const },
+  { label: "Çok Satanlar", href: "/urunler?sort=bestseller", key: "bestseller", badge: "new" as const },
 ] as const;
 
 // Kategori görselleri (seed category id → image path)

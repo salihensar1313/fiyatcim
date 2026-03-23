@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 };
 import HeroSlider from "@/components/home/HeroSlider";
 import PromoBanner from "@/components/home/PromoBanner";
+import QuickAccessGrid from "@/components/home/QuickAccessGrid";
 import FeaturedProducts from "@/components/home/FeaturedProducts";
 import RandomProducts from "@/components/home/RandomProducts";
 
@@ -51,6 +52,7 @@ export default function HomePage() {
         <HeroSlider />
       </Suspense>
       <PromoBanner />
+      <QuickAccessGrid />
       <Suspense fallback={<div className="border-y border-dark-100 bg-white dark:bg-dark-800 py-6 sm:py-8"><div className="container-custom"><div className="grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-8">{Array.from({ length: 4 }).map((_, i) => (<div key={i} className="h-12 animate-pulse rounded bg-dark-50 dark:bg-dark-800" />))}</div></div></div>}>
         <TrustBadges />
       </Suspense>
