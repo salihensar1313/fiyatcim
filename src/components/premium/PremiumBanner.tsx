@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Crown, Wrench, Headphones, Shield, Zap, Tv, Music, ArrowRight } from "lucide-react";
+import { Crown, Wrench, Headphones, Shield, Truck, Tv, Music, ArrowRight } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { PREMIUM_PRICE_WITH_ORDER, PREMIUM_PRICE_STANDALONE } from "@/lib/premium";
 
@@ -96,11 +96,11 @@ export default function PremiumBanner({ variant = "home" }: PremiumBannerProps) 
                 <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
                   {[
                     { icon: Wrench, text: "Ücretsiz Kurulum" },
-                    { icon: Headphones, text: "7/24 Destek" },
+                    { icon: Truck, text: "Ücretsiz Kargo" },
                     { icon: Shield, text: "+1 Yıl Garanti" },
-                    { icon: Zap, text: "Aynı Gün Kargo" },
-                    { icon: Tv, text: "1 Ay Netflix Hediye" },
-                    { icon: Music, text: "1 Ay Spotify Hediye" },
+                    { icon: Tv, text: "Netflix Hediye" },
+                    { icon: Music, text: "Spotify Hediye" },
+                    { icon: Headphones, text: "7/24 Destek" },
                   ].map((b) => (
                     <div key={b.text} className="flex items-center gap-2">
                       <b.icon size={14} className="shrink-0 text-amber-400" />

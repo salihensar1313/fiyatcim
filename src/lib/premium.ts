@@ -27,8 +27,13 @@ export const PREMIUM_BENEFITS = [
     desc: "Standart garantiye ek +1 yıl uzatılmış garanti",
   },
   {
+    icon: "Truck" as const,
+    title: "Tüm Siparişlerde Ücretsiz Kargo",
+    desc: "Tutar fark etmeksizin tüm kargolar ücretsiz",
+  },
+  {
     icon: "Zap" as const,
-    title: "Öncelikli Kargo",
+    title: "Aynı Gün Kargo",
     desc: "Siparişleriniz aynı gün kargoya verilir",
   },
   {

@@ -91,7 +91,7 @@ export default function Header() {
               <span className="text-dark-600">|</span>
               <span className="flex items-center gap-1.5">
                 <Truck size={12} />
-                2.000₺+ Ücretsiz Kargo
+                Premium&apos;a Özel Ücretsiz Kargo
               </span>
             </div>
           </div>

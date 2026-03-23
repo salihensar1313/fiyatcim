@@ -30,7 +30,8 @@ export default function AnnouncementBar() {
 
         {/* Ana mesaj */}
         <span>
-          <strong>Ücretsiz Kargo:</strong> {threshold}&#8378;+ Üzeri |{" "}
+          <strong className="text-amber-300">Premium</strong> Üyelere{" "}
+          <strong>Ücretsiz Kargo</strong> + Ücretsiz Kurulum |{" "}
           <strong>7/24</strong> Teknik Destek
         </span>
 
