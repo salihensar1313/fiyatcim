@@ -66,11 +66,46 @@ const config: Config = {
           "75%": { transform: "translateY(-2px)" },
           "80%": { transform: "translateY(0)" },
         },
+        "premium-glow": {
+          "0%, 100%": { boxShadow: "0 0 20px rgba(245,158,11,0.3), 0 0 60px rgba(245,158,11,0.1)" },
+          "50%": { boxShadow: "0 0 30px rgba(245,158,11,0.5), 0 0 80px rgba(245,158,11,0.2)" },
+        },
+        "premium-shine": {
+          "0%": { transform: "translateX(-100%) skewX(-15deg)" },
+          "100%": { transform: "translateX(200%) skewX(-15deg)" },
+        },
+        "float": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-8px)" },
+        },
+        "slide-up": {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "scale-in": {
+          "0%": { opacity: "0", transform: "scale(0.9)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
+        "shimmer": {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
+        "sparkle": {
+          "0%, 100%": { opacity: "0", transform: "scale(0) rotate(0deg)" },
+          "50%": { opacity: "1", transform: "scale(1) rotate(180deg)" },
+        },
       },
       animation: {
         "bounce-in": "bounce-in 0.4s ease-out",
         "fade-in": "fade-in 0.3s ease-out",
         "cimbot-wave": "cimbot-wave 5s ease-in-out infinite",
+        "premium-glow": "premium-glow 2s ease-in-out infinite",
+        "premium-shine": "premium-shine 3s ease-in-out infinite",
+        "float": "float 3s ease-in-out infinite",
+        "slide-up": "slide-up 0.5s ease-out",
+        "scale-in": "scale-in 0.3s ease-out",
+        "shimmer": "shimmer 2s linear infinite",
+        "sparkle": "sparkle 2s ease-in-out infinite",
       },
     },
   },
