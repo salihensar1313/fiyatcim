@@ -20,6 +20,7 @@ from app.csv_export import CsvExport
 from app.site_guide import SiteGuide
 from app.discount_manager import DiscountManager
 from app.source_matcher import SourceMatcher
+from app.customer_manager import CustomerManager
 
 
 class MainWindow(ctk.CTkFrame):
@@ -102,7 +103,8 @@ class MainWindow(ctk.CTkFrame):
             [("products", "Urunler"), ("new_product", "Yeni Urun"),
              ("discounts", "Indirimler"), ("bulk", "Toplu Islem"),
              ("source_match", "Kaynak Esleme")],
-            [("orders", "Siparisler"), ("invoices", "Faturalar")],
+            [("orders", "Siparisler"), ("invoices", "Faturalar"),
+             ("customers", "Musteriler")],
             [("categories", "Kategoriler"), ("brands", "Markalar"),
              ("stock", "Stok"), ("csv", "CSV / Yedek"), ("guide", "Rehber")],
         ]
@@ -127,7 +129,7 @@ class MainWindow(ctk.CTkFrame):
                 btn.pack(side="left", fill="x", expand=True)
                 self.nav_buttons[key] = btn
 
-                if key in ("orders", "stock"):
+                if key in ("orders", "stock", "customers"):
                     badge = ctk.CTkLabel(
                         btn_frame, text="", width=20, height=18,
                         font=FONTS["badge"], corner_radius=9,
@@ -209,6 +211,7 @@ class MainWindow(ctk.CTkFrame):
             "source_match": lambda: SourceMatcher(self.content_frame, self.sb),
             "orders": lambda: OrderManager(self.content_frame, self.sb),
             "invoices": lambda: InvoiceManager(self.content_frame, self.sb),
+            "customers": lambda: CustomerManager(self.content_frame, self.sb),
             "categories": lambda: CategoryManager(
                 self.content_frame, self.sb, on_change=self._on_category_change,
             ),
@@ -238,7 +241,8 @@ class MainWindow(ctk.CTkFrame):
                 "products": "product_list", "new_product": "product_form",
                 "discounts": "discount_mgr", "bulk": "bulk_ops",
                 "source_match": "source_matcher", "orders": "order_mgr",
-                "invoices": "invoice_mgr", "categories": "category_mgr",
+                "invoices": "invoice_mgr", "customers": "customer_mgr",
+                "categories": "category_mgr",
                 "brands": "brand_mgr", "stock": "stock_mgr",
             }
             if key in attr_map:
@@ -341,8 +345,9 @@ class MainWindow(ctk.CTkFrame):
             try:
                 today_count = self.sb.get_orders_today_count()
                 critical = self.sb.get_critical_stock_products()
+                premium_count = self.sb.get_premium_count()
                 # UI guncellemeyi ana thread'de yap
-                self.after(0, lambda: self._update_badges(today_count, critical))
+                self.after(0, lambda: self._update_badges(today_count, critical, premium_count))
             except Exception:
                 pass
 
@@ -350,7 +355,7 @@ class MainWindow(ctk.CTkFrame):
         # Sonraki kontrol: 5 dakika (eskiden 60sn idi — cok sik)
         self.after(300000, self._check_notifications_bg)
 
-    def _update_badges(self, today_count: int, critical: list):
+    def _update_badges(self, today_count: int, critical: list, premium_count: int = 0):
         """Badge'leri guncelle (ana thread'de cagirilir)."""
         try:
             if today_count > 0 and "orders" in self._badge_labels:
@@ -368,6 +373,15 @@ class MainWindow(ctk.CTkFrame):
                 )
             elif "stock" in self._badge_labels:
                 self._badge_labels["stock"].configure(
+                    text="", fg_color="transparent"
+                )
+
+            if premium_count > 0 and "customers" in self._badge_labels:
+                self._badge_labels["customers"].configure(
+                    text=str(premium_count), fg_color=COLORS["gold"]
+                )
+            elif "customers" in self._badge_labels:
+                self._badge_labels["customers"].configure(
                     text="", fg_color="transparent"
                 )
         except Exception:

@@ -940,3 +940,104 @@ class SupabaseManager:
             )
         except Exception:
             pass
+
+    # ─── Müşteriler (Profiles) ─────────────────────────────
+
+    def get_customers(self, search: str = "", premium_only: bool = False) -> list[dict]:
+        """Tüm müşteri profillerini getir."""
+        q = self.client.table("profiles").select(
+            "id, email, full_name, phone, avatar_url, is_premium, premium_expires_at, created_at, updated_at"
+        ).order("created_at", desc=True)
+        if premium_only:
+            q = q.eq("is_premium", True)
+        res = q.execute()
+        customers = res.data or []
+        if search:
+            s = search.lower()
+            customers = [c for c in customers if
+                         s in (c.get("email") or "").lower() or
+                         s in (c.get("full_name") or "").lower() or
+                         s in (c.get("phone") or "").lower()]
+        return customers
+
+    def get_customer(self, user_id: str) -> dict | None:
+        """Tek müşteri detayı."""
+        res = self.client.table("profiles").select("*").eq("id", user_id).maybe_single().execute()
+        return res.data
+
+    def get_customer_orders(self, user_id: str) -> list[dict]:
+        """Müşterinin siparişlerini getir."""
+        res = (self.client.table("orders")
+               .select("id, order_no, status, payment_status, subtotal, shipping, discount, total, created_at")
+               .eq("user_id", user_id)
+               .order("created_at", desc=True)
+               .execute())
+        return res.data or []
+
+    def get_customer_count(self) -> int:
+        """Toplam müşteri sayısı."""
+        res = self.client.table("profiles").select("id", count="exact").execute()
+        return res.count or 0
+
+    def get_premium_count(self) -> int:
+        """Premium müşteri sayısı."""
+        res = (self.client.table("profiles")
+               .select("id", count="exact")
+               .eq("is_premium", True)
+               .execute())
+        return res.count or 0
+
+    def grant_premium(self, user_id: str, days: int = 365) -> dict:
+        """Müşteriye premium ver."""
+        from datetime import timedelta
+        expires = datetime.now(timezone.utc) + timedelta(days=days)
+        res = (self.client.table("profiles")
+               .update({
+                   "is_premium": True,
+                   "premium_expires_at": expires.isoformat(),
+               })
+               .eq("id", user_id)
+               .execute())
+        return (res.data or [{}])[0]
+
+    def revoke_premium(self, user_id: str) -> dict:
+        """Müşteriden premiumu kaldır."""
+        res = (self.client.table("profiles")
+               .update({
+                   "is_premium": False,
+                   "premium_expires_at": None,
+               })
+               .eq("id", user_id)
+               .execute())
+        return (res.data or [{}])[0]
+
+    def send_campaign_email(self, to_email: str, subject: str, html: str) -> bool:
+        """Kampanya maili gönder (web API üzerinden)."""
+        import urllib.request
+        import urllib.error
+        env = self._get_root_env()
+        resend_key = env.get("RESEND_API_KEY", "")
+        if not resend_key:
+            logger.warning("RESEND_API_KEY bulunamadi, mail gonderilemedi")
+            return False
+        payload = json.dumps({
+            "from": "Fiyatcim <noreply@fiyatcim.com>",
+            "to": to_email,
+            "subject": subject,
+            "html": html,
+        }).encode("utf-8")
+        req = urllib.request.Request(
+            "https://api.resend.com/emails",
+            data=payload,
+            headers={
+                "Authorization": f"Bearer {resend_key}",
+                "Content-Type": "application/json",
+            },
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                return resp.status == 200
+        except Exception as e:
+            logger.error("Mail gonderme hatasi: %s", e)
+            return False
