@@ -35,14 +35,28 @@ function buildPriceAlertEmail(productName: string, oldPrice: number, newPrice: n
 </div>`;
 }
 
-// GET /api/alerts/check — check all active price alerts and send emails
-// Call this via cron or manually
+/**
+ * GET /api/alerts/check
+ *
+ * Aktif fiyat alarmlarını kontrol eder, koşul sağlananlara e-posta gönderir.
+ * Vercel Cron Job tarafından 6 saatte bir çağrılır.
+ * Manuel çağrı: ?secret=CRON_SECRET veya x-cron-secret header
+ */
 export async function GET(request: Request) {
-  // Simple auth: require secret header or query param
+  // Vercel Cron auth: Authorization: Bearer <CRON_SECRET>
+  // Manuel auth: ?secret= veya x-cron-secret header
   const { searchParams } = new URL(request.url);
-  const secret = searchParams.get("secret") || request.headers.get("x-cron-secret");
   const cronSecret = process.env.CRON_SECRET;
-  if (!cronSecret || secret !== cronSecret) {
+  if (!cronSecret) {
+    return NextResponse.json({ error: "CRON_SECRET not configured" }, { status: 500 });
+  }
+
+  const authHeader = request.headers.get("authorization");
+  const secret = searchParams.get("secret")
+    || request.headers.get("x-cron-secret")
+    || (authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null);
+
+  if (secret !== cronSecret) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

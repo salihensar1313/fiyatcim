@@ -196,7 +196,13 @@ function AccountPage() {
     setDeleteLoading(false);
     if (result.error) {
       showToast(result.error, "error");
+    } else if (result.message) {
+      // E-posta onay akışı — kullanıcıya bilgi ver
+      showToast(result.message, "success");
+      setDeleteConfirm(false);
+      setDeleteText("");
     } else {
+      // Demo mod — doğrudan silindi
       showToast("Hesabınız silindi.", "success");
       router.push("/");
     }
@@ -600,7 +606,7 @@ function AccountPage() {
               <h2 className="text-lg font-bold text-red-600">Hesabı Sil</h2>
             </div>
             <p className="mb-5 text-sm text-dark-500 dark:text-dark-400">
-              Hesabınızı sildiğinizde tüm verileriniz kalıcı olarak silinir. Bu işlem geri alınamaz.
+              Hesap silme talebi oluşturduğunuzda e-posta adresinize bir onay bağlantısı gönderilir. Hesabınız yalnızca bu bağlantı üzerinden silinebilir.
             </p>
 
             {!deleteConfirm ? (
@@ -616,6 +622,9 @@ function AccountPage() {
                   <p className="text-sm text-red-700 dark:text-red-400 font-medium mb-2">
                     Bu işlem geri alınamaz! Onaylamak için aşağıya &quot;HESABIMI SIL&quot; yazın.
                   </p>
+                  <p className="text-xs text-red-600 dark:text-red-500 mb-3">
+                    E-posta adresinize bir onay bağlantısı gönderilecektir. Hesabınız yalnızca bu bağlantı ile silinebilir.
+                  </p>
                   <input
                     type="text"
                     value={deleteText}
@@ -630,7 +639,7 @@ function AccountPage() {
                     disabled={deleteLoading || deleteText !== "HESABIMI SIL"}
                     className="rounded-lg bg-red-600 px-6 py-2.5 text-sm font-bold text-white hover:bg-red-700 disabled:opacity-50"
                   >
-                    {deleteLoading ? "Siliniyor..." : "Evet, Hesabımı Sil"}
+                    {deleteLoading ? "Gönderiliyor..." : "Onay E-postası Gönder"}
                   </button>
                   <button
                     onClick={() => { setDeleteConfirm(false); setDeleteText(""); }}

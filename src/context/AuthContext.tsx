@@ -34,7 +34,7 @@ interface AuthContextType {
   updateProfile: (data: Partial<Profile>) => void;
   changePassword: (currentPassword: string, newPassword: string) => Promise<{ error?: string }>;
   updateEmail: (newEmail: string) => Promise<{ error?: string }>;
-  deleteAccount: () => Promise<{ error?: string }>;
+  deleteAccount: () => Promise<{ error?: string; message?: string }>;
   adminUpdateUser: (userId: string, data: { ad: string; soyad: string; telefon: string }) => void;
   adminChangePassword: (email: string, newPassword: string) => Promise<{ error?: string }>;
 }
@@ -577,36 +577,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ========================================
   // DELETE ACCOUNT (user self-service)
   // ========================================
-  const deleteAccount = useCallback(async (): Promise<{ error?: string }> => {
+  /**
+   * Hesap silme — e-posta onay akışı.
+   * Doğrudan silmez, onay e-postası gönderir.
+   * Hesap yalnızca e-postadaki linke tıklanarak silinebilir.
+   */
+  const deleteAccount = useCallback(async (): Promise<{ error?: string; message?: string }> => {
     if (!user) return { error: "Giriş yapmanız gerekiyor." };
 
     if (IS_DEMO_MODE) {
-      // Remove from registered users
+      // Demo: doğrudan sil
       const users = safeGetJSON<RegisteredUser[]>("fiyatcim_registered_users", []);
       const arr = Array.isArray(users) ? users : [];
       safeSetJSON("fiyatcim_registered_users", arr.filter((u) => u.user_id !== user.id));
-      // Remove password hash
       const hashes = safeGetJSON<Record<string, string>>("fiyatcim_demo_pw_hashes", {});
       const hashMap = typeof hashes === "object" && hashes ? hashes : {};
       delete hashMap[user.email];
       safeSetJSON("fiyatcim_demo_pw_hashes", hashMap);
-      // Sign out
       setUser(null);
       setProfile(null);
       persistDemo(null, null);
       return {};
     }
 
-    // Non-demo: call API route to delete user (needs service_role key on server)
+    // Production: e-posta onay talebi gönder (hesap hemen silinmez)
     try {
-      const res = await fetch("/api/auth/delete-account", { method: "DELETE" });
+      const res = await fetch("/api/auth/request-delete", { method: "POST" });
       const data = await res.json();
-      if (!res.ok) return { error: data.error || "Hesap silinemedi." };
-      setUser(null);
-      setProfile(null);
-      return {};
+      if (!res.ok) return { error: data.error || "İşlem başarısız." };
+      return { message: data.message || "Onay e-postası gönderildi." };
     } catch {
-      return { error: "Hesap silinemedi. Lütfen tekrar deneyin." };
+      return { error: "Bağlantı hatası. Lütfen tekrar deneyin." };
     }
   }, [user, persistDemo]);
 

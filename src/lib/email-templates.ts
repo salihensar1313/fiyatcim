@@ -329,6 +329,53 @@ export function orderCancelledEmail(data: { orderNo: string; customerName: strin
   return emailWrapper(content);
 }
 
+export function accountDeletionEmail(name: string, confirmUrl: string): string {
+  const safeName = escapeHtml(name);
+  const content = `
+  ${emailHeader("Hesap Silme Onayı", "#991b1b")}
+  <tr>
+    <td class="email-body" style="padding: 28px 32px;">
+      <p style="margin: 0 0 4px; font-size: 16px; color: #333333; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+        Merhaba <strong>${safeName}</strong>,
+      </p>
+      <p style="margin: 0 0 24px; color: #555555; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6;">
+        Hesabınızı silme talebinde bulundunuz. Bu işlem <strong>geri alınamaz</strong> ve tüm verileriniz kalıcı olarak silinecektir.
+      </p>
+
+      ${infoBox("Bu işlem geri alınamaz. Siparişler, favoriler, adresler ve tüm hesap verileriniz kalıcı olarak silinecektir.", "#fef2f2", "#fecaca", "#991b1b")}
+
+      <p style="margin: 0 0 24px; color: #555555; font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6;">
+        Hesabınızı silmek istiyorsanız aşağıdaki butona tıklayın:
+      </p>
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 24px;">
+        <tr>
+          <td align="center">
+            <a href="${confirmUrl}" target="_blank" style="display: inline-block; background-color: #DC2626; color: #ffffff; font-size: 16px; font-weight: 700; text-decoration: none; padding: 14px 40px; border-radius: 8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+              Hesabımı Kalıcı Olarak Sil
+            </a>
+          </td>
+        </tr>
+      </table>
+
+      ${infoBox("Bu bağlantı 24 saat geçerlidir.", "#eff6ff", "#bfdbfe", "#1e40af")}
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top: 24px; border-top: 1px solid #eeeeee; padding-top: 16px;">
+        <tr>
+          <td>
+            <p style="margin: 0; font-size: 12px; color: #aaaaaa; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+              Bu talebi siz yapmadıysanız bu e-postayı güvenle yok sayabilirsiniz. Hesabınız güvende kalacaktır.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  ${emailFooter()}`;
+
+  return emailWrapper(content);
+}
+
 export function orderRefundedEmail(data: { orderNo: string; customerName: string }): string {
   const content = `
   ${emailHeader("İade İşleminiz Tamamlandı")}
