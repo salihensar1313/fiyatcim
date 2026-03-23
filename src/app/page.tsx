@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
-import JsonLd, { buildOrganizationSchema, buildWebSiteSchema } from "@/components/seo/JsonLd";
 
 export const revalidate = 3600; // 1 saat
 
@@ -50,8 +49,6 @@ const BannerSlot = dynamic(() => import("@/components/ui/BannerSlot"));
 export default function HomePage() {
   return (
     <>
-      <JsonLd data={buildOrganizationSchema()} />
-      <JsonLd data={buildWebSiteSchema()} />
       {/* SEO: Tek H1 — sayfa başına 1 adet */}
       <h1 className="sr-only">Fiyatcim — Alarm ve Güvenlik Sistemleri</h1>
 
