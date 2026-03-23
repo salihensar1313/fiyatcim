@@ -19,9 +19,15 @@ export async function POST(request: NextRequest) {
 
     const supabase = createServiceClient();
 
-    // Kullanıcıyı email ile bul
-    const { data: users } = await supabase.auth.admin.listUsers();
-    const user = users?.users?.find((u) => u.email === email);
+    // Kullanıcıyı email ile bul (tüm sayfaları tara)
+    let user = null;
+    let page = 1;
+    while (!user) {
+      const { data: users } = await supabase.auth.admin.listUsers({ page, perPage: 1000 });
+      if (!users?.users?.length) break;
+      user = users.users.find((u) => u.email === email);
+      page++;
+    }
 
     if (!user) {
       return NextResponse.json({ error: "Kullanıcı bulunamadı" }, { status: 404 });
@@ -43,7 +49,7 @@ export async function POST(request: NextRequest) {
     const { error } = await supabase.from("user_premium_memberships").insert({
       user_id: user.id,
       status: "active",
-      price_paid: 0,
+      price_paid: 1,
       payment_method: "admin_granted",
       notes: notes || "Admin tarafından atandı",
     });

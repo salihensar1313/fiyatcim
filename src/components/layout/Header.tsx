@@ -219,11 +219,17 @@ export default function Header() {
             <div className="ml-auto">
               <Link
                 href="/premium"
-                className="group relative flex items-center gap-2 overflow-hidden rounded-lg bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 px-6 py-2 text-sm font-black text-white shadow-lg shadow-amber-500/30 transition-all hover:shadow-xl hover:shadow-amber-500/40"
+                className="group relative flex items-center gap-2 overflow-hidden rounded-lg bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 px-6 py-2.5 text-sm font-black text-white shadow-lg shadow-amber-500/30 ring-2 ring-amber-400/50 animate-premium-bounce transition-all hover:scale-105 hover:shadow-xl hover:shadow-amber-500/50"
               >
-                <div className="absolute inset-0 animate-premium-shine bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-                <Crown size={18} className="relative z-10" />
-                <span className="relative z-10 text-base tracking-wide">PREMIUM</span>
+                {/* Shine sweep */}
+                <div className="absolute inset-0 animate-premium-shine bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+                {/* Sparkle parçacıkları */}
+                <div className="absolute top-1 right-2 h-1 w-1 rounded-full bg-white animate-sparkle" />
+                <div className="absolute bottom-1.5 left-3 h-1 w-1 rounded-full bg-yellow-200 animate-sparkle [animation-delay:0.7s]" />
+                <div className="absolute top-2 left-10 h-0.5 w-0.5 rounded-full bg-white animate-sparkle [animation-delay:1.3s]" />
+                {/* Crown — hover'da 360° döner */}
+                <Crown size={20} className="relative z-10 drop-shadow-[0_0_6px_rgba(255,255,255,0.5)] transition-transform duration-500 group-hover:rotate-[360deg]" />
+                <span className="relative z-10 text-base tracking-wider drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">PREMIUM</span>
               </Link>
             </div>
           </div>

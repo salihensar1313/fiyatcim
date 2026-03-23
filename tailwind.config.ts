@@ -94,6 +94,10 @@ const config: Config = {
           "0%, 100%": { opacity: "0", transform: "scale(0) rotate(0deg)" },
           "50%": { opacity: "1", transform: "scale(1) rotate(180deg)" },
         },
+        "premium-bounce": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-2px)" },
+        },
       },
       animation: {
         "bounce-in": "bounce-in 0.4s ease-out",
@@ -106,6 +110,7 @@ const config: Config = {
         "scale-in": "scale-in 0.3s ease-out",
         "shimmer": "shimmer 2s linear infinite",
         "sparkle": "sparkle 2s ease-in-out infinite",
+        "premium-bounce": "premium-bounce 2s ease-in-out infinite",
       },
     },
   },
