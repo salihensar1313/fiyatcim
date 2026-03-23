@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { getBlogPostBySlug } from "@/lib/queries";
 import { formatDate } from "@/lib/utils";
 import Breadcrumb from "@/components/ui/Breadcrumb";
-import { SITE_NAME, SITE_URL } from "@/lib/constants";
+import { SITE_URL } from "@/lib/constants";
 import JsonLd, { buildArticleSchema, buildBreadcrumbSchema } from "@/components/seo/JsonLd";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
@@ -21,9 +21,9 @@ async function getPost(slug: string) {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPost(slug);
-  if (!post) return { title: `Yazı Bulunamadı | ${SITE_NAME}` };
+  if (!post) return { title: "Yazı Bulunamadı" };
   return {
-    title: `${post.title} | ${SITE_NAME}`,
+    title: post.title,
     description: post.excerpt || post.title,
     openGraph: {
       title: post.title,

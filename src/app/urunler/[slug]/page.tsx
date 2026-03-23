@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getProductBySlug } from "@/lib/queries";
 
 export const revalidate = 60; // Revalidate every 60 seconds
-import { SITE_NAME, SITE_URL } from "@/lib/constants";
+import { SITE_URL } from "@/lib/constants";
 import JsonLd, { buildProductSchema, buildBreadcrumbSchema } from "@/components/seo/JsonLd";
 import { getProductPrimaryImage } from "@/lib/product-images";
 import ProductDetailClient from "./ProductDetailClient";
@@ -12,10 +12,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const product = await getProductBySlug(slug);
 
   if (!product) {
-    return { title: `Ürün Bulunamadı | ${SITE_NAME}` };
+    return { title: "Ürün Bulunamadı" };
   }
 
-  const title = product.seo_title || `${product.name} | ${SITE_NAME}`;
+  const title = product.seo_title || product.name;
   const description = product.seo_desc || product.short_desc || `${product.name} - En uygun fiyatlarla Fiyatcim.com'da`;
 
   const productImage = getProductPrimaryImage(product);

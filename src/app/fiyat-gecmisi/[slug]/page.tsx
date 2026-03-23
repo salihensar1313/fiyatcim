@@ -74,7 +74,7 @@ export default function PriceHistoryPage() {
   return (
     <div className="bg-dark-50 dark:bg-dark-900 pb-16">
       {/* SEO Meta */}
-      <title>{`${product.name} Fiyat Geçmişi — Fiyatcim.com`}</title>
+      <title>{`${product.name} Fiyat Geçmişi`}</title>
       <meta
         name="description"
         content={`${product.name} fiyat geçmişi, fiyat trendi ve en düşük/en yüksek fiyat bilgisi. Fiyatcim.com'da fiyat takibi yapın.`}

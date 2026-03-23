@@ -6,7 +6,7 @@ import { PREMIUM_PRICE_WITH_ORDER, PREMIUM_PRICE_STANDALONE, PREMIUM_BENEFITS } 
 import { formatPrice } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Premium Üyelik — Ücretsiz Kurulum & 7/24 Destek | Fiyatcim",
+  title: "Premium Üyelik — Ücretsiz Kurulum & 7/24 Destek",
   description: "Fiyatcim Premium ile ücretsiz profesyonel kurulum, 7/24 öncelikli destek, genişletilmiş garanti, Netflix & Spotify hediye ve ücretsiz kargo ayrıcalıklarından yararlanın.",
   alternates: { canonical: "/premium" },
 };
