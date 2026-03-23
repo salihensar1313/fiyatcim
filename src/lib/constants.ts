@@ -103,6 +103,7 @@ export const PAGINATION = {
 export const FREE_SHIPPING_THRESHOLD = 2000;
 export const DEFAULT_SHIPPING_COST = 49.90;
 export const GIFT_WRAP_COST = 19.90;
+export const PREMIUM_SETUP_COST = 2500;
 
 export const TURKISH_PROVINCES = [
   "Adana","Adıyaman","Afyonkarahisar","Ağrı","Amasya","Ankara","Antalya","Artvin","Aydın","Balıkesir",

@@ -22,6 +22,7 @@ interface CreateOrderParams {
   total: number;
   couponCode: string | null;
   invoiceInfo?: InvoiceInfo;
+  premiumSetup?: boolean;
 }
 
 interface OrderContextType {
@@ -223,7 +224,8 @@ export function OrderProvider({ children }: { children: ReactNode }) {
       const recalcShipping = recalcSubtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
       // Use client-sent discount (coupon validation would be done separately)
       const recalcDiscount = Math.min(Math.max(0, params.discount), recalcSubtotal);
-      const recalcTotal = Math.max(0, recalcSubtotal - recalcDiscount + recalcShipping);
+      const premiumCost = params.premiumSetup ? 2500 : 0;
+      const recalcTotal = Math.max(0, recalcSubtotal - recalcDiscount + recalcShipping + premiumCost);
 
       const initialLog: OrderStatusLog = {
         id: `log-${Date.now()}`,
@@ -252,7 +254,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
         shipping_company: null,
         tracking_no: null,
         customer_email: params.user?.email || "",
-        notes: null,
+        notes: params.premiumSetup ? "PREMIUM KURULUM DESTEĞİ DAHİL (₺2.500)" : null,
         coupon_id: params.couponCode,
         invoice_info: params.invoiceInfo,
         created_at: now,

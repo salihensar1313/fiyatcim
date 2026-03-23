@@ -7,6 +7,7 @@ import { CreditCard, Truck, FileText, MapPin, Plus, Smartphone, LogIn, UserX, Bu
 import type { InvoiceType } from "@/types";
 import SmsOtpVerify from "@/components/ui/SmsOtpVerify";
 import CartRecommendations from "@/components/product/CartRecommendations";
+import PremiumSetupUpsell from "@/components/cart/PremiumSetupUpsell";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useOrders } from "@/context/OrderContext";
@@ -17,7 +18,7 @@ import Breadcrumb from "@/components/ui/Breadcrumb";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, getSubtotal, getShipping, getTotal, discount, couponCode, clearCart, isCartLoaded } = useCart();
+  const { items, getSubtotal, getShipping, getTotal, getPremiumSetupCost, discount, couponCode, clearCart, premiumSetup, isCartLoaded } = useCart();
   const { user, isLoading } = useAuth();
   const { createOrder } = useOrders();
   const { addresses } = useAddresses();
@@ -155,6 +156,7 @@ export default function CheckoutPage() {
 
   const subtotal = getSubtotal();
   const shipping = getShipping();
+  const premiumCost = getPremiumSetupCost();
   const total = getTotal();
 
   return (
@@ -552,6 +554,9 @@ export default function CheckoutPage() {
                     Şu an demo modundadır.
                   </p>
                 </div>
+                {/* Premium Kurulum Upsell */}
+                <PremiumSetupUpsell />
+
                 {/* G7: Zorunlu Sözleşme Onayları */}
                 <div className="mt-6 space-y-2">
                   <div className="mb-2 flex items-center justify-between">
@@ -648,6 +653,7 @@ export default function CheckoutPage() {
                           total: safeTotal,
                           couponCode,
                           invoiceInfo: buildInvoiceInfo(),
+                          premiumSetup,
                         });
                         setOrderCompleted(true);
                         clearCart();
@@ -715,6 +721,12 @@ export default function CheckoutPage() {
                     {shipping === 0 ? "Ücretsiz" : formatPrice(shipping)}
                   </span>
                 </div>
+                {premiumCost > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-amber-600 dark:text-amber-400">Premium Kurulum</span>
+                    <span className="font-medium text-amber-600 dark:text-amber-400">{formatPrice(premiumCost)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm">
                   <span className="text-dark-500 dark:text-dark-400">KDV (%20 dahil)</span>
                   <span className="text-dark-900 dark:text-dark-50">{formatPrice(total - total / 1.2)}</span>
