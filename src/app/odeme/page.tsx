@@ -665,15 +665,8 @@ export default function CheckoutPage() {
             )}
           </div>
 
-          {/* Checkout Recommendations */}
-          {step === "address" && (
-            <div className="lg:col-span-2">
-              <CartRecommendations />
-            </div>
-          )}
-
-          {/* Order Summary */}
-          <div>
+          {/* Order Summary — sağ kolonda, sticky, her zaman üstte */}
+          <div className="lg:row-start-1 lg:col-start-3">
             <div className="sticky top-24 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-6">
               <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-dark-900 dark:text-dark-50">
                 <FileText size={18} />
@@ -727,6 +720,9 @@ export default function CheckoutPage() {
             </div>
           </div>
         </div>
+
+        {/* Checkout Recommendations — grid dışında */}
+        {step === "address" && <CartRecommendations />}
       </div>
 
       {/* Sticky Mobile CTA — Checkout */}
