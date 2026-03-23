@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Crown, Wrench, Headphones, Shield, Zap, Settings, RefreshCw, Check, Phone, ArrowRight } from "lucide-react";
+import { Crown, Wrench, Headphones, Shield, Zap, Settings, RefreshCw, Tv, Music, Check, Phone, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { PREMIUM_PRICE_WITH_ORDER, PREMIUM_PRICE_STANDALONE, PREMIUM_BENEFITS } from "@/lib/premium";
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/premium" },
 };
 
-const ICON_MAP = { Wrench, Headphones, Shield, Zap, Settings, RefreshCw };
+const ICON_MAP = { Wrench, Headphones, Shield, Zap, Settings, RefreshCw, Tv, Music };
 
 export default function PremiumPage() {
   return (

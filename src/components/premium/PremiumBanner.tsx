@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Crown, Wrench, Headphones, Shield, Zap, Settings, RefreshCw, ArrowRight } from "lucide-react";
+import { Crown, Wrench, Headphones, Shield, Zap, Tv, Music, ArrowRight } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { PREMIUM_PRICE_WITH_ORDER, PREMIUM_PRICE_STANDALONE } from "@/lib/premium";
 
@@ -23,7 +23,7 @@ export default function PremiumBanner({ variant = "home" }: PremiumBannerProps) 
               Bu ürünü <span className="text-amber-600">ücretsiz kurdurabilirsiniz!</span>
             </p>
             <p className="text-xs text-dark-500 dark:text-dark-400">
-              Premium üyelikle profesyonel kurulum + 7/24 destek.
+              Premium üyelikle profesyonel kurulum + 7/24 destek + Netflix & Spotify hediye.
               Siparişle birlikte sadece <strong className="text-amber-600">{formatPrice(PREMIUM_PRICE_WITH_ORDER)}</strong>
             </p>
           </div>
@@ -49,7 +49,7 @@ export default function PremiumBanner({ variant = "home" }: PremiumBannerProps) 
           </span>
         </div>
         <p className="text-sm text-dark-600 dark:text-dark-300 mb-3">
-          Siparişinizle birlikte alın, <strong>ücretsiz profesyonel kurulum</strong> + 7/24 öncelikli destek + genişletilmiş garanti kazanın.
+          Siparişinizle birlikte alın, <strong>ücretsiz profesyonel kurulum</strong> + 7/24 destek + 1 ay Netflix & Spotify hediye kazanın.
         </p>
         <div className="flex items-center justify-between">
           <div>
@@ -99,8 +99,8 @@ export default function PremiumBanner({ variant = "home" }: PremiumBannerProps) 
                     { icon: Headphones, text: "7/24 Destek" },
                     { icon: Shield, text: "+1 Yıl Garanti" },
                     { icon: Zap, text: "Aynı Gün Kargo" },
-                    { icon: Settings, text: "Uzaktan Erişim" },
-                    { icon: RefreshCw, text: "Yıllık Bakım" },
+                    { icon: Tv, text: "1 Ay Netflix Hediye" },
+                    { icon: Music, text: "1 Ay Spotify Hediye" },
                   ].map((b) => (
                     <div key={b.text} className="flex items-center gap-2">
                       <b.icon size={14} className="shrink-0 text-amber-400" />

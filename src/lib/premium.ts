@@ -32,6 +32,16 @@ export const PREMIUM_BENEFITS = [
     desc: "Siparişleriniz aynı gün kargoya verilir",
   },
   {
+    icon: "Tv" as const,
+    title: "1 Ay Ücretsiz Netflix",
+    desc: "Premium üyelere hediye 1 aylık Netflix aboneliği",
+  },
+  {
+    icon: "Music" as const,
+    title: "1 Ay Ücretsiz Spotify",
+    desc: "Premium üyelere hediye 1 aylık Spotify Premium",
+  },
+  {
     icon: "Settings" as const,
     title: "Uzaktan Erişim Kurulumu",
     desc: "Mobil uygulama ve uzaktan izleme ayarları yapılır",
