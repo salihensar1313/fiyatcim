@@ -255,7 +255,7 @@ export default function AdminOrdersPage() {
           <div class="info-box"><h3>Sipariş Bilgileri</h3><p style="margin:0;"><strong>Sipariş No:</strong> ${order.order_no}</p><p style="margin:2px 0;font-size:12px;"><strong>Durum:</strong> ${ORDER_STATUS_LABELS[order.status]}</p>${order.tracking_no ? `<p style="margin:2px 0;font-size:12px;"><strong>Kargo Takip:</strong> ${order.tracking_no}</p>` : ""}</div>
         </div>
         <table><thead><tr><th>Ürün</th><th>Adet</th><th>Birim Fiyat</th><th style="text-align:right">Toplam</th></tr></thead><tbody>
-        ${(order.items || []).map((item) => `<tr><td>${item.name_snapshot}</td><td>${item.qty}</td><td>${new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(item.sale_price_snapshot ?? item.price_snapshot)}</td><td style="text-align:right">${new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format((item.sale_price_snapshot ?? item.price_snapshot) * item.qty)}</td></tr>`).join("")}
+        ${(order.items || []).map((item) => `<tr><td>${item.name_snapshot}</td><td>${item.qty}</td><td>${new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(item.sale_price_snapshot || item.price_snapshot)}</td><td style="text-align:right">${new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format((item.sale_price_snapshot || item.price_snapshot) * item.qty)}</td></tr>`).join("")}
         </tbody></table>
         <div class="totals">
           <p>Ara Toplam: ${new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(order.subtotal)}</p>
@@ -467,7 +467,7 @@ export default function AdminOrdersPage() {
                                       <p className="text-xs text-dark-500 dark:text-dark-400">x{item.qty}</p>
                                     </div>
                                     <span className="shrink-0 font-medium text-dark-900 dark:text-dark-50">
-                                      {formatPrice((item.sale_price_snapshot ?? item.price_snapshot) * item.qty)}
+                                      {formatPrice((item.sale_price_snapshot || item.price_snapshot) * item.qty)}
                                     </span>
                                   </div>
                                 ))}

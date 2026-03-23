@@ -92,7 +92,7 @@ function buildCategoryData(orders: Order[], products: { id: string; category?: {
     (o.items || []).forEach((item) => {
       const catName = productCatMap.get(item.product_id) || "Diğer";
       const existing = catMap.get(catName) || { revenue: 0, count: 0 };
-      const price = item.sale_price_snapshot ?? item.price_snapshot;
+      const price = item.sale_price_snapshot || item.price_snapshot;
       catMap.set(catName, { revenue: existing.revenue + price * item.qty, count: existing.count + item.qty });
     });
   });

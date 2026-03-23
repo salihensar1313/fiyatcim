@@ -37,7 +37,7 @@ function formatCurrency(amount: number): string {
 
 /** Urun birim fiyatini hesaplar (indirimli veya normal) */
 function getUnitPrice(item: OrderItem): number {
-  return item.sale_price_snapshot ?? item.price_snapshot;
+  return item.sale_price_snapshot || item.price_snapshot;
 }
 
 export function generateInvoiceHTML(data: InvoiceData): string {

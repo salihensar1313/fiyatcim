@@ -155,7 +155,7 @@ export async function createSalesInvoice(
     name: item.name_snapshot,
     quantity: item.qty,
     unit_price: String(
-      ((item.sale_price_snapshot ?? item.price_snapshot) / (1 + item.tax_rate_snapshot / 100)).toFixed(2)
+      ((item.sale_price_snapshot || item.price_snapshot) / (1 + item.tax_rate_snapshot / 100)).toFixed(2)
     ),
     vat_rate: String(item.tax_rate_snapshot),
   }));

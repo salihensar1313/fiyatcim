@@ -66,7 +66,7 @@ function sendOrderEmail(order: Order, email: string, customerName: string) {
   const items = (order.items || []).map((item) => ({
     name: item.name_snapshot,
     quantity: item.qty,
-    price: item.sale_price_snapshot ?? item.price_snapshot,
+    price: item.sale_price_snapshot || item.price_snapshot,
   }));
 
   const addr = order.shipping_address;
