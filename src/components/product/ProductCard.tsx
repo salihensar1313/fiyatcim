@@ -13,6 +13,7 @@ import Rating from "@/components/ui/Rating";
 import { useToast } from "@/components/ui/Toast";
 import { useCompare } from "@/hooks/useCompare";
 import { useCountdown } from "@/hooks/useFlashSale";
+import { useAuth } from "@/context/AuthContext";
 import { getCategoryFallbackImage, getProductPrimaryImage, isRemoteImage } from "@/lib/product-images";
 import PriceDropBadge from "./PriceDropBadge";
 import { trackAddToCart, trackSelectItem, trackAddToWishlist } from "@/lib/analytics";
@@ -28,6 +29,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const { addItem, items, updateQuantity, removeItem, isInCart } = useCart();
   const { toggleItem, isInWishlist } = useWishlist();
   const { showToast } = useToast();
+  const { isPremium } = useAuth();
   const discount = getDiscountPercent(product.price_usd, product.sale_price_usd);
   const stock = getStockStatus(product.stock, product.critical_stock);
   const inCart = isInCart(product.id);
@@ -230,7 +232,9 @@ export default function ProductCard({ product }: ProductCardProps) {
             className={`mt-3 flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all active:scale-95 ${
               product.stock === 0
                 ? "cursor-not-allowed bg-dark-200 text-dark-500 dark:bg-dark-700 dark:text-dark-400"
-                : "bg-primary-600 text-white hover:bg-primary-700 hover:shadow-md"
+                : isPremium
+                  ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 hover:shadow-md shadow-amber-500/20"
+                  : "bg-primary-600 text-white hover:bg-primary-700 hover:shadow-md"
             }`}
           >
             <ShoppingCart size={16} />

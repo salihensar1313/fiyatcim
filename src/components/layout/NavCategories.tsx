@@ -8,7 +8,7 @@ import type { Category } from "@/types";
 import { getCategories } from "@/lib/queries";
 import { getCategoryIcon } from "@/lib/nav";
 
-export default function NavCategories() {
+export default function NavCategories({ isPremium = false }: { isPremium?: boolean }) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [activeMega, setActiveMega] = useState<string | null>(null);
   const megaTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -46,8 +46,10 @@ export default function NavCategories() {
           >
             <Link
               href={href}
-              className={`flex items-center gap-1 px-4 py-3 text-sm font-semibold transition-colors hover:bg-primary-700 ${
-                isActive ? "bg-primary-700 text-white" : "text-white"
+              className={`flex items-center gap-1 px-4 py-3 text-sm font-semibold transition-colors ${
+                isPremium
+                  ? `hover:bg-amber-700 ${isActive ? "bg-amber-700 text-white" : "text-white"}`
+                  : `hover:bg-primary-700 ${isActive ? "bg-primary-700 text-white" : "text-white"}`
               }`}
             >
               {cat.name}

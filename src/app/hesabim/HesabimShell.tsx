@@ -4,7 +4,7 @@
 import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { User, Package, Heart, MapPin, LogOut, Shield } from "lucide-react";
+import { User, Package, Heart, MapPin, LogOut, Shield, Crown } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 
@@ -28,7 +28,7 @@ const MENU_SECTIONS = [
 export default function HesabimShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, profile, isLoading, isAdmin, signOut } = useAuth();
+  const { user, profile, isLoading, isAdmin, isPremium, signOut } = useAuth();
 
   useEffect(() => {
     if (!isLoading && !user) router.push("/giris");
@@ -61,20 +61,43 @@ export default function HesabimShell({ children }: { children: React.ReactNode }
                   <img
                     src={profile.avatar}
                     alt={`${profile.ad} ${profile.soyad}`}
-                    className="h-10 w-10 rounded-full object-cover border border-dark-100 dark:border-dark-600"
+                    className={`h-10 w-10 rounded-full object-cover border ${isPremium ? "border-amber-400 ring-2 ring-amber-400/30" : "border-dark-100 dark:border-dark-600"}`}
                   />
                 ) : (
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-sm font-bold text-primary-600">
+                  <div className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold ${isPremium ? "bg-gradient-to-br from-amber-500 to-orange-500 text-white" : "bg-primary-100 text-primary-600"}`}>
                     {initial}
                   </div>
                 )}
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-dark-900 dark:text-dark-50">
+                  <p className={`truncate text-sm font-semibold ${isPremium ? "bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent" : "text-dark-900 dark:text-dark-50"}`}>
                     {profile?.ad} {profile?.soyad}
                   </p>
                   <p className="truncate text-xs text-dark-500 dark:text-dark-400">{user.email}</p>
                 </div>
               </div>
+
+              {/* Premium Durum */}
+              {isPremium ? (
+                <div className="mb-4 rounded-lg bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 p-3">
+                  <div className="flex items-center gap-2">
+                    <Crown size={16} className="text-amber-500" />
+                    <span className="text-sm font-bold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
+                      Premium Üye
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-dark-500 dark:text-dark-400">
+                    Tüm premium ayrıcalıklarınız aktif
+                  </p>
+                </div>
+              ) : (
+                <Link
+                  href="/premium"
+                  className="mb-4 flex items-center gap-2 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 p-3 text-sm font-bold text-white transition-all hover:shadow-md"
+                >
+                  <Crown size={16} />
+                  <span>Premium&apos;a Geç</span>
+                </Link>
+              )}
 
               {/* Menu Sections */}
               <nav className="space-y-4">

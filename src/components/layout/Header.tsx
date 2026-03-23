@@ -191,10 +191,10 @@ export default function Header() {
           <SearchAutocomplete isMobile />
         </div>
 
-        {/* Red Navigation Bar - Desktop with Dynamic Categories */}
-        <nav className="hidden bg-primary-600 lg:block">
+        {/* Navigation Bar - Desktop with Dynamic Categories */}
+        <nav className={`hidden lg:block ${isPremium ? "bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600" : "bg-primary-600"}`}>
           <div className="container-custom flex items-center gap-0">
-            <NavCategories />
+            <NavCategories isPremium={isPremium} />
             {/* Tüm Ürünler */}
             <Link
               href="/urunler"

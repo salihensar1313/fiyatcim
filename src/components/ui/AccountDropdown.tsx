@@ -83,7 +83,7 @@ export default function AccountDropdown() {
   const menuItemsRef = useRef<(HTMLElement | null)[]>([]);
   const pathname = usePathname();
   const router = useRouter();
-  const { user, profile, isAdmin, signOut, signInWithGoogle } = useAuth();
+  const { user, profile, isAdmin, isPremium, signOut, signInWithGoogle } = useAuth();
   const { theme, setTheme, mounted: themeMounted } = useTheme();
 
   const close = useCallback(() => {
@@ -322,26 +322,31 @@ export default function AccountDropdown() {
           {!isGuest && (
             <div className="px-5 pb-4 pt-5">
               <div className="flex items-center gap-3">
-                {/* Avatar */}
+                {/* Avatar — premium kullanıcılar altın çerçeve */}
                 {profile?.avatar ? (
                   <img
                     src={profile.avatar}
                     alt={fullName}
-                    className="h-12 w-12 shrink-0 rounded-full object-cover border-2 border-primary-200 dark:border-primary-800"
+                    className={`h-12 w-12 shrink-0 rounded-full object-cover border-2 ${isPremium ? "border-amber-400 ring-2 ring-amber-400/30" : "border-primary-200 dark:border-primary-800"}`}
                   />
                 ) : (
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary-500 to-primary-700 text-lg font-bold text-white shadow-md">
+                  <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-lg font-bold text-white shadow-md ${isPremium ? "bg-gradient-to-br from-amber-500 to-orange-600" : "bg-gradient-to-br from-primary-500 to-primary-700"}`}>
                     {initial}
                   </div>
                 )}
-                {/* Name & Email */}
+                {/* Name & Email — premium altın isim */}
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[15px] font-bold text-dark-900 dark:text-dark-50">
+                  <p className={`truncate text-[15px] font-bold ${isPremium ? "bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent" : "text-dark-900 dark:text-dark-50"}`}>
                     {fullName || "Kullanıcı"}
                   </p>
                   <p className="truncate text-xs text-dark-500 dark:text-dark-400">
                     {email}
                   </p>
+                  {isPremium && (
+                    <span className="mt-0.5 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-2 py-0.5 text-[9px] font-bold tracking-wider text-white">
+                      👑 PREMIUM ÜYE
+                    </span>
+                  )}
                 </div>
                 {/* Settings shortcut */}
                 <Link
