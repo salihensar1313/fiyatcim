@@ -8,13 +8,12 @@ import { useSettings } from "@/hooks/useSettings";
 import CouponInput from "./CouponInput";
 
 export default function CartSummary() {
-  const { getSubtotal, getShipping, getGiftWrapTotal, getPremiumSetupCost, getTotal, discount, getItemCount } = useCart();
+  const { getSubtotal, getShipping, getGiftWrapTotal, getTotal, discount, getItemCount } = useCart();
   const settings = useSettings();
 
   const subtotal = getSubtotal();
   const shipping = getShipping();
   const giftWrapTotal = getGiftWrapTotal();
-  const premiumCost = getPremiumSetupCost();
   const total = getTotal();
   const itemCount = getItemCount();
   const threshold = settings.freeShippingThreshold;
@@ -75,12 +74,6 @@ export default function CartSummary() {
             )}
           </span>
         </div>
-        {premiumCost > 0 && (
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-amber-600 dark:text-amber-400">Premium Kurulum</span>
-            <span className="font-medium text-amber-600 dark:text-amber-400">{formatPrice(premiumCost)}</span>
-          </div>
-        )}
       </div>
 
       {/* KDV — fiyatlar zaten KDV dahil, sadece KDV tutarını göster */}

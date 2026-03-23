@@ -5,7 +5,7 @@ import type { CartItem, Product } from "@/types";
 import { getEffectivePrice, calculateShipping } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { safeGetJSON, safeSetJSON } from "@/lib/safe-storage";
-import { GIFT_WRAP_COST, PREMIUM_SETUP_COST } from "@/lib/constants";
+import { GIFT_WRAP_COST } from "@/lib/constants";
 
 interface CartContextType {
   items: CartItem[];
@@ -18,15 +18,12 @@ interface CartContextType {
   getSubtotal: () => number;
   getShipping: () => number;
   getGiftWrapTotal: () => number;
-  getPremiumSetupCost: () => number;
   getTotal: () => number;
   isInCart: (productId: string) => boolean;
   couponCode: string | null;
   setCouponCode: (code: string | null) => void;
   discount: number;
   setDiscount: (amount: number) => void;
-  premiumSetup: boolean;
-  setPremiumSetup: (val: boolean) => void;
   isCartLoaded: boolean;
 }
 
@@ -37,7 +34,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [couponCode, setCouponCode] = useState<string | null>(null);
   const [discount, setDiscount] = useState(0);
-  const [premiumSetup, setPremiumSetup] = useState(false);
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
 
   // G1: Kullanıcı bazlı storage key — her kullanıcının sepeti ayrı
@@ -176,7 +172,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems([]);
     setCouponCode(null);
     setDiscount(0);
-    setPremiumSetup(false);
   }, []);
 
   const getItemCount = useCallback(() => {
@@ -198,13 +193,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return items.filter((item) => item.giftWrap).length * GIFT_WRAP_COST;
   }, [items]);
 
-  const getPremiumSetupCost = useCallback(() => {
-    return premiumSetup ? PREMIUM_SETUP_COST : 0;
-  }, [premiumSetup]);
-
   const getTotal = useCallback(() => {
-    return Math.max(0, getSubtotal() - discount + getShipping() + getGiftWrapTotal() + getPremiumSetupCost());
-  }, [getSubtotal, discount, getShipping, getGiftWrapTotal, getPremiumSetupCost]);
+    return Math.max(0, getSubtotal() - discount + getShipping() + getGiftWrapTotal());
+  }, [getSubtotal, discount, getShipping, getGiftWrapTotal]);
 
   const isInCart = useCallback(
     (productId: string) => items.some((item) => item.product_id === productId),
@@ -224,15 +215,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
         getSubtotal,
         getShipping,
         getGiftWrapTotal,
-        getPremiumSetupCost,
         getTotal,
         isInCart,
         couponCode,
         setCouponCode,
         discount,
         setDiscount,
-        premiumSetup,
-        setPremiumSetup,
         isCartLoaded: isLoaded,
       }}
     >
