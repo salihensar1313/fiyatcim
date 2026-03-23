@@ -158,6 +158,8 @@ export default function HeroSliderClient({ slides }: Props) {
           <button
             key={i}
             onClick={() => setCurrent(i)}
+            aria-label={`Slayt ${i + 1}`}
+            aria-pressed={i === current}
             className={`h-2.5 rounded-full transition-all ${
               i === current ? "w-8 bg-primary-600" : "w-2.5 bg-white dark:bg-dark-800/50"
             }`}

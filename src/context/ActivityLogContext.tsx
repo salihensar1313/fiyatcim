@@ -31,8 +31,14 @@ export function ActivityLogProvider({ children }: { children: ReactNode }) {
     }
 
     // GÜVENLIK: audit_logs artık server-side admin route üzerinden okunur.
-    // Client-side doğrudan Supabase erişimi kaldırıldı.
+    // Sadece /admin sayfalarında çağrılır — gereksiz 401 isteklerini önler.
     // @see claude2-detailed-security-report-2026-03-23.md — Bulgu #3
+    const isAdminPage = typeof window !== "undefined" && window.location.pathname.startsWith("/admin");
+    if (!isAdminPage) {
+      setIsLoaded(true);
+      return;
+    }
+
     let isMounted = true;
     fetch("/api/admin/audit-logs?limit=200")
       .then((res) => {
