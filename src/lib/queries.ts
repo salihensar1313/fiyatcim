@@ -844,6 +844,49 @@ export async function getAllActiveProducts(client?: SupabaseClient, options?: { 
 
 
 /**
+ * Server-side ürün arama — Supabase ilike ile.
+ * Client-side arama 200 ürün limitiyle çalışmıyordu, bu fonksiyon
+ * DB'den doğrudan arar ve tüm eşleşen ürünleri döner (max 100).
+ */
+export async function searchProductsServer(query: string, client?: SupabaseClient): Promise<Product[]> {
+  const start = performance.now();
+  if (!query || query.trim().length < 2) return [];
+
+  if (IS_DEMO) {
+    const q = query.toLowerCase();
+    const results = activeSeedProducts().filter(p =>
+      p.name.toLowerCase().includes(q) ||
+      p.sku?.toLowerCase().includes(q) ||
+      p.short_desc?.toLowerCase().includes(q)
+    );
+    logger.info("query_ok", { fn: "searchProductsServer", demo: true, query, rows: results.length, ms: performance.now() - start });
+    return results.slice(0, 100);
+  }
+
+  const supabase = getSupabase(client);
+  const searchTerm = `%${query.trim()}%`;
+
+  const { data, error } = await supabase
+    .from("products")
+    .select("*, category:categories(*), brand:brands(*), reviews:reviews!left(id, rating, is_approved)")
+    .eq("is_active", true)
+    .is("deleted_at", null)
+    .or(`name.ilike.${searchTerm},sku.ilike.${searchTerm},short_desc.ilike.${searchTerm}`)
+    .order("is_featured", { ascending: false })
+    .order("created_at", { ascending: false })
+    .limit(100);
+
+  if (error) {
+    logger.error("query_failed", { fn: "searchProductsServer", query, error: error.message, ms: performance.now() - start });
+    return [];
+  }
+
+  const result = (data ?? []).map((row) => mapProduct(row as Record<string, unknown>));
+  logger.info("query_ok", { fn: "searchProductsServer", query, rows: result.length, ms: performance.now() - start });
+  return result;
+}
+
+/**
  * Belirli ID listesine göre ürünleri getirir.
  * RecentlyViewed gibi bileşenler için — tüm ürünleri çekmek yerine.
  */

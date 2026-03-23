@@ -15,7 +15,6 @@ import ConfirmModal from "@/components/ui/ConfirmModal";
 export default function CartPage() {
   const { items, clearCart, getItemCount, getTotal } = useCart();
   const itemCount = getItemCount();
-  const total = getTotal();
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   return (

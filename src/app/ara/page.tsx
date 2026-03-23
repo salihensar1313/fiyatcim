@@ -1,11 +1,12 @@
 "use client";
 
-import { Suspense, useEffect, useState, useMemo } from "react";
+import { Suspense, useEffect, useState, useMemo, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Search, SearchX, TrendingUp, ChevronRight } from "lucide-react";
 import { useProducts } from "@/context/ProductContext";
-import { searchProducts, POPULAR_SEARCHES } from "@/lib/search";
+import { POPULAR_SEARCHES } from "@/lib/search";
 import { useSearchHistory } from "@/hooks/useSearchHistory";
+import type { Product } from "@/types";
 import ProductCard from "@/components/product/ProductCard";
 import Link from "next/link";
 
@@ -99,20 +100,37 @@ function AraContent() {
 
   const queryParam = searchParams.get("q") || "";
   const [query, setQuery] = useState(queryParam);
+  const [results, setResults] = useState<Product[]>([]);
+  const [searching, setSearching] = useState(false);
 
-  // Sync URL param to state
+  // Server-side search via API
+  const performSearch = useCallback(async (q: string) => {
+    if (!q || q.trim().length < 2) {
+      setResults([]);
+      return;
+    }
+    setSearching(true);
+    try {
+      const res = await fetch(`/api/search?q=${encodeURIComponent(q.trim())}`);
+      const data = await res.json();
+      setResults(data.results || []);
+    } catch {
+      setResults([]);
+    } finally {
+      setSearching(false);
+    }
+  }, []);
+
+  // Sync URL param to state + trigger search
   useEffect(() => {
     setQuery(queryParam);
     if (queryParam.trim().length >= 2) {
       addSearch(queryParam.trim());
+      performSearch(queryParam.trim());
+    } else {
+      setResults([]);
     }
-  }, [queryParam, addSearch]);
-
-  // Search results
-  const results = useMemo(() => {
-    if (!query || query.trim().length < 2) return [];
-    return searchProducts(products, query);
-  }, [products, query]);
+  }, [queryParam, addSearch, performSearch]);
 
   // Detect matching category for banner
   const matchedCategory = useMemo(() => {
@@ -122,11 +140,10 @@ function AraContent() {
 
   // Featured products in search results (merchandising slot — top 4 from results)
   const featuredInSearch = useMemo(() => {
-    if (results.length < 8) return []; // Çok az sonuç varsa gösterme
+    if (results.length < 8) return [];
     return results
-      .filter((r) => r.product.is_featured || r.product.is_trending)
-      .slice(0, 4)
-      .map((r) => r.product);
+      .filter((p) => p.is_featured || p.is_trending)
+      .slice(0, 4);
   }, [results]);
 
   // Popular products (for empty results)
@@ -172,7 +189,7 @@ function AraContent() {
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary-500 border-t-transparent" />
         </div>
       ) : queryParam.trim().length >= 2 ? (
-        results.length > 0 ? (
+        (results.length > 0 || searching) ? (
           <>
             {/* ─── Kategori Banner ─── */}
             {matchedCategory && (
@@ -243,11 +260,19 @@ function AraContent() {
             </div>
 
             {/* Results grid */}
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {results.map((r) => (
-                <ProductCard key={r.product.id} product={r.product} />
-              ))}
-            </div>
+            {searching ? (
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="h-72 animate-pulse rounded-xl bg-dark-100 dark:bg-dark-700" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                {results.map((p) => (
+                  <ProductCard key={p.id} product={p} />
+                ))}
+              </div>
+            )}
           </>
         ) : (
           /* No results */
