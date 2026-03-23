@@ -649,6 +649,14 @@ export default function CheckoutPage() {
                           couponCode,
                           invoiceInfo: buildInvoiceInfo(),
                         });
+                        // Kampanya mail listesine kaydet
+                        if (agreeMarketing && user?.email) {
+                          fetch("/api/newsletter", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ email: user.email, source: "checkout" }),
+                          }).catch(() => {});
+                        }
                         setOrderCompleted(true);
                         clearCart();
                         router.push(`/siparis-basarili?order=${order.order_no}`);
@@ -752,6 +760,14 @@ export default function CheckoutPage() {
                     couponCode,
                     invoiceInfo: buildInvoiceInfo(),
                   });
+                  // Kampanya mail listesine kaydet
+                  if (agreeMarketing && user?.email) {
+                    fetch("/api/newsletter", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ email: user.email, source: "checkout" }),
+                    }).catch(() => {});
+                  }
                   setOrderCompleted(true);
                   clearCart();
                   router.push(`/siparis-basarili?order=${order.order_no}`);

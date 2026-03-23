@@ -41,10 +41,11 @@ export async function POST(request: NextRequest) {
     );
 
     // Upsert — duplicate'leri sessizce yönet
+    const source = String(body.source || "homepage").slice(0, 50);
     const { error } = await adminClient
       .from("newsletter_subscribers")
       .upsert(
-        { email, source: "homepage", subscribed_at: new Date().toISOString(), is_active: true },
+        { email, source, subscribed_at: new Date().toISOString(), is_active: true },
         { onConflict: "email" }
       );
 
