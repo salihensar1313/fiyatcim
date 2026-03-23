@@ -20,8 +20,8 @@ export default function BestSellers() {
     })
     .slice(0, 12);
 
-  // IBP: kişiselleştirilmiş sıralama (max 4 göster)
-  const personalized = personalize(discounted, 4);
+  // IBP: kişiselleştirilmiş sıralama (2 satır = 8 ürün)
+  const personalized = personalize(discounted, 8);
 
   if (personalized.length === 0) return null;
 

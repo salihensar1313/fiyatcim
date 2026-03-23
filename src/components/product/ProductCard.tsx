@@ -22,7 +22,8 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const [imgSrc, setImgSrc] = useState(() => getProductPrimaryImage(product));
-  useEffect(() => { setImgSrc(getProductPrimaryImage(product)); }, [product.id, product.images, product.category_id, product.category?.slug]);
+  const [imgLoaded, setImgLoaded] = useState(false);
+  useEffect(() => { setImgSrc(getProductPrimaryImage(product)); setImgLoaded(false); }, [product.id, product.images, product.category_id, product.category?.slug]);
   const { addItem, items, updateQuantity, removeItem, isInCart } = useCart();
   const { toggleItem, isInWishlist } = useWishlist();
   const { showToast } = useToast();
@@ -56,6 +57,16 @@ export default function ProductCard({ product }: ProductCardProps) {
           </span>
         )}
         <PriceDropBadge productId={product.id} currentPrice={product.sale_price || product.price} />
+        {product.is_trending && (
+          <span className="rounded-full bg-green-500 px-2 py-0.5 text-[10px] font-bold text-white">
+            Trend
+          </span>
+        )}
+        {product.is_featured && !product.is_trending && (
+          <span className="rounded-full bg-blue-500 px-2 py-0.5 text-[10px] font-bold text-white">
+            Öne Çıkan
+          </span>
+        )}
         {flashSale.ready && !flashSale.isExpired && product.sale_ends_at && product.stock > 0 && (
           <span className="flex items-center gap-1 rounded-full bg-yellow-500 px-2 py-1 text-xs font-bold text-white animate-pulse">
             <Zap size={12} />
@@ -101,14 +112,18 @@ export default function ProductCard({ product }: ProductCardProps) {
 
       {/* Product Image */}
       <Link href={`/urunler/${product.slug}`} className="relative aspect-square overflow-hidden !bg-white p-4">
+        {!imgLoaded && (
+          <div className="absolute inset-0 z-[1] animate-pulse bg-dark-100 dark:bg-dark-700" />
+        )}
         <Image
           src={imgSrc}
           alt={`${product.name} - ${product.brand?.name || "ürün"} | Fiyatcim.com`}
           width={300}
           height={300}
           unoptimized={isRemoteImage(imgSrc)}
-          className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
-          onError={() => setImgSrc(getCategoryFallbackImage(product.category_id, product.category?.slug))}
+          className={`h-full w-full object-contain transition-transform duration-300 group-hover:scale-105 ${!imgLoaded ? "opacity-0" : "opacity-100"}`}
+          onLoad={() => setImgLoaded(true)}
+          onError={() => { setImgSrc(getCategoryFallbackImage(product.category_id, product.category?.slug)); setImgLoaded(false); }}
         />
       </Link>
 
@@ -142,11 +157,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </>
               );
             }
-            return (
-              <Link href={`/urunler/${product.slug}#degerlendirmeler`} className="text-xs text-primary-500 hover:text-primary-600 hover:underline">
-                İlk değerlendirmeyi yaz
-              </Link>
-            );
+            return null;
           })()}
         </div>
 

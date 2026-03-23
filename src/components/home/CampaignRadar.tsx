@@ -20,8 +20,8 @@ export default function CampaignRadar() {
     })
     .slice(0, 12);
 
-  // IBP: kişiselleştirilmiş sıralama
-  const campaigns = personalize(allCampaigns, 4);
+  // IBP: kişiselleştirilmiş sıralama (2 satır = 8 ürün)
+  const campaigns = personalize(allCampaigns, 8);
 
   if (campaigns.length === 0) return null;
 

@@ -10,8 +10,8 @@ export default function TrendingProducts() {
   const trending = useTrendingProducts(8);
   const { personalize } = usePersonalization();
 
-  // IBP: kişiselleştirilmiş sıralama (max 4 göster)
-  const personalized = personalize(trending, 4);
+  // IBP: kişiselleştirilmiş sıralama (2 satır = 8 ürün)
+  const personalized = personalize(trending, 8);
 
   if (personalized.length === 0) return null;
 
