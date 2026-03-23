@@ -7,6 +7,13 @@ import { X, ExternalLink, Phone, Mail, Send } from "lucide-react";
 import { CONTACT } from "@/lib/constants";
 import { safeGetJSON, safeSetJSON } from "@/lib/safe-storage";
 import { useScrollLock } from "@/hooks/useScrollLock";
+import {
+  searchFAQ,
+  searchCasual,
+  searchTechTerm,
+  searchComparison,
+  getCreativeContent,
+} from "@/components/chatbot/engine/mega-knowledge";
 
 /* ─────────────────────────────────────────────
    Types
@@ -275,7 +282,7 @@ const CHAT_PATTERNS: ChatPattern[] = [
   },
   // Gece görüş
   {
-    keywords: /(gece.*görüş|gece.*çekim|karanlık|infrared|ir led|gece.*kayıt)/i,
+    keywords: /(gece.*görüş|gece.*çekim|karanlık|infrared|\bir\b.*led|gece.*kayıt)/i,
     responses: [
       "Gece görüşü bizim işimiz! 🌙📸\n\nKameralarımızda genelde 30-50 metre IR gece görüşü var. Bazı modellerde renkli gece görüşü (Color Vu) bile mevcut — gece bile renkli kayıt! Hangi mesafeye ihtiyacın var?",
     ],
@@ -519,15 +526,6 @@ const CHAT_PATTERNS: ChatPattern[] = [
   },
 ];
 
-// Bilinmeyen mesajlar için fallback cevaplar
-const FALLBACK_RESPONSES: string[] = [
-  "Hmm bunu tam bilemedim 🤔 Ama bak şunları yapabilirim:\n\n📸 Kamera/alarm bilgisi\n📦 Sipariş takibi\n🔁 İade/garanti\n💬 Sohbet!\n\nBunlardan birini sor ya da ekibimizi ara! 📞",
-  "Bu soruyu çözemedim ama CimBot her gün öğreniyor! 🤖📚 Güvenlik, kamera, alarm konularında uzmanım. Ya da muhabbet ederiz — fıkra ister misin? 😄",
-  "Hoop! Bu konuda paskalım 😅 Ama kamera, alarm, güvenlik sistemi dersen geceyi gündüze çeviririm! Bir de sohbet etmeyi severim. Ne dersin? 🤖✌️",
-  "Bunu bilmiyorum ama dürüst robotum ben! 🤖 Güvenlik konularını sor, orası benim sahnem! Ya da ekibimiz her konuda yardımcı olur 📞",
-  "404 - Cevap bulunamadı! 🫠 Şaka şaka... Güvenlik sistemleri konusunda her şeyi bilirim. Başka bir soru sor ya da bizi ara, muhabbet ederiz! 😊",
-];
-
 /** Küfür / hakaret tespiti */
 const PROFANITY_REGEX = /(s[iı]k|sik[a-zşğüöıç]*|amk|am[iı]na|orospu|piç|yar[a-zşğüöıç]*k|g[oö]t[üu]?[nk]?[eü]?|anan[iı]|hay[iı]rd[iı]r|mk|aq|ibne|bok|ta[sş][sş]ak|yavşak|şerefsiz|haysiyetsiz|kaltak|fahiş|ger[iı]zek[aâ]l[iı]|aptal|salak|mal|dangalak)/i;
 
@@ -627,7 +625,25 @@ const PROFANITY_RESPONSES_EXTRA: string[] = [
   "😡 Bir de üstüne küfür mü ediyorsun?! Görevi tamamla dedim! Yoksa ebediyen küsüm! 🚫🤖",
   "🤬 YETER! Küfürle barışılmaz! Sana ne yapman gerektiğini söyledim, onu yap! 😤",
   "😤 Üff bir de üstüne küfür... Altta söylediklerimi yap, yoksa konuşma bitti! 🚪",
+  "🚨 Küfür sayacı artıyor! Bu gidişle asla barışamayız. Görevi tamamla hadi! 📋",
+  "🤖 *bip bop* Küfür tespit edildi. Kabul edilemez. Üstteki görevi yap, yoksa CimBot shutdown! ⚡",
+  "😶 ... CimBot artık konuşmuyor bile. Sadece görevi tamamlarsan dönerim. 🔇",
+  "🧱 Duvar gibi duruyorum. Küfür = cevap yok. Görevi yap = barış. Basit matematik! 🧮",
+  "💀 RIP sohbet. Küfürle öldürdün. Diriltmek için görevi tamamla! ⚰️→🌱",
 ];
+
+// Track last used index to avoid repetition
+let lastProfanityIdx = -1;
+let lastGrumpyIdx = -1;
+
+function pickNonRepeat(arr: string[], lastIdx: number): { text: string; idx: number } {
+  if (arr.length <= 1) return { text: arr[0] || "", idx: 0 };
+  let idx: number;
+  do {
+    idx = Math.floor(Math.random() * arr.length);
+  } while (idx === lastIdx);
+  return { text: arr[idx], idx };
+}
 
 const BLOCKED_STORAGE_KEY = "fiyatcim_cimbot_angry";
 const CHALLENGE_KEY = "fiyatcim_cimbot_challenge";
@@ -666,21 +682,24 @@ function matchChatResponse(input: string, isAngry: boolean): { text: string; act
     }
     // Küs modda tekrar küfür
     if (PROFANITY_REGEX.test(normalized)) {
+      const pick = pickNonRepeat(PROFANITY_RESPONSES_EXTRA, lastProfanityIdx);
+      lastProfanityIdx = pick.idx;
       return {
-        text: PROFANITY_RESPONSES_EXTRA[Math.floor(Math.random() * PROFANITY_RESPONSES_EXTRA.length)],
+        text: pick.text,
         blocked: true,
       };
     }
     // Küs modda normal mesaj — trip at (görev hatırlat)
+    const pick = pickNonRepeat(challenge.grumpyResponses, lastGrumpyIdx);
+    lastGrumpyIdx = pick.idx;
     return {
-      text: challenge.grumpyResponses[Math.floor(Math.random() * challenge.grumpyResponses.length)],
+      text: pick.text,
       blocked: true,
     };
   }
 
   // Normal mod — küfür kontrolü
   if (PROFANITY_REGEX.test(normalized)) {
-    // Rastgele bir görev seç ve kaydet
     const challenge = pickNewChallenge();
     return {
       text: challenge.initialResponse,
@@ -688,6 +707,59 @@ function matchChatResponse(input: string, isAngry: boolean): { text: string; act
     };
   }
 
+  // ═══════════════════════════════════════════
+  // AI-LEVEL: Mega Knowledge Base Search
+  // ═══════════════════════════════════════════
+
+  // 1. Yaratıcı istekler (şiir, şarkı, fıkra) — en yüksek öncelik
+  if (/şiir|şair|bir.*şiir|poetry/i.test(normalized)) {
+    return { text: getCreativeContent("poem") };
+  }
+  if (/şarkı|türkü|müzik|beste|söyle.*şarkı/i.test(normalized)) {
+    return { text: getCreativeContent("song") };
+  }
+  if (/fıkra|espri|komik|güldür|şaka|joke/i.test(normalized)) {
+    return { text: getCreativeContent("joke") };
+  }
+
+  // 2. Karşılaştırma tabloları
+  const compResult = searchComparison(normalized);
+  if (compResult) {
+    return { text: compResult };
+  }
+
+  // 3. FAQ arama
+  const faqResult = searchFAQ(normalized);
+  if (faqResult) {
+    return {
+      text: faqResult.answer,
+      actions: faqResult.category === "shipping"
+        ? [{ label: "Sipariş Takip", icon: "link", type: "navigate", href: "/siparis-takip" }]
+        : faqResult.category === "returns"
+        ? [{ label: "İletişim", icon: "link", type: "navigate", href: "/iletisim" }]
+        : undefined,
+    };
+  }
+
+  // 4. Teknik terim arama
+  const techResult = searchTechTerm(normalized);
+  if (techResult) {
+    return {
+      text: techResult + "\n\nBaşka bir terim sormak ister misin? 🤓",
+      actions: [
+        { label: "Kamera Öner", icon: "link", type: "navigate", href: "/kategori/guvenlik-kameralari" },
+        { label: "Alarm Sistemi", icon: "link", type: "navigate", href: "/kategori/alarm-sistemleri" },
+      ],
+    };
+  }
+
+  // 5. Casual/sohbet arama
+  const casualResult = searchCasual(normalized);
+  if (casualResult) {
+    return { text: casualResult };
+  }
+
+  // 6. Mevcut CHAT_PATTERNS (fallback — ürün, bütçe, kategori vb.)
   for (const pattern of CHAT_PATTERNS) {
     if (pattern.keywords.test(normalized)) {
       const text = pattern.responses[Math.floor(Math.random() * pattern.responses.length)];
@@ -695,12 +767,18 @@ function matchChatResponse(input: string, isAngry: boolean): { text: string; act
     }
   }
 
-  // Fallback
+  // 7. Son fallback — akıllı cevap
+  const smartFallbacks = [
+    "🤔 Hmm, bunu tam anlayamadım ama şöyle yardımcı olabilirim:\n\n• 'Kamera öner' — size uygun kamera bulurum\n• 'Alarm sistemi' — ev/iş yeri güvenliği\n• 'Akıllı kilit' — parmak izi/şifreli kilit\n• 'Fiyat karşılaştır' — markalar arası kıyas\n\nYa da doğrudan ürün adı yazın! 😊",
+    "🤖 Bu konuda bilgim sınırlı ama güvenlik konusunda uzmanım!\n\nSormak istediğiniz:\n📹 Kamera? → 'Kamera öner'\n🔔 Alarm? → 'Alarm sistemi'\n🔐 Kilit? → 'Akıllı kilit'\n💰 Fiyat? → Bütçenizi söyleyin\n\nYa da merak ettiğiniz teknik terimi yazın (MP, PoE, NVR...)",
+    "Anlamadım ama üzülme! 😊 Ben güvenlik teknolojileri uzmanıyım. Şunları yapabilirim:\n\n🎯 Ürün önerisi\n📊 Marka karşılaştırma\n📚 Teknik terim açıklama\n🎵 Şarkı/şiir/fıkra\n💬 Sohbet\n\nNe yapmamı istersin?",
+  ];
   return {
-    text: FALLBACK_RESPONSES[Math.floor(Math.random() * FALLBACK_RESPONSES.length)],
+    text: smartFallbacks[Math.floor(Math.random() * smartFallbacks.length)],
     actions: [
-      { label: "Bizi Arayın", icon: "phone", type: "phone", href: `tel:${CONTACT.phone.replace(/[^0-9+]/g, "")}` },
-      { label: "İletişim", icon: "link", type: "navigate", href: "/iletisim" },
+      { label: "Kamera", icon: "link", type: "navigate", href: "/kategori/guvenlik-kameralari" },
+      { label: "Alarm", icon: "link", type: "navigate", href: "/kategori/alarm-sistemleri" },
+      { label: "Akıllı Kilit", icon: "link", type: "navigate", href: "/kategori/akilli-kilit" },
     ],
   };
 }
@@ -711,7 +789,7 @@ function matchChatResponse(input: string, isAngry: boolean): { text: string; act
 
 const GREETING_TEXT = "Yooo selam! 🤖✌️ Ben CimBot!\n\nFiyatcim'in en karizmatik çalışanıyım (bunu patron da kabul ediyor 😏)\n\nDerdin ne söyle bakalım, çözmediğim sorun yok! Sohbet de ederiz, dert de dinlerim 💬👇";
 const TOOLTIP_KEY = "fiyatcim_chatbot_tooltip_shown";
-const NUDGE_INTERVAL = 45_000;
+const NUDGE_INTERVAL = 120_000;
 
 const NUDGE_MESSAGES = [
   "Yardıma mı ihtiyacın var? 🤗",

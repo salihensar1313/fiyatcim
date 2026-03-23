@@ -46,7 +46,11 @@ export async function POST(request: NextRequest) {
     // ─── Origin validation (CSRF protection) ───
     const origin = request.headers.get("origin");
     const host = request.headers.get("host");
-    if (origin && host) {
+    if (!origin) {
+      // Origin header yoksa reddet (curl/bot koruması)
+      return NextResponse.json({ error: "Geçersiz istek kaynağı." }, { status: 403 });
+    }
+    if (host) {
       try {
         const originHost = new URL(origin).hostname;
         const expectedHost = host.split(":")[0]; // strip port

@@ -10,7 +10,7 @@ export const SITE_DESCRIPTION =
 
 export const CONTACT = {
   email: "destek@fiyatcim.com",
-  phone: "+90 (___) ___ __ __",
+  phone: "",
   address: "Adapazarı, Sakarya",
   workingHours: "Pzt–Cum: 09:00–18:00 | Cmt: 10:00–16:00",
 } as const;

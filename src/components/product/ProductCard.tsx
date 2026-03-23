@@ -131,19 +131,23 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Rating */}
         <div className="mt-2 flex items-center gap-1.5">
-          {product.reviews && product.reviews.length > 0 ? (
-            <>
-              <Rating
-                rating={product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length}
-                size="sm"
-              />
-              <span className="text-xs text-dark-500">({product.reviews.length})</span>
-            </>
-          ) : (
-            <Link href={`/urunler/${product.slug}#degerlendirmeler`} className="text-xs text-primary-500 hover:text-primary-600 hover:underline">
-              İlk değerlendirmeyi yaz
-            </Link>
-          )}
+          {(() => {
+            const approvedReviews = product.reviews?.filter((r: { is_approved?: boolean }) => r.is_approved !== false) || [];
+            if (approvedReviews.length > 0) {
+              const avg = approvedReviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / approvedReviews.length;
+              return (
+                <>
+                  <Rating rating={avg} size="sm" />
+                  <span className="text-xs text-dark-500">({approvedReviews.length})</span>
+                </>
+              );
+            }
+            return (
+              <Link href={`/urunler/${product.slug}#degerlendirmeler`} className="text-xs text-primary-500 hover:text-primary-600 hover:underline">
+                İlk değerlendirmeyi yaz
+              </Link>
+            );
+          })()}
         </div>
 
         {/* Price — USD + TL */}

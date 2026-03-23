@@ -668,7 +668,7 @@ function extractSpecs(text: string): Record<string, string> {
   if (chMatch) specs.channels = chMatch[1];
   if (/wifi|kablosuz/i.test(text)) specs.connectivity = "WiFi";
   if (/poe/i.test(text)) specs.power = "PoE";
-  if (/gece\s*gorus|ir|infrared/i.test(text)) specs.nightVision = "true";
+  if (/gece\s*gorus|\bir\b|infrared/i.test(text)) specs.nightVision = "true";
   if (/dis\s*mekan|outdoor|ip67|ip66/i.test(text)) specs.outdoor = "true";
   if (/ic\s*mekan|indoor/i.test(text)) specs.indoor = "true";
 

@@ -342,7 +342,7 @@ export async function getProducts(opts: ProductQueryOpts = {}): Promise<{ data: 
 
   let query = supabase
     .from("products")
-    .select("*, category:categories(*), brand:brands(*)", { count: "exact" })
+    .select("*, category:categories(*), brand:brands(*), reviews:reviews!left(id, rating, is_approved)", { count: "exact" })
     .eq("is_active", true)
     .is("deleted_at", null)
     .gt("stock", 0);
@@ -400,7 +400,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   const supabase = getSupabase();
   const { data, error } = await supabase
     .from("products")
-    .select("*, category:categories(*), brand:brands(*)")
+    .select("*, category:categories(*), brand:brands(*), reviews:reviews!left(id, rating, is_approved)")
     .eq("slug", slug)
     .eq("is_active", true)
     .is("deleted_at", null)
@@ -454,7 +454,7 @@ export async function getFeaturedProducts(limit = 8, client?: SupabaseClient): P
   // Once is_featured=true urunleri dene
   const { data: featuredData, error: featuredError } = await supabase
     .from("products")
-    .select("*, category:categories(*), brand:brands(*)")
+    .select("*, category:categories(*), brand:brands(*), reviews:reviews!left(id, rating, is_approved)")
     .eq("is_active", true)
     .is("deleted_at", null)
     .gt("stock", 0)
@@ -471,7 +471,7 @@ export async function getFeaturedProducts(limit = 8, client?: SupabaseClient): P
   // Fallback: sale_price olan urunler
   const { data, error } = await supabase
     .from("products")
-    .select("*, category:categories(*), brand:brands(*)")
+    .select("*, category:categories(*), brand:brands(*), reviews:reviews!left(id, rating, is_approved)")
     .eq("is_active", true)
     .is("deleted_at", null)
     .gt("stock", 0)
@@ -516,7 +516,7 @@ export async function getRandomProducts(limit = 12, client?: SupabaseClient): Pr
   // Supabase doesn't have RANDOM(), so fetch more and shuffle client-side
   const { data, error } = await supabase
     .from("products")
-    .select("*, category:categories(*), brand:brands(*)")
+    .select("*, category:categories(*), brand:brands(*), reviews:reviews!left(id, rating, is_approved)")
     .eq("is_active", true)
     .is("deleted_at", null)
     .gt("stock", 0)
@@ -552,7 +552,7 @@ export async function getTrendingProducts(limit = 8, client?: SupabaseClient): P
   const supabase = getSupabase(client);
   const { data, error } = await supabase
     .from("products")
-    .select("*, category:categories(*), brand:brands(*)")
+    .select("*, category:categories(*), brand:brands(*), reviews:reviews!left(id, rating, is_approved)")
     .eq("is_active", true)
     .is("deleted_at", null)
     .gt("stock", 0)
@@ -585,7 +585,7 @@ export async function getRelatedProducts(productId: string, categoryId: string, 
   const supabase = getSupabase();
   const { data, error } = await supabase
     .from("products")
-    .select("*, category:categories(*), brand:brands(*)")
+    .select("*, category:categories(*), brand:brands(*), reviews:reviews!left(id, rating, is_approved)")
     .eq("is_active", true)
     .is("deleted_at", null)
     .eq("category_id", categoryId)
@@ -815,7 +815,7 @@ export async function getAllActiveProducts(client?: SupabaseClient): Promise<Pro
   const supabase = getSupabase(client);
   const { data, error } = await supabase
     .from("products")
-    .select("*, category:categories(*), brand:brands(*)")
+    .select("*, category:categories(*), brand:brands(*), reviews:reviews!left(id, rating, is_approved)")
     .eq("is_active", true)
     .is("deleted_at", null)
     .order("created_at", { ascending: false });
@@ -860,7 +860,7 @@ export async function getProductReviews(productId: string, client?: SupabaseClie
   const supabase = getSupabase(client);
   const { data, error } = await supabase
     .from("reviews")
-    .select("*, profile:profiles!reviews_user_id_fkey(ad, soyad)")
+    .select("*")
     .eq("product_id", productId)
     .eq("is_approved", true)
     .order("created_at", { ascending: false });
@@ -882,7 +882,7 @@ export async function getAllReviews(client?: SupabaseClient): Promise<Review[]> 
   const supabase = getSupabase(client);
   const { data, error } = await supabase
     .from("reviews")
-    .select("*, profile:profiles!reviews_user_id_fkey(ad, soyad)")
+    .select("*")
     .order("created_at", { ascending: false });
 
   if (error) {

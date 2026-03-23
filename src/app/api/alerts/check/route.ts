@@ -41,7 +41,8 @@ export async function GET(request: Request) {
   // Simple auth: require secret header or query param
   const { searchParams } = new URL(request.url);
   const secret = searchParams.get("secret") || request.headers.get("x-cron-secret");
-  if (secret !== process.env.CRON_SECRET && secret !== "manual-check") {
+  const cronSecret = process.env.CRON_SECRET;
+  if (!cronSecret || secret !== cronSecret) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -59,7 +60,7 @@ export async function GET(request: Request) {
   }
 
   // Get unique product IDs
-  const productIds = [...new Set(alerts.map(a => a.product_id))];
+  const productIds = Array.from(new Set(alerts.map(a => a.product_id)));
 
   // Fetch current prices for those products
   const { data: products } = await supabase

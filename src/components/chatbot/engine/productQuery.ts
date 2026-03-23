@@ -142,10 +142,23 @@ export async function queryProducts(filters: ProductFilters): Promise<Product[]>
       query = query.order("created_at", { ascending: false });
       break;
     case "best_value":
-      // Products with sale_price first, then by price ascending
       query = query.order("sale_price", { ascending: true, nullsFirst: false })
         .order("price", { ascending: true });
       break;
+    case "random": {
+      // Fetch more, then shuffle client-side
+      const limit = filters.limit || 4;
+      query = query.limit(limit * 3); // fetch 3x, then pick random
+      const { data, error } = await query;
+      if (error || !data) return [];
+      // Fisher-Yates shuffle
+      const arr = data.map(mapProduct);
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr.slice(0, limit);
+    }
     default:
       query = query.order("created_at", { ascending: false });
   }
@@ -267,7 +280,7 @@ export async function getPackageDeal(
   const main = await queryProducts({
     categorySlug,
     budget: mainBudget ? { max: mainBudget } : undefined,
-    sort: "best_value",
+    sort: "random",
     limit,
     searchText: mainSearchExclude,
   });
@@ -275,7 +288,7 @@ export async function getPackageDeal(
   const complementary = await queryProducts({
     categorySlug: complementaryCategory.slug,
     budget: compBudget ? { max: compBudget } : undefined,
-    sort: "best_value",
+    sort: "random",
     limit,
     searchText: complementaryCategory.searchText,
     excludeIds: main.map((p) => p.id),

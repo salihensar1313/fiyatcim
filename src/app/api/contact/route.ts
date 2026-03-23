@@ -38,6 +38,14 @@ const SUBJECT_LABELS: Record<string, string> = {
 
 export async function POST(request: NextRequest) {
   try {
+    // Safe JSON parse
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ error: "Gecersiz istek formati." }, { status: 400 });
+    }
+
     // CSRF: origin check
     const origin = request.headers.get("origin");
     const host = request.headers.get("host");
@@ -59,7 +67,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Çok fazla istek. Lütfen biraz bekleyin." }, { status: 429 });
     }
 
-    const body = await request.json();
     const parsed = contactSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json({ error: parsed.error.issues[0]?.message || "Geçersiz istek" }, { status: 400 });

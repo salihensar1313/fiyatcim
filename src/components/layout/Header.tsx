@@ -65,11 +65,15 @@ export default function Header() {
         <div className="hidden border-b border-dark-800 bg-dark-950 py-1.5 lg:block">
           <div className="container-custom flex items-center justify-between text-xs text-dark-400">
             <div className="flex items-center gap-4">
-              <span className="flex items-center gap-1.5">
-                <Phone size={12} className="text-primary-500" />
-                {CONTACT.phone}
-              </span>
-              <span className="text-dark-600">|</span>
+              {CONTACT.phone && (
+                <>
+                  <span className="flex items-center gap-1.5">
+                    <Phone size={12} className="text-primary-500" />
+                    {CONTACT.phone}
+                  </span>
+                  <span className="text-dark-600">|</span>
+                </>
+              )}
               <span>{CONTACT.workingHours}</span>
             </div>
             <div className="flex items-center gap-4">

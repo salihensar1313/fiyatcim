@@ -13,11 +13,16 @@ interface Props {
 
 export default function HeroSliderClient({ slides }: Props) {
   const { personalizeSlideOrder } = usePersonalization();
+  const [hasMounted, setHasMounted] = useState(false);
 
-  // IBP: İlgili kategori slide'ını öne al
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  // IBP: İlgili kategori slide'ını öne al — yalnızca mount sonrası (hydration uyumu)
   const orderedSlides = useMemo(
-    () => personalizeSlideOrder(slides),
-    [slides, personalizeSlideOrder]
+    () => (hasMounted ? personalizeSlideOrder(slides) : slides),
+    [slides, personalizeSlideOrder, hasMounted]
   );
 
   const [current, setCurrent] = useState(0);
@@ -87,9 +92,12 @@ export default function HeroSliderClient({ slides }: Props) {
         {orderedSlides.map((slide, i) => (
           <div
             key={slide.id}
-            className={`transition-opacity duration-700 ${
-              i === current ? "relative opacity-100" : "absolute inset-0 opacity-0"
+            className={`transition-[opacity,visibility] duration-700 ${
+              i === current
+                ? "relative z-[2] visible opacity-100"
+                : "invisible absolute inset-0 z-[1] opacity-0 pointer-events-none"
             }`}
+            aria-hidden={i !== current}
           >
             <div className="relative min-h-[300px] sm:min-h-[400px] lg:min-h-[540px]">
               <Image

@@ -264,7 +264,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }).catch(settle);
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "TOKEN_REFRESHED" && !session) {
+        // Stale refresh token — clear session silently
+        console.warn("[auth] Token refresh failed, clearing session");
+        await supabase.auth.signOut();
+        setUser(null);
+        setProfile(null);
+        settle();
+        return;
+      }
       if (session?.user) {
         await loadUser(session.user.id, session.user.email!);
         settle();
@@ -321,11 +330,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { error: "Geçersiz e-posta veya şifre." };
     }
 
-    // Non-demo: Supabase Auth
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) return { error: translateAuthError(error.message) };
-    return {};
+    // Non-demo: Login via API route (brute-force protection + email alert)
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        return { error: data.error || "Giris basarisiz." };
+      }
+
+      // Set session from API response
+      if (data.session?.access_token && data.session?.refresh_token) {
+        const supabase = createClient();
+        await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+        });
+      }
+
+      return {};
+    } catch {
+      return { error: "Baglanti hatasi. Lutfen tekrar deneyin." };
+    }
   }, [persistDemo]);
 
   // ========================================

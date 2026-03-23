@@ -102,7 +102,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         supabase.from("user_carts").upsert(
           { user_id: user.id, items: cartData, updated_at: new Date().toISOString() },
           { onConflict: "user_id" }
-        ).then(() => {}).catch(() => {});
+        ).then(() => {});
       }).catch(() => {});
     }
   }, [items, couponCode, isLoaded, storageKey, user?.id]);

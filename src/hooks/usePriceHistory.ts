@@ -202,6 +202,12 @@ export function get7DayChange(productId: string, currentPrice: number): number |
 
   const oldPrice = entries[0].price;
   if (oldPrice === currentPrice) return null;
+  if (oldPrice <= 0) return null;
 
-  return Math.round(((currentPrice - oldPrice) / oldPrice) * 100 * 10) / 10;
+  const change = Math.round(((currentPrice - oldPrice) / oldPrice) * 100 * 10) / 10;
+
+  // Ignore unrealistic changes (>70% drop or >200% increase — likely data issue)
+  if (change < -70 || change > 200) return null;
+
+  return change;
 }

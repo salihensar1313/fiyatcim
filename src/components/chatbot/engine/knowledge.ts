@@ -327,9 +327,22 @@ export function findKnowledge(query: string): KnowledgeEntry | null {
 // ─── Find Tech Term ───
 export function findTechTerm(query: string): string | null {
   const q = query.toLowerCase();
-  for (const [term, explanation] of Object.entries(TECH_TERMS)) {
-    if (q.includes(term.toLowerCase())) return `**${term.toUpperCase()}:** ${explanation}`;
+  const words = q.split(/\s+/);
+
+  // Exact word match for short terms (prevents "siir" matching "ir")
+  for (const word of words) {
+    if (word.length < 2) continue;
+    const explanation = TECH_TERMS[word];
+    if (explanation) return `**${word.toUpperCase()}:** ${explanation}`;
   }
+
+  // Substring match only for longer terms (4+ chars)
+  for (const [term, explanation] of Object.entries(TECH_TERMS)) {
+    if (term.length >= 4 && q.includes(term.toLowerCase())) {
+      return `**${term.toUpperCase()}:** ${explanation}`;
+    }
+  }
+
   return null;
 }
 

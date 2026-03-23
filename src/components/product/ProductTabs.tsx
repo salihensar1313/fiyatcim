@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Shield, Truck, Package, CheckCircle } from "lucide-react";
+import { sanitizeHtml } from "@/lib/sanitize";
 import type { Product } from "@/types";
 import { useProductReviews } from "@/hooks/useProductReviews";
 import { useProductQA } from "@/hooks/useProductQA";
@@ -124,7 +125,7 @@ export default function ProductTabs({ product }: ProductTabsProps) {
           <div className="space-y-6">
             <div
               className="prose max-w-none text-dark-700 dark:text-dark-200 leading-relaxed [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:my-2 [&_li]:my-1 [&_p]:my-2"
-              dangerouslySetInnerHTML={{ __html: product.description || "" }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.description) }}
             />
 
             {/* Highlights */}

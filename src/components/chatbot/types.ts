@@ -149,7 +149,7 @@ export interface ProductFilters {
   onSale?: boolean;
   specs?: Record<string, string>;
   searchText?: string;        // Full-text search in name/description
-  sort?: "price_asc" | "price_desc" | "popular" | "newest" | "best_value";
+  sort?: "price_asc" | "price_desc" | "popular" | "newest" | "best_value" | "random";
   limit?: number;
   offset?: number;            // For pagination
   excludeIds?: string[];

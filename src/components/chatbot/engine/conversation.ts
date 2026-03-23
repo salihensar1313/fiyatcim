@@ -3,6 +3,13 @@
 // State machine, context tracking, intelligent response generation
 // ============================================================
 
+import {
+  searchFAQ,
+  searchCasual,
+  searchTechTerm,
+  searchComparison,
+  getCreativeContent,
+} from "./mega-knowledge";
 import type {
   ConversationContext,
   ConversationState,
@@ -268,6 +275,92 @@ function getCategoryDisplayName(slug: string | null): string {
   return map[slug] || "Ürünler";
 }
 
+// ─── Mega Knowledge Handler (AI-Level) ───
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function handleMegaKnowledge(userText: string, _nlp: NLPResult): BotResponse | null {
+  const normalized = userText.toLowerCase().trim();
+  // Turkish normalized version (ş→s, ü→u, ç→c, etc.)
+  const tn = normalized.replace(/ç/g,"c").replace(/ğ/g,"g").replace(/ı/g,"i").replace(/ö/g,"o").replace(/ş/g,"s").replace(/ü/g,"u").replace(/â/g,"a");
+
+  // 1. Yaratıcı istekler — en yüksek öncelik
+  if (/siir|sair|poetry|bir.*siir/i.test(tn)) {
+    return {
+      text: getCreativeContent("poem"),
+      quickReplies: [
+        { label: "Başka şiir 📝", value: "bir şiir daha yaz", icon: "📝" },
+        { label: "Şarkı söyle 🎵", value: "şarkı söyle", icon: "🎵" },
+        { label: "Fıkra anlat 😂", value: "fıkra anlat", icon: "😂" },
+      ],
+    };
+  }
+  if (/sarki|turku|muzik|beste|soyle.*sark|bir.*sark/i.test(tn)) {
+    return {
+      text: getCreativeContent("song"),
+      quickReplies: [
+        { label: "Başka şarkı 🎵", value: "başka şarkı söyle", icon: "🎵" },
+        { label: "Şiir yaz 📝", value: "şiir yaz", icon: "📝" },
+        { label: "Ürün öner 📹", value: "kamera öner", icon: "📹" },
+      ],
+    };
+  }
+  if (/fikra|espri|komik|guldur|saka.*yap|bir.*fikra|joke/i.test(tn)) {
+    return {
+      text: getCreativeContent("joke"),
+      quickReplies: [
+        { label: "Bir daha 😂", value: "başka fıkra anlat", icon: "😂" },
+        { label: "Şiir yaz 📝", value: "şiir yaz", icon: "📝" },
+        { label: "Ürün öner 📹", value: "kamera öner", icon: "📹" },
+      ],
+    };
+  }
+
+  // 2. Karşılaştırma tabloları
+  const compResult = searchComparison(userText);
+  if (compResult) {
+    return {
+      text: compResult,
+      quickReplies: [
+        { label: "Ürün öner 📹", value: "kamera öner", icon: "📹" },
+        { label: "Başka karşılaştır", value: "karşılaştır", icon: "📊" },
+      ],
+    };
+  }
+
+  // 3. FAQ arama — her zaman kontrol et
+  const faqResult = searchFAQ(userText);
+  if (faqResult) {
+    return {
+      text: faqResult.answer,
+      quickReplies: [
+        { label: "Başka soru ❓", value: "başka sorum var", icon: "❓" },
+        { label: "Ürün öner 📹", value: "kamera öner", icon: "📹" },
+      ],
+    };
+  }
+
+  // 4. Teknik terim arama
+  const techResult = searchTechTerm(userText);
+  if (techResult) {
+    return {
+      text: techResult + "\n\nBaşka bir terim sormak ister misin? 🤓",
+      quickReplies: [
+        { label: "Kamera Öner 📹", value: "kamera öner", icon: "📹" },
+        { label: "Alarm Sistemi 🔔", value: "alarm sistemi", icon: "🔔" },
+        { label: "Karşılaştır 📊", value: "karşılaştır", icon: "📊" },
+      ],
+    };
+  }
+
+  // 5. Casual sohbet
+  const casualResult = searchCasual(userText);
+  if (casualResult) {
+    return { text: casualResult };
+  }
+
+  // Mega knowledge eşleşmedi — null dön, routeByIntent devam etsin
+  return null;
+}
+
 // ─── Main Process Message ───
 export async function processMessage(
   userText: string,
@@ -301,6 +394,12 @@ export async function processMessage(
   // ─── Handle Profanity ───
   if (nlp.primaryIntent === "PROFANITY") {
     return handleProfanity(newContext);
+  }
+
+  // ─── Mega Knowledge Base (AI-Level) ───
+  const megaResult = handleMegaKnowledge(userText, nlp);
+  if (megaResult) {
+    return { response: megaResult, updatedContext: newContext };
   }
 
   // ─── Handle Sales Funnel (NEEDS_ASSESSMENT state) ───
