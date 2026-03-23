@@ -23,6 +23,7 @@ const CampaignRadar = dynamic(() => import("@/components/home/CampaignRadar"));
 const TrustBadges = dynamic(() => import("@/components/home/TrustBadges"));
 const WhyChooseUs = dynamic(() => import("@/components/home/WhyChooseUs"));
 const Newsletter = dynamic(() => import("@/components/home/Newsletter"));
+const BannerSlot = dynamic(() => import("@/components/ui/BannerSlot"));
 
 /**
  * Ana sayfa bölüm sırası (Sprint 2C — G9-G14):
@@ -59,6 +60,7 @@ export default function HomePage() {
       <Suspense fallback={<div className="py-12 sm:py-16"><div className="container-custom"><div className="grid grid-cols-2 gap-4 lg:grid-cols-4">{Array.from({ length: 4 }).map((_, i) => (<div key={i} className="h-72 animate-pulse rounded-xl bg-dark-100" />))}</div></div></div>}>
         <RandomProducts />
       </Suspense>
+      <BannerSlot name="products_between" />
       <FlashSale />
       <BestSellers />
       <TrendingProducts />

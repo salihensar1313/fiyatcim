@@ -14,6 +14,8 @@ import { incrementViewCount } from "@/hooks/useTrendingProducts";
 import { useUserBehavior } from "@/hooks/useUserBehavior";
 import AlertButtons from "@/components/product/AlertButtons";
 import ProductAlternatives from "@/components/product/ProductAlternatives";
+import { trackViewItem } from "@/lib/analytics";
+import { getViewCount } from "@/hooks/useTrendingProducts";
 import SmartRecommendations from "@/components/product/SmartRecommendations";
 import BoughtAlsoViewed from "@/components/product/BoughtAlsoViewed";
 import Link from "next/link";
@@ -35,17 +37,22 @@ export default function ProductDetailClient({ initialProduct }: Props) {
   const ctaRef = useRef<HTMLDivElement>(null);
   const [showStickyCTA, setShowStickyCTA] = useState(false);
 
+  const [viewCount, setViewCount] = useState(0);
+
   useEffect(() => {
     if (product) {
       addViewed(product.id);
       recordPrice(product);
       incrementViewCount(product.id);
+      trackViewItem(product);
       // IBP: Ürün görüntüleme sinyali
       trackProductView(
         product.category?.slug || "",
         product.brand?.slug,
         product.sale_price || product.price
       );
+      // Social proof: view count
+      setViewCount(getViewCount(product.id));
     }
   }, [product, addViewed, trackProductView]);
 
@@ -91,6 +98,13 @@ export default function ProductDetailClient({ initialProduct }: Props) {
           <ProductGallery images={product.images} productName={product.name} categoryId={product.category_id} categorySlug={product.category?.slug} />
           <div>
             <ProductInfo product={product} />
+            {/* Social proof: görüntülenme sayısı */}
+            {viewCount >= 3 && (
+              <p className="mt-3 flex items-center gap-1.5 text-xs text-dark-500 dark:text-dark-400">
+                <span className="inline-block h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                Son 7 günde {viewCount} kez görüntülendi
+              </p>
+            )}
             {/* Sentinel div — IntersectionObserver hedefi */}
             <div ref={ctaRef} />
             <div className="mt-4">

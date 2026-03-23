@@ -21,10 +21,30 @@ export default function Newsletter() {
     }
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email.trim()) {
-      setSubmitted(true);
+    if (!email.trim()) return;
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        setError(data.error || "Kayıt başarısız.");
+      }
+    } catch {
+      setError("Bağlantı hatası.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -61,11 +81,13 @@ export default function Newsletter() {
               />
               <button
                 type="submit"
-                className="flex shrink-0 items-center justify-center gap-2 rounded-lg bg-primary-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-700"
+                disabled={loading}
+                className="flex shrink-0 items-center justify-center gap-2 rounded-lg bg-primary-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-700 disabled:opacity-50"
               >
-                Abone Ol
-                <ArrowRight size={16} />
+                {loading ? "Kaydediliyor..." : "Abone Ol"}
+                {!loading && <ArrowRight size={16} />}
               </button>
+              {error && <p className="text-xs text-red-400 sm:hidden">{error}</p>}
             </form>
           )}
 

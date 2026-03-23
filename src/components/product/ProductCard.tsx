@@ -15,6 +15,7 @@ import { useCompare } from "@/hooks/useCompare";
 import { useCountdown } from "@/hooks/useFlashSale";
 import { getCategoryFallbackImage, getProductPrimaryImage, isRemoteImage } from "@/lib/product-images";
 import PriceDropBadge from "./PriceDropBadge";
+import { trackAddToCart, trackSelectItem, trackAddToWishlist } from "@/lib/analytics";
 
 interface ProductCardProps {
   product: Product;
@@ -80,6 +81,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <button
           onClick={() => {
             toggleItem(product.id);
+            if (!inWishlist) trackAddToWishlist(product);
             showToast(inWishlist ? "Favorilerden çıkarıldı" : "Favorilere eklendi", inWishlist ? "info" : "success");
           }}
           className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md transition-all active:scale-95 sm:h-auto sm:w-auto sm:p-2 sm:hover:scale-110 dark:bg-dark-700"
@@ -139,6 +141,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Name */}
         <Link
           href={`/urunler/${product.slug}`}
+          onClick={() => trackSelectItem(product)}
           className="mt-1 line-clamp-2 text-sm font-medium text-dark-900 dark:text-dark-50 transition-colors hover:text-primary-600"
         >
           {product.name}
@@ -220,6 +223,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <button
             onClick={() => {
               addItem(product);
+              trackAddToCart(product);
               showToast("Ürün sepete eklendi", "success");
             }}
             disabled={product.stock === 0}

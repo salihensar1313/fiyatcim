@@ -14,6 +14,7 @@ import { CurrencyProvider } from "@/context/CurrencyContext";
 import { ToastProvider } from "@/components/ui/Toast";
 import CookieConsent from "@/components/ui/CookieConsent";
 import GoogleAnalytics from "@/components/seo/GoogleAnalytics";
+import MetaPixel from "@/components/analytics/MetaPixel";
 import WebVitals from "@/components/analytics/WebVitals";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { ActivityLogProvider } from "@/context/ActivityLogContext";
@@ -106,6 +107,7 @@ export default function RootLayout({
       </head>
       <body className="flex min-h-screen flex-col font-sans antialiased">
         <GoogleAnalytics />
+        <MetaPixel />
         <WebVitals />
         <JsonLd data={buildOrganizationSchema()} />
         <JsonLd data={buildWebSiteSchema()} />

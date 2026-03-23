@@ -53,6 +53,12 @@ function getViewCounts(): Map<string, number> {
   return counts;
 }
 
+/** Get view count for a single product (last 7 days) — social proof için */
+export function getViewCount(productId: string): number {
+  const counts = getViewCounts();
+  return counts.get(productId) || 0;
+}
+
 /** Hook: get trending products — DB is_trending flag first, then localStorage fallback */
 export function useTrendingProducts(limit = 8): Product[] {
   const { products } = useProducts();
