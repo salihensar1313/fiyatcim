@@ -50,8 +50,8 @@ export async function POST(request: NextRequest) {
       );
 
     if (error) {
-      console.error("[newsletter] Insert error:", error.message);
-      return NextResponse.json({ error: "Kayit basarisiz." }, { status: 500 });
+      console.error("[newsletter] Insert error:", error.message, error.code, error.details);
+      return NextResponse.json({ error: "Kayit basarisiz: " + error.message }, { status: 500 });
     }
 
     // Hoşgeldin e-postası gönder
@@ -84,6 +84,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error("[newsletter] Error:", err);
-    return NextResponse.json({ error: "Bir hata olustu." }, { status: 500 });
+    return NextResponse.json({ error: "Hata: " + (err instanceof Error ? err.message : String(err)) }, { status: 500 });
   }
 }
