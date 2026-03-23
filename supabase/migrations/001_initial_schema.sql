@@ -324,7 +324,7 @@ BEGIN
     IF v_product.stock < v_item.qty THEN
       RAISE EXCEPTION 'Insufficient stock: %', v_item.product_id;
     END IF;
-    v_effective_price := COALESCE(v_product.sale_price, v_product.price);
+    v_effective_price := COALESCE(NULLIF(v_product.sale_price, 0), v_product.price);
     v_subtotal := v_subtotal + (v_effective_price * v_item.qty);
   END LOOP;
 
