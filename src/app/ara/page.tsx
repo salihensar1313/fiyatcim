@@ -112,6 +112,7 @@ function AraContent() {
     setSearching(true);
     try {
       const res = await fetch(`/api/search?q=${encodeURIComponent(q.trim())}`);
+      if (!res.ok) { setResults([]); return; }
       const data = await res.json();
       setResults(data.results || []);
     } catch {
