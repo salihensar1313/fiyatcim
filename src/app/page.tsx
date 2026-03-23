@@ -17,8 +17,8 @@ import FeaturedProducts from "@/components/home/FeaturedProducts";
 import RandomProducts from "@/components/home/RandomProducts";
 
 // Below-the-fold: dynamic imports for code splitting
-const CategoryShowcase = dynamic(() => import("@/components/home/CategoryShowcase"));
 const BrandCarousel = dynamic(() => import("@/components/home/BrandCarousel"));
+const PremiumBanner = dynamic(() => import("@/components/premium/PremiumBanner"));
 const FlashSale = dynamic(() => import("@/components/home/FlashSale"));
 const BestSellers = dynamic(() => import("@/components/home/BestSellers"));
 const TrendingProducts = dynamic(() => import("@/components/home/TrendingProducts"));
@@ -74,9 +74,6 @@ export default function HomePage() {
         <FeaturedProducts />
       </Suspense>
 
-      {/* Kategori Vitrin — 6 renkli kart */}
-      <CategoryShowcase />
-
       {/* Keşfet — Rastgele ürünler */}
       <Suspense fallback={<div className="py-12 sm:py-16"><div className="container-custom"><div className="grid grid-cols-2 gap-4 lg:grid-cols-4">{Array.from({ length: 4 }).map((_, i) => (<div key={i} className="h-72 animate-pulse rounded-xl bg-dark-100" />))}</div></div></div>}>
         <RandomProducts />
@@ -90,6 +87,9 @@ export default function HomePage() {
 
       {/* Öne Çıkan İndirimler — indirimli ürünler (8) */}
       <BestSellers />
+
+      {/* Premium Üyelik Banner */}
+      <PremiumBanner variant="home" />
 
       {/* Markalar — logo carousel */}
       <BrandCarousel />

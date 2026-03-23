@@ -9,6 +9,7 @@ import CartItemComponent from "@/components/cart/CartItem";
 import CartSummary from "@/components/cart/CartSummary";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import CartRecommendations from "@/components/product/CartRecommendations";
+import PremiumBanner from "@/components/premium/PremiumBanner";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 
 const FREE_SHIPPING_THRESHOLD = 2000;
@@ -134,6 +135,13 @@ export default function CartPage() {
 
         {/* Boş Sepette Öne Çıkan Ürünler */}
         {items.length === 0 && <CartRecommendations />}
+
+        {/* Premium Üyelik Banner */}
+        {items.length > 0 && (
+          <div className="mt-6">
+            <PremiumBanner variant="cart" />
+          </div>
+        )}
 
         {/* Bunu Alanlar Şunları da Aldı */}
         {items.length > 0 && <CartRecommendations />}

@@ -15,6 +15,7 @@ import {
   RotateCcw,
   Truck,
   Zap,
+  Crown,
 } from "lucide-react";
 import { SITE_FULL_NAME, CONTACT } from "@/lib/constants";
 import { useCart } from "@/context/CartContext";
@@ -198,6 +199,13 @@ export default function Header() {
             >
               <Zap size={14} />
               Flaş İndirimler
+            </Link>
+            <Link
+              href="/premium"
+              className="flex items-center gap-1 px-3 py-3 text-sm font-bold text-amber-300 transition-colors hover:bg-primary-700 hover:text-amber-200"
+            >
+              <Crown size={14} />
+              Premium
             </Link>
           </div>
         </nav>

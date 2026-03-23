@@ -13,6 +13,7 @@ import { recordPrice } from "@/hooks/usePriceHistory";
 import { incrementViewCount } from "@/hooks/useTrendingProducts";
 import { useUserBehavior } from "@/hooks/useUserBehavior";
 import AlertButtons from "@/components/product/AlertButtons";
+import PremiumBanner from "@/components/premium/PremiumBanner";
 import ProductAlternatives from "@/components/product/ProductAlternatives";
 import { trackViewItem } from "@/lib/analytics";
 import { getViewCount } from "@/hooks/useTrendingProducts";
@@ -111,6 +112,11 @@ export default function ProductDetailClient({ initialProduct }: Props) {
               <AlertButtons product={product} />
             </div>
           </div>
+        </div>
+
+        {/* Premium Üyelik Banner */}
+        <div className="mt-6">
+          <PremiumBanner variant="product" />
         </div>
 
         <div id="product-tabs" className="mt-8 rounded-xl border border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800 p-4 sm:mt-12 sm:p-6">
