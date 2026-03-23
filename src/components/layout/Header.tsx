@@ -117,9 +117,15 @@ export default function Header() {
               <Menu size={24} />
             </button>
 
-            {/* Logo */}
-            <Link href="/" className="flex shrink-0 items-center">
+            {/* Logo + Premium Badge */}
+            <Link href="/" className="flex shrink-0 flex-col items-center">
               <Image src="/images/logo-white.png" alt={SITE_FULL_NAME} width={180} height={50} priority className="h-10 w-auto sm:h-14" />
+              {isPremium && (
+                <span className="mt-0.5 flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-2 py-0.5 text-[9px] font-bold tracking-wider text-white shadow-sm shadow-amber-500/30">
+                  <Crown size={8} />
+                  PREMIUM
+                </span>
+              )}
             </Link>
 
             {/* Search - Desktop */}
@@ -199,7 +205,7 @@ export default function Header() {
               <Package size={14} />
               Tüm Ürünler
             </Link>
-            {/* Discovery links — Trendyol-style */}
+            {/* Discovery links */}
             <span className="mx-1 h-5 w-px bg-primary-400/30" />
             <Link
               href="/kampanyalar"
@@ -208,13 +214,18 @@ export default function Header() {
               <Zap size={14} />
               Flaş İndirimler
             </Link>
-            <Link
-              href="/premium"
-              className="flex items-center gap-1 px-3 py-3 text-sm font-bold text-amber-300 transition-colors hover:bg-primary-700 hover:text-amber-200"
-            >
-              <Crown size={14} />
-              Premium
-            </Link>
+
+            {/* PREMIUM — ortada, büyük ve gösterişli */}
+            <div className="ml-auto">
+              <Link
+                href="/premium"
+                className="group relative flex items-center gap-2 overflow-hidden rounded-lg bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 px-6 py-2 text-sm font-black text-white shadow-lg shadow-amber-500/30 transition-all hover:shadow-xl hover:shadow-amber-500/40"
+              >
+                <div className="absolute inset-0 animate-premium-shine bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                <Crown size={18} className="relative z-10" />
+                <span className="relative z-10 text-base tracking-wide">PREMIUM</span>
+              </Link>
+            </div>
           </div>
         </nav>
       </header>
