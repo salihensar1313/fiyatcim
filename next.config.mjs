@@ -18,13 +18,6 @@ if (isProductionDeploy && process.env.NEXT_PUBLIC_DEMO_MODE === "true") {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   poweredByHeader: false,
-  // Server-side env vars — Vercel runtime'a inject et
-  // Bu değerler .env.local'dan okunur ve serverless function bundle'a dahil edilir
-  env: {
-    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || "",
-    RESEND_API_KEY: process.env.RESEND_API_KEY || "",
-    CRON_SECRET: process.env.CRON_SECRET || "",
-  },
   async headers() {
     return [
       {
