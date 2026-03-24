@@ -105,7 +105,11 @@ export default function AdminCustomersPage() {
   }), [customers]);
 
   const toggleSelect = (id: string) => {
-    setSelected((prev) => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next; });
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) { next.delete(id); } else { next.add(id); }
+      return next;
+    });
   };
   const selectAll = () => setSelected(selected.size === filtered.length ? new Set() : new Set(filtered.map((c) => c.id)));
   const selectByFilter = (type: "non-premium" | "newsletter") => {
