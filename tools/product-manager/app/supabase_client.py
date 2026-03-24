@@ -45,6 +45,7 @@ class SupabaseManager:
         self.anon_key = config["supabase_anon_key"]
         self.client: Client = create_client(self.url, self.anon_key)
         self.user = None
+        self._admin_client: Client | None = None
         self._pricing_service_client: Client | None = None
         self._pricing_env_cache: dict | None = None
         self._product_cache: list[dict] | None = None
@@ -83,6 +84,13 @@ class SupabaseManager:
         if ROOT_ENV_PATH.exists():
             return dotenv_values(ROOT_ENV_PATH)
         return {}
+
+    def _get_admin_client(self) -> Client:
+        """Service role key ile admin client (RLS bypass)."""
+        if self._admin_client is None:
+            service_key = self._get_service_key()
+            self._admin_client = create_client(self.url, service_key)
+        return self._admin_client
 
     def _load_pricing_env(self) -> dict:
         if self._pricing_env_cache is not None:
@@ -956,8 +964,9 @@ class SupabaseManager:
         # 1) auth.users'dan tüm kullanıcıları al (email, created_at)
         auth_users = self._get_auth_users()
 
-        # 2) profiles tablosundan tüm profilleri al
-        res = self.client.table("profiles").select(
+        # 2) profiles tablosundan tüm profilleri al (admin client — RLS bypass)
+        admin = self._get_admin_client()
+        res = admin.table("profiles").select(
             "user_id, ad, soyad, telefon, role, avatar, is_premium, premium_expires_at, updated_at"
         ).execute()
         profile_map = {}
@@ -1059,13 +1068,14 @@ class SupabaseManager:
         return res.count or 0
 
     def grant_premium(self, user_id: str, days: int = 365) -> dict:
-        """Müşteriye premium ver. Profil yoksa oluştur."""
+        """Müşteriye premium ver. Profil yoksa oluştur. Admin client (RLS bypass)."""
         from datetime import timedelta
+        admin = self._get_admin_client()
         expires = datetime.now(timezone.utc) + timedelta(days=days)
         # Profil var mı kontrol et
-        existing = self.client.table("profiles").select("user_id").eq("user_id", user_id).maybe_single().execute()
+        existing = admin.table("profiles").select("user_id").eq("user_id", user_id).maybe_single().execute()
         if existing.data:
-            res = (self.client.table("profiles")
+            res = (admin.table("profiles")
                    .update({
                        "is_premium": True,
                        "premium_expires_at": expires.isoformat(),
@@ -1073,8 +1083,7 @@ class SupabaseManager:
                    .eq("user_id", user_id)
                    .execute())
         else:
-            # Profil yoksa oluştur
-            res = (self.client.table("profiles")
+            res = (admin.table("profiles")
                    .insert({
                        "user_id": user_id,
                        "is_premium": True,
@@ -1085,8 +1094,9 @@ class SupabaseManager:
         return (res.data or [{}])[0]
 
     def revoke_premium(self, user_id: str) -> dict:
-        """Müşteriden premiumu kaldır."""
-        res = (self.client.table("profiles")
+        """Müşteriden premiumu kaldır. Admin client (RLS bypass)."""
+        admin = self._get_admin_client()
+        res = (admin.table("profiles")
                .update({
                    "is_premium": False,
                    "premium_expires_at": None,
