@@ -1126,12 +1126,16 @@ class SupabaseManager:
             headers={
                 "Authorization": f"Bearer {resend_key}",
                 "Content-Type": "application/json",
+                "User-Agent": "FiyatcimApp/1.0",
             },
             method="POST",
         )
         try:
-            with urllib.request.urlopen(req, timeout=10) as resp:
+            with urllib.request.urlopen(req, timeout=15) as resp:
                 return resp.status == 200
+        except urllib.error.HTTPError as e:
+            logger.error("Mail HTTP hatasi: %s — %s", e.code, e.read().decode()[:200])
+            return False
         except Exception as e:
             logger.error("Mail gonderme hatasi: %s", e)
             return False
