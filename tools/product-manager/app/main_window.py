@@ -21,6 +21,7 @@ from app.site_guide import SiteGuide
 from app.discount_manager import DiscountManager
 from app.source_matcher import SourceMatcher
 from app.customer_manager import CustomerManager
+from app.coupon_manager import CouponManager
 
 
 class MainWindow(ctk.CTkFrame):
@@ -104,7 +105,7 @@ class MainWindow(ctk.CTkFrame):
              ("discounts", "Indirimler"), ("bulk", "Toplu Islem"),
              ("source_match", "Kaynak Esleme")],
             [("orders", "Siparisler"), ("invoices", "Faturalar"),
-             ("customers", "Musteriler")],
+             ("customers", "Musteriler"), ("coupons", "Kuponlar")],
             [("categories", "Kategoriler"), ("brands", "Markalar"),
              ("stock", "Stok"), ("csv", "CSV / Yedek"), ("guide", "Rehber")],
         ]
@@ -212,6 +213,7 @@ class MainWindow(ctk.CTkFrame):
             "orders": lambda: OrderManager(self.content_frame, self.sb),
             "invoices": lambda: InvoiceManager(self.content_frame, self.sb),
             "customers": lambda: CustomerManager(self.content_frame, self.sb),
+            "coupons": lambda: CouponManager(self.content_frame, self.sb),
             "categories": lambda: CategoryManager(
                 self.content_frame, self.sb, on_change=self._on_category_change,
             ),
