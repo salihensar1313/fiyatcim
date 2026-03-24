@@ -1059,16 +1059,29 @@ class SupabaseManager:
         return res.count or 0
 
     def grant_premium(self, user_id: str, days: int = 365) -> dict:
-        """Müşteriye premium ver."""
+        """Müşteriye premium ver. Profil yoksa oluştur."""
         from datetime import timedelta
         expires = datetime.now(timezone.utc) + timedelta(days=days)
-        res = (self.client.table("profiles")
-               .update({
-                   "is_premium": True,
-                   "premium_expires_at": expires.isoformat(),
-               })
-               .eq("user_id", user_id)
-               .execute())
+        # Profil var mı kontrol et
+        existing = self.client.table("profiles").select("user_id").eq("user_id", user_id).maybe_single().execute()
+        if existing.data:
+            res = (self.client.table("profiles")
+                   .update({
+                       "is_premium": True,
+                       "premium_expires_at": expires.isoformat(),
+                   })
+                   .eq("user_id", user_id)
+                   .execute())
+        else:
+            # Profil yoksa oluştur
+            res = (self.client.table("profiles")
+                   .insert({
+                       "user_id": user_id,
+                       "is_premium": True,
+                       "premium_expires_at": expires.isoformat(),
+                       "role": "user",
+                   })
+                   .execute())
         return (res.data or [{}])[0]
 
     def revoke_premium(self, user_id: str) -> dict:
