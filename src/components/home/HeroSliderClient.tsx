@@ -100,35 +100,52 @@ export default function HeroSliderClient({ slides }: Props) {
             aria-hidden={i !== current}
           >
             <div className="relative min-h-[300px] sm:min-h-[400px] lg:min-h-[540px]">
-              <Image
-                src={slide.image || "/images/hero/hero-main.webp"}
-                alt={slide.title}
-                fill
-                sizes="100vw"
-                priority={i === 0}
-                className="scale-[1.01] object-cover object-center"
-                onLoad={i === 0 ? () => setHeroLoaded(true) : undefined}
-              />
+              {/* Slide görseli — Premium slide'da tıklanabilir */}
+              {slide.cta_link === "/premium" ? (
+                <Link href="/premium" className="absolute inset-0 z-10">
+                  <Image
+                    src={slide.image || "/images/hero/hero-main.webp"}
+                    alt={slide.title}
+                    fill
+                    sizes="100vw"
+                    priority={i === 0}
+                    className="object-cover object-center"
+                    onLoad={i === 0 ? () => setHeroLoaded(true) : undefined}
+                  />
+                </Link>
+              ) : (
+                <>
+                  <Image
+                    src={slide.image || "/images/hero/hero-main.webp"}
+                    alt={slide.title}
+                    fill
+                    sizes="100vw"
+                    priority={i === 0}
+                    className="scale-[1.01] object-cover object-center"
+                    onLoad={i === 0 ? () => setHeroLoaded(true) : undefined}
+                  />
 
-              {/* Full overlay on mobile for readability, gradient on desktop */}
-              <div className="absolute inset-0 bg-dark-900/60 sm:bg-[linear-gradient(to_right,rgba(15,23,42,0.9)_0%,rgba(15,23,42,0.7)_25%,rgba(15,23,42,0.2)_50%,transparent_65%)]" />
+                  {/* Full overlay on mobile for readability, gradient on desktop */}
+                  <div className="absolute inset-0 bg-dark-900/60 sm:bg-[linear-gradient(to_right,rgba(15,23,42,0.9)_0%,rgba(15,23,42,0.7)_25%,rgba(15,23,42,0.2)_50%,transparent_65%)]" />
 
-              <div className="container-custom relative z-10 flex min-h-[300px] items-center sm:min-h-[400px] lg:min-h-[540px]">
-                <div className="w-full max-w-lg py-8 text-center sm:py-12 sm:text-left lg:py-16">
-                  <h2 className="text-2xl font-extrabold uppercase leading-tight text-white sm:text-3xl lg:text-5xl">
-                    {slide.title}
-                  </h2>
-                  <p className="mx-auto mt-3 max-w-md text-sm text-dark-200 sm:mx-0 sm:mt-4 sm:text-base lg:text-lg">
-                    {slide.subtitle}
-                  </p>
-                  <Link
-                    href={slide.cta_link}
-                    className="mt-5 inline-flex items-center rounded-lg bg-primary-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-700 active:scale-95 sm:mt-6 sm:px-8 sm:py-3.5"
-                  >
-                    {slide.cta_text}
-                  </Link>
-                </div>
-              </div>
+                  <div className="container-custom relative z-10 flex min-h-[300px] items-center sm:min-h-[400px] lg:min-h-[540px]">
+                    <div className="w-full max-w-lg py-8 text-center sm:py-12 sm:text-left lg:py-16">
+                      <h2 className="text-2xl font-extrabold uppercase leading-tight text-white sm:text-3xl lg:text-5xl">
+                        {slide.title}
+                      </h2>
+                      <p className="mx-auto mt-3 max-w-md text-sm text-dark-200 sm:mx-0 sm:mt-4 sm:text-base lg:text-lg">
+                        {slide.subtitle}
+                      </p>
+                      <Link
+                        href={slide.cta_link}
+                        className="mt-5 inline-flex items-center rounded-lg bg-primary-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-700 active:scale-95 sm:mt-6 sm:px-8 sm:py-3.5"
+                      >
+                        {slide.cta_text}
+                      </Link>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         ))}
