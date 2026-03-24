@@ -100,6 +100,28 @@ export async function middleware(request: NextRequest) {
   // ═══════════════════════════════════════════
   const response = await updateSession(request);
 
+  // ═══════════════════════════════════════════
+  // CSP: Nonce-based Content Security Policy
+  // ═══════════════════════════════════════════
+  if (!isApiRoute) {
+    const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+    const csp = [
+      `default-src 'self'`,
+      `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
+      `style-src 'self' 'unsafe-inline'`, // CSS-in-JS needs unsafe-inline for styles
+      `img-src 'self' https: data: blob:`,
+      `font-src 'self' data:`,
+      `connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.resend.com https://open.er-api.com`,
+      `frame-ancestors 'none'`,
+      `base-uri 'self'`,
+      `form-action 'self'`,
+      `upgrade-insecure-requests`,
+    ].join("; ");
+
+    response.headers.set("x-nonce", nonce);
+    response.headers.set("Content-Security-Policy", csp);
+  }
+
   return response;
 }
 

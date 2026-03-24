@@ -7,6 +7,7 @@ import { Mail, Phone, Camera, Trash2, Lock, AlertTriangle, Eye, EyeOff, X, Check
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/components/ui/Toast";
 import SmsOtpVerify from "@/components/ui/SmsOtpVerify";
+import MfaSection from "@/components/auth/MfaSection";
 
 const IS_DEMO = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 const MAX_AVATAR_SIZE = 200; // px — resize to this max dimension
@@ -598,6 +599,9 @@ function AccountPage() {
               </button>
             </form>
           </div>
+
+          {/* MFA — İki Faktörlü Doğrulama */}
+          <MfaSection />
 
           {/* Hesap Silme */}
           <div className="rounded-xl border border-red-200 bg-white dark:border-red-900/50 dark:bg-dark-800 p-6">
