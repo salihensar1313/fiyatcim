@@ -946,31 +946,42 @@ class SupabaseManager:
     # Email auth.users'da — admin API ile alınır
 
     def get_customers(self, search: str = "", premium_only: bool = False) -> list[dict]:
-        """Tüm müşteri profillerini getir + auth.users'dan email eşleştir."""
-        q = self.client.table("profiles").select(
+        """Tüm müşterileri getir — auth.users başlangıç, profiles ile birleştir."""
+        # 1) auth.users'dan tüm kullanıcıları al (email, created_at)
+        auth_users = self._get_auth_users()
+
+        # 2) profiles tablosundan tüm profilleri al
+        res = self.client.table("profiles").select(
             "user_id, ad, soyad, telefon, role, avatar, is_premium, premium_expires_at, updated_at"
-        ).order("updated_at", desc=True)
-        if premium_only:
-            q = q.eq("is_premium", True)
-        res = q.execute()
-        profiles = res.data or []
+        ).execute()
+        profile_map = {}
+        for p in (res.data or []):
+            profile_map[p.get("user_id", "")] = p
 
-        # auth.users'dan emailleri çek
-        email_map = self._get_auth_emails()
-
+        # 3) Birleştir — auth.users temel, profiles zenginleştirme
         customers = []
-        for p in profiles:
-            uid = p.get("user_id", "")
-            full_name = f'{p.get("ad") or ""} {p.get("soyad") or ""}'.strip() or None
+        for u in auth_users:
+            uid = u["id"]
+            profile = profile_map.get(uid, {})
+            is_premium = profile.get("is_premium", False)
+
+            if premium_only and not is_premium:
+                continue
+
+            ad = profile.get("ad") or ""
+            soyad = profile.get("soyad") or ""
+            full_name = f"{ad} {soyad}".strip() or u.get("email", "").split("@")[0]
+
             c = {
                 "id": uid,
-                "email": email_map.get(uid, ""),
+                "email": u.get("email", ""),
                 "full_name": full_name,
-                "phone": p.get("telefon"),
-                "is_premium": p.get("is_premium", False),
-                "premium_expires_at": p.get("premium_expires_at"),
-                "created_at": email_map.get(uid + "_created", p.get("updated_at")),
-                "avatar": p.get("avatar"),
+                "phone": profile.get("telefon") or "",
+                "is_premium": is_premium,
+                "premium_expires_at": profile.get("premium_expires_at"),
+                "created_at": u.get("created_at", ""),
+                "avatar": profile.get("avatar"),
+                "has_profile": bool(profile),
             }
             customers.append(c)
 
@@ -982,10 +993,10 @@ class SupabaseManager:
                          s in (c.get("phone") or "").lower()]
         return customers
 
-    def _get_auth_emails(self) -> dict:
-        """auth.users admin API'den email + created_at bilgilerini al."""
+    def _get_auth_users(self) -> list[dict]:
+        """auth.users admin API'den tüm kullanıcıları al."""
         import urllib.request
-        email_map = {}
+        users = []
         try:
             req = urllib.request.Request(
                 f"{self.url}/auth/v1/admin/users?per_page=1000",
@@ -994,15 +1005,12 @@ class SupabaseManager:
                     "Authorization": f"Bearer {self._get_service_key()}",
                 },
             )
-            with urllib.request.urlopen(req, timeout=10) as resp:
+            with urllib.request.urlopen(req, timeout=15) as resp:
                 data = json.loads(resp.read().decode())
-                for u in data.get("users", []):
-                    uid = u.get("id", "")
-                    email_map[uid] = u.get("email", "")
-                    email_map[uid + "_created"] = u.get("created_at", "")
+                users = data.get("users", [])
         except Exception as e:
             logger.warning("Auth users cekme hatasi: %s", e)
-        return email_map
+        return users
 
     def _get_service_key(self) -> str:
         """Service role key'i env'den al."""
