@@ -26,6 +26,12 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [imgSrc, setImgSrc] = useState(() => getProductPrimaryImage(product));
   const [imgLoaded, setImgLoaded] = useState(false);
   useEffect(() => { setImgSrc(getProductPrimaryImage(product)); setImgLoaded(false); }, [product.id, product.images, product.category_id, product.category?.slug]);
+  // Fix: cached images may not fire onLoad — force show after 2s timeout
+  useEffect(() => {
+    if (imgLoaded) return;
+    const timer = setTimeout(() => setImgLoaded(true), 2000);
+    return () => clearTimeout(timer);
+  }, [imgSrc, imgLoaded]);
   const { addItem, items, updateQuantity, removeItem, isInCart } = useCart();
   const { toggleItem, isInWishlist } = useWishlist();
   const { showToast } = useToast();
