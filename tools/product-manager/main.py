@@ -26,11 +26,22 @@ class App(ctk.CTk):
 
         self.title("Fiyatcim — Urun Yoneticisi")
         self.minsize(1024, 700)
-        # Windows tam ekran: wm_state ile maximize
+        # Windows tam ekran maximize
+        self.after(50, self._maximize_window)
+
+    def _maximize_window(self):
+        """Pencereyi maximize et — birden fazla yöntem dene."""
         try:
-            self.after(10, lambda: self.wm_state("zoomed"))
+            import ctypes
+            hwnd = ctypes.windll.user32.GetForegroundWindow()
+            ctypes.windll.user32.ShowWindow(hwnd, 3)  # SW_MAXIMIZE = 3
         except Exception:
-            self.geometry("1280x800")
+            try:
+                self.wm_state("zoomed")
+            except Exception:
+                w = self.winfo_screenwidth()
+                h = self.winfo_screenheight()
+                self.geometry(f"{w}x{h}+0+0")
 
         # Pencere ikonu
         ico_path = os.path.join(APP_DIR, "logo.ico")
