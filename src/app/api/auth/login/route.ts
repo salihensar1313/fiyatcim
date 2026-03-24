@@ -176,14 +176,14 @@ export async function POST(request: NextRequest) {
       const count = recordFailedAttempt(email);
       const entry = getAttempts(email);
 
-      // 5. denemede email uyarisi gonder
-      if (count === MAX_ATTEMPTS && entry && !entry.alertSent) {
+      // 5+ denemede email uyarisi gonder (bir kez)
+      if (count >= MAX_ATTEMPTS && entry && !entry.alertSent) {
         entry.alertSent = true;
         sendSecurityAlert(email, count, ip); // fire-and-forget
       }
 
-      // 10. denemede tekrar email + kilit bilgisi
-      if (count === LOCK_THRESHOLD) {
+      // 10. denemede tekrar email + kilit bilgisi (alertSent reset edilmeden)
+      if (count >= LOCK_THRESHOLD) {
         sendSecurityAlert(email, count, ip);
       }
 
