@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 import { getCouponByCode } from "@/lib/queries";
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 /**
  * POST /api/coupons/validate
  *
  * Server-side kupon doğrulama endpoint'i.
- * Client-side kupon katalog/doğrulama mantığı yerine kullanılır.
+ * Kullanıcı başına kupon kullanım sınırı uygulanır.
  *
  * GÜVENLIK: Kupon doğrulama tamamen server-side yapılır.
  * @see claude2-detailed-security-report-2026-03-23.md — Bulgu #4
@@ -13,7 +19,7 @@ import { getCouponByCode } from "@/lib/queries";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { code, cartTotal } = body as { code?: string; cartTotal?: number };
+    const { code, cartTotal, userId } = body as { code?: string; cartTotal?: number; userId?: string };
 
     if (!code || typeof code !== "string" || code.trim().length === 0) {
       return NextResponse.json({ valid: false, error: "Kupon kodu gereklidir." }, { status: 400 });
@@ -22,8 +28,6 @@ export async function POST(request: NextRequest) {
     if (typeof cartTotal !== "number" || cartTotal < 0) {
       return NextResponse.json({ valid: false, error: "Gecersiz sepet tutari." }, { status: 400 });
     }
-
-    // TODO: Kullanıcı başına kupon limiti için userId alınacak (coupon_usages tablosu gelince)
 
     // DB'den kupon al
     const coupon = await getCouponByCode(code.trim().toUpperCase());
@@ -51,10 +55,24 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // TODO: Kullanıcı başına kupon kullanım kontrolü (DB tabanlı)
-    // if (userId) { ... check coupon_usages table ... }
+    // Kullanıcı başına kupon kullanım kontrolü — orders tablosundan
+    if (userId) {
+      const { count } = await supabaseAdmin
+        .from("orders")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .eq("coupon_code", code.trim().toUpperCase())
+        .neq("status", "cancelled");
 
-    // Kupon geçerli — sadece indirim bilgisini dön, kupon detaylarını client'a gösterme
+      if (count && count > 0) {
+        return NextResponse.json({
+          valid: false,
+          error: "Bu kuponu daha once kullandiniz.",
+        });
+      }
+    }
+
+    // Kupon geçerli — sadece indirim bilgisini dön
     const discount = coupon.type === "percent"
       ? Math.round(cartTotal * (coupon.value / 100) * 100) / 100
       : coupon.value;

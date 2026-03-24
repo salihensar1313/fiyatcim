@@ -275,7 +275,27 @@ function filterSeedProducts(opts: ProductQueryOpts = {}): { data: Product[]; tot
 // QUERY FUNCTIONS
 // ==========================================
 
+// Client-side dedup cache: multiple components calling getCategories share one request
+let _categoriesCache: { promise: Promise<Category[]>; ts: number } | null = null;
+const CACHE_TTL = 30_000; // 30s
+
 export async function getCategories(client?: SupabaseClient): Promise<Category[]> {
+  // Server-side (with explicit client) always fetches fresh
+  if (client) return _getCategoriesImpl(client);
+
+  // Client-side dedup: reuse in-flight or recent result
+  const now = Date.now();
+  if (_categoriesCache && now - _categoriesCache.ts < CACHE_TTL) {
+    return _categoriesCache.promise;
+  }
+  const promise = _getCategoriesImpl();
+  _categoriesCache = { promise, ts: now };
+  // Clear cache on error so next call retries
+  promise.catch(() => { _categoriesCache = null; });
+  return promise;
+}
+
+async function _getCategoriesImpl(client?: SupabaseClient): Promise<Category[]> {
   const start = performance.now();
 
   if (IS_DEMO) {
