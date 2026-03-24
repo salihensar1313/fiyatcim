@@ -107,7 +107,39 @@ class CustomerManager(ctk.CTkFrame):
             hover_color="#9333ea", corner_radius=6,
             command=self._send_premium_offer
         )
-        self.btn_premium_mail.pack(side="left")
+        self.btn_premium_mail.pack(side="left", padx=(0, 6))
+
+        # Düzenleme / Silme / Ban butonları
+        action_bar2 = ctk.CTkFrame(self, fg_color="transparent")
+        action_bar2.pack(fill="x", pady=(0, 8))
+
+        ctk.CTkButton(
+            action_bar2, text="✏️ Düzenle", width=100, height=32,
+            font=FONTS["small"], fg_color=COLORS["accent"],
+            hover_color=COLORS["accent_hover"], corner_radius=6,
+            command=self._edit_customer
+        ).pack(side="left", padx=(0, 6))
+
+        ctk.CTkButton(
+            action_bar2, text="🚫 Banla", width=100, height=32,
+            font=FONTS["small"], fg_color=COLORS["warning_muted"],
+            hover_color=COLORS["warning"], corner_radius=6,
+            command=self._ban_customer
+        ).pack(side="left", padx=(0, 6))
+
+        ctk.CTkButton(
+            action_bar2, text="✅ Ban Kaldır", width=110, height=32,
+            font=FONTS["small"], fg_color=COLORS["success_muted"],
+            hover_color=COLORS["success"], corner_radius=6,
+            command=self._unban_customer
+        ).pack(side="left", padx=(0, 6))
+
+        ctk.CTkButton(
+            action_bar2, text="🗑️ Sil", width=80, height=32,
+            font=FONTS["small"], fg_color=COLORS["danger"],
+            hover_color=COLORS["danger_hover"], corner_radius=6,
+            command=self._delete_customer
+        ).pack(side="left")
 
         self.lbl_selected = ctk.CTkLabel(
             action_bar, text="0 seçili",
@@ -385,6 +417,134 @@ class CustomerManager(ctk.CTkFrame):
             msg += f", {fail} başarısız"
         messagebox.showinfo("Sonuç", msg)
         self.refresh()
+
+    # ─── Edit / Delete / Ban ──────────────────────────────
+
+    def _edit_customer(self):
+        selected = self._get_selected_customers()
+        if len(selected) != 1:
+            messagebox.showwarning("Uyarı", "Düzenlemek için tam 1 müşteri seçin.")
+            return
+        cust = selected[0]
+
+        dialog = ctk.CTkToplevel(self)
+        dialog.title(f"Müşteri Düzenle — {cust.get('email', '')}")
+        dialog.geometry("450x350")
+        dialog.attributes("-topmost", True)
+        dialog.configure(fg_color=COLORS["bg_primary"])
+
+        fields = {}
+        for label, key, val in [
+            ("Ad", "ad", (cust.get("full_name") or "").split()[0] if cust.get("full_name") else ""),
+            ("Soyad", "soyad", " ".join((cust.get("full_name") or "").split()[1:]) if cust.get("full_name") else ""),
+            ("Telefon", "telefon", cust.get("phone") or ""),
+        ]:
+            ctk.CTkLabel(dialog, text=f"{label}:", font=FONTS["body"],
+                          text_color=COLORS["text_primary"]).pack(padx=16, pady=(12, 2), anchor="w")
+            var = ctk.StringVar(value=val)
+            ctk.CTkEntry(dialog, textvariable=var, width=400, height=32,
+                          font=FONTS["body"], fg_color=COLORS["bg_input"],
+                          border_color=COLORS["border"]).pack(padx=16)
+            fields[key] = var
+
+        def _save():
+            data = {k: v.get().strip() for k, v in fields.items()}
+            dialog.destroy()
+
+            def _worker():
+                try:
+                    self.sb.update_customer(cust["id"], data)
+                    self.after(0, lambda: messagebox.showinfo("Başarılı", "Müşteri güncellendi."))
+                    self.after(0, self.refresh)
+                except Exception as e:
+                    self.after(0, lambda: messagebox.showerror("Hata", f"Güncelleme başarısız:\n{e}"))
+
+            threading.Thread(target=_worker, daemon=True).start()
+
+        ctk.CTkButton(dialog, text="💾 Kaydet", width=200, height=36,
+                       font=FONTS["body"], fg_color=COLORS["accent"],
+                       hover_color=COLORS["accent_hover"], corner_radius=8,
+                       command=_save).pack(pady=20)
+
+    def _delete_customer(self):
+        selected = self._get_selected_customers()
+        if not selected:
+            messagebox.showwarning("Uyarı", "En az 1 müşteri seçin.")
+            return
+
+        emails = ", ".join(c.get("email", "?") for c in selected[:5])
+        if not messagebox.askyesno(
+            "⚠️ Müşteri Sil",
+            f"{len(selected)} müşteri kalıcı olarak silinecek:\n\n{emails}\n\n"
+            "Bu işlem geri alınamaz! Devam?",
+            icon="warning"
+        ):
+            return
+
+        def _worker():
+            ok, fail = 0, 0
+            for c in selected:
+                if self.sb.delete_customer(c["id"]):
+                    ok += 1
+                else:
+                    fail += 1
+            msg = f"Silindi: {ok}"
+            if fail:
+                msg += f", Başarısız: {fail}"
+            self.after(0, lambda: messagebox.showinfo("Sonuç", msg))
+            self.after(0, self.refresh)
+
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _ban_customer(self):
+        selected = self._get_selected_customers()
+        if not selected:
+            messagebox.showwarning("Uyarı", "En az 1 müşteri seçin.")
+            return
+
+        emails = ", ".join(c.get("email", "?") for c in selected[:5])
+        if not messagebox.askyesno(
+            "🚫 Müşteri Banla",
+            f"{len(selected)} müşteri banlanacak:\n\n{emails}\n\n"
+            "Banlanan müşteriler giriş yapamaz. Devam?"
+        ):
+            return
+
+        def _worker():
+            ok, fail = 0, 0
+            for c in selected:
+                if self.sb.ban_customer(c["id"], ban=True):
+                    ok += 1
+                else:
+                    fail += 1
+            msg = f"Banlandı: {ok}"
+            if fail:
+                msg += f", Başarısız: {fail}"
+            self.after(0, lambda: messagebox.showinfo("Sonuç", msg))
+            self.after(0, self.refresh)
+
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _unban_customer(self):
+        selected = self._get_selected_customers()
+        if not selected:
+            messagebox.showwarning("Uyarı", "En az 1 müşteri seçin.")
+            return
+
+        def _worker():
+            ok, fail = 0, 0
+            for c in selected:
+                if self.sb.ban_customer(c["id"], ban=False):
+                    ok += 1
+                else:
+                    fail += 1
+            msg = f"Ban kaldırıldı: {ok}"
+            if fail:
+                msg += f", Başarısız: {fail}"
+            self.after(0, lambda: messagebox.showinfo("Sonuç", msg))
+            self.after(0, self.refresh)
+
+        threading.Thread(target=_worker, daemon=True).start()
 
     # ─── Mail Actions ──────────────────────────────────────
 

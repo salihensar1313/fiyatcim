@@ -1105,6 +1105,62 @@ class SupabaseManager:
                .execute())
         return (res.data or [{}])[0]
 
+    def update_customer(self, user_id: str, data: dict) -> dict:
+        """Müşteri profilini güncelle. Admin client (RLS bypass)."""
+        admin = self._get_admin_client()
+        # Profil var mı kontrol et
+        existing = admin.table("profiles").select("user_id").eq("user_id", user_id).maybe_single().execute()
+        if existing.data:
+            res = admin.table("profiles").update(data).eq("user_id", user_id).execute()
+        else:
+            res = admin.table("profiles").insert({"user_id": user_id, **data}).execute()
+        return (res.data or [{}])[0]
+
+    def delete_customer(self, user_id: str) -> bool:
+        """Müşteriyi sil — auth.users'dan kaldır (profil cascade)."""
+        import urllib.request
+        import urllib.error
+        try:
+            req = urllib.request.Request(
+                f"{self.url}/auth/v1/admin/users/{user_id}",
+                headers={
+                    "apikey": self.anon_key,
+                    "Authorization": f"Bearer {self._get_service_key()}",
+                    "User-Agent": "FiyatcimApp/1.0",
+                },
+                method="DELETE",
+            )
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                return resp.status == 200
+        except Exception as e:
+            logger.error("Musteri silme hatasi: %s", e)
+            return False
+
+    def ban_customer(self, user_id: str, ban: bool = True) -> bool:
+        """Müşteriyi banla/unbanla — auth.users ban_duration ayarla."""
+        import urllib.request
+        import urllib.error
+        payload = json.dumps({
+            "ban_duration": "876600h" if ban else "none",  # 100 yıl veya kaldır
+        }).encode("utf-8")
+        try:
+            req = urllib.request.Request(
+                f"{self.url}/auth/v1/admin/users/{user_id}",
+                data=payload,
+                headers={
+                    "apikey": self.anon_key,
+                    "Authorization": f"Bearer {self._get_service_key()}",
+                    "Content-Type": "application/json",
+                    "User-Agent": "FiyatcimApp/1.0",
+                },
+                method="PUT",
+            )
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                return resp.status == 200
+        except Exception as e:
+            logger.error("Musteri ban hatasi: %s", e)
+            return False
+
     def send_campaign_email(self, to_email: str, subject: str, html: str) -> bool:
         """Kampanya maili gönder (web API üzerinden)."""
         import urllib.request
