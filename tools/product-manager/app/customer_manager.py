@@ -195,9 +195,9 @@ class CustomerManager(ctk.CTkFrame):
         self._render_table(filtered)
 
     def _set_loading(self, loading: bool):
-        for widget in self.rows_frame.winfo_children():
-            widget.destroy()
         if loading:
+            for widget in self.rows_frame.winfo_children():
+                widget.destroy()
             ctk.CTkLabel(
                 self.rows_frame, text="Yükleniyor...",
                 font=FONTS["body"], text_color=COLORS["text_muted"]
