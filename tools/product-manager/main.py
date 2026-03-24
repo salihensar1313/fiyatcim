@@ -25,9 +25,12 @@ class App(ctk.CTk):
         super().__init__()
 
         self.title("Fiyatcim — Urun Yoneticisi")
-        self.geometry("1280x800")
         self.minsize(1024, 700)
-        self.state("zoomed")  # Windows'ta tam ekran aç
+        # Windows tam ekran: wm_state ile maximize
+        try:
+            self.after(10, lambda: self.wm_state("zoomed"))
+        except Exception:
+            self.geometry("1280x800")
 
         # Pencere ikonu
         ico_path = os.path.join(APP_DIR, "logo.ico")
