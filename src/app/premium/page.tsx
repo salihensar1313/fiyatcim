@@ -300,6 +300,17 @@ export default function PremiumPage() {
           </div>
         </div>
       </section>
+
+      {/* ═══════════ SÖZLEŞME LİNKİ ═══════════ */}
+      <div className="container-custom mt-8 text-center">
+        <p className="text-xs text-dark-400 dark:text-dark-500">
+          Premium Üyelik satın alarak{" "}
+          <Link href="/premium/sozlesme" className="text-amber-500 underline hover:text-amber-400">
+            Premium Üyelik Sözleşmesi
+          </Link>
+          &apos;ni kabul etmiş olursunuz.
+        </p>
+      </div>
     </div>
   );
 }

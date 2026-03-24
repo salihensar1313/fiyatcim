@@ -13,7 +13,7 @@ export const PREMIUM_PRICE_STANDALONE = 3000;
 export const PREMIUM_BENEFITS = [
   {
     icon: "Wrench" as const,
-    title: "Ücretsiz Profesyonel Kurulum",
+    title: "Ücretsiz Profesyonel Kurulum Desteği",
     desc: "Uzman ekibimiz tüm ürünlerinizi ücretsiz kurar",
     highlight: true,
   },
