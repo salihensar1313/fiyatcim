@@ -16,14 +16,14 @@ export default function Error({
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 py-16 text-center">
       <div className="text-6xl">😔</div>
-      <h1 className="mt-4 text-2xl font-bold text-gray-800 dark:text-gray-100">
+      <h1 className="mt-4 text-2xl font-bold text-dark-900 dark:text-dark-50">
         Bir Sorun Oluştu
       </h1>
-      <p className="mt-2 max-w-md text-gray-500 dark:text-gray-400">
+      <p className="mt-2 max-w-md text-dark-500 dark:text-dark-400">
         Sayfa yüklenirken beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.
       </p>
       {error.digest && (
-        <p className="mt-1 text-xs text-gray-400">Hata Kodu: {error.digest}</p>
+        <p className="mt-1 text-xs text-dark-400">Hata Kodu: {error.digest}</p>
       )}
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <button

@@ -44,6 +44,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description: post.excerpt || post.title,
       images: ["/images/og-default.png"],
     },
+    alternates: {
+      canonical: `/blog/${post.slug}`,
+    },
   };
 }
 

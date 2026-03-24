@@ -174,11 +174,14 @@ function AraContent() {
       <form onSubmit={handleSearch} className="mx-auto mb-8 max-w-2xl">
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-dark-500" size={20} />
+          <label htmlFor="search-query" className="sr-only">Ürün Arayın</label>
           <input
-            type="text"
+            id="search-query"
+            type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Ürün, marka veya kategori ara..."
+            aria-label="Ürün, marka veya kategori ara"
             className="w-full rounded-xl border-2 border-dark-200 bg-white dark:bg-dark-800 py-3.5 pl-12 pr-4 text-base text-dark-800 dark:text-dark-100 placeholder-dark-400 outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10"
             autoFocus
           />

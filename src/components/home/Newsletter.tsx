@@ -71,12 +71,16 @@ export default function Newsletter() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <label htmlFor="newsletter-email" className="sr-only">E-posta Adresi</label>
               <input
+                id="newsletter-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="E-posta adresiniz"
+                aria-label="E-posta adresiniz"
                 required
+                autoComplete="email"
                 className="w-full rounded-lg bg-dark-800 px-4 py-3 text-sm text-white placeholder-dark-400 focus:outline-none focus:ring-2 focus:ring-primary-500 sm:max-w-sm"
               />
               <button

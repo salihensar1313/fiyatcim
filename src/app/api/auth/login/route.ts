@@ -30,6 +30,14 @@ function getAttempts(email: string) {
 
 function recordFailedAttempt(email: string) {
   const now = Date.now();
+
+  // Lazy cleanup — memory leak önleme
+  if (loginAttempts.size > 50000) {
+    loginAttempts.forEach((v, k) => {
+      if (now - v.firstAttempt > WINDOW) loginAttempts.delete(k);
+    });
+  }
+
   const entry = loginAttempts.get(email);
 
   if (!entry) {

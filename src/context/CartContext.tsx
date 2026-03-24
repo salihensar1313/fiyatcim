@@ -37,7 +37,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const { user, isPremium } = useAuth();
   const [items, setItems] = useState<CartItem[]>([]);
   const [couponCode, setCouponCode] = useState<string | null>(null);
-  const [discount, setDiscount] = useState(0);
+  const [discount, setDiscountRaw] = useState(0);
+  const setDiscount = useCallback((amount: number) => {
+    setDiscountRaw(Math.max(0, amount)); // Negatif indirim engelle
+  }, []);
   const [premiumInCart, setPremiumInCart] = useState(false);
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
 
@@ -157,8 +160,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       prev.map((item) => {
         if (item.product_id !== productId) return item;
         // Cap at stock limit
-        const maxQty = item.product?.stock ?? qty;
-        return { ...item, qty: Math.min(qty, maxQty) };
+        const maxQty = item.product?.stock ?? 99;
+        return { ...item, qty: Math.min(qty, Math.max(1, maxQty)) };
       })
     );
   }, []);

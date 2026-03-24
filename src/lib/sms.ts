@@ -85,8 +85,10 @@ function cleanupExpiredOTPs(): void {
 // ==========================================
 
 class MockSMSProvider implements SMSProvider {
-  async sendSMS(phone: string, message: string): Promise<SMSResult> {
-    console.log(`[MockSMS] ${phone} numarasina gonderildi: ${message}`);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async sendSMS(phone: string, _message: string): Promise<SMSResult> {
+    // GÜVENLIK: OTP kodu asla loglanmaz — sadece gönderim bilgisi
+    console.log(`[MockSMS] ${phone} numarasina SMS gonderildi (kod loglanmiyor)`);
     return { success: true };
   }
 }
