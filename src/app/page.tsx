@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
 
-export const revalidate = 0; // Cache bypass — hero slide güncellendi
+export const revalidate = 60; // 1 dakika — hızlı güncelleme
 
 export const metadata: Metadata = {
   title: "Fiyatcim — Alarm ve Güvenlik Sistemleri | En Uygun Fiyatlar",

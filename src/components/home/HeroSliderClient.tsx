@@ -103,13 +103,12 @@ export default function HeroSliderClient({ slides }: Props) {
               {/* Slide görseli — Premium slide'da tıklanabilir */}
               {slide.cta_link === "/premium" ? (
                 <Link href="/premium" className="absolute inset-0 z-10">
-                  <Image
-                    src={slide.image || "/images/hero/hero-main.webp"}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="https://qnsvqshljktoiktwprkr.supabase.co/storage/v1/object/public/product-images/hero/hero-premium.webp"
                     alt={slide.title}
-                    fill
-                    sizes="100vw"
-                    priority={i === 0}
-                    className="object-cover object-center"
+                    className="h-full w-full object-cover object-center"
+                    loading={i === 0 ? "eager" : "lazy"}
                     onLoad={i === 0 ? () => setHeroLoaded(true) : undefined}
                   />
                 </Link>
