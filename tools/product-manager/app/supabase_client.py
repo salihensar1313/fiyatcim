@@ -965,8 +965,13 @@ class SupabaseManager:
             profile_map[p.get("user_id", "")] = p
 
         # 3) Birleştir — auth.users temel, profiles zenginleştirme
+        #    Fake/demo hesapları filtrele
+        FAKE_DOMAINS = ("fiyatcim-fake.local", "fake.local", "test.local")
         customers = []
         for u in auth_users:
+            email = u.get("email", "")
+            if any(email.endswith(f"@{d}") for d in FAKE_DOMAINS):
+                continue
             uid = u["id"]
             profile = profile_map.get(uid, {})
             is_premium = profile.get("is_premium", False)
@@ -1038,9 +1043,12 @@ class SupabaseManager:
         return res.data or []
 
     def get_customer_count(self) -> int:
-        """Toplam müşteri sayısı (auth.users'dan)."""
+        """Toplam gerçek müşteri sayısı (fake hesaplar hariç)."""
         users = self._get_auth_users()
-        return len(users)
+        FAKE_DOMAINS = ("fiyatcim-fake.local", "fake.local", "test.local")
+        return sum(1 for u in users if not any(
+            (u.get("email") or "").endswith(f"@{d}") for d in FAKE_DOMAINS
+        ))
 
     def get_premium_count(self) -> int:
         """Premium müşteri sayısı."""
