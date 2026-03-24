@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api-auth";
 
 /**
  * POST /api/admin/customers/send-mail
  * Body: { emails: string[], subject: string, html: string }
- * Seçili müşterilere toplu mail gönder
+ * Seçili müşterilere toplu mail gönder — ADMIN ONLY
  */
 export async function POST(request: NextRequest) {
   try {
+    const auth = await requireAdmin();
+    if (!auth.isAdmin) return auth.response;
+
     const { emails, subject, html } = await request.json();
 
     if (!emails?.length || !subject || !html) {

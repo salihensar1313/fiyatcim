@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getCouponByCode } from "@/lib/queries";
 
 const supabaseAdmin = createClient(
@@ -11,15 +12,22 @@ const supabaseAdmin = createClient(
  * POST /api/coupons/validate
  *
  * Server-side kupon doğrulama endpoint'i.
- * Kullanıcı başına kupon kullanım sınırı uygulanır.
+ * Kullanıcı başına kupon kullanım sınırı — userId server-side auth'tan alınır.
  *
  * GÜVENLIK: Kupon doğrulama tamamen server-side yapılır.
- * @see claude2-detailed-security-report-2026-03-23.md — Bulgu #4
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { code, cartTotal, userId } = body as { code?: string; cartTotal?: number; userId?: string };
+    const { code, cartTotal } = body as { code?: string; cartTotal?: number };
+
+    // Get userId from server-side auth (NOT from client body)
+    let userId: string | null = null;
+    try {
+      const authClient = await createServerSupabaseClient();
+      const { data: { user } } = await authClient.auth.getUser();
+      userId = user?.id ?? null;
+    } catch { /* guest user — no userId */ }
 
     if (!code || typeof code !== "string" || code.trim().length === 0) {
       return NextResponse.json({ valid: false, error: "Kupon kodu gereklidir." }, { status: 400 });

@@ -46,19 +46,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Gecersiz istek formati." }, { status: 400 });
     }
 
-    // CSRF: origin check
+    // CSRF: origin check — origin ZORUNLU (curl/bot koruması)
     const origin = request.headers.get("origin");
     const host = request.headers.get("host");
-    if (origin && host) {
-      try {
-        const originHost = new URL(origin).hostname;
-        const expectedHost = host.split(":")[0];
-        if (originHost !== expectedHost) {
-          return NextResponse.json({ error: "Geçersiz istek kaynağı." }, { status: 403 });
-        }
-      } catch {
+    if (!origin) {
+      return NextResponse.json({ error: "Geçersiz istek kaynağı." }, { status: 403 });
+    }
+    try {
+      const originHost = new URL(origin).hostname;
+      const expectedHost = (host || "").split(":")[0];
+      if (originHost !== expectedHost) {
         return NextResponse.json({ error: "Geçersiz istek kaynağı." }, { status: 403 });
       }
+    } catch {
+      return NextResponse.json({ error: "Geçersiz istek kaynağı." }, { status: 403 });
     }
 
     // Rate limit by IP

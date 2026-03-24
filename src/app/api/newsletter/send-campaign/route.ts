@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { requireAdmin } from "@/lib/api-auth";
 
 function createServiceClient() {
   return createClient(
@@ -16,6 +17,9 @@ function createServiceClient() {
  */
 export async function POST(request: NextRequest) {
   try {
+    const auth = await requireAdmin();
+    if (!auth.isAdmin) return auth.response;
+
     const { subject, html, testOnly } = await request.json();
 
     if (!subject || !html) {
