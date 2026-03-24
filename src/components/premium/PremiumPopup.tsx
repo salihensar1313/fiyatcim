@@ -32,9 +32,11 @@ export default function PremiumPopup() {
       if (Date.now() - dismissedAt < 24 * 60 * 60 * 1000) return;
     }
     const timer = setTimeout(() => {
+      // Re-check premium status after delay (profile may have loaded by now)
+      if (document.cookie.includes("premium") || localStorage.getItem("fiyatcim_is_premium") === "true") return;
       setShow(true);
       requestAnimationFrame(() => setVisible(true));
-    }, 2000);
+    }, 4000);
     return () => clearTimeout(timer);
   }, [isPremium]);
 

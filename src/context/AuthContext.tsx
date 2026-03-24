@@ -655,6 +655,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isAdmin = profile?.role === "admin";
   const isPremium = profile?.is_premium === true;
 
+  // Sync premium flag to localStorage for popup check
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (isPremium) localStorage.setItem("fiyatcim_is_premium", "true");
+      else localStorage.removeItem("fiyatcim_is_premium");
+    }
+  }, [isPremium]);
+
   return (
     <AuthContext.Provider
       value={{ user, profile, isLoading, isAdmin, isPremium, signIn, signInWithGoogle, signUp, signOut, updateProfile, changePassword, updateEmail, deleteAccount, adminUpdateUser, adminChangePassword }}
