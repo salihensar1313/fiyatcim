@@ -78,6 +78,12 @@ class SupabaseManager:
     def get_user_id(self) -> str | None:
         return self.user.id if self.user else None
 
+    def _get_root_env(self) -> dict:
+        """Proje kök .env.local dosyasını oku."""
+        if ROOT_ENV_PATH.exists():
+            return dotenv_values(ROOT_ENV_PATH)
+        return {}
+
     def _load_pricing_env(self) -> dict:
         if self._pricing_env_cache is not None:
             return self._pricing_env_cache
@@ -1032,9 +1038,9 @@ class SupabaseManager:
         return res.data or []
 
     def get_customer_count(self) -> int:
-        """Toplam müşteri sayısı."""
-        res = self.client.table("profiles").select("user_id", count="exact").execute()
-        return res.count or 0
+        """Toplam müşteri sayısı (auth.users'dan)."""
+        users = self._get_auth_users()
+        return len(users)
 
     def get_premium_count(self) -> int:
         """Premium müşteri sayısı."""
