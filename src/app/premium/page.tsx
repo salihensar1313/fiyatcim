@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Crown, Wrench, Headphones, Shield, Zap, Truck, Settings, RefreshCw, Tv, Music, Check, Phone, ArrowRight, Sparkles, Star } from "lucide-react";
+import { Crown, Wrench, Headphones, Shield, Zap, Truck, Settings, RefreshCw, Tv, Music, Check, Phone, ArrowRight, Sparkles, Star, Palette, Bell } from "lucide-react";
 import Link from "next/link";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { PREMIUM_PRICE_WITH_ORDER, PREMIUM_PRICE_STANDALONE, PREMIUM_BENEFITS } from "@/lib/premium";
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/premium" },
 };
 
-const ICON_MAP: Record<string, typeof Shield> = { Wrench, Headphones, Shield, Zap, Truck, Settings, RefreshCw, Tv, Music };
+const ICON_MAP: Record<string, typeof Shield> = { Wrench, Headphones, Shield, Zap, Truck, Settings, RefreshCw, Tv, Music, Crown, Palette, Bell };
 
 export default function PremiumPage() {
   return (
@@ -75,7 +75,7 @@ export default function PremiumPage() {
           {/* Quick stats */}
           <div className="mt-12 flex animate-slide-up flex-wrap justify-center gap-8" style={{ animationDelay: "400ms", animationFillMode: "both" }}>
             {[
-              { num: "9", label: "Ayrıcalık" },
+              { num: "12", label: "Ayrıcalık" },
               { num: "%17", label: "Tasarruf" },
               { num: "7/24", label: "Destek" },
             ].map((s) => (
@@ -93,20 +93,93 @@ export default function PremiumPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {PREMIUM_BENEFITS.map((b, i) => {
             const Icon = ICON_MAP[b.icon] || Shield;
+            const isHighlight = "highlight" in b && b.highlight;
             return (
               <div
                 key={b.title}
-                className="group animate-slide-up rounded-2xl border border-dark-100 bg-white p-6 transition-all hover:border-amber-200 hover:shadow-lg hover:shadow-amber-500/5 dark:border-dark-700 dark:bg-dark-800 dark:hover:border-amber-600/30"
+                className={`group animate-slide-up rounded-2xl border p-6 transition-all hover:shadow-lg hover:shadow-amber-500/5 ${
+                  isHighlight
+                    ? "border-amber-300 bg-gradient-to-br from-amber-50 to-orange-50 dark:border-amber-600/40 dark:from-amber-950/30 dark:to-orange-950/20"
+                    : "border-dark-100 bg-white dark:border-dark-700 dark:bg-dark-800"
+                } hover:border-amber-200 dark:hover:border-amber-600/30`}
                 style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
               >
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 transition-transform group-hover:scale-110 dark:from-amber-900/30 dark:to-orange-900/30">
-                  <Icon size={22} className="text-amber-600 dark:text-amber-400" />
+                <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl transition-transform group-hover:scale-110 ${
+                  isHighlight
+                    ? "bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg shadow-amber-500/20"
+                    : "bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30"
+                }`}>
+                  <Icon size={22} className={isHighlight ? "text-white" : "text-amber-600 dark:text-amber-400"} />
                 </div>
-                <h3 className="mb-1.5 text-base font-bold text-dark-900 dark:text-dark-50">{b.title}</h3>
+                <h3 className="mb-1.5 text-base font-bold text-dark-900 dark:text-dark-50">
+                  {b.title}
+                  {isHighlight && <span className="ml-2 inline-block rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-bold text-white align-middle">YENİ</span>}
+                </h3>
                 <p className="text-sm text-dark-500 dark:text-dark-400">{b.desc}</p>
               </div>
             );
           })}
+        </div>
+      </section>
+
+      {/* ═══════════ PREMIUM TEMA ÖNİZLEME ═══════════ */}
+      <section className="container-custom mt-20">
+        <div className="mb-10 text-center">
+          <h2 className="text-3xl font-bold text-dark-900 dark:text-dark-50 sm:text-4xl">
+            <span className="bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">Altın Tema</span> ile VIP Deneyim
+          </h2>
+          <p className="mt-2 text-base text-dark-500 dark:text-dark-400">Premium üyeler için tamamen farklı bir arayüz</p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Altın Navigasyon */}
+          <div className="overflow-hidden rounded-2xl border border-dark-200 dark:border-dark-700">
+            <div className="bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-500 p-4 text-center">
+              <p className="text-sm font-bold text-white">Altın Navigasyon Barı</p>
+            </div>
+            <div className="bg-dark-900 p-4">
+              <div className="flex items-center justify-center gap-3">
+                {["Alarm", "Kamera", "Akıllı Ev", "Kilit"].map((cat) => (
+                  <span key={cat} className="rounded px-3 py-1.5 text-xs font-medium text-amber-300">{cat}</span>
+                ))}
+              </div>
+              <p className="mt-3 text-center text-xs text-dark-400">Standart kırmızı yerine altın gradient</p>
+            </div>
+          </div>
+
+          {/* Altın Avatar */}
+          <div className="overflow-hidden rounded-2xl border border-dark-200 dark:border-dark-700">
+            <div className="bg-dark-800 p-6 text-center">
+              <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-2xl font-bold text-white shadow-lg shadow-amber-500/30">
+                R
+              </div>
+              <p className="text-sm font-bold text-amber-400">Reelbenghost</p>
+              <div className="mt-1 inline-flex items-center gap-1 rounded-full bg-amber-500/20 px-3 py-0.5">
+                <Crown size={10} className="text-amber-400" />
+                <span className="text-[10px] font-bold text-amber-400">PREMIUM</span>
+              </div>
+            </div>
+            <div className="bg-dark-900 p-3 text-center">
+              <p className="text-xs text-dark-400">Profil ve dropdown&apos;da altın premium rozet</p>
+            </div>
+          </div>
+
+          {/* Altın Butonlar */}
+          <div className="overflow-hidden rounded-2xl border border-dark-200 dark:border-dark-700">
+            <div className="bg-dark-800 p-6 text-center">
+              <div className="mx-auto max-w-[200px] overflow-hidden rounded-xl border border-dark-600 bg-dark-900 p-4">
+                <div className="mx-auto mb-3 h-20 w-20 rounded-lg bg-dark-700" />
+                <p className="mb-1 text-xs font-bold text-white">Ajax MotionProtect</p>
+                <p className="mb-3 text-sm font-bold text-amber-400">₺1.590</p>
+                <div className="rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 py-2 text-center text-xs font-bold text-white">
+                  Sepete Ekle
+                </div>
+              </div>
+            </div>
+            <div className="bg-dark-900 p-3 text-center">
+              <p className="text-xs text-dark-400">Ürün kartlarında altın &quot;Sepete Ekle&quot; butonu</p>
+            </div>
+          </div>
         </div>
       </section>
 
