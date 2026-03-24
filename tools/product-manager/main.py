@@ -27,6 +27,7 @@ class App(ctk.CTk):
         self.title("Fiyatcim — Urun Yoneticisi")
         self.geometry("1280x800")
         self.minsize(1024, 700)
+        self.state("zoomed")  # Windows'ta tam ekran aç
 
         # Pencere ikonu
         ico_path = os.path.join(APP_DIR, "logo.ico")
